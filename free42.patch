@@ -1,0 +1,102 @@
+diff -ur common/bcdmath.cc ../free42.old/common/bcdmath.cc
+--- common/bcdmath.cc	2006-05-01 13:16:26.000000000 -0700
++++ ../free42.old/common/bcdmath.cc	2009-01-06 16:18:38.000000000 -0700
+@@ -100,7 +100,7 @@
+     { 2, 5000, 0, 0, 0, 0, 0, 1 }, // 2.5
+ };
+ 
+-BCD pi()
++BCD bcdPi()
+ {
+     return *(const BCDFloat*)(constTable + BCD_CONST_PI);
+ }
+@@ -461,12 +461,12 @@
+     else {
+         r = atan(y/x);
+         if (x.isNeg()) {
+-            BCD pi(*(const BCDFloat*)(constTable + BCD_CONST_PI));
++            BCD bcdPi(*(const BCDFloat*)(constTable + BCD_CONST_PI));
+             if (y.isNeg()) {
+-                r = r - pi;
++                r = r - bcdPi;
+             }
+             else {
+-                r = r + pi;
++                r = r + bcdPi;
+             }
+         }
+     }
+@@ -821,8 +821,8 @@
+     if (c.isNeg()) {
+         /* use reflection formula */
+         BCD z1 = -c;
+-        BCD pi(*(const BCDFloat*)(constTable + BCD_CONST_PI));
+-        BCD z2 = z1*pi;
++        BCD bcdPi(*(const BCDFloat*)(constTable + BCD_CONST_PI));
++        BCD z2 = z1*bcdPi;
+         return z2/sin(z2)/_gammaFactorial(z1);
+     }
+     else {
+diff -ur common/bcdmath.h ../free42.old/common/bcdmath.h
+--- common/bcdmath.h	2006-02-27 10:25:49.000000000 -0700
++++ ../free42.old/common/bcdmath.h	2009-01-06 16:18:38.000000000 -0700
+@@ -25,7 +25,7 @@
+ 
+ #include "bcd.h"
+ 
+-BCD pi() BCD_SECT;
++BCD bcdPi() BCD_SECT;
+ BCD sin(const BCD&) BCD_SECT;
+ BCD cos(const BCD&) BCD_SECT;
+ BCD tan(const BCD&) BCD_SECT;
+diff -ur common/core_keydown.cc ../free42.old/common/core_keydown.cc
+--- common/core_keydown.cc	2008-08-16 08:54:47.000000000 -0700
++++ ../free42.old/common/core_keydown.cc	2009-01-06 16:18:45.000000000 -0700
+@@ -2205,33 +2205,33 @@
+ 		return;
+ 	    } else {
+ 		const menu_item_spec *mi = menus[menu].child + menukey;
+-		int id = mi->menuid;
++		int menuid = mi->menuid;
+ 		const command_spec *cmd;
+-		if ((id & 0x3000) == 0) {
+-		    set_menu(level, id);
++		if ((menuid & 0x3000) == 0) {
++		    set_menu(level, menuid);
+ 		    redisplay();
+ 		    return;
+ 		}
+ 		if (menu == MENU_TOP_FCN && shift) {
+ 		    switch (menukey) {
+-			case 0: id = CMD_SIGMASUB; break;
+-			case 1: id = CMD_Y_POW_X; break;
+-			case 2: id = CMD_SQUARE; break;
+-			case 3: id = CMD_10_POW_X; break;
+-			case 4: id = CMD_E_POW_X; break;
+-			case 5: id = CMD_GTO; break;
++		    case 0: menuid = CMD_SIGMASUB; break;
++			case 1: menuid = CMD_Y_POW_X; break;
++			case 2: menuid = CMD_SQUARE; break;
++			case 3: menuid = CMD_10_POW_X; break;
++			case 4: menuid = CMD_E_POW_X; break;
++			case 5: menuid = CMD_GTO; break;
+ 		    }
+ 		} else if (menu == MENU_PGM_FCN1 && menukey == 5 && shift)
+-		    id = CMD_GTO;
++		    menuid = CMD_GTO;
+ 		else if (menu == MENU_STAT1 && menukey == 0 && shift)
+-		    id = CMD_SIGMASUB;
++		    menuid = CMD_SIGMASUB;
+ 		else
+-		    id &= 0xfff;
+-		cmd = cmdlist(id);
++		    menuid &= 0xfff;
++		cmd = cmdlist(menuid);
+ 		if (level == MENULEVEL_TRANSIENT
+ 			|| (level == MENULEVEL_PLAIN && !mode_plainmenu_sticky))
+ 		    set_menu(level, MENU_NONE);
+-		do_interactive(id);
++		do_interactive(menuid);
+ 		return;
+ 	    }
+ 	}
