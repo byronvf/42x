@@ -182,6 +182,7 @@ NSString* CONFIG_KEY_CLICK_ON = @"keyClickOn";
 NSString* CONFIG_BEEP_ON = @"beepOn";
 NSString* CONFIG_KEYBOARD = @"keyboardOn";
 NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
+NSString* CONFIG_PRINT_BUF = @"printBuf";
 
 - (void)loadSettings
 {
@@ -206,6 +207,15 @@ NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
 		[[Settings instance] setAutoPrintOn:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
 	else
 		[[Settings instance] setAutoPrintOn:TRUE];
+	
+	if ([defaults objectForKey:CONFIG_PRINT_BUF])
+    {
+		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
+		NSMutableData *pbuf = [[NSMutableData alloc] init];
+		[pbuf setData:data];
+		[[navViewController printViewController] setPrintBuff:pbuf];
+	}
+	
 }
 
 - (void)saveSettings
@@ -215,6 +225,9 @@ NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
 	[defaults setBool:[[Settings instance] clickSoundOn] forKey:CONFIG_KEY_CLICK_ON];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] autoPrintOn] forKey:CONFIG_AUTO_PRINT_ON];
+
+	NSMutableData *pbuf = [[navViewController printViewController] printBuff];
+	[defaults setObject:pbuf forKey:@"printBuf"];
 }
 
 

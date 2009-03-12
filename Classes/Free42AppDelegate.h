@@ -24,12 +24,12 @@ extern int cpuCount;
 @interface Free42AppDelegate : NSObject <UIApplicationDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet CalcViewController *viewController;
-	IBOutlet UINavigationController *navViewController;
+	IBOutlet NavViewController *navViewController;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) CalcViewController *viewController;
-@property (nonatomic, retain) UINavigationController *navViewController;
+@property (nonatomic, retain) NavViewController *navViewController;
 
 @end
 

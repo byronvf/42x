@@ -149,7 +149,7 @@ void shell_print(const char *text, int length,
 
 	// Initialize the two views we will use to tile the scroll view.
 	printViewController = self;
-	printBuff = [[NSMutableData alloc] init];
+	if (!printBuff) printBuff = [[NSMutableData alloc] init];
 	view1 = [[PrintView alloc] initWithFrame:CGRectMake(0,0,320,480)];	
 	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,480,320,480)];
 	[view1 setPrintViewController:self];
