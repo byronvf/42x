@@ -19,17 +19,22 @@
 #import "ConfigViewController.h"
 
 @class PrintViewController;
+@class CalcViewController;
+@class ServerViewController;
 
-@interface NavViewController : UINavigationController {
+@interface NavViewController : UINavigationController <UINavigationControllerDelegate> {
 	
 	IBOutlet ConfigViewController* configViewController;
 	IBOutlet PrintViewController* printViewController;
+	IBOutlet ServerViewController* serverViewController;	
 }
 
 @property (nonatomic, retain) ConfigViewController* configViewController;
 @property (nonatomic, retain) PrintViewController* printViewController;
+@property (nonatomic, retain) ServerViewController* serverViewController;
 
 - (void)switchToView:(UIViewController*) viewCtrl;
 - (void)switchToPrintView;
+- (void)switchToServerView;
 
 @end

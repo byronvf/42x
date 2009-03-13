@@ -1,0 +1,6 @@
+OK, I'm now closing the client socket using shutdown(SHUT_WR), which avoids the
+'connection reset' mess that was happening with shutdown(SHUT_RDWR) and with
+close(). But is it correct? Am I leaking sockets now?
+Also, I'm not closing the server socket at all right now.
+How about support for web-based mkdir, rmdir, and rm -rf?
+In all of this, the /icons directory should be protected.

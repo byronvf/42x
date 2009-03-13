@@ -248,6 +248,7 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
+	[navViewController setDelegate:navViewController];
     [window addSubview: [navViewController view]];
 	[window makeKeyAndVisible];
 	

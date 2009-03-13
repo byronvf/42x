@@ -16,6 +16,9 @@
 		28D7ACF80DDB3853001CB0EB /* CalcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* CalcViewController.m */; };
 		ED08B0740EB940F300D368A2 /* imgFlagPrint.png in Resources */ = {isa = PBXBuildFile; fileRef = ED08B0730EB940F300D368A2 /* imgFlagPrint.png */; };
 		ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED0C2CF10EB4BA6F00053F90 /* PrintView.m */; };
+		ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */ = {isa = PBXBuildFile; fileRef = ED26D23F0F6AB1D100F285A2 /* simpleserver.c */; };
+		ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26D2640F6AB70E00F285A2 /* ServerViewController.m */; };
+		ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED26D2730F6AB7F400F285A2 /* ServerView.xib */; };
 		ED3DF9FE0E52E6C4000044AF /* bcd.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED3DF9CB0E52E6C4000044AF /* bcd.cc */; };
 		ED3DF9FF0E52E6C4000044AF /* bcdfloat.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED3DF9CD0E52E6C4000044AF /* bcdfloat.cc */; };
 		ED3DFA000E52E6C4000044AF /* bcdmath.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED3DF9CF0E52E6C4000044AF /* bcdmath.cc */; };
@@ -81,6 +84,10 @@
 		ED08B0730EB940F300D368A2 /* imgFlagPrint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imgFlagPrint.png; sourceTree = "<group>"; };
 		ED0C2CF00EB4BA6F00053F90 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		ED0C2CF10EB4BA6F00053F90 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
+		ED26D23F0F6AB1D100F285A2 /* simpleserver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = simpleserver.c; path = simpleserver/simpleserver.c; sourceTree = "<group>"; };
+		ED26D2630F6AB70E00F285A2 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
+		ED26D2640F6AB70E00F285A2 /* ServerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerViewController.m; sourceTree = "<group>"; };
+		ED26D2730F6AB7F400F285A2 /* ServerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ServerView.xib; sourceTree = "<group>"; };
 		ED3DF9CB0E52E6C4000044AF /* bcd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcd.cc; path = ../common/bcd.cc; sourceTree = SOURCE_ROOT; };
 		ED3DF9CC0E52E6C4000044AF /* bcd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcd.h; path = ../common/bcd.h; sourceTree = SOURCE_ROOT; };
 		ED3DF9CD0E52E6C4000044AF /* bcdfloat.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcdfloat.cc; path = ../common/bcdfloat.cc; sourceTree = SOURCE_ROOT; };
@@ -184,6 +191,8 @@
 				ED581CB80EB7623100B0E61F /* TonePlayer.h */,
 				ED581CB60EB7622900B0E61F /* TonePlayer.m */,
 				1D3623240D0F684500981E51 /* Free42AppDelegate.h */,
+				ED26D2630F6AB70E00F285A2 /* ServerViewController.h */,
+				ED26D2640F6AB70E00F285A2 /* ServerViewController.m */,
 				1D3623250D0F684500981E51 /* Free42AppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* CalcViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* CalcViewController.m */,
@@ -250,6 +259,7 @@
 				EDFC86BD0EAF1FBD007120DA /* imgFlagRun.png */,
 				EDFC86B80EAF10F4007120DA /* imgFlagShift.png */,
 				EDFC86BA0EAF10FC007120DA /* imgFlagUpDown.png */,
+				ED26D2730F6AB7F400F285A2 /* ServerView.xib */,
 				EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */,
 				EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */,
 				2899E5210DE3E06400AC0155 /* CalcView.xib */,
@@ -274,6 +284,7 @@
 		ED3DF9C10E52E691000044AF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				ED26D23F0F6AB1D100F285A2 /* simpleserver.c */,
 				ED3DF9CB0E52E6C4000044AF /* bcd.cc */,
 				ED3DF9CC0E52E6C4000044AF /* bcd.h */,
 				ED3DF9CD0E52E6C4000044AF /* bcdfloat.cc */,
@@ -385,6 +396,7 @@
 				ED08B0740EB940F300D368A2 /* imgFlagPrint.png in Resources */,
 				ED63D3C40EBAA93C004FE0D8 /* glow.png in Resources */,
 				ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */,
+				ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +442,8 @@
 				EDA9BBE80EB4A49400D30EA2 /* Utils.m in Sources */,
 				ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */,
 				ED581CB70EB7622900B0E61F /* TonePlayer.m in Sources */,
+				ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */,
+				ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

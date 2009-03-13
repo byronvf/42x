@@ -17,18 +17,22 @@
 
 #import "NavViewController.h"
 #import "PrintViewController.h"
+#import "ServerViewController.h"
 
 static NavViewController *navCtrl = NULL;
 
 void shell_powerdown()
 {
 	[navCtrl switchToView:[navCtrl configViewController]];
+	[[navCtrl configViewController] setNavViewController:navCtrl];
 }	
 
 @implementation NavViewController
 
 @synthesize configViewController;
 @synthesize printViewController;
+@synthesize serverViewController;
+
 
 /**
  *  We are not using a NIB for this class, so this is never called
@@ -61,18 +65,41 @@ void shell_powerdown()
 	
 }
 
+- (void)switchToServerView
+{
+    [self pushViewController:(UIViewController *)serverViewController animated:TRUE];	
+}
+
 - (BOOL)navigationBar:(UINavigationBar *)nb shouldPopItem:(UINavigationItem *)item
 {
 
-	// When we come back to the calc view, rehide the navigation bar
-	[self setNavigationBarHidden:TRUE animated:TRUE];
+	// If there are 2 views on the stack, then we are comming back to the main calc view
+	if ([[self viewControllers] count] == 2)
+	{
+  	    // When we come back to the calc view, rehide the navigation bar
+	    [self setNavigationBarHidden:TRUE animated:TRUE];
+	}
 	
+	if (item == (UINavigationItem*)serverViewController)
+	{
+		[serverViewController stopServer];
+	}
+		
 	// This method will be accepted by the super class... I don't know why 
 	// Obj-C has a problem with this, but the warning really annoys ME!!!!
 	[super navigationBar:nb shouldPopItem:item];
+	
 	return TRUE;
 }
 
+
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+	if (viewController == (UIViewController*)serverViewController)
+	{
+		[serverViewController startServer];
+	}
+}
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically

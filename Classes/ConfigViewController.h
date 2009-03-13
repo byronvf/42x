@@ -25,11 +25,16 @@
 	IBOutlet UISwitch* beepSoundSwitch;
 	IBOutlet UISwitch* keyboardSwitch;
 	IBOutlet UISwitch* autoPrintSwitch;
+	NavViewController* navViewController;
+	IBOutlet UIButton* gotoServerButton;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* autoPrintSwitch;
+@property (nonatomic, retain) UIButton* gotoServerButton;
+@property (nonatomic, retain) NavViewController* navViewController;
+
 
 @end

@@ -24,6 +24,9 @@
 @synthesize beepSoundSwitch;
 @synthesize keyboardSwitch;
 @synthesize autoPrintSwitch;
+@synthesize gotoServerButton;
+
+@synthesize navViewController;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
@@ -72,10 +75,16 @@
 	}	
 }
 
-
 - (void)buttonDown:(UIButton*)sender
 {
-   [[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://free42iphone.appspot.com/"]];
+	if (sender == gotoServerButton)
+	{
+		[navViewController switchToServerView];
+	}
+	else
+	{
+       [[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://free42iphone.appspot.com/"]];
+	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
