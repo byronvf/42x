@@ -17,6 +17,8 @@
 
 #import <time.h>
 #import <sys/time.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #import <AudioToolbox/AudioServices.h>
 #import "shell.h"
 #import "Settings.h"
@@ -59,7 +61,18 @@ void shell_delay(int duration)
 
 uint4 shell_get_mem()
 {
-	return 65536; // return 64K
+	int mib[2];
+	uint4 memsize;
+	size_t len;
+
+	// Retrieve the available system memory
+	
+	mib[0] = CTL_HW;
+	mib[1] = HW_USERMEM;
+	len = sizeof(memsize);
+	sysctl(mib, 2, &memsize, &len, NULL, 0);
+		
+	return memsize;
 }
 
 
