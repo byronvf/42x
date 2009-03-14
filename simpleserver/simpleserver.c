@@ -664,37 +664,12 @@ static void http_error(int csock, int err) {
     sockprintf(csock, "\r\n");
 }
 
-char ipname[256];
-int ssock;
-
-int begin_listen()
-{
-	int csock;
-    struct sockaddr_in ca;	
-	char cname[256];
-	int err;
-	
-    while (1) {
-		unsigned int n = sizeof(ca);
-		csock = accept(ssock, (struct sockaddr *) &ca, &n);
-		if (csock == -1) {
-			err = errno;
-			fprintf(stderr, "Could not accept connection from client: %s (%d)\n", strerror(err), err);
-			return 1;
-		}
-		inet_ntop(AF_INET, &ca.sin_addr, cname, sizeof(cname));
-		/*fprintf(stderr, "Accepted connection from %s\n", cname);*/
-		handle_client(csock);
-    }
-    
-	return 0;
-}
-
-int init(int argc, char *argv[]) {
+int mainx(int argc, char *argv[]) {
     int i;
     int port = 9090;
     int backlog = 32;
-    struct sockaddr_in sa;
+    int ssock, csock;
+    struct sockaddr_in sa, ca;
     int err;
 
     for (i = 1; i < argc; i++) {
@@ -750,6 +725,19 @@ int init(int argc, char *argv[]) {
 	return 1;
     }
 
-	inet_ntop(AF_INET, &sa.sin_addr, ipname, sizeof(ipname));	
+    while (1) {
+	unsigned int n = sizeof(ca);
+	char cname[256];
+	csock = accept(ssock, (struct sockaddr *) &ca, &n);
+	if (csock == -1) {
+	    err = errno;
+	    fprintf(stderr, "Could not accept connection from client: %s (%d)\n", strerror(err), err);
+	    return 1;
+	}
+	inet_ntop(AF_INET, &ca.sin_addr, cname, sizeof(cname));
+	/*fprintf(stderr, "Accepted connection from %s\n", cname);*/
+	handle_client(csock);
+    }
+    
     return 0;
 }

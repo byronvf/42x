@@ -17,6 +17,7 @@
 
 #import "ConfigViewController.h"
 #import "Settings.h"
+#import "NavViewController.h"
 
 @implementation ConfigViewController
 

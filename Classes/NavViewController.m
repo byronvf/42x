@@ -44,9 +44,14 @@ void shell_powerdown()
 	return self;
 }
 
+
+/// Set to true when we are currently displaying the server view
+BOOL showingServerView;
+
 - (void)awakeFromNib
 {
 	navCtrl = self;	
+	showingServerView = FALSE;
 }
 
 
@@ -80,11 +85,6 @@ void shell_powerdown()
 	    [self setNavigationBarHidden:TRUE animated:TRUE];
 	}
 	
-	if (item == (UINavigationItem*)serverViewController)
-	{
-		[serverViewController stopServer];
-	}
-		
 	// This method will be accepted by the super class... I don't know why 
 	// Obj-C has a problem with this, but the warning really annoys ME!!!!
 	[super navigationBar:nb shouldPopItem:item];
@@ -92,11 +92,18 @@ void shell_powerdown()
 	return TRUE;
 }
 
-
-- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+- (void)navigationController:(UINavigationController *)navigationController 
+	   willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+	if (showingServerView)
+	{
+		[serverViewController stopServer];
+		showingServerView = FALSE;
+	}		
+	
 	if (viewController == (UIViewController*)serverViewController)
 	{
+		showingServerView = TRUE;
 		[serverViewController startServer];
 	}
 }
