@@ -8,7 +8,6 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -32,14 +31,14 @@
 				<string key="IBProxiedObjectIdentifier">IBFirstResponder</string>
 			</object>
 			<object class="IBUIView" id="191373211">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBUILabel" id="742155697">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{36, 41}, {253, 62}}</string>
+						<string key="NSFrame">{{36, 35}, {253, 62}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -58,7 +57,7 @@
 					<object class="IBUILabel" id="353932403">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{16, 119}, {266, 38}}</string>
+						<string key="NSFrame">{{16, 119}, {266, 40}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -70,11 +69,10 @@
 						</object>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">1</int>
-						<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
-						<float key="IBUIMinimumFontSize">1.200000e+01</float>
+						<float key="IBUIMinimumFontSize">1.000000e+01</float>
 						<int key="IBUITextAlignment">1</int>
 					</object>
-					<object class="IBUILabel" id="521653485">
+					<object class="IBUILabel" id="339871064">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{36, 345}, {237, 39}}</string>
@@ -94,7 +92,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{322, 404}</string>
-				<reference key="NSSuperview"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">2</int>
 					<bytes key="NSRGB">MC4yNTg4MjM1NCAwLjI1MDk4MDQxIDAuMjU4ODIzNTQAA</bytes>
@@ -138,8 +135,8 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="353932403"/>
+							<reference ref="339871064"/>
 							<reference ref="742155697"/>
-							<reference ref="521653485"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -166,7 +163,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">7</int>
-						<reference key="object" ref="521653485"/>
+						<reference key="object" ref="339871064"/>
 						<reference key="parent" ref="191373211"/>
 					</object>
 				</object>
@@ -187,7 +184,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>ServerViewController</string>
 					<string>UIResponder</string>
-					<string>{{920, 66}, {322, 404}}</string>
+					<string>{{754, 181}, {322, 404}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
