@@ -137,8 +137,14 @@ extern void handle_client(int);
 
 - (void)startServer
 {
-	[self init];	
-	[addressLabel setText:@"this is the address"];
+	[self init];
+	char textbuf[256];
+	sprintf(textbuf, "http://%s/9090", ipaddress);
+	
+	NSString* addr = [[NSString alloc] initWithBytes:textbuf length:strlen(textbuf)
+											encoding:NSISOLatin1StringEncoding];
+	[addressLabel setText:addr];
+	[addr release];
 	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.5];
 }
 

@@ -184,7 +184,7 @@
 					<object class="IBUILabel" id="318377910">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{17, 225}, {275, 21}}</string>
+						<string key="NSFrame">{{17, 216}, {275, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -201,7 +201,7 @@
 					<object class="IBUILabel" id="945283325">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{31, 315}, {170, 21}}</string>
+						<string key="NSFrame">{{31, 315}, {201, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -372,10 +372,10 @@
 							<reference ref="928052265"/>
 							<reference ref="521831140"/>
 							<reference ref="1061026022"/>
-							<reference ref="318377910"/>
 							<reference ref="903146287"/>
 							<reference ref="945283325"/>
 							<reference ref="362745970"/>
+							<reference ref="318377910"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -478,7 +478,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>ConfigViewController</string>
 					<string>UIResponder</string>
-					<string>{{545, 89}, {312, 479}}</string>
+					<string>{{352, 89}, {312, 479}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -651,7 +651,6 @@
 							<string>clickSoundSwitch</string>
 							<string>gotoServerButton</string>
 							<string>keyboardSwitch</string>
-							<string>serverViewController</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -660,7 +659,6 @@
 							<string>UISwitch</string>
 							<string>UIButton</string>
 							<string>UISwitch</string>
-							<string>ServerViewController</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -677,11 +675,13 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>configViewController</string>
 							<string>printViewController</string>
+							<string>serverViewController</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>ConfigViewController</string>
 							<string>PrintViewController</string>
+							<string>ServerViewController</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -700,6 +700,10 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">ServerViewController</string>
 					<string key="superclassName">UIViewController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">addressLabel</string>
+						<string key="NS.object.0">UILabel</string>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Classes/ServerViewController.h</string>
@@ -707,6 +711,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">UIButton</string>
+					<string key="superclassName">UIControl</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
