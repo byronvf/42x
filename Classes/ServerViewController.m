@@ -95,17 +95,6 @@ int ssock;
 	return 0;
 }
 
-int shell_write(const char *buf, int4 buflen)
-{
-	return 0;
-}
-
-
-int4 shell_read(char *buf, int4 buflen)
-{
-	return 0;
-}
-
 extern void handle_client(int);
 
 - (int) handleRequest
@@ -168,7 +157,7 @@ extern void handle_client(int);
 
 
 - (void)startServer
-{
+{	
 	int port = 9089;
 	NSString* ipAddr = [self getIpAddress];
 	NSString* msg = @"You are not connected to a wireless network";	
