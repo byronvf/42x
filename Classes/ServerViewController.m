@@ -180,6 +180,7 @@ extern void handle_client(int);
 	if (ipAddr) 
 		url = [NSString stringWithFormat:@"http://%@/9090", ipAddr];
 	
+	[addressLabel setText:url];
 	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.5];
 }
 
