@@ -25,6 +25,9 @@
 #include <net/if.h>
 #include <ifaddrs.h>
 
+#include "shell.h"
+#include "core_main.h"
+
 @implementation ServerViewController
 
 @synthesize addressLabel;
@@ -62,18 +65,15 @@
 
 int ssock;
 
-- (int)init
+- (int)init: (int)port
 {
-    int port = 9090;
     int backlog = 32;
     struct sockaddr_in sa;
-    int err;
+	int err;
 	
     ssock = socket(AF_INET, SOCK_STREAM, 0);
     if (ssock == -1) {
-		err = errno;
-		fprintf(stderr, "Could not create socket: %s (%d)\n", strerror(err), err);
-		return 1;
+		return errno;
     }
 
 	// Make accepts on socket non-blocking
@@ -84,36 +84,36 @@ int ssock;
     sa.sin_addr.s_addr = INADDR_ANY;
     err = bind(ssock, (struct sockaddr *) &sa, sizeof(sa));
     if (err != 0) {
-		err = errno;
-		fprintf(stderr, "Could not bind socket to port %d: %s (%d)\n", port, strerror(err), err);
-		return 1;
+		return errno;
     }
 	
     err = listen(ssock, backlog);
     if (err != 0) {
 		err = errno;
-		fprintf(stderr, "Could not listen (backlog = %d): %s (%d)\n", backlog, strerror(err), err);
-		return 1;
     }
 	
-	//inet_ntop(AF_INET, &sa.sin_addr, ipaddress, sizeof(ipaddress));
+	return 0;
+}
 
+int shell_write(const char *buf, int4 buflen)
+{
 	return 0;
 }
 
 
+int4 shell_read(char *buf, int4 buflen)
+{
+	return 0;
+}
+
 extern void handle_client(int);
 
-- (int)handleRequest
+- (int) handleRequest
 {
     int csock;
     struct sockaddr_in ca;
     int err;
 	
-
-    //ca.sin_family = AF_INET;
-    //ca.sin_port = htons(9090);	
-    //ca.sin_addr.s_addr = INADDR_ANY;	
 	unsigned int n = sizeof(ca);
 	csock = accept(ssock, (struct sockaddr *) &ca, &n);
 	if (csock == -1) {
@@ -126,11 +126,8 @@ extern void handle_client(int);
 		[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.5];
 		return 1;
 	}
-	//inet_ntop(AF_INET, &ca.sin_addr, cname, sizeof(cname));
-	/*fprintf(stderr, "Accepted connection from %s\n", cname);*/
 	
 	handle_client(csock);
-	
 	// Check sooner since there are probably additional requests.
 	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.1];	
 	return 0;
@@ -165,7 +162,6 @@ extern void handle_client(int);
 	}
 	
 	freeifaddrs(list);	
-	
 	NSString *wlanAddress =  [[array objectAtIndex:1] valueForKey:@"address"];
 	return wlanAddress;
 }
@@ -173,15 +169,32 @@ extern void handle_client(int);
 
 - (void)startServer
 {
-	[self init];
-
+	int port = 9089;
 	NSString* ipAddr = [self getIpAddress];
-	NSString* url = @"Sorry, You must on wireless";	
-	if (ipAddr) 
-		url = [NSString stringWithFormat:@"http://%@/9090", ipAddr];
-	
-	[addressLabel setText:url];
-	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.5];
+	NSString* msg = @"You are not connected to a wireless network";	
+	if (ipAddr)
+	{
+		int status;
+		do
+		{
+		   // The user may pop right back into this view after using it 
+		   // Which means that the port may still be in use,  so we try
+		   // a few port numbers, then give up.
+  		   status = [self init: ++port];
+		}
+		while(status == EADDRINUSE && port < 9095);			
+		if (status)
+		{
+			// Something went wrong initializing...
+		    msg = [NSString stringWithFormat:@"Error - %s (%i)", strerror(status), status];
+		}
+		else
+		{
+		    msg = [NSString stringWithFormat:@"http://%@/%i", ipAddr, port];
+		   [self handleRequest];
+		}
+    }
+	[addressLabel setText:msg];		
 }
 
 
