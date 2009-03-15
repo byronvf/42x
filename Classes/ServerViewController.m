@@ -22,7 +22,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-
+#include <net/if.h>
+#include <ifaddrs.h>
 
 @implementation ServerViewController
 
@@ -60,7 +61,6 @@
 */
 
 int ssock;
-char ipaddress[256];
 
 - (int)init
 {
@@ -96,7 +96,7 @@ char ipaddress[256];
 		return 1;
     }
 	
-	inet_ntop(AF_INET, &sa.sin_addr, ipaddress, sizeof(ipaddress));
+	//inet_ntop(AF_INET, &sa.sin_addr, ipaddress, sizeof(ipaddress));
 
 	return 0;
 }
@@ -136,24 +136,60 @@ extern void handle_client(int);
 	return 0;
 }
 
+
+- (NSString*) getIpAddress
+{
+	struct ifaddrs *list;
+	if(getifaddrs(&list) < 0)
+	{
+		perror("getifaddrs");
+		return nil;
+	}
+	
+	NSMutableArray *array = [NSMutableArray array];
+	struct ifaddrs *cur;	
+	for(cur = list; cur != NULL; cur = cur->ifa_next)
+	{
+		if(cur->ifa_addr->sa_family != AF_INET)
+			continue;
+		
+		struct sockaddr_in *addrStruct = (struct sockaddr_in *)cur->ifa_addr;
+		NSString *name = [NSString stringWithUTF8String:cur->ifa_name];
+		NSString *addr = [NSString stringWithUTF8String:inet_ntoa(addrStruct->sin_addr)];
+		[array addObject:
+		 [NSDictionary dictionaryWithObjectsAndKeys:
+		  name, @"name",
+		  addr, @"address",
+		  [NSString stringWithFormat:@"%@ - %@", name, addr], @"formattedName",
+		  nil]];
+	}
+	
+	freeifaddrs(list);	
+	
+	NSString *wlanAddress =  [[array objectAtIndex:1] valueForKey:@"address"];
+	return wlanAddress;
+}
+
+
 - (void)startServer
 {
 	[self init];
-	char textbuf[256];
-	sprintf(textbuf, "http://%s/9090", ipaddress);
+
+	NSString* ipAddr = [self getIpAddress];
+	NSString* url = @"Sorry, You must on wireless";	
+	if (ipAddr) 
+		url = [NSString stringWithFormat:@"http://%@/9090", ipAddr];
 	
-	NSString* addr = [[NSString alloc] initWithBytes:textbuf length:strlen(textbuf)
-											encoding:NSISOLatin1StringEncoding];
-	[addressLabel setText:addr];
-	[addr release];
 	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.5];
 }
+
 
 - (void)stopServer
 {
 	[[self class] cancelPreviousPerformRequestsWithTarget: self];	
 	close(ssock);
 }
+
 
 
 - (void)didReceiveMemoryWarning {
