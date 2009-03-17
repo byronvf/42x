@@ -6,11 +6,15 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
+
+#ifndef VERSION
+#define VERSION ""
+#endif
 
 /* TODO:
  * The code is currently not thread-safe; it uses static
@@ -26,13 +30,24 @@ typedef struct {
 
 #define LINEBUFSIZE 1024
 
+/* Stuff defined in icons.c */
+extern int icon_count;
+extern const char *icon_name[];
+extern long icon_size[];
+extern unsigned char *icon_data[];
+
+#ifdef STANDALONE
+static
+#endif
+void handle_client(int csock);
+
 static void sockprintf(int sock, char *fmt, ...);
 static void tbwrite(textbuf *tb, const char *data, int size);
 static void tbprintf(textbuf *tb, const char *fmt, ...);
 static void do_get(int csock, const char *url);
 static void do_post(int csock, const char *url);
 static const char *canonicalize_url(const char *url);
-static int open_item(const char *url, int post, FILE **file, int *filesize, DIR **dir);
+static int open_item(const char *url, int post, void **ptr, int *type, int *filesize);
 static const char *get_mime(const char *ext);
 static void http_error(int csock, int err);
 
@@ -66,6 +81,9 @@ static void read_line(int csock, char *buf, int bufsize) {
     buf[p] = 0;
 }
 
+#ifdef STANDALONE
+static
+#endif
 void handle_client(int csock) {
     char *req;
     char *url;
@@ -178,7 +196,8 @@ static int dir_item_compare(const void *va, const void *vb) {
 
 static void do_get(int csock, const char *url) {
     int err;
-    FILE *file;
+    void *ptr;
+    int type;
     int filesize;
     DIR *dir;
     char buf[LINEBUFSIZE];
@@ -190,22 +209,27 @@ static void do_get(int csock, const char *url) {
 	return;
     }
 
-    err = open_item(url, 0, &file, &filesize, &dir);
+    err = open_item(url, 0, &ptr, &type, &filesize);
     if (err != 200) {
 	free((void *) url);
 	http_error(csock, err);
 	return;
     }
 
-    if (file != NULL) {
+    if (type == 0 || type == 1) {
 	sockprintf(csock, "HTTP/1.0 200 OK\r\n");
 	sockprintf(csock, "Connection: close\r\n");
 	sockprintf(csock, "Content-Type: %s\r\n", get_mime(url));
 	sockprintf(csock, "Content-Length: %d\r\n", filesize);
 	sockprintf(csock, "\r\n");
-	while ((n = fread(buf, 1, LINEBUFSIZE, file)) > 0)
-	    send(csock, buf, n, 0);
-	fclose(file);
+	if (type == 0)
+	    send(csock, ptr, filesize, 0);
+	else {
+	    FILE *file = (FILE *) ptr;
+	    while ((n = fread(buf, 1, LINEBUFSIZE, file)) > 0)
+		send(csock, buf, n, 0);
+	    fclose(file);
+	}
     } else if (url[strlen(url) - 1] != '/') {
 	sockprintf(csock, "HTTP/1.0 302 Moved Temporarily\r\n");
 	sockprintf(csock, "Connection: close\r\n");
@@ -218,6 +242,7 @@ static void do_get(int csock, const char *url) {
 	int dir_length = 0;
 	struct dir_item **dir_array;
 	int i;
+	dir = (DIR *) ptr;
 
 	tbprintf(&tb, "<html>\n");
 	tbprintf(&tb, " <head>\n");
@@ -299,7 +324,7 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, "    <input type=\"submit\" value=\"Submit\">\n");
 	tbprintf(&tb, "   </form></td></tr>\n");
 	tbprintf(&tb, "   <tr><th colspan=\"4\"><hr></th></tr></table>\n");
-	tbprintf(&tb, "  <address>Free42 HTTP Server</address>\n");
+	tbprintf(&tb, "  <address>Free42 " VERSION " HTTP Server</address>\n");
 	tbprintf(&tb, " </body>\n");
 	tbprintf(&tb, "</html>\n");
 
@@ -318,8 +343,6 @@ static void do_get(int csock, const char *url) {
 void do_post(int csock, const char *url) {
     char line[LINEBUFSIZE];
     char boundary[LINEBUFSIZE] = "";
-    char c;
-    int n;
     int blen;
 
     url = canonicalize_url(url);
@@ -549,9 +572,10 @@ static const char *canonicalize_url(const char *url) {
     }
 }
 
-static int open_item(const char *url, int post, FILE **file, int *filesize, DIR **dir) {
+static int open_item(const char *url, int post, void **ptr, int *type, int *filesize) {
     struct stat statbuf;
     int err;
+    int i;
 
     /* We know that the url starts with '/'; strip it so that
      * it becomes a path relative to the current directory.
@@ -564,8 +588,20 @@ static int open_item(const char *url, int post, FILE **file, int *filesize, DIR 
     url++;
     if (strlen(url) == 0)
 	url = ".";
-    *file = NULL;
-    *dir = NULL;
+
+    /* Look for hard-coded icons from icons.c */
+    for (i = 0; i < icon_count; i++) {
+	if (strcmp(url, icon_name[i]) == 0) {
+	    if (post)
+		return 403;
+	    else {
+		*ptr = icon_data[i];
+		*type = 0;
+		*filesize = icon_size[i];
+		return 200;
+	    }
+	}
+    }
 
     /* TODO: if post == 1, it is OK for the item referenced by url
      * to not exist; in that case, we will create it (otherwise,
@@ -590,9 +626,10 @@ static int open_item(const char *url, int post, FILE **file, int *filesize, DIR 
     }
 
     if (S_ISREG(statbuf.st_mode)) {
-	*file = fopen(url, "r");
+	*ptr = fopen(url, "r");
+	*type = 1;
 	*filesize = statbuf.st_size;
-	if (*file == NULL) {
+	if (*ptr == NULL) {
 	    /* We already know the file exists and is reachable, so
 	     * we only check for EACCES; any other error is reported
 	     * as an internal server error (500).
@@ -602,8 +639,9 @@ static int open_item(const char *url, int post, FILE **file, int *filesize, DIR 
 	}
 	return 200;
     } else if (S_ISDIR(statbuf.st_mode)) {
-	*dir = opendir(url);
-	if (*dir == NULL) {
+	*ptr = opendir(url);
+	*type = 2;
+	if (*ptr == NULL) {
 	    /* We already know the file exists and is reachable, so
 	     * we only check for EACCES; any other error is reported
 	     * as an internal server error (500).
@@ -664,7 +702,8 @@ static void http_error(int csock, int err) {
     sockprintf(csock, "\r\n");
 }
 
-int mainx(int argc, char *argv[]) {
+#ifdef STANDALONE
+int main(int argc, char *argv[]) {
     int i;
     int port = 9090;
     int backlog = 32;
@@ -741,3 +780,4 @@ int mainx(int argc, char *argv[]) {
     
     return 0;
 }
+#endif
