@@ -141,16 +141,21 @@ bool isFirstTimeEverRun()
 
 const NSString* PRGM_STATE = @"free42prgm";
 bool prgmFirstWrite = TRUE;
-int shell_write(const char *buf, int4 nbytes)
-{
-	return write_state(PRGM_STATE, &prgmFirstWrite, buf, nbytes);
-}
-
-int prgmReadUpTo = 0;
-int4 shell_read(char *buf, int4 buflen)
-{
-	return read_state(PRGM_STATE, &prgmReadUpTo, buf, buflen);
-}
+// TODO: Implemented in simpleserver.c, at least for now.
+// Something will have to be changed in order to support *both*
+// direct export by doing a GET /memory/<num> from the HTTP
+// server, *and* the old-fashioned interface of saving to a local
+// file.
+//int shell_write(const char *buf, int4 nbytes)
+//{
+//	return write_state(PRGM_STATE, &prgmFirstWrite, buf, nbytes);
+//}
+//
+//int prgmReadUpTo = 0;
+//int4 shell_read(char *buf, int4 buflen)
+//{
+//	return read_state(PRGM_STATE, &prgmReadUpTo, buf, buflen);
+//}
 
 
 @implementation Free42AppDelegate

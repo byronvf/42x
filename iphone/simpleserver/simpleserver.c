@@ -12,6 +12,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#ifdef FREE42
+#include "../../common/core_main.h"
+#endif
+
 #ifndef VERSION
 #define VERSION ""
 #endif
@@ -47,7 +51,7 @@ static void tbprintf(textbuf *tb, const char *fmt, ...);
 static void do_get(int csock, const char *url);
 static void do_post(int csock, const char *url);
 static const char *canonicalize_url(const char *url);
-static int open_item(const char *url, int post, void **ptr, int *type, int *filesize);
+static int open_item(const char *url, void **ptr, int *type, int *filesize);
 static const char *get_mime(const char *ext);
 static void http_error(int csock, int err);
 
@@ -209,7 +213,7 @@ static void do_get(int csock, const char *url) {
 	return;
     }
 
-    err = open_item(url, 0, &ptr, &type, &filesize);
+    err = open_item(url, &ptr, &type, &filesize);
     if (err != 200) {
 	free((void *) url);
 	http_error(csock, err);
@@ -235,15 +239,113 @@ static void do_get(int csock, const char *url) {
 	sockprintf(csock, "Connection: close\r\n");
 	sockprintf(csock, "Location: %s/\r\n", url);
 	sockprintf(csock, "\r\n");
+	if (type == 3)
+	    closedir((DIR *) ptr);
     } else {
-	textbuf tb = { NULL, 0, 0 };
-	struct dirent *d;
 	struct dir_item *dir_list = NULL;
 	int dir_length = 0;
 	struct dir_item **dir_array;
+	textbuf tb = { NULL, 0, 0 };
 	int i;
-	dir = (DIR *) ptr;
 
+	if (type == 3) {
+	    struct dirent *d;
+	    dir = (DIR *) ptr;
+
+	    while ((d = readdir(dir)) != NULL) {
+		struct stat s;
+		struct tm stm;
+		dir_item *di = (dir_item *) malloc(sizeof(dir_item));
+		
+		if (strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
+		    continue;
+		if (strlen(url) == 1)
+		    err = stat(d->d_name, &s);
+		else {
+		    char *p = (char *) malloc(strlen(url) + strlen(d->d_name) + 1);
+		    strcpy(p, url + 1);
+		    strcat(p, "/");
+		    strcat(p, d->d_name);
+		    err = stat(p, &s);
+		    free(p);
+		}
+		di->name = (char *) malloc(strlen(d->d_name) + 1);
+		strcpy(di->name, d->d_name);
+		if (err == 0) {
+		    localtime_r(&s.st_mtime, &stm);
+		    strftime(di->mtime, sizeof(di->mtime), "%d-%b-%Y %H:%M:%S", &stm);
+		    if (S_ISREG(s.st_mode)) {
+			di->type = 1;
+			di->size = s.st_size;
+		    } else if (S_ISDIR(s.st_mode))
+			di->type = 2;
+		    else
+			di->type = 0;
+		} else
+		    di->type = 0;
+		di->next = dir_list;
+		dir_list = di;
+		dir_length++;
+	    }
+	    closedir(dir);
+#ifdef FREE42
+	    if (strcmp(url, "/") == 0) {
+		/* Make sure there is a directory called "memory"; override
+		 * whatever real item exists with that name, if necessary
+		 */
+		int found = 0;
+		dir_item *di = dir_list;
+		while (di != NULL) {
+		    if (strcmp(di->name, "memory") == 0) {
+			di->type = 2;
+			strcpy(di->mtime, "?");
+			found = 2;
+			break;
+		    }
+		    di = di->next;
+		}
+		if (!found) {
+		    di = (dir_item *) malloc(sizeof(dir_item));
+		    di->name = (char *) malloc(7);
+		    strcpy(di->name, "memory");
+		    strcpy(di->mtime, "?");
+		    di->type = 2;
+		    di->next = dir_list;
+		    dir_list = di;
+		    dir_length++;
+		}
+	    }
+#endif
+	} else {
+	    /* type == 2: fake directory for /memory */
+	    char **name = (char **) ptr;
+	    dir_item *dir_tail;
+	    while (*name != NULL) {
+		dir_item *di = (dir_item *) malloc(sizeof(dir_item));
+		di->name = *name;
+		di->size = 0;
+		di->type = 1;
+		strcpy(di->mtime, "?");
+		di->next = NULL;
+		if (dir_list == NULL)
+		    dir_list = di;
+		else
+		    dir_tail->next = di;
+		dir_tail = di;
+		name++;
+		dir_length++;
+	    }
+	}		
+	
+	dir_array = (dir_item **) malloc(dir_length * sizeof(dir_item *));
+	for (i = 0; i < dir_length; i++) {
+	    dir_array[i] = dir_list;
+	    dir_list = dir_list->next;
+	}
+	
+	if (type == 3)
+	    qsort(dir_array, dir_length, sizeof(dir_item *), dir_item_compare);
+	
 	tbprintf(&tb, "<html>\n");
 	tbprintf(&tb, " <head>\n");
 	tbprintf(&tb, "  <title>Index of %s</title>\n", url);
@@ -255,49 +357,6 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, "  <h1>Index of %s</h1>\n", url);
 	tbprintf(&tb, "  <table><tr><th><img src=\"/icons/blank.gif\"></th><th>Name</th><th>Last modified</th><th>Size</th></tr><tr><th colspan=\"4\"><hr></th></tr>\n");
 	tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/back.gif\"></td><td><a href=\"..\">Parent directory</a></td><td>&nbsp;</td><td align=\"right\">&nbsp;</td></tr>\n");
-	while ((d = readdir(dir)) != NULL) {
-	    struct stat s;
-	    struct tm stm;
-	    dir_item *di = (dir_item *) malloc(sizeof(dir_item));
-
-	    if (strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
-		continue;
-	    if (strlen(url) == 1)
-		err = stat(d->d_name, &s);
-	    else {
-		char *p = (char *) malloc(strlen(url) + strlen(d->d_name) + 1);
-		strcpy(p, url + 1);
-		strcat(p, "/");
-		strcat(p, d->d_name);
-		err = stat(p, &s);
-		free(p);
-	    }
-	    di->name = (char *) malloc(strlen(d->d_name) + 1);
-	    strcpy(di->name, d->d_name);
-	    if (err == 0) {
-		localtime_r(&s.st_mtime, &stm);
-		strftime(di->mtime, sizeof(di->mtime), "%d-%b-%Y %H:%M:%S", &stm);
-		if (S_ISREG(s.st_mode)) {
-		    di->type = 1;
-		    di->size = s.st_size;
-		} else if (S_ISDIR(s.st_mode))
-		    di->type = 2;
-		else
-		    di->type = 0;
-	    } else
-		di->type = 0;
-	    di->next = dir_list;
-	    dir_list = di;
-	    dir_length++;
-	}
-
-	dir_array = (dir_item **) malloc(dir_length * sizeof(dir_item *));
-	for (i = 0; i < dir_length; i++) {
-	    dir_array[i] = dir_list;
-	    dir_list = dir_list->next;
-	}
-
-	qsort(dir_array, dir_length, sizeof(dir_item *), dir_item_compare);
 
 	for (i = 0; i < dir_length; i++) {
 	    dir_item *di = dir_array[i];
@@ -306,13 +365,17 @@ static void do_get(int csock, const char *url) {
 		    tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/unknown.gif\"></td><td><a href=\"%s\">%s</a></td><td>?</td><td align=\"right\">?</td></tr>\n", di->name, di->name);
 		    break;
 		case 1:
-		    tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/text.gif\"></td><td><a href=\"%s\">%s</a></td><td>%s</td><td align=\"right\">%d</td></tr>\n", di->name, di->name, di->mtime, di->size);
+		    if (type == 2)
+			tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/text.gif\"></td><td><a href=\"%d\">%s</a></td><td>%s</td><td align=\"right\">%d</td></tr>\n", i, di->name, di->mtime, di->size);
+		    else
+			tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/text.gif\"></td><td><a href=\"%s\">%s</a></td><td>%s</td><td align=\"right\">%d</td></tr>\n", di->name, di->name, di->mtime, di->size);
 		    break;
 		case 2:
 		    tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/folder.gif\"></td><td><a href=\"%s\">%s</a></td><td>%s</td><td align=\"right\">-</td></tr>\n", di->name, di->name, di->mtime);
 		    break;
 	    }
-	    free(di->name);
+	    if (type == 3)
+		free(di->name);
 	    free(di);
 	}
 	free(dir_array);
@@ -335,9 +398,26 @@ static void do_get(int csock, const char *url) {
 	sockprintf(csock, "\r\n");
 	send(csock, tb.buf, tb.size, 0);
 	free(tb.buf);
-	closedir(dir);
     }
     free((void *) url);
+}
+
+// TODO: I could use one textbuffer for import *and* export;
+// those two things can't happen at the same time.
+// NOTE: We only read from this textbuf, we don't write;
+// we use 'capacity' as the read position.
+
+static textbuf import_tb = { NULL, 0, 0 };
+
+int shell_read(char *buf, int nbytes) {
+    if (import_tb.buf == NULL || import_tb.capacity >= import_tb.size)
+	return -1;
+    int bytes_copied = import_tb.size - import_tb.capacity;
+    if (nbytes < bytes_copied)
+	bytes_copied = nbytes;
+    memcpy(buf, import_tb.buf + import_tb.capacity, bytes_copied);
+    import_tb.capacity += bytes_copied;
+    return bytes_copied;
 }
 
 void do_post(int csock, const char *url) {
@@ -460,19 +540,31 @@ void do_post(int csock, const char *url) {
 		/* Found the body delimiter! */
 		if (*filename != 0) {
 		    tb.size -= blen + 2;
-		    strcpy(line, url + 1);
-		    strcat(line, filename);
-		    if (tb.size == 0)
-			unlink(line);
-		    else {
-			FILE *f = fopen(line, "w");
-			if (f == NULL) {
-			    http_error(csock, 403);
-			    free(tb.buf);
-			    return;
+		    if (strcmp(url, "/memory/") == 0) {
+			// Import program straight to memory
+			import_tb.buf = tb.buf;
+			import_tb.size = tb.size;
+			import_tb.capacity = 0;
+			// TODO -- error message on failure
+			core_import_programs(NULL);
+		    } else {
+			// Upload to file
+			strcpy(line, url + 1);
+			strcat(line, filename);
+			if (tb.size == 0)
+			    // Uploading zero-length file: delete destination
+			    unlink(line);
+			else {
+			    // Uploading nonempty file: create it
+			    FILE *f = fopen(line, "w");
+			    if (f == NULL) {
+				http_error(csock, 403);
+				free(tb.buf);
+				return;
+			    }
+			    fwrite(tb.buf, 1, tb.size, f);
+			    fclose(f);
 			}
-			fwrite(tb.buf, 1, tb.size, f);
-			fclose(f);
 		    }
 		    free(tb.buf);
 		}
@@ -572,7 +664,26 @@ static const char *canonicalize_url(const char *url) {
     }
 }
 
-static int open_item(const char *url, int post, void **ptr, int *type, int *filesize) {
+static textbuf export_tb = { NULL, 0, 0 };
+
+int shell_write(const char *buf, int nbytes) {
+    tbwrite(&export_tb, buf, nbytes);
+    return 1;
+}
+
+
+/*
+ * Returns: an HTTP status code: 200, 403, 404, or 500.
+ * 200 means everything is fine; 302 is used for redirects from /dirname to /dirname/;
+ * everything else is an error (duh).
+ * The return parameters ptr, type, and filesize are only meaningful for status 200:
+ * type = 0: built-in icon; *ptr points to icon data; filesize is icon data size;
+ * type = 1: regular file; *ptr points to FILE*, filesize is file size;
+ * type = 2: fake directory; *ptr points to char**; dir end flagged by NULL
+ * type = 3: real directory; *ptr points to DIR*
+ * The caller must close the FILE* or DIR* returned when type = 1 or 3.
+ */
+static int open_item(const char *url, void **ptr, int *type, int *filesize) {
     struct stat statbuf;
     int err;
     int i;
@@ -589,25 +700,78 @@ static int open_item(const char *url, int post, void **ptr, int *type, int *file
     if (strlen(url) == 0)
 	url = ".";
 
+#ifdef FREE42
+    /* We map /memory/ to the simulator's program memory,  */
+    if (strcmp(url, "memory") == 0) {
+	*type = 2;
+	/* We don't bother actually populating anything further,
+	 * since the caller, do_get(), is going to ignore the
+	 * other return values anyway and send a redirect.
+	 */
+	return 200;
+    }
+    if (strcmp(url, "memory/") == 0) {
+#define NAMEBUFSIZE 1024
+#define MAXPROGS 255
+	static char buf[NAMEBUFSIZE];
+	static char *names[MAXPROGS + 1];
+	int p = 0, i;
+	int n = core_list_programs(buf, NAMEBUFSIZE);
+	buf[NAMEBUFSIZE - 1] = 0;
+	for (i = 0; i < n; i++) {
+	    names[i] = buf + p;
+	    p += strlen(names[i]) + 1;
+	    if (p >= NAMEBUFSIZE - 2 || i == MAXPROGS)
+		break;
+	}
+	names[i] = NULL;
+	*type = 2;
+	*ptr = names;
+	return 200;
+    }
+    if (strncmp(url, "memory/", 7) == 0) {
+	/* We treat the remainder of the URL as a decimal number,
+	 * representing a 0-based index into the list of programs.
+	 * TODO: In the other versions of Free42, we can always be
+	 * sure that core_export_programs() is only called with
+	 * valid program indexes, but not here, and that's a bit
+	 * of a concern since out-of-range values can cause bad
+	 * things to happen. Not destructively bad things per se,
+	 * I think, but dereferencing bad pointers and/or writing
+	 * insane amounts of data are definite possibilities.
+	 */
+	int n;
+	if (sscanf(url + 7, "%d", &n) != 1)
+	    return 404;
+	if (n < 0)
+	    return 404;
+	/* TODO -- this is where the range check would be nice! */
+	if (export_tb.buf != NULL)
+	    free(export_tb.buf);
+	export_tb.buf = NULL;
+	export_tb.size = 0;
+	export_tb.capacity = 0;
+	core_export_programs(1, &n, NULL);
+	if (export_tb.size == 0)
+	    return 404;
+	else {
+	    *ptr = export_tb.buf;
+	    *type = 0;
+	    *filesize = export_tb.size;
+	    return 200;
+	}
+    }
+#endif
+
     /* Look for hard-coded icons from icons.c */
     for (i = 0; i < icon_count; i++) {
 	if (strcmp(url, icon_name[i]) == 0) {
-	    if (post)
-		return 403;
-	    else {
-		*ptr = icon_data[i];
-		*type = 0;
-		*filesize = icon_size[i];
-		return 200;
-	    }
+	    *ptr = icon_data[i];
+	    *type = 0;
+	    *filesize = icon_size[i];
+	    return 200;
 	}
     }
-
-    /* TODO: if post == 1, it is OK for the item referenced by url
-     * to not exist; in that case, we will create it (otherwise,
-     * overwrite it, assuming it is a regular file), and the FILE we
-     * return will have been opened for writing.
-     */
 
     err = stat(url, &statbuf);
     if (err != 0) {
@@ -640,7 +804,7 @@ static int open_item(const char *url, int post, void **ptr, int *type, int *file
 	return 200;
     } else if (S_ISDIR(statbuf.st_mode)) {
 	*ptr = opendir(url);
-	*type = 2;
+	*type = 3;
 	if (*ptr == NULL) {
 	    /* We already know the file exists and is reachable, so
 	     * we only check for EACCES; any other error is reported
@@ -698,8 +862,10 @@ static void http_error(int csock, int err) {
     }
     sockprintf(csock, "HTTP/1.0 %d %s\r\n", err, msg);
     sockprintf(csock, "Connection: close\r\n");
-    /* TODO: Descriptive response body */
     sockprintf(csock, "\r\n");
+    /* TODO: Descriptive response body */
+    sockprintf(csock, "<h1>%d %s</h1>\r\n", err, msg);
+    sockprintf(csock, "This error page is under construction.\r\n");
 }
 
 #ifdef STANDALONE
