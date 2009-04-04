@@ -35,6 +35,8 @@ int enqueued = FALSE;
 int callKeydownAgain = FALSE;
 bool timer3active = FALSE;  // Keep track if the timer3 event is currently pending
 
+
+
 /*
  * The CalcViewController manages the key pad portion of the calculator
  */
@@ -87,11 +89,30 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 }
  */
 
+void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+	if (callKeydownAgain)
+	{
+		[viewCtrl performSelectorOnMainThread:@selector(keepRunning) withObject:NULL waitUntilDone:NO];
+	}
+}
+
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	[blitterView setNavViewController:navViewController];
 	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
+
+	
+    // The application uses garbage collection, so no autorelease pool is needed.
+    NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
+    // Create a run loop observer and attach it to the run loop.
+    CFRunLoopObserverContext  context = {0, self, NULL, NULL, NULL};
+    CFRunLoopObserverRef    observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
+					kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
+	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
+	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
+	
 	//tonePlayer = [[TonePlayer alloc] init];
 }
  
@@ -124,17 +145,11 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
  */
 -(void)keepRunning
 {
-	if (callKeydownAgain)
-	{
-		// If are printing then we allow a little time for event handling, if we 
-		// don't do this then key handling gets starved.
-		if (printingStarted)			
-			[self performSelector:@selector(runMore) withObject:NULL afterDelay:0.01];
-		else
-			[self performSelector:@selector(runMore) withObject:NULL afterDelay:0.0];
-			
-	}
-	else if (printingStarted)
+	int repeat;
+	// We are not processing a key event, so pass 0,
+	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
+	
+	if (!callKeydownAgain && printingStarted)
 	{
 		// We set printingStarted to true in the shell_print method to indicate 
 		// that printing has begun.  For each line out output Free42 returns from
@@ -152,16 +167,6 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 	}
 }
 
-/*
- * Calls free42 to continue running a free42 program.
- */
--(void)runMore
-{
-	int repeat;
-	// We are not processing a key event, so pass 0,
-	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
-	[self keepRunning];
-}
 
 /*
  * Handle the user pressing a keypad button
@@ -198,7 +203,7 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 	}
 		
 	// Tests if in enqueMode and if so, call core_keydown again
-	[self keepRunning];
+	//[self keepRunning];
 }
 
 

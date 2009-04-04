@@ -192,9 +192,9 @@
 				ED3DFA250E52E912000044AF /* shell.m */,
 				ED581CB80EB7623100B0E61F /* TonePlayer.h */,
 				ED581CB60EB7622900B0E61F /* TonePlayer.m */,
-				1D3623240D0F684500981E51 /* Free42AppDelegate.h */,
 				ED26D2630F6AB70E00F285A2 /* ServerViewController.h */,
 				ED26D2640F6AB70E00F285A2 /* ServerViewController.m */,
+				1D3623240D0F684500981E51 /* Free42AppDelegate.h */,
 				1D3623250D0F684500981E51 /* Free42AppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* CalcViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* CalcViewController.m */,
@@ -475,6 +475,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Byron Foster";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -483,6 +484,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
+				PROVISIONING_PROFILE = "84F05523-690A-4A8F-86E1-33E15E61422F";
 			};
 			name = Debug;
 		};
