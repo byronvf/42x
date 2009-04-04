@@ -12,8 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# along with this program; if not, see http://www.gnu.org/licenses/.
 ###############################################################################
 
 VERSION = "\"$(shell cat ../VERSION)\""
@@ -30,9 +29,9 @@ ifeq "$(shell uname -s)" "Linux"
 LDFLAGS += -Wl,--hash-style=both
 endif
 
-#CXXFLAGS = -MMD -Wall -g -I/usr/local/lesstif/include -I/usr/X11R6/include -fno-exceptions -fno-rtti -DVERSION=$(VERSION)
-#LDFLAGS = -L/usr/local/lesstif/lib -L/usr/X11R6/lib
-#LIBS = -lm -lXm -lXpm -lXmu
+ifeq "$(shell uname -s | sed 's/^\(......\).*/\1/')" "CYGWIN"
+LDFLAGS += -Wl,--enable-auto-import
+endif
 
 SRCS = shell_main.cc shell_skin.cc skins.cc keymap.cc shell_loadimage.cc \
 	shell_spool.cc core_main.cc core_commands1.cc core_commands2.cc \

@@ -177,9 +177,10 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	if ([[Settings instance] clickSoundOn])
 		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
 	
-	[self cancelKeyTimer];
-	
 	int keynum = (int)[sender tag];
+	if (keynum != 28)
+		[self cancelKeyTimer];
+	
 	int repeat;
 	callKeydownAgain = core_keydown(keynum, &enqueued, &repeat);
 	if (repeat)
@@ -299,7 +300,10 @@ void shell_request_timeout3(int delay)
 {
 	[self cancelKeyTimer];
 	timer3active = FALSE;
-	core_timeout3(1);
+	callKeydownAgain = core_timeout3(1);
+	if (callKeydownAgain)
+		// PSE just ended
+		[self keepRunning];
 }
 
 

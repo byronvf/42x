@@ -12,8 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// along with this program; if not, see http://www.gnu.org/licenses/.
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <X11/Xlib.h>
@@ -1767,8 +1766,10 @@ static gboolean timeout2(gpointer cd) {
 }
 
 static gboolean timeout3(gpointer cd) {
-    core_timeout3(1);
+    bool keep_running = core_timeout3(1);
     timeout3_id = 0;
+    if (keep_running)
+	enable_reminder();
     return FALSE;
 }
 

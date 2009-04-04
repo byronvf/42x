@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
 #include <ctype.h>
@@ -266,8 +265,8 @@ static int get_real_depth() {
 	return d;
 
     d = depth;
-    if (d > visual->bits_per_rgb);
-    d = visual->bits_per_rgb;
+    if (d > visual->bits_per_rgb)
+	d = visual->bits_per_rgb;
     if (d > 8)
 	d = 8;
 

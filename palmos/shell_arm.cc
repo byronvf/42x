@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
 #include <stdlib.h>
@@ -196,10 +195,10 @@ void core_keytimeout2() {
     PealCall(m, p_core_keytimeout2, NULL);
 }
 
-void core_timeout3(int repaint) {
+bool core_timeout3(int repaint) {
     int4 p = repaint;
     p = ByteSwap32(p);
-    PealCall(m, p_core_timeout3, (void *) p);
+    return (bool) PealCall(m, p_core_timeout3, (void *) p);
 }
 
 int core_keyup() {

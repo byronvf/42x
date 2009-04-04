@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
 #include <stdlib.h>
@@ -577,6 +576,7 @@ int mode_alphamenu;
 int mode_commandmenu;
 bool mode_running;
 bool mode_getkey;
+bool mode_pause = false;
 bool mode_disable_stack_lift; /* transient */
 bool mode_varmenu;
 bool mode_updown;
@@ -2496,6 +2496,7 @@ void hard_reset(int bad_state_file) {
     mode_appmenu = MENU_NONE;
     mode_running = false;
     mode_getkey = false;
+    mode_pause = false;
     mode_varmenu = false;
     prgm_highlight_row = 0;
     varmenu_length = 0;

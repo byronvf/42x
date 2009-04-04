@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
 // shell.cpp : Defines the entry point for the application.
@@ -1432,8 +1431,13 @@ static VOID CALLBACK timeout2(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime) 
 
 static VOID CALLBACK timeout3(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime) {
 	KillTimer(NULL, timer3);
-	core_timeout3(1);
+	bool keep_running = core_timeout3(1);
 	timer3 = 0;
+	if (keep_running) {
+		running = 1;
+		// Post dummy message to get the message loop moving again
+	    PostMessage(hMainWnd, WM_USER, 0, 0);
+	}
 }
 
 static VOID CALLBACK battery_checker(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime) {

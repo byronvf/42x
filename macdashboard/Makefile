@@ -1,6 +1,6 @@
 ###############################################################################
 # Free42 -- an HP-42S calculator simulator
-# Copyright (C) 2004-2005  Thomas Okken
+# Copyright (C) 2004-2009  Thomas Okken
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License, version 2,
@@ -12,11 +12,10 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# along with this program; if not, see http://www.gnu.org/licenses/.
 ###############################################################################
 
-CXXFLAGS = -DNO_SINCOS -arch ppc -arch i386 -mmacosx-version-min=10.4 -Wall -g -fno-exceptions -fno-rtti
+CXXFLAGS = -DNO_SINCOS -DOLD_PSE -arch ppc -arch i386 -mmacosx-version-min=10.4 -Wall -g -fno-exceptions -fno-rtti
 LDFLAGS = -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4
 LIBS = -arch ppc -arch i386 -lm
 
@@ -43,7 +42,9 @@ endif
 
 Free42.wdgt: free42 keymap.txt
 	cp -rv Widget.Template Free42.wdgt
+	find Free42.wdgt -type d -name .svn -prune -exec rm -rf {} \;
 	find Free42.wdgt -type d -name CVS -prune -exec rm -rf {} \;
+	find Free42.wdgt -type f -name .cvsignore -exec rm -f {} \;
 	sed -e "s/%VERSION%/$(shell cat ../VERSION)/g" < Widget.Template/Free42.html> Free42.wdgt/Free42.html
 	cp keymap.txt Free42.wdgt
 	- mkdir Free42.wdgt/bin
