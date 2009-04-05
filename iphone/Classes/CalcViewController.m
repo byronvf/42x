@@ -89,6 +89,11 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 }
  */
 
+/*
+ This handler gets called whenever the run loop is about to sleep.  We us it to try
+ and do a better job at executing free42 programs, and handling key events.
+ */
+
 void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
 {
 	if (callKeydownAgain)
@@ -103,8 +108,8 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
 
-	
-    // The application uses garbage collection, so no autorelease pool is needed.
+
+    // Install the mySleepHandler run loop observer
     NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
     // Create a run loop observer and attach it to the run loop.
     CFRunLoopObserverContext  context = {0, self, NULL, NULL, NULL};

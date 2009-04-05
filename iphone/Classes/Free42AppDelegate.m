@@ -47,12 +47,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	// If we are printing then throttle way down.
-	if (printingStarted)
-		cpuCount = 1;
-	else
-		cpuCount = 100;
-	
+	cpuCount = 1;
 	return 1;
 }
 

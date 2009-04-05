@@ -127,7 +127,6 @@ void drawAnnunciators(CGContextRef ctx)
 	// 3.0 - vert scale factor
 	
 	drawBlitterDataToContext(ctx, buff, 8, 18, 16, 17, 2.3, 3.0);
-		
 	drawAnnunciators(ctx);	
 }
 
