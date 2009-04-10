@@ -418,7 +418,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd simpleserver\nmake icons.c";
+			shellScript = "cd simpleserver\nmake icons.c\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -475,7 +475,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Byron Foster";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -484,7 +483,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "84F05523-690A-4A8F-86E1-33E15E61422F";
 			};
 			name = Debug;
 		};
@@ -504,7 +502,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Thomas Okken";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PREPROCESSOR_DEFINITIONS = BCD_MATH;
@@ -514,7 +511,6 @@
 				OTHER_CFLAGS = "-DFREE42=1";
 				PREBINDING = NO;
 				PRODUCT_NAME = 42S;
-				PROVISIONING_PROFILE = "40342E79-BC73-4E74-95AA-C217A229A4D6";
 				SDKROOT = iphoneos2.0;
 			};
 			name = Debug;
