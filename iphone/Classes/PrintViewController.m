@@ -37,9 +37,18 @@ void shell_print(const char *text, int length,
 		lastPrintPosition = [buf length]/18;
 	}
 	
-	if ([buf length] < 18*9*MAX_PRINT_LINES) 
-	{
-		[buf appendBytes:bits length:18*9];
+	if (bytesperline == 18) {
+		// Regular text-mode print command
+		if ([buf length] < 18*9*MAX_PRINT_LINES) 
+			[buf appendBytes:bits length:18*9];
+	} else {
+		// PRLCD
+		if ([buf length] < 18 * 16 * MAX_PRINT_LINES) {
+			for (int i = 0; i < 16; i++) {
+				[buf appendBytes:(bits + i * 17) length:17];
+				[buf increaseLengthBy:1];
+			}
+		}
 	}
 }
 

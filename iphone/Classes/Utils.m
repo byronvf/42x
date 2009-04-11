@@ -80,7 +80,11 @@ void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to
 	for(int h=0; h < height; h++)
 	{
         int tx = xoffset;
-		int altclr = (offset++ + 1) % 18;
+		//Commented out the pale blue stripes
+		//They get out of sync with the printed text when PRLCD
+		//is used -- text lines are 9 pixels high, PRLCD output
+		//is 16 pixels high...
+		//int altclr = (offset++ + 1) % 18;
 		for(int w=0; w < byte_width; w++)
 		{
 			char byte = data[h*byte_width + w];
@@ -98,13 +102,13 @@ void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to
 					*(ui + tm + 320 + tx) = 0;
 					*(ui + tm + 320 + tx + 1) = 0;
 				}
-				else if (altclr > 8)
-				{
-					*(ui + tm + tx) = 0xD0D0D0;
-					*(ui + tm + tx + 1) = 0xD0D0D0;
-					*(ui + tm + 320 + tx) = 0xD0D0D0;
-					*(ui + tm + 320 + tx + 1) = 0xD0D0D0;					
-				}
+				//else if (altclr > 8)
+				//{
+				//	*(ui + tm + tx) = 0xD0D0D0;
+				//	*(ui + tm + tx + 1) = 0xD0D0D0;
+				//	*(ui + tm + 320 + tx) = 0xD0D0D0;
+				//	*(ui + tm + 320 + tx + 1) = 0xD0D0D0;					
+				//}
 				
 				byte >>= 1;
 				tx += 2;
