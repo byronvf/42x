@@ -65,27 +65,14 @@ static void quit2();
 static void shell_keydown();
 static void shell_keyup();
 
-static NSString *skin_name;
 static int skin_width, skin_height;
-
-static const int FILENAMELEN = 1024;
 
 static int read_shell_state(int *version);
 static void init_shell_state(int version);
 static int write_shell_state();
 
-#define SHELL_VERSION 0
-
+state_type state;
 static FILE* statefile;
-
-static struct {
-	int printerToTxtFile;
-	int printerToGifFile;
-	char printerTxtFileName[FILENAMELEN];
-	char printerGifFileName[FILENAMELEN];
-	int printerGifMaxLength;
-	char skinName[FILENAMELEN];
-} state;
 
 static int quit_flag = 0;
 static int enqueued;
@@ -123,7 +110,7 @@ static MainView *mainView = nil;
 @implementation MainView
 
 
-- (id)initWithFrame:(CGRect)frame {
+- (id) initWithFrame:(CGRect)frame {
 	TRACE("initWithFrame");
     if (self = [super initWithFrame:frame]) {
         // Note: this does not get called when instantiated from a nib file,
@@ -146,7 +133,45 @@ static MainView *mainView = nil;
 		[self performSelectorOnMainThread:@selector(setNeedsDisplayInRectSafely2:) withObject:[MyRect rectWithCGRect:rect] waitUntilDone:NO];
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+	switch (buttonIndex) {
+		case 0:
+			// Show Print-Out
+			[shell_iphone showPrintOut];
+			break;
+		case 1:
+			// HTTP Server
+			[shell_iphone showHttpServer];
+			break;
+		case 2:
+			// Select Skin
+			[shell_iphone showSelectSkin];
+			break;
+		case 3:
+			// Preferences
+			[shell_iphone showPreferences];
+			break;
+		case 4:
+			// About Free42
+			[shell_iphone showAbout];
+			break;
+		case 5:
+			// Cancel
+			break;
+	}
+}
+
+- (void) showMenu {
+	UIActionSheet *menu =
+	[[UIActionSheet alloc] initWithTitle:nil//@"Main Menu"
+								delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+					   otherButtonTitles:@"Show Print-Out", @"HTTP Server", @"Select Skin", @"Preferences", @"About Free42", nil, nil];
+	
+	[menu showInView:self];
+	[menu release];
+}
+
+- (void) drawRect:(CGRect)rect {
 	TRACE("drawRect");
 	if (mainView == nil)
 		[self initialize];
@@ -181,11 +206,13 @@ static MainView *mainView = nil;
 - (void) touchesBegan: (NSSet *) touches withEvent: (UIEvent *) event {
 	TRACE("touchesBegan");
 	[super touchesBegan:touches withEvent:event];
-	if (ckey == 0) {
-		UITouch *touch = (UITouch *) [touches anyObject];
-		CGPoint p = [touch locationInView:self];
-		int x = (int) p.x;
-		int y = (int) p.y;
+	UITouch *touch = (UITouch *) [touches anyObject];
+	CGPoint p = [touch locationInView:self];
+	int x = (int) p.x;
+	int y = (int) p.y;
+	if (skin_in_menu_area(x, y)) {
+		[self showMenu];
+	} else if (ckey == 0) {
 		skin_find_key(x, y, ann_shift != 0, &skey, &ckey);
 		if (ckey != 0) {
 			if (is_running)
@@ -234,6 +261,11 @@ static MainView *mainView = nil;
 	}
 }
 
++ (void) repaint {
+	TRACE("repaint");
+	[mainView setNeedsDisplay];
+}
+
 + (void) quit {
 	TRACE("quit");
 	quit2();
@@ -247,13 +279,6 @@ static MainView *mainView = nil;
 - (void) initialize {
 	TRACE("initialize");
 	mainView = self;
-	if (skin_name == nil) {
-		skin_name = @"Realistic";
-		long w, h;
-		skin_load(skin_name, &w, &h);
-		skin_width = w;
-		skin_height = h;
-	}	
 	statefile = fopen("config/state", "r");
 	int init_mode, version;
 	if (statefile != NULL) {
@@ -267,6 +292,12 @@ static MainView *mainView = nil;
 		init_shell_state(-1);
 		init_mode = 0;
 	}
+
+	long w, h;
+	skin_load(&w, &h);
+	skin_width = w;
+	skin_height = h;
+	
 	core_init(init_mode, version);
 	if (statefile != NULL) {
 		fclose(statefile);

@@ -15,26 +15,36 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
-#import <sys/stat.h>
-#import <UIKit/UIKit.h>
+#import "PrintOutView.h"
+#import "shell_iphone.h"
 
-int main(int argc, char *argv[]) {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	
-	// This is so that the remainder of the Free42 code can assume that the current
-	// directory is the home directory; this will be the top-level directory that
-	// users can navigate with the built-in HTTP server.
-	// TODO: Is UTF-8 the right encoding to use here? Does it matter?
-	char *homedir = (char *) malloc(1024);
-	[NSHomeDirectory() getCString:homedir maxLength:1024 encoding:NSUTF8StringEncoding];
-	strcat(homedir, "/Documents");
-	NSLog(@"home = %s", homedir);
-	chdir(homedir);
-	free(homedir);
-	mkdir("skins", 0755);
 
-    int retVal = UIApplicationMain(argc, argv, nil, nil);
-    [pool release];
-    return retVal;
+@implementation PrintOutView
+
+@synthesize doneButton;
+
+- (id)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        // Initialization code
+    }
+    return self;
 }
+
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+
+- (void) raised {
+	// start-up code
+}
+
+- (IBAction) done {
+	[shell_iphone showMain];
+}
+
+- (void)dealloc {
+    [super dealloc];
+}
+
+
+@end
