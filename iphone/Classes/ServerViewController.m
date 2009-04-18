@@ -24,9 +24,19 @@
 #include <fcntl.h>
 #include <net/if.h>
 #include <ifaddrs.h>
+#include <stdarg.h>
 
 #include "shell.h"
 #include "core_main.h"
+
+/* simpleserver logger */
+void errprintf(char *fmt, ...) {
+	/* TODO: write to the screen? */
+    va_list ap;
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+}
 
 @implementation ServerViewController
 
