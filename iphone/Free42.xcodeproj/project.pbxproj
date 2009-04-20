@@ -52,7 +52,6 @@
 		ED63D3C40EBAA93C004FE0D8 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED63D3C30EBAA93C004FE0D8 /* glow.png */; };
 		ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = ED69AAD60F13F6A8001B6C1A /* COPYING */; };
 		EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */; };
-		EDA9B94A0EB332A800D30EA2 /* Background.png in Resources */ = {isa = PBXBuildFile; fileRef = EDA9B9490EB332A800D30EA2 /* Background.png */; };
 		EDA9BB2D0EB3B66F00D30EA2 /* beep_04.wav in Resources */ = {isa = PBXBuildFile; fileRef = EDA9BB2C0EB3B66F00D30EA2 /* beep_04.wav */; };
 		EDA9BB310EB3B72900D30EA2 /* click.wav in Resources */ = {isa = PBXBuildFile; fileRef = EDA9BB300EB3B72900D30EA2 /* click.wav */; };
 		EDA9BBCE0EB49EEF00D30EA2 /* PrintViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA9BBCD0EB49EEF00D30EA2 /* PrintViewController.m */; };
@@ -149,7 +148,6 @@
 		ED63D3C30EBAA93C004FE0D8 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
 		ED69AAD60F13F6A8001B6C1A /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		EDA9B9490EB332A800D30EA2 /* Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Background.png; sourceTree = "<group>"; };
 		EDA9BB2C0EB3B66F00D30EA2 /* beep_04.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beep_04.wav; sourceTree = "<group>"; };
 		EDA9BB300EB3B72900D30EA2 /* click.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = click.wav; sourceTree = "<group>"; };
 		EDA9BBCC0EB49EEF00D30EA2 /* PrintViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintViewController.h; sourceTree = "<group>"; };
@@ -257,7 +255,6 @@
 				EDA9BBD00EB4A06600D30EA2 /* PrintView.xib */,
 				EDA9BB300EB3B72900D30EA2 /* click.wav */,
 				EDA9BB2C0EB3B66F00D30EA2 /* beep_04.wav */,
-				EDA9B9490EB332A800D30EA2 /* Background.png */,
 				EDFC86BD0EAF1FBD007120DA /* imgFlagRun.png */,
 				EDFC86B80EAF10F4007120DA /* imgFlagShift.png */,
 				EDFC86BA0EAF10FC007120DA /* imgFlagUpDown.png */,
@@ -391,7 +388,6 @@
 				EDFC86BB0EAF10FC007120DA /* imgFlagUpDown.png in Resources */,
 				EDFC86BE0EAF1FBD007120DA /* imgFlagRun.png in Resources */,
 				EDE45EB20EB033F500404D59 /* ConfigView.xib in Resources */,
-				EDA9B94A0EB332A800D30EA2 /* Background.png in Resources */,
 				EDA9BB2D0EB3B66F00D30EA2 /* beep_04.wav in Resources */,
 				EDA9BB310EB3B72900D30EA2 /* click.wav in Resources */,
 				EDA9BBD10EB4A06600D30EA2 /* PrintView.xib in Resources */,
@@ -475,6 +471,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Byron Foster";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -483,6 +480,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
+				PROVISIONING_PROFILE = "84F05523-690A-4A8F-86E1-33E15E61422F";
 			};
 			name = Debug;
 		};

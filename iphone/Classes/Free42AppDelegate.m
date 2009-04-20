@@ -33,11 +33,6 @@ int cpuCount = 0;
  * proccess it in the case it may be EXIT or R/S.  So, as a little hack we simply
  * return true (which means we should pop out of core_keydown) every so many 
  * calls to this method.
- *
- * NOTE - I found that setting the count to 1000 causes the program to lock up
- * on the actual iPhone, but works in the simulator.. I couldn't find what the
- * deal was.  However, I found setting this to 100 works fine, but something
- * to be concerned with.
  */
 int shell_wants_cpu()
 {
