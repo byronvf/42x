@@ -17,11 +17,19 @@
 
 #import <AudioToolbox/AudioServices.h>
 
+#import "MainView.h"
+#import "PrintOutView.h"
+#import "HTTPServerView.h"
+#import "SelectSkinView.h"
+#import "PreferencesView.h"
+#import "AboutView.h"
+#import "SelectFileView.h"
 #import "shell_iphone.h"
 
 static SystemSoundID soundIDs[12];
 
 static shell_iphone *instance;
+static char version[32] = "";
 
 @implementation shell_iphone
 
@@ -34,6 +42,7 @@ static shell_iphone *instance;
 @synthesize selectSkinView;
 @synthesize preferencesView;
 @synthesize aboutView;
+@synthesize selectFileView;
 
 
 - (void) applicationDidFinishLaunching:(UIApplication *)application {
@@ -48,12 +57,13 @@ static shell_iphone *instance;
 		if (status)
 			NSLog(@"error loading sound:  %d", name);
 	}
-
+	
 	[containerView addSubview:printOutView];
 	[containerView addSubview:httpServerView];
 	[containerView addSubview:selectSkinView];
 	[containerView addSubview:preferencesView];
 	[containerView addSubview:aboutView];
+	[containerView addSubview:selectFileView];
 	[containerView addSubview:mainView];
     [window makeKeyAndVisible];
 }
@@ -128,6 +138,32 @@ static shell_iphone *instance;
 
 + (void) showAbout {
 	[instance showAbout2];
+}
+
+- (void) showSelectFile2 {
+	[selectFileView raised];
+	[containerView bringSubviewToFront:selectFileView];
+}
+
++ (void) showSelectFile {
+	[instance showSelectFile2];
+}
+
++ (const char *) getVersion {
+	if (version[0] == 0) {
+		NSString *path = [[NSBundle mainBundle] pathForResource:@"VERSION" ofType:nil];
+		const char *cpath = [path cStringUsingEncoding:NSUTF8StringEncoding];
+		FILE *vfile = fopen(cpath, "r");
+		fscanf(vfile, "%s", version);
+		fclose(vfile);
+	}	
+	return version;
+}
+
+// C version of getVersion, needed by the HTTP Server
+
+const char *get_version() {
+	return [shell_iphone getVersion];
 }
 
 @end

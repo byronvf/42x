@@ -1,3 +1,13 @@
+SHELL:
+* OFF: shouldn't it just turn the power off, like the Palm version? If not, is
+  there a way to make an application quit with the same kind of "disappear
+  backwards" animation, like what takes place when you exit using the "home"
+  button?
+* Use UIApplication.idleTimerDisabled to prevent the screen from dimming while
+  a lengthy operation is in progress.
+* Implement "glow" highlight like 42s.
+
+HTTP SERVER:
 * Figure out a way to separate the Free42 stuff from the generic HTTP server
   (or application server) stuff.
 * I'm currently closing the client socket using shutdown(SHUT_WR), which avoids
@@ -15,10 +25,6 @@
   be parsed at all.
 * The server does not seem to handle pathnames with spaces correctly. For
   example, try "/Library/Application Support" on the iPod.
-* Get the version number compiled into simpleserver.c by using substitution
-  using sed, and add a Run Script build phase to perform the substitution. The
-  same mechanism could also be used to get the version number displayed in the
-  Options window.
 * http_error() should return a response body -- right now, whenever the server
   reports a 404 or any other error, a Firefox user will only see a blank
   screen. Maybe other browsers are more helpful, but this is bad behavior

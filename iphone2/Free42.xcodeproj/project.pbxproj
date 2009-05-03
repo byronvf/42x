@@ -39,7 +39,6 @@
 		E91CC1D60F8C200800EE702C /* icons.c in Sources */ = {isa = PBXBuildFile; fileRef = E91CC1D50F8C200800EE702C /* icons.c */; };
 		E93F2B560F894D9000CE8542 /* shell_spool.cc in Sources */ = {isa = PBXBuildFile; fileRef = E93F2B540F894D9000CE8542 /* shell_spool.cc */; };
 		E98DD7510F8C198A0089D9FA /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E98DD7500F8C198A0089D9FA /* AudioToolbox.framework */; };
-		E98DD75B0F8C1A150089D9FA /* click.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75A0F8C1A150089D9FA /* click.wav */; };
 		E98DD7670F8C1A210089D9FA /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75C0F8C1A210089D9FA /* squeak.wav */; };
 		E98DD7680F8C1A210089D9FA /* tone0.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75D0F8C1A210089D9FA /* tone0.wav */; };
 		E98DD7690F8C1A210089D9FA /* tone1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75E0F8C1A210089D9FA /* tone1.wav */; };
@@ -57,11 +56,13 @@
 		E9B16DFA0F88EE46002BB9B2 /* shell_loadimage.cc in Sources */ = {isa = PBXBuildFile; fileRef = E9B16DF80F88EE46002BB9B2 /* shell_loadimage.cc */; };
 		E9B16E040F88F015002BB9B2 /* shell_skin_iphone.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B16E010F88F015002BB9B2 /* shell_skin_iphone.m */; };
 		E9B16E050F88F015002BB9B2 /* skins.cc in Sources */ = {isa = PBXBuildFile; fileRef = E9B16E030F88F015002BB9B2 /* skins.cc */; };
+		E9B1D9230FAC7C51000EB4CD /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = E9B1D9220FAC7C51000EB4CD /* VERSION */; };
 		E9BA0E710F92239F0087EBFB /* PrintOutView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0E700F92239F0087EBFB /* PrintOutView.m */; };
 		E9BA0E780F9224480087EBFB /* PreferencesView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0E770F9224480087EBFB /* PreferencesView.m */; };
 		E9BA0E7D0F92245E0087EBFB /* HTTPServerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0E7C0F92245E0087EBFB /* HTTPServerView.m */; };
 		E9BA0E800F9224700087EBFB /* SelectSkinView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0E7F0F9224700087EBFB /* SelectSkinView.m */; };
 		E9BA0EAE0F9224F00087EBFB /* AboutView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0EAD0F9224F00087EBFB /* AboutView.m */; };
+		E9CD216B0FA39C41008E1E65 /* SelectFileView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CD216A0FA39C41008E1E65 /* SelectFileView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +86,7 @@
 		E91005A70F893F8900B68C27 /* bcdmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcdmath.h; path = ../common/bcdmath.h; sourceTree = SOURCE_ROOT; };
 		E91005A80F893F8900B68C27 /* core_commands1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands1.cc; path = ../common/core_commands1.cc; sourceTree = SOURCE_ROOT; };
 		E91005A90F893F8900B68C27 /* core_commands1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands1.h; path = ../common/core_commands1.h; sourceTree = SOURCE_ROOT; };
-		E91005AA0F893F8900B68C27 /* core_commands2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands2.cc; path = ../common/core_commands2.cc; sourceTree = SOURCE_ROOT; };
+		E91005AA0F893F8900B68C27 /* core_commands2.cc */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands2.cc; path = ../common/core_commands2.cc; sourceTree = SOURCE_ROOT; tabWidth = 8; usesTabs = 1; };
 		E91005AB0F893F8900B68C27 /* core_commands2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands2.h; path = ../common/core_commands2.h; sourceTree = SOURCE_ROOT; };
 		E91005AC0F893F8900B68C27 /* core_commands3.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands3.cc; path = ../common/core_commands3.cc; sourceTree = SOURCE_ROOT; };
 		E91005AD0F893F8900B68C27 /* core_commands3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands3.h; path = ../common/core_commands3.h; sourceTree = SOURCE_ROOT; };
@@ -126,7 +127,6 @@
 		E93F2B540F894D9000CE8542 /* shell_spool.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shell_spool.cc; path = ../common/shell_spool.cc; sourceTree = SOURCE_ROOT; };
 		E93F2B550F894D9000CE8542 /* shell_spool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shell_spool.h; path = ../common/shell_spool.h; sourceTree = SOURCE_ROOT; };
 		E98DD7500F8C198A0089D9FA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		E98DD75A0F8C1A150089D9FA /* click.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = click.wav; sourceTree = "<group>"; };
 		E98DD75C0F8C1A210089D9FA /* squeak.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = squeak.wav; sourceTree = "<group>"; };
 		E98DD75D0F8C1A210089D9FA /* tone0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone0.wav; sourceTree = "<group>"; };
 		E98DD75E0F8C1A210089D9FA /* tone1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone1.wav; sourceTree = "<group>"; };
@@ -149,6 +149,7 @@
 		E9B16E020F88F015002BB9B2 /* shell_skin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shell_skin.h; sourceTree = "<group>"; };
 		E9B16E030F88F015002BB9B2 /* skins.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skins.cc; sourceTree = "<group>"; };
 		E9B16E840F8907E8002BB9B2 /* shell_skin_iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shell_skin_iphone.h; sourceTree = "<group>"; };
+		E9B1D9220FAC7C51000EB4CD /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = VERSION; path = ../VERSION; sourceTree = SOURCE_ROOT; };
 		E9BA0E6F0F92239F0087EBFB /* PrintOutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintOutView.h; sourceTree = "<group>"; };
 		E9BA0E700F92239F0087EBFB /* PrintOutView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = PrintOutView.m; sourceTree = "<group>"; };
 		E9BA0E760F9224480087EBFB /* PreferencesView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesView.h; sourceTree = "<group>"; };
@@ -159,6 +160,8 @@
 		E9BA0E7F0F9224700087EBFB /* SelectSkinView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SelectSkinView.m; sourceTree = "<group>"; };
 		E9BA0EAC0F9224F00087EBFB /* AboutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutView.h; sourceTree = "<group>"; };
 		E9BA0EAD0F9224F00087EBFB /* AboutView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = AboutView.m; sourceTree = "<group>"; };
+		E9CD21690FA39C41008E1E65 /* SelectFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectFileView.h; sourceTree = "<group>"; };
+		E9CD216A0FA39C41008E1E65 /* SelectFileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectFileView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +202,8 @@
 				E9BA0E7F0F9224700087EBFB /* SelectSkinView.m */,
 				E9BA0EAC0F9224F00087EBFB /* AboutView.h */,
 				E9BA0EAD0F9224F00087EBFB /* AboutView.m */,
+				E9CD21690FA39C41008E1E65 /* SelectFileView.h */,
+				E9CD216A0FA39C41008E1E65 /* SelectFileView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -238,6 +243,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E9B1D9220FAC7C51000EB4CD /* VERSION */,
 				E98FA4830F913E2900DED348 /* icon.png */,
 				E98DD75C0F8C1A210089D9FA /* squeak.wav */,
 				E98DD75D0F8C1A210089D9FA /* tone0.wav */,
@@ -250,7 +256,6 @@
 				E98DD7640F8C1A210089D9FA /* tone7.wav */,
 				E98DD7650F8C1A210089D9FA /* tone8.wav */,
 				E98DD7660F8C1A210089D9FA /* tone9.wav */,
-				E98DD75A0F8C1A150089D9FA /* click.wav */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
@@ -369,7 +374,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
-				E98DD75B0F8C1A150089D9FA /* click.wav in Resources */,
 				E98DD7670F8C1A210089D9FA /* squeak.wav in Resources */,
 				E98DD7680F8C1A210089D9FA /* tone0.wav in Resources */,
 				E98DD7690F8C1A210089D9FA /* tone1.wav in Resources */,
@@ -382,6 +386,7 @@
 				E98DD7700F8C1A210089D9FA /* tone8.wav in Resources */,
 				E98DD7710F8C1A210089D9FA /* tone9.wav in Resources */,
 				E98FA4840F913E2900DED348 /* icon.png in Resources */,
+				E9B1D9230FAC7C51000EB4CD /* VERSION in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +450,7 @@
 				E9BA0E7D0F92245E0087EBFB /* HTTPServerView.m in Sources */,
 				E9BA0E800F9224700087EBFB /* SelectSkinView.m in Sources */,
 				E9BA0EAE0F9224F00087EBFB /* AboutView.m in Sources */,
+				E9CD216B0FA39C41008E1E65 /* SelectFileView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,7 +487,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Thomas Okken";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Thomas Okken";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NO_SINCOS,
@@ -492,7 +498,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "40342E79-BC73-4E74-95AA-C217A229A4D6";
+				PROVISIONING_PROFILE = "B93CE866-95CC-4679-B4B0-63AA40ECC0C3";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Debug;
@@ -501,7 +507,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
