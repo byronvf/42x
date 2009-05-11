@@ -169,7 +169,7 @@ bool prgmFirstWrite = TRUE;
 	image  = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
 	[[viewController blitterView] setImgFlagPrint:image];
 	image  = [[UIImage imageNamed:@"glow.png"] CGImage];
-	[[viewController blitterView] setImgShiftGlow:[UIImage imageWithCGImage:image]];
+	[[viewController blitterView] setImgShiftGlow:[UIImage imageWithCGImage:image]];	
 }
 
 

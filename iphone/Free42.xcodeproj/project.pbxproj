@@ -59,6 +59,7 @@
 		EDA9BBE80EB4A49400D30EA2 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA9BBE70EB4A49400D30EA2 /* Utils.m */; };
 		EDAFFDDE0EAF0BB500F06495 /* imgFlagGrad.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */; };
 		EDAFFE100EAF0D6B00F06495 /* imgFlagRad.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */; };
+		EDDA2FCB0FB810FC00B9D002 /* Default-BlankTop.png in Resources */ = {isa = PBXBuildFile; fileRef = EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */; };
 		EDE45EAE0EAF7D6000404D59 /* ConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE45EAD0EAF7D6000404D59 /* ConfigViewController.m */; };
 		EDE45EB20EB033F500404D59 /* ConfigView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EDE45EB10EB033F500404D59 /* ConfigView.xib */; };
 		EDE45F3E0EB0450100404D59 /* NavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE45F3D0EB0450100404D59 /* NavViewController.m */; };
@@ -157,6 +158,7 @@
 		EDA9BBE70EB4A49400D30EA2 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imgFlagGrad.png; sourceTree = "<group>"; };
 		EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imgFlagRad.png; sourceTree = "<group>"; };
+		EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-BlankTop.png"; sourceTree = "<group>"; };
 		EDE45EAC0EAF7D6000404D59 /* ConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigViewController.h; sourceTree = "<group>"; };
 		EDE45EAD0EAF7D6000404D59 /* ConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigViewController.m; sourceTree = "<group>"; };
 		EDE45EB10EB033F500404D59 /* ConfigView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigView.xib; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */,
 				ED69AAD60F13F6A8001B6C1A /* COPYING */,
 				ED63D3C30EBAA93C004FE0D8 /* glow.png */,
 				ED08B0730EB940F300D368A2 /* imgFlagPrint.png */,
@@ -397,6 +400,7 @@
 				ED63D3C40EBAA93C004FE0D8 /* glow.png in Resources */,
 				ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */,
 				ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */,
+				EDDA2FCB0FB810FC00B9D002 /* Default-BlankTop.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -81,7 +81,10 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 @synthesize b36;
 @synthesize b37;
 @synthesize blitterView;
+@synthesize bgImageView;
 @synthesize navViewController;
+@synthesize bgBlankButtons;
+@synthesize bgImage;
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically
@@ -108,7 +111,6 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
 
-
     // Install the mySleepHandler run loop observer
     NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
     // Create a run loop observer and attach it to the run loop.
@@ -117,6 +119,14 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 					kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
+
+	bgBlankButtons  = [UIImage imageNamed:@"Default-BlankTop.png"];
+	bgImage = [bgImageView image];
+	menuActive = core_menu();
+	if (menuActive)
+	{
+	  [[self bgImageView] setImage:bgBlankButtons];
+	}
 	
 	//tonePlayer = [[TonePlayer alloc] init];
 }
@@ -230,6 +240,17 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 		
 	if ([[Settings instance] keyboardOn])
 	{
+		if (!menuActive && core_menu())
+		{
+			menuActive = YES;
+			[[self bgImageView] setImage:bgBlankButtons];
+		}
+		else if (menuActive && !core_menu())
+		{	menuActive = NO;
+			[[self bgImageView] setImage:bgImage];
+		}
+		
+		
 		if( !alphaMenuActive && core_alpha_menu())
 		{
 			alphaMenuActive = YES;

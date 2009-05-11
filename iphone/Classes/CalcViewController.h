@@ -63,16 +63,23 @@ extern int callKeydownAgain;
     IBOutlet UIButton *b36;
     IBOutlet UIButton *b37;
 	
-	int alphaMenuActive;	
+	int alphaMenuActive;
+	int menuActive;
 	IBOutlet UITextField* textEntryField;
+	UIImage *bgBlankButtons;
+	UIImage *bgImage;
 	
 	IBOutlet BlitterView *blitterView;
+	IBOutlet UIImageView *bgImageView;	
 	IBOutlet NavViewController* navViewController;
 	
 	TonePlayer* tonePlayer;		
 }
 
 @property (nonatomic, retain) BlitterView* blitterView;
+@property (nonatomic, retain) UIImageView* bgImageView;
+@property (nonatomic, retain) UIImage *bgBlankButtons;
+@property (nonatomic, retain) UIImage *bgImage;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) UILabel *screen;
 @property (nonatomic, retain) UIButton *b01;
