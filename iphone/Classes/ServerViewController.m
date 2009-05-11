@@ -151,18 +151,26 @@ extern void handle_client(int);
 		
 		struct sockaddr_in *addrStruct = (struct sockaddr_in *)cur->ifa_addr;
 		NSString *name = [NSString stringWithUTF8String:cur->ifa_name];
-		NSString *addr = [NSString stringWithUTF8String:inet_ntoa(addrStruct->sin_addr)];
-		[array addObject:
-		 [NSDictionary dictionaryWithObjectsAndKeys:
-		  name, @"name",
-		  addr, @"address",
-		  [NSString stringWithFormat:@"%@ - %@", name, addr], @"formattedName",
-		  nil]];
+		// only the wireless interface begins with "en"
+		if ([name hasPrefix:@"en"])
+		{	
+			NSString *addr = [NSString stringWithUTF8String:inet_ntoa(addrStruct->sin_addr)];
+				[array addObject:
+				[NSDictionary dictionaryWithObjectsAndKeys:
+				   name, @"name",
+				   addr, @"address",
+				   [NSString stringWithFormat:@"%@ - %@", name, addr], @"formattedName",
+					nil]];
+		}
 	}
 	
-	freeifaddrs(list);	
-	NSString *wlanAddress =  [[array objectAtIndex:1] valueForKey:@"address"];
-	return wlanAddress;
+	freeifaddrs(list); 
+
+	
+	if ([array count] == 0)
+		return NULL;
+	
+	return [[array objectAtIndex:0] valueForKey:@"address"];
 }
 
 
@@ -189,7 +197,7 @@ extern void handle_client(int);
 		}
 		else
 		{
-		    msg = [NSString stringWithFormat:@"http://%@/%i", ipAddr, port];
+		    msg = [NSString stringWithFormat:@"http://%@:%i", ipAddr, port];
 		   [self handleRequest];
 		}
     }
