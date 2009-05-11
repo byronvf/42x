@@ -87,7 +87,7 @@ int ssock;
     }
 
 	// Make accepts on socket non-blocking
-    fcntl(ssock,F_SETFL,FNDELAY);
+    fcntl(ssock,F_SETFL,O_NONBLOCK);
 	
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
@@ -115,6 +115,8 @@ extern void handle_client(int);
 	
 	unsigned int n = sizeof(ca);
 	csock = accept(ssock, (struct sockaddr *) &ca, &n);
+	int flags = fcntl(csock, F_GETFL);
+	fcntl(csock, F_SETFL, flags & ~O_NONBLOCK);
 	if (csock == -1) {
 		// If we fall out because of non blocking, and no sockets waiting
 		err = errno;
@@ -127,6 +129,7 @@ extern void handle_client(int);
 	}
 	
 	handle_client(csock);
+	close(csock);
 	// Check sooner since there are probably additional requests.
 	[self performSelector:@selector(handleRequest) withObject:NULL afterDelay:0.1];	
 	return 0;
