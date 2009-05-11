@@ -22,10 +22,6 @@
 #import "Settings.h"
 #import "PrintViewController.h"
 
-
-
-
-// This variable is shared in BlitterView and PrintViewController
 int cpuCount = 0;
 /*
  * The problem is that I'm not aware of a way we can test if an event is pending,

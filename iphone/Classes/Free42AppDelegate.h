@@ -19,8 +19,6 @@
 #import "CalcViewController.h"
 #import "NavViewController.h"
 
-extern int cpuCount;
-
 @interface Free42AppDelegate : NSObject <UIApplicationDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet CalcViewController *viewController;
