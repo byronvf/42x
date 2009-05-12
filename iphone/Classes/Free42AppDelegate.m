@@ -22,6 +22,12 @@
 #import "Settings.h"
 #import "PrintViewController.h"
 
+
+static FILE *statefile;
+
+// If we are loading from the old style state method NSUserDefaults
+BOOL oldStyleStateExists;
+
 int cpuCount = 0;
 /*
  * The problem is that I'm not aware of a way we can test if an event is pending,
@@ -96,31 +102,53 @@ int4 read_state(NSString* key, int *readUpTo, void *buf, int4 bufsize)
 	int cnt = MIN(length - *readUpTo, bufsize);	
 	memcpy(buf, sbuf+*readUpTo, cnt);
 	*readUpTo += cnt;
-	return cnt;
+	return cnt;	
 }
 
 // -------------------------  Saving State -------------------------------
 
-const NSString* STATE_KEY = @"free42state";
+NSString* STATE_KEY = @"free42state";
 bool stateFirstWrite = TRUE;
 bool shell_write_saved_state(const void *buf, int4 nbytes)
 {
-	return write_state(STATE_KEY, &stateFirstWrite, buf, nbytes);
+	if (statefile == NULL)
+	return false;
+    else {
+		int4 n = fwrite(buf, 1, nbytes, statefile);
+		if (n != nbytes) {
+			fclose(statefile);
+			NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+			remove([statepath UTF8String]);
+			statefile = NULL;
+			return false;
+		} else
+			return true;
+    }
 }
 
 int stateReadUpTo = 0;
 int4 shell_read_saved_state(void *buf, int4 bufsize)
 {
-	return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
-}
 
-/*
- * Returns true if this is the first time the application has ever been run
- * we test this by checking if we have ever saved state before.
- */
-bool isFirstTimeEverRun()
-{
-	return getStateData(STATE_KEY) == NULL;
+	if (oldStyleStateExists)
+	{
+		// Backward compatibility
+		return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
+	}
+	
+
+    if (statefile == NULL)
+		return -1;
+    else {
+		int4 n = fread(buf, 1, bufsize, statefile);
+		if (n != bufsize && ferror(statefile)) {
+			fclose(statefile);
+			statefile = NULL;
+			return -1;
+		} else
+			return n;
+    }	
+	
 }
 	
 // ************************* read write programs **********************************
@@ -223,7 +251,13 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {	
-	if (isFirstTimeEverRun())
+	
+	NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+	statefile = fopen([statepath UTF8String], "r");
+	
+	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
+	
+	if (!oldStyleStateExists && statefile == NULL)
 	{
 		// We get here if this application has never been run, and there is 
 		// no saved state.  In this case we call core_init with readstate 
@@ -234,6 +268,8 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 	{
    	  core_init(1, FREE42_VERSION);	
 	}
+	
+	if (statefile) fclose(statefile);
 	
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 
@@ -268,7 +304,18 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	core_quit();  // This causes a call to shell_write
+
+	if (oldStyleStateExists)
+	{
+     	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];		
+		// Remove the state key so we don't use this method anymore.
+		[defaults removeObjectForKey:STATE_KEY];		
+	}
+	
+	NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+    statefile = fopen([statepath UTF8String], "w");	
+    core_quit();
+    fclose(statefile);	
 	[self saveSettings];
 }
 
