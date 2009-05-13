@@ -49,4 +49,6 @@ extern BlitterView *blitterView;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
 
+- (void)setViewRedisplayLowerClip:(int)horzMax;
+
 @end

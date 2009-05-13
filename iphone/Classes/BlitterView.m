@@ -86,6 +86,7 @@ void drawAnnunciators(CGContextRef ctx)
 
 }	
 
+static int hMax = 16;
 
 /**
  * The blitterView manages the calculators digital display
@@ -103,6 +104,17 @@ void drawAnnunciators(CGContextRef ctx)
 @synthesize shiftButton;
 
 
+/**
+ * Set the lowest bounds to clip on the next redisplay, we always draw from
+ * horz position 0, to hMax.  We do this so we don't redraw the whole display
+ * if we don't have to.
+ */
+- (void)setViewRedisplayLowerClip:(int)horzMax
+{
+	if (horzMax > hMax) hMax = horzMax;
+}
+
+
 - (void)drawRect:(CGRect)rect {	
 	blitterView = self;  // This is a dumb place to initialize this var, but not sure where else...
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -115,8 +127,9 @@ void drawAnnunciators(CGContextRef ctx)
 	// 2.3 - horz scale factor
 	// 3.0 - vert scale factor
 	
-	drawBlitterDataToContext(ctx, displayBuff, 8, 18, 16, 17, 2.3, 3.0, -1, 17*8, 0);
+	drawBlitterDataToContext(ctx, displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
 	drawAnnunciators(ctx);
+	hMax = 16;  // We always reset hMax to redisplay the entire screen to be safe.
 }
 
 

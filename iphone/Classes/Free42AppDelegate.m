@@ -289,6 +289,8 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	}
 	
 	if (statefile) fclose(statefile);
+
+	[self loadSettings];
 	
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 
@@ -299,11 +301,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	[window makeKeyAndVisible];
 	
 	[self loadAnnunciatorImages];
-	
-	[self loadSettings];
-	
-	
-	
+		
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"click" ofType:@"wav"];
 	OSStatus status = AudioServicesCreateSystemSoundID(
 			    (CFURLRef)[NSURL  fileURLWithPath:path], &[Settings instance]->clickSoundId);

@@ -84,8 +84,8 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 @synthesize bgImageView;
 @synthesize navViewController;
 @synthesize bgBlankButtons;
-@synthesize bgImage;
 @synthesize menuView;
+@synthesize blankButtonsView;
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically
@@ -122,14 +122,14 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
 
 	bgBlankButtons  = [UIImage imageNamed:@"Default-BlankTop.png"];
-	bgImage = [bgImageView image];
 	menuActive = core_menu();
 	if (menuActive && menuKeys)
 	{
-	  [[self bgImageView] setImage:bgBlankButtons];
+		[blankButtonsView setAlpha:1.0];
 	}
 	else
 	{
+		[blankButtonsView setAlpha:0.0];
 		[menuView setAlpha:0.0];
 	}
 	
@@ -152,18 +152,23 @@ const char *menuBuff;
 void shell_blitter(const char *bits, int bytesperline, int x, int y,
 				   int width, int height)
 {	
-	// We don't take advantage of the additional clipping information, but
-	// I don't think this is an issue given the iPhone's hardware display support.
-	// displayBuff = bits + 136 - 68;
 	displayBuff = bits;
 	menuBuff = bits + 272 + 17*2;
+	[blitterView setViewRedisplayLowerClip:height];
 	[blitterView setNeedsDisplay];
 	
+	// If the viewCtrl is not initialized yet, don't try and use it
 	if (!viewCtrl) return;
+
 	if (core_menu() && menuKeys)
 	{
-		[[viewCtrl menuView] setAlpha:1.0];
-		[[viewCtrl menuView] setNeedsDisplay];
+		// The menu keys are in the third row of the display (> 16), so 
+		// don't bother updateing unless this area of the display has changed.
+		if (height > 16)
+		{
+			[[viewCtrl menuView] setAlpha:1.0];
+			[[viewCtrl menuView] setNeedsDisplay];
+		}
 	}
 	else
 	{  
@@ -272,11 +277,12 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if (!menuActive && core_menu())
 		{
 			menuActive = YES;
-			[[self bgImageView] setImage:bgBlankButtons];
+			[blankButtonsView setAlpha:1.0];
 		}
 		else if (menuActive && !core_menu())
-		{	menuActive = NO;
-			[[self bgImageView] setImage:bgImage];
+		{	
+			menuActive = NO;
+			[blankButtonsView setAlpha:0.0];
 		}
 		
 		
@@ -400,7 +406,7 @@ void shell_request_timeout3(int delay)
 	if (!core_alpha_menu())
 	{
 		[textEntryField resignFirstResponder];
-		[[self bgImageView] setImage:bgImage];
+		[blankButtonsView setAlpha:0.0];
 		menuActive = FALSE;
 		alphaMenuActive = NO;
 	}
