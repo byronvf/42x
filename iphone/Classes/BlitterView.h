@@ -18,6 +18,9 @@
 #import <UIKit/UIKit.h>
 
 @class NavViewController;
+@class BlitterView;
+
+extern BlitterView *blitterView;
 
 @interface BlitterView : UIView {
 

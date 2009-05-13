@@ -955,6 +955,18 @@
 						</object>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 					</object>
+					<object class="IBUIView" id="586780858">
+						<reference key="NSNextResponder" ref="191373211"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{0, 68}, {320, 61}}</string>
+						<reference key="NSSuperview" ref="191373211"/>
+						<object class="NSColor" key="IBUIBackgroundColor">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MSAwAA</bytes>
+						</object>
+						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+						<bool key="IBUIUserInteractionEnabled">NO</bool>
+					</object>
 				</object>
 				<string key="NSFrameSize">{320, 460}</string>
 				<reference key="NSSuperview"/>
@@ -2303,6 +2315,14 @@
 					</object>
 					<int key="connectionID">220</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">menuView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="586780858"/>
+					</object>
+					<int key="connectionID">222</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2326,7 +2346,6 @@
 							<reference ref="682522263"/>
 							<reference ref="299411803"/>
 							<reference ref="834687299"/>
-							<reference ref="778581069"/>
 							<reference ref="760078447"/>
 							<reference ref="527588107"/>
 							<reference ref="473618708"/>
@@ -2338,7 +2357,6 @@
 							<reference ref="311305488"/>
 							<reference ref="255989375"/>
 							<reference ref="752517338"/>
-							<reference ref="605333349"/>
 							<reference ref="1064715112"/>
 							<reference ref="702527048"/>
 							<reference ref="521021290"/>
@@ -2351,7 +2369,6 @@
 							<reference ref="122432444"/>
 							<reference ref="832394867"/>
 							<reference ref="498445119"/>
-							<reference ref="75868913"/>
 							<reference ref="204082929"/>
 							<reference ref="596889203"/>
 							<reference ref="741752231"/>
@@ -2359,6 +2376,10 @@
 							<reference ref="726885872"/>
 							<reference ref="767015456"/>
 							<reference ref="1071449393"/>
+							<reference ref="75868913"/>
+							<reference ref="778581069"/>
+							<reference ref="605333349"/>
+							<reference ref="586780858"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -2614,6 +2635,12 @@
 						<reference key="object" ref="765481828"/>
 						<reference key="parent" ref="741752231"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">221</int>
+						<reference key="object" ref="586780858"/>
+						<reference key="parent" ref="191373211"/>
+						<string key="objectName">menuView</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2639,6 +2666,8 @@
 					<string>21.IBPluginDependency</string>
 					<string>216.IBPluginDependency</string>
 					<string>22.IBPluginDependency</string>
+					<string>221.CustomClassName</string>
+					<string>221.IBPluginDependency</string>
 					<string>23.IBPluginDependency</string>
 					<string>24.IBPluginDependency</string>
 					<string>25.IBPluginDependency</string>
@@ -2672,7 +2701,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{705, 121}, {320, 460}}</string>
+					<string>{{553, 92}, {320, 460}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2690,6 +2719,8 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>MenuView</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -2741,7 +2772,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">220</int>
+			<int key="maxID">222</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2813,6 +2844,7 @@
 							<string>b37</string>
 							<string>bgImageView</string>
 							<string>blitterView</string>
+							<string>menuView</string>
 							<string>navViewController</string>
 							<string>screen</string>
 							<string>textEntryField</string>
@@ -2858,6 +2890,7 @@
 							<string>UIButton</string>
 							<string>UIImageView</string>
 							<string>BlitterView</string>
+							<string>MenuView</string>
 							<string>NavViewController</string>
 							<string>UILabel</string>
 							<string>UITextField</string>
@@ -2893,6 +2926,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Classes/ConfigViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MenuView</string>
+					<string key="superclassName">UIView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Classes/MenuView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

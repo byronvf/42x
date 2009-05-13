@@ -22,18 +22,7 @@
 #import "NavViewController.h"
 #import "CalcViewController.h"
 
-
 BlitterView *blitterView; // Reference to this blitter so we can access from C methods
-
-static const char *buff;
-void shell_blitter(const char *bits, int bytesperline, int x, int y,
-				   int width, int height)
-{
-	// We don't take advantage of the additional clipping information, but
-	// I don't think this is an issue given the iPhone's hardware display support.
-	buff = bits;
-	[blitterView setNeedsDisplay];
-}
 
 static BOOL flagUpDown = false;
 static BOOL flagShift = false;
@@ -126,8 +115,8 @@ void drawAnnunciators(CGContextRef ctx)
 	// 2.3 - horz scale factor
 	// 3.0 - vert scale factor
 	
-	drawBlitterDataToContext(ctx, buff, 8, 18, 16, 17, 2.3, 3.0);
-	drawAnnunciators(ctx);	
+	drawBlitterDataToContext(ctx, displayBuff, 8, 18, 16, 17, 2.3, 3.0, -1, 17*8, 0);
+	drawAnnunciators(ctx);
 }
 
 

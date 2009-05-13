@@ -20,8 +20,11 @@
 
 @class TonePlayer;
 @class NavViewController;
+@class MenuView;
 
 extern int callKeydownAgain;
+extern const char *displayBuff;
+extern const char *menuBuff;
 
 @interface CalcViewController : UIViewController {
     IBOutlet UILabel *screen;
@@ -72,12 +75,14 @@ extern int callKeydownAgain;
 	IBOutlet BlitterView *blitterView;
 	IBOutlet UIImageView *bgImageView;	
 	IBOutlet NavViewController* navViewController;
+	IBOutlet MenuView *menuView;
 	
 	TonePlayer* tonePlayer;		
 }
 
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
+@property (nonatomic, retain) MenuView *menuView;
 @property (nonatomic, retain) UIImage *bgBlankButtons;
 @property (nonatomic, retain) UIImage *bgImage;
 @property (nonatomic, retain) NavViewController* navViewController;

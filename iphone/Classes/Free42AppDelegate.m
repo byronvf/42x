@@ -23,6 +23,10 @@
 #import "PrintViewController.h"
 
 
+// Base name of 42s state file name, this will be prepended by the home directory
+static NSString* stateBaseName = @"/Documents/42s.state";
+
+// File discriptor for the statefile
 static FILE *statefile;
 
 // If we are loading from the old style state method NSUserDefaults
@@ -117,7 +121,7 @@ bool shell_write_saved_state(const void *buf, int4 nbytes)
 		int4 n = fwrite(buf, 1, nbytes, statefile);
 		if (n != nbytes) {
 			fclose(statefile);
-			NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+			NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 			remove([statepath UTF8String]);
 			statefile = NULL;
 			return false;
@@ -132,7 +136,15 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		// Backward compatibility
+		if (bufsize == 408)
+		{
+			// We do this to convert the file state format from the old version
+			// to the new version that stores 3 lines of display.
+			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
+			memset((char*)buf+272, 0, 136);
+			return 408;
+		}
+		
 		return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
 	}
 	
@@ -202,6 +214,7 @@ NSString* CONFIG_BEEP_ON = @"beepOn";
 NSString* CONFIG_KEYBOARD = @"keyboardOn";
 NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
 NSString* CONFIG_PRINT_BUF = @"printBuf";
+NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 
 - (void)loadSettings
 {
@@ -227,6 +240,11 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 	else
 		[[Settings instance] setAutoPrintOn:TRUE];
 	
+	if ([defaults objectForKey:CONFIG_MENU_KEYS_BUF])
+		menuKeys = [defaults boolForKey:CONFIG_MENU_KEYS_BUF];
+	else
+		menuKeys = TRUE;	
+	
 	if ([defaults objectForKey:CONFIG_PRINT_BUF])
     {
 		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
@@ -244,6 +262,7 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 	[defaults setBool:[[Settings instance] clickSoundOn] forKey:CONFIG_KEY_CLICK_ON];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] autoPrintOn] forKey:CONFIG_AUTO_PRINT_ON];
+	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 
 	NSMutableData *pbuf = [[navViewController printViewController] printBuff];
 	[defaults setObject:pbuf forKey:@"printBuf"];
@@ -252,7 +271,7 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {	
 	
-	NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 	statefile = fopen([statepath UTF8String], "r");
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
@@ -312,7 +331,7 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 		[defaults removeObjectForKey:STATE_KEY];		
 	}
 	
-	NSString *statepath = [NSHomeDirectory() stringByAppendingString:@"/Documents/state"];	
+	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
     statefile = fopen([statepath UTF8String], "w");	
     core_quit();
     fclose(statefile);	

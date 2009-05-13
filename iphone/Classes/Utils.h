@@ -18,7 +18,7 @@
 #import <UIKit/UIKit.h>
 
 void drawBlitterDataToContext(CGContextRef ctx, const char* data, int xoffset, 
-			int yoffset, int height, int byte_width, float xscale, float yscale);
+			int yoffset, int height, int byte_width, float xscale, float yscale, int hl, int hr, int inv);
 
 
 void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to 

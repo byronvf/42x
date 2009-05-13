@@ -85,6 +85,7 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 @synthesize navViewController;
 @synthesize bgBlankButtons;
 @synthesize bgImage;
+@synthesize menuView;
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically
@@ -123,9 +124,13 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	bgBlankButtons  = [UIImage imageNamed:@"Default-BlankTop.png"];
 	bgImage = [bgImageView image];
 	menuActive = core_menu();
-	if (menuActive)
+	if (menuActive && menuKeys)
 	{
 	  [[self bgImageView] setImage:bgBlankButtons];
+	}
+	else
+	{
+		[menuView setAlpha:0.0];
 	}
 	
 	//tonePlayer = [[TonePlayer alloc] init];
@@ -138,8 +143,32 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
-	// UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Allert" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
-	// [alert show];
+}
+
+
+const char *displayBuff;
+const char *menuBuff;
+
+void shell_blitter(const char *bits, int bytesperline, int x, int y,
+				   int width, int height)
+{	
+	// We don't take advantage of the additional clipping information, but
+	// I don't think this is an issue given the iPhone's hardware display support.
+	// displayBuff = bits + 136 - 68;
+	displayBuff = bits;
+	menuBuff = bits + 272 + 17*2;
+	[blitterView setNeedsDisplay];
+	
+	if (!viewCtrl) return;
+	if (core_menu() && menuKeys)
+	{
+		[[viewCtrl menuView] setAlpha:1.0];
+		[[viewCtrl menuView] setNeedsDisplay];
+	}
+	else
+	{  
+		[[viewCtrl menuView] setAlpha:0.0];
+	} 
 }
 
 
@@ -371,6 +400,8 @@ void shell_request_timeout3(int delay)
 	if (!core_alpha_menu())
 	{
 		[textEntryField resignFirstResponder];
+		[[self bgImageView] setImage:bgImage];
+		menuActive = FALSE;
 		alphaMenuActive = NO;
 	}
 		

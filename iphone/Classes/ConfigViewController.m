@@ -18,6 +18,7 @@
 #import "ConfigViewController.h"
 #import "Settings.h"
 #import "NavViewController.h"
+#import "core_main.h"
 
 @implementation ConfigViewController
 
@@ -25,9 +26,12 @@
 @synthesize beepSoundSwitch;
 @synthesize keyboardSwitch;
 @synthesize autoPrintSwitch;
+@synthesize menuKeysSwitch;
 @synthesize gotoServerButton;
 
 @synthesize navViewController;
+
+int menuKeys;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
@@ -53,7 +57,8 @@
 	[clickSoundSwitch setOn:[[Settings instance] clickSoundOn]];	
 	[beepSoundSwitch setOn:[[Settings instance] beepSoundOn]];	
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
-	[autoPrintSwitch setOn:[[Settings instance] autoPrintOn]];	
+	[autoPrintSwitch setOn:[[Settings instance] autoPrintOn]];
+	[menuKeysSwitch setOn:menuKeys];
 }
 
 - (void)buttonUp:(UISwitch*)sender
@@ -73,7 +78,12 @@
 	else if (sender == autoPrintSwitch)
 	{
 		[[Settings instance] setAutoPrintOn:[sender isOn]];
-	}	
+	}
+	else if (sender == menuKeysSwitch)
+	{
+		menuKeys = [sender isOn];
+		core_repaint_display();
+	}
 }
 
 - (void)buttonDown:(UIButton*)sender

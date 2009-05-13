@@ -20,6 +20,8 @@
 
 @class NavViewController;
 
+extern int menuKeys;
+
 @interface ConfigViewController : UIViewController {
 	IBOutlet UISwitch* clickSoundSwitch;
 	IBOutlet UISwitch* beepSoundSwitch;
@@ -27,9 +29,11 @@
 	IBOutlet UISwitch* autoPrintSwitch;
 	NavViewController* navViewController;
 	IBOutlet UIButton* gotoServerButton;
+	IBOutlet UISwitch* menuKeysSwitch;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
+@property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* autoPrintSwitch;

@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with 42s.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <math.h>
 #import "Utils.h"
-
 
 /**
  * Draw a bitmap image in data to a CGContext. data points to a one bit per pixel data buffer
@@ -30,7 +30,10 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
 		 int height,         // pixel height of data in the data buffer.
 		 int byte_width,     // number of bytes per row
 		 float xscale,       // horz scale factor when blitting to context							  
-		 float yscale)       // vert scale factor when blitting to context
+		 float yscale,       // vert scale factor when blitting to context
+         int hlclip,         // horz clip, left
+		 int hrclip,         // horz clip, right
+         int inv)            // If we should draw inverse
 {
 	// We draw free42's display to the context, then we scale it
 	// to fit
@@ -46,7 +49,7 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
 			for (int bcnt = 0; bcnt < 8; bcnt++)
 			{				
 				int isset = byte&1;
-				if (isset)
+				if ((isset^inv) && xpos > hlclip && xpos < hrclip)
 				{
 					int ypos = h;
 					// Strange that CG provides no way to set a single
