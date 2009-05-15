@@ -46,8 +46,10 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
 		for(int w=0; w < byte_width; w++)
 		{
 			char byte = data[h*byte_width + w];
-			for (int bcnt = 0; bcnt < 8; bcnt++)
-			{				
+			if (byte)  // Quick test to see if we even need to display anything in the byte
+			{
+  			for (int bcnt = 0; bcnt < 8; bcnt++)
+ 			{				
 				int isset = byte&1;
 				if ((isset^inv) && xpos > hlclip && xpos < hrclip)
 				{
@@ -58,6 +60,11 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
 				}
 				byte >>= 1;
 				xpos += 1;
+			}
+			}
+			else
+			{
+				xpos += 8;
 			}
 		}
 	}	

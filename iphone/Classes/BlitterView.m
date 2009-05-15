@@ -29,8 +29,11 @@ static BOOL flagShift = false;
 static BOOL flagGrad = false;
 static BOOL flagRad = false;
 static BOOL flagRun = false;
-//static BOOL flagPrint = false;
 
+/**
+ * Returns the new value of 'flag' based on the value of 'code' based
+ * on values passed in from shell_annuciators
+ */ 
 BOOL setFlag(BOOL flag, int code)
 {
 	if (code == 1)
@@ -48,7 +51,9 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagGrad = setFlag(flagGrad, g);
 	flagRad = setFlag(flagRad, rad) && !flagGrad;
 	flagRun = setFlag(flagRun, run);
-	[blitterView setNeedsDisplay];
+
+	// Only update the flags region of the display
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
 		
 	if (shf != -1)
 	{
@@ -60,34 +65,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 			[[blitterView shiftButton] setImage:NULL forState:NULL];
 	}
 }
-
-/**
- * Draw Free42's annunciators, such as shift flag, to the top line of the
- * blitter display.
- */
-void drawAnnunciators(CGContextRef ctx)
-{
-	if (flagUpDown)
-		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), [blitterView imgFlagUpDown]);
-	
-	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18), [blitterView imgFlagShift]);
-	
-	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18), [blitterView imgFlagPrint]);	
-
-	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18), [blitterView imgFlagRun]);	
-	
-	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), [blitterView imgFlagGrad]);
-		
-	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20), [blitterView imgFlagRad]);	
-
-}	
-
-static int hMax = 16;
 
 /**
  * The blitterView manages the calculators digital display
@@ -103,10 +80,10 @@ static int hMax = 16;
 @synthesize navViewController;
 @synthesize shiftButton;
 
-
 - (void)awakeFromNib
 {	
 	// Initialization code
+	blitterView = self; // We need a reference to this view outside the class
 	imgFlagUpDown = [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage];
 	imgFlagShift = [[UIImage imageNamed:@"imgFlagShift.png"] CGImage];
 	imgFlagGrad = [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage];
@@ -117,30 +94,54 @@ static int hMax = 16;
 
 
 /**
- * Set the lowest bounds to clip on the next redisplay, we always draw from
- * horz position 0, to hMax.  We do this so we don't redraw the whole display
- * if we don't have to.
+ * Draw Free42's annunciators, such as shift flag, to the top line of the
+ * blitter display.
  */
-- (void)setViewRedisplayLowerClip:(int)horzMax
+- (void) drawAnnunciators
 {
-	if (horzMax > hMax) hMax = horzMax;
-}
-
-- (void)drawRect:(CGRect)rect {	
-	blitterView = self;  // This is a dumb place to initialize this var, but not sure where else...
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	// 8 - horz pixel offset
-	// 18 - vert pixel offset to begin drawing.
-	// 16 - pixel height of display
-	// 17 - number of bytes per line, each byte is an 8 pixel bit map. 
-	// 2.3 - horz scale factor
-	// 3.0 - vert scale factor
+	if (flagUpDown)
+		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), [blitterView imgFlagUpDown]);
 	
-	drawBlitterDataToContext(ctx, displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
-	drawAnnunciators(ctx);
-	hMax = 16;  // We always reset hMax to redisplay the entire screen to be safe.
+	if (flagShift)
+		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18), [blitterView imgFlagShift]);
+	
+	if (printingStarted)
+		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18), [blitterView imgFlagPrint]);	
+	
+	if (flagRun)
+		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18), [blitterView imgFlagRun]);	
+	
+	if (flagGrad)
+		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), [blitterView imgFlagGrad]);
+	
+	if (flagRad)
+		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20), [blitterView imgFlagRad]);		
+}	
+
+- (void)drawRect:(CGRect)rect {	
+	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
+
+	if (rect.origin.y < 18) 
+		[self drawAnnunciators];	
+	
+	if (rect.origin.y + rect.size.height > 18)
+	{
+		// 8 - horz pixel offset
+		// 18 - vert pixel offset to begin drawing.
+		// hMax - pixel height of display
+		// 17 - number of bytes per line, each byte is an 8 pixel bit map. 
+		// 2.3 - horz scale factor
+		// 3.0 - vert scale factor
+				
+		int hMax = ((rect.origin.y - 18) + rect.size.height)/3;
+		if (hMax > 16) hMax = 16;
+		drawBlitterDataToContext(ctx, displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
+	}
+	
 }
 
 

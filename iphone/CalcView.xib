@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1"/>
+			<integer value="175"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -848,6 +848,7 @@
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC43OTA3NDU2OCAxIDAuNzUwMDE5MDEgMAA</bytes>
 						</object>
+						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 					</object>
 					<object class="IBUIImageView" id="28959429">
@@ -2289,7 +2290,6 @@
 							<reference ref="498445119"/>
 							<reference ref="204082929"/>
 							<reference ref="596889203"/>
-							<reference ref="741752231"/>
 							<reference ref="366006359"/>
 							<reference ref="726885872"/>
 							<reference ref="767015456"/>
@@ -2299,6 +2299,7 @@
 							<reference ref="778581069"/>
 							<reference ref="28959429"/>
 							<reference ref="15774718"/>
+							<reference ref="741752231"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -2627,7 +2628,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{79, 45}, {320, 460}}</string>
+					<string>{{75, 105}, {320, 460}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>

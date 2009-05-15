@@ -154,8 +154,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 {	
 	displayBuff = bits;
 	menuBuff = bits + 272 + 17*2;
-	[blitterView setViewRedisplayLowerClip:height];
-	[blitterView setNeedsDisplay];
+	
+	// Indicate that the blitter view needs to update the given region,
+	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
+	// The 18 is the base offset into the display, pass the flags row
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3)];
 	
 	// If the viewCtrl is not initialized yet, don't try and use it
 	if (!viewCtrl) return;
@@ -164,7 +167,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		// The menu keys are in the third row of the display (> 16), so 
 		// don't bother updateing unless this area of the display has changed.
-		if (height > 16)
+		if (height + y > 16)
 		{
 			[[viewCtrl menuView] setAlpha:1.0];
 			[[viewCtrl menuView] setNeedsDisplay];
