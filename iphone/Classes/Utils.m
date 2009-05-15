@@ -73,8 +73,6 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
     CGContextRestoreGState(ctx);	
 }
 
-
-
 void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to 
 							  const char* data,   // data buffer to read from, size is in bytes is height*byte_width
 							  int xoffset,        // horz offset for drawing to the context
