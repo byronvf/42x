@@ -48,13 +48,14 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagGrad = setFlag(flagGrad, g);
 	flagRad = setFlag(flagRad, rad) && !flagGrad;
 	flagRun = setFlag(flagRun, run);
-	//flagPrint = setFlag(flagPrint, prt);
 	[blitterView setNeedsDisplay];
-	
+		
 	if (shf != -1)
 	{
 		if (flagShift)
-			[[blitterView shiftButton] setImage:[blitterView imgShiftGlow] forState:NULL];
+		{
+			[[blitterView shiftButton] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
+		}
 		else
 			[[blitterView shiftButton] setImage:NULL forState:NULL];
 	}
@@ -99,9 +100,20 @@ static int hMax = 16;
 @synthesize imgFlagRad;
 @synthesize imgFlagRun;
 @synthesize imgFlagPrint;
-@synthesize imgShiftGlow;
 @synthesize navViewController;
 @synthesize shiftButton;
+
+
+- (void)awakeFromNib
+{	
+	// Initialization code
+	imgFlagUpDown = [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage];
+	imgFlagShift = [[UIImage imageNamed:@"imgFlagShift.png"] CGImage];
+	imgFlagGrad = [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage];
+	imgFlagRad = [[UIImage imageNamed:@"imgFlagRad.png"] CGImage];
+	imgFlagRun = [[UIImage imageNamed:@"imgFlagRun.png"] CGImage];
+	imgFlagPrint = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
+}
 
 
 /**
@@ -113,7 +125,6 @@ static int hMax = 16;
 {
 	if (horzMax > hMax) hMax = horzMax;
 }
-
 
 - (void)drawRect:(CGRect)rect {	
 	blitterView = self;  // This is a dumb place to initialize this var, but not sure where else...
@@ -137,7 +148,6 @@ static int hMax = 16;
  * The following two event handlers implement the swiping of the display 
  * to switch to the print view.  If the touches are far enough apart, then we switch 
  */
-
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	// If we are currently in the process of printing, then we don't allow flipping 

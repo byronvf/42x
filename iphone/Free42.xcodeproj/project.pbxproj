@@ -50,7 +50,7 @@
 		ED559B6A0EB6089B0060A929 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = ED559B690EB6089B0060A929 /* Default.png */; };
 		ED56CBE20EB5C5E6006B9130 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = ED56CBE10EB5C5E6006B9130 /* icon.png */; };
 		ED581CB70EB7622900B0E61F /* TonePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ED581CB60EB7622900B0E61F /* TonePlayer.m */; };
-		ED63D3C40EBAA93C004FE0D8 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED63D3C30EBAA93C004FE0D8 /* glow.png */; };
+		ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED5F1AC70FBCB72A00ABACC2 /* glow.png */; };
 		ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = ED69AAD60F13F6A8001B6C1A /* COPYING */; };
 		EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */; };
 		EDA9BB2D0EB3B66F00D30EA2 /* beep_04.wav in Resources */ = {isa = PBXBuildFile; fileRef = EDA9BB2C0EB3B66F00D30EA2 /* beep_04.wav */; };
@@ -149,7 +149,7 @@
 		ED56CBE10EB5C5E6006B9130 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		ED581CB60EB7622900B0E61F /* TonePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TonePlayer.m; sourceTree = "<group>"; };
 		ED581CB80EB7623100B0E61F /* TonePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TonePlayer.h; sourceTree = "<group>"; };
-		ED63D3C30EBAA93C004FE0D8 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
+		ED5F1AC70FBCB72A00ABACC2 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
 		ED69AAD60F13F6A8001B6C1A /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		EDA9BB2C0EB3B66F00D30EA2 /* beep_04.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beep_04.wav; sourceTree = "<group>"; };
@@ -254,9 +254,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				ED5F1AC70FBCB72A00ABACC2 /* glow.png */,
 				EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */,
 				ED69AAD60F13F6A8001B6C1A /* COPYING */,
-				ED63D3C30EBAA93C004FE0D8 /* glow.png */,
 				ED08B0730EB940F300D368A2 /* imgFlagPrint.png */,
 				ED559B690EB6089B0060A929 /* Default.png */,
 				ED56CBE10EB5C5E6006B9130 /* icon.png */,
@@ -402,10 +402,10 @@
 				ED56CBE20EB5C5E6006B9130 /* icon.png in Resources */,
 				ED559B6A0EB6089B0060A929 /* Default.png in Resources */,
 				ED08B0740EB940F300D368A2 /* imgFlagPrint.png in Resources */,
-				ED63D3C40EBAA93C004FE0D8 /* glow.png in Resources */,
 				ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */,
 				ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */,
 				EDDA2FCB0FB810FC00B9D002 /* Default-BlankTop.png in Resources */,
+				ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,7 +490,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "84F05523-690A-4A8F-86E1-33E15E61422F";
+				PROVISIONING_PROFILE = "CB7F922C-950A-447D-8BC4-2CCC93F8AC18";
 			};
 			name = Debug;
 		};

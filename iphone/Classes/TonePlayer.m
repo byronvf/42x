@@ -40,9 +40,6 @@ static void toneBufferCallback( void* userData, AudioQueueRef queue, AudioQueueB
 	}
 }
 
-
-
-
 @implementation TonePlayer
 
 @synthesize frequency;

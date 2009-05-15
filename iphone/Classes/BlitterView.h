@@ -30,7 +30,6 @@ extern BlitterView *blitterView;
 	CGImageRef imgFlagRad;
 	CGImageRef imgFlagRun;
 	CGImageRef imgFlagPrint;
-	UIImage* imgShiftGlow;
 	NavViewController* navViewController;
 	
 	UIButton* shiftButton;
@@ -45,7 +44,6 @@ extern BlitterView *blitterView;
 @property CGImageRef imgFlagRad;
 @property CGImageRef imgFlagRun;
 @property CGImageRef imgFlagPrint;
-@property (nonatomic, retain) UIImage* imgShiftGlow;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
 

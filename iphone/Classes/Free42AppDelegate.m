@@ -190,25 +190,6 @@ bool prgmFirstWrite = TRUE;
 @synthesize viewController;
 @synthesize navViewController;
 
-- (void)loadAnnunciatorImages
-{
-	CGImageRef image  = [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage];
-	[[viewController blitterView] setImgFlagUpDown:image];
-	image  = [[UIImage imageNamed:@"imgFlagShift.png"] CGImage];
-	[[viewController blitterView] setImgFlagShift:image];
-	image  = [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage];
-	[[viewController blitterView] setImgFlagGrad:image];
-	image  = [[UIImage imageNamed:@"imgFlagRad.png"] CGImage];
-	[[viewController blitterView] setImgFlagRad:image];
-	image  = [[UIImage imageNamed:@"imgFlagRun.png"] CGImage];
-	[[viewController blitterView] setImgFlagRun:image];
-	image  = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
-	[[viewController blitterView] setImgFlagPrint:image];
-	image  = [[UIImage imageNamed:@"glow.png"] CGImage];
-	[[viewController blitterView] setImgShiftGlow:[UIImage imageWithCGImage:image]];	
-}
-
-
 NSString* CONFIG_KEY_CLICK_ON = @"keyClickOn";
 NSString* CONFIG_BEEP_ON = @"beepOn";
 NSString* CONFIG_KEYBOARD = @"keyboardOn";
@@ -299,9 +280,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	[navViewController setDelegate:navViewController];
     [window addSubview: [navViewController view]];
 	[window makeKeyAndVisible];
-	
-	[self loadAnnunciatorImages];
-		
+			
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"click" ofType:@"wav"];
 	OSStatus status = AudioServicesCreateSystemSoundID(
 			    (CFURLRef)[NSURL  fileURLWithPath:path], &[Settings instance]->clickSoundId);
