@@ -212,7 +212,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 		// We use the printingStarted flag to turn on the and off the print aunnunciator
 		// since it is off now, we want to redisplay.
-		[blitterView setNeedsDisplay];
+		[blitterView annuncNeedsDisplay];
 		
 		if ([[Settings instance] autoPrintOn])
 			[navViewController switchToPrintView];
@@ -227,6 +227,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 {
 	// Play click sound
 	if ([[Settings instance] clickSoundOn])
+		//AudioServicesPlaySystemSound(1105);
 		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
 	
 	int keynum = (int)[sender tag];
@@ -254,9 +255,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		// key function.
 		[self performSelector:@selector(keyTimerEvent1) withObject:NULL afterDelay:0.25];
 	}
-		
-	// Tests if in enqueMode and if so, call core_keydown again
-	//[self keepRunning];
 }
 
 
@@ -275,24 +273,24 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		callKeydownAgain = core_keyup();
 	}
 		
-	if ([[Settings instance] keyboardOn])
+	if (!menuActive && core_menu())
 	{
-		if (!menuActive && core_menu())
-		{
-			menuActive = YES;
-			[blankButtonsView setAlpha:1.0];
-		}
-		else if (menuActive && !core_menu())
-		{	
-			menuActive = NO;
-			[blankButtonsView setAlpha:0.0];
-		}
-		
-		
+		menuActive = YES;
+		[blankButtonsView setAlpha:1.0];
+	}
+	else if (menuActive && !core_menu())
+	{	
+		menuActive = NO;
+		[blankButtonsView setAlpha:0.0];
+	}
+	
+	if ([[Settings instance] keyboardOn])
+	{		
 		if( !alphaMenuActive && core_alpha_menu())
 		{
 			alphaMenuActive = YES;
 			[textEntryField becomeFirstResponder];
+			textEntryField.text = @"";
 		}
 		else if( alphaMenuActive && !core_alpha_menu())
 		{
@@ -379,7 +377,7 @@ void shell_request_timeout3(int delay)
 {
 	int repeat;
 	
-	if( 0 == targetRange.length)
+	if(newString.length != 0)
 	{
 		// We are inserting a character
 		unichar newChar = [newString characterAtIndex:0];
@@ -387,23 +385,20 @@ void shell_request_timeout3(int delay)
 		{
 			// Adding an alpha character
 			core_keydown(newChar + 1024, &enqueued, &repeat);
-			if( !enqueued)
-			{ core_keyup(); }
+			if( !enqueued) core_keyup();
 		}
 		else if( '\n' == newChar)
 		{
 			// End the edit
 			core_keydown(KEY_ENTER, &enqueued, &repeat);
-			if( !enqueued)
-			{ core_keyup(); }
+			if( !enqueued) core_keyup();
 		}
 	}
 	else
 	{
 		// We are deleting a character
 		core_keydown(KEY_BSP, &enqueued, &repeat);
-		if( !enqueued)
-		{ core_keyup(); }
+		if( !enqueued) core_keyup();
 	}
 	
 	if (!core_alpha_menu())

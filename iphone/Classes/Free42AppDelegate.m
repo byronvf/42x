@@ -48,7 +48,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	cpuCount = 1;
+	cpuCount = 10;
 	return 1;
 }
 

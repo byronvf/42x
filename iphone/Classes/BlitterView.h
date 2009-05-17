@@ -48,5 +48,6 @@ extern BlitterView *blitterView;
 @property (nonatomic, retain) UIButton* shiftButton;
 
 - (void) drawAnnunciators;
+- (void) annuncNeedsDisplay;
 
 @end

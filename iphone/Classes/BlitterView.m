@@ -53,7 +53,7 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagRun = setFlag(flagRun, run);
 
 	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
+	[blitterView annuncNeedsDisplay];
 		
 	if (shf != -1)
 	{
@@ -93,6 +93,12 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 }
 
 
+- (void) annuncNeedsDisplay
+{
+	// Only update the flags region of the display
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];	
+}
+
 /**
  * Draw Free42's annunciators, such as shift flag, to the top line of the
  * blitter display.
@@ -121,7 +127,8 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20), [blitterView imgFlagRad]);		
 }	
 
-- (void)drawRect:(CGRect)rect {	
+- (void)drawRect:(CGRect)rect 
+{	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
