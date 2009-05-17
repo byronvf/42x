@@ -49,7 +49,6 @@
 		ED3DFAB80E5308B0000044AF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED3DFAB70E5308B0000044AF /* CoreGraphics.framework */; };
 		ED559B6A0EB6089B0060A929 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = ED559B690EB6089B0060A929 /* Default.png */; };
 		ED56CBE20EB5C5E6006B9130 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = ED56CBE10EB5C5E6006B9130 /* icon.png */; };
-		ED581CB70EB7622900B0E61F /* TonePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ED581CB60EB7622900B0E61F /* TonePlayer.m */; };
 		ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED5F1AC70FBCB72A00ABACC2 /* glow.png */; };
 		ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = ED69AAD60F13F6A8001B6C1A /* COPYING */; };
 		EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */; };
@@ -147,8 +146,6 @@
 		ED3DFAB70E5308B0000044AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		ED559B690EB6089B0060A929 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		ED56CBE10EB5C5E6006B9130 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		ED581CB60EB7622900B0E61F /* TonePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TonePlayer.m; sourceTree = "<group>"; };
-		ED581CB80EB7623100B0E61F /* TonePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TonePlayer.h; sourceTree = "<group>"; };
 		ED5F1AC70FBCB72A00ABACC2 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
 		ED69AAD60F13F6A8001B6C1A /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -193,8 +190,6 @@
 			isa = PBXGroup;
 			children = (
 				ED3DFA250E52E912000044AF /* shell.m */,
-				ED581CB80EB7623100B0E61F /* TonePlayer.h */,
-				ED581CB60EB7622900B0E61F /* TonePlayer.m */,
 				ED26D2630F6AB70E00F285A2 /* ServerViewController.h */,
 				ED26D2640F6AB70E00F285A2 /* ServerViewController.m */,
 				1D3623240D0F684500981E51 /* Free42AppDelegate.h */,
@@ -464,7 +459,6 @@
 				EDA9BBCE0EB49EEF00D30EA2 /* PrintViewController.m in Sources */,
 				EDA9BBE80EB4A49400D30EA2 /* Utils.m in Sources */,
 				ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */,
-				ED581CB70EB7622900B0E61F /* TonePlayer.m in Sources */,
 				ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */,
 				ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */,
 				ED0C58E00F88940B00C2BD7C /* icons.c in Sources */,

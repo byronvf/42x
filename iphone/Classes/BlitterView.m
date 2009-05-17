@@ -17,6 +17,7 @@
 
 #import "BlitterView.h"
 #import "Utils.h"
+#import "core_main.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -171,13 +172,40 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		}
 		else if (firstTouchXPos - [touch locationInView:self].x > 60)
 		{
+			firstTouchXPos = 0;
 			[[self navViewController] switchToPrintView];
 		}
 	}
 }
 
+char cbuf[30];
+- (void)copy:(id)sender {
+	core_copy(cbuf, 30);
+	NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	pb.string = copyStr;
+}
+
+- (void)paste:(id)sender {
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
+}
+
+
+- (BOOL) canBecomeFirstResponder {
+	return YES;
+}
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    UITouch *touch = [touches anyObject];
+    if (touch.tapCount == 2 && [self becomeFirstResponder]) {
+        CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
+        UIMenuController *mc = [UIMenuController sharedMenuController];
+        [mc setTargetRect:targetRect inView:self];
+        [mc setMenuVisible:YES animated:YES];
+    }	
+			
 	firstTouchXPos = 0;	
 }
 
