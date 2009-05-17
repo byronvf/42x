@@ -196,6 +196,13 @@ char cbuf[30];
 	return YES;
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UIMenuController *mc = [UIMenuController sharedMenuController];
+	if (mc.menuVisible) mc.menuVisible = FALSE;					
+}
+
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *touch = [touches anyObject];
@@ -204,7 +211,7 @@ char cbuf[30];
         UIMenuController *mc = [UIMenuController sharedMenuController];
         [mc setTargetRect:targetRect inView:self];
         [mc setMenuVisible:YES animated:YES];
-    }	
+    }
 			
 	firstTouchXPos = 0;	
 }
