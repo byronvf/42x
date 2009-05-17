@@ -272,7 +272,8 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 
 	[self loadSettings];
 	
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
 
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
