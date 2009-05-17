@@ -232,8 +232,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 		NSMutableData *pbuf = [[NSMutableData alloc] init];
 		[pbuf setData:data];
 		[[navViewController printViewController] setPrintBuff:pbuf];
-	}
-	
+	}	
 }
 
 - (void)saveSettings
@@ -300,7 +299,6 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-
 	if (oldStyleStateExists)
 	{
      	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];		

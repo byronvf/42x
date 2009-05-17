@@ -22,7 +22,6 @@
 #import "PrintViewController.h"
 #import "NavViewController.h"
 #import "core_globals.h"
-#import "TonePlayer.h"
 
 const float SLOW_KEY_REPEAT_RATE = 0.2;  // Slow key repeat rate in seconds
 const float FAST_KEY_REPEAT_RATE = 0.1;  // Fast key repeat rate in seconds
