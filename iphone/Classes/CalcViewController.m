@@ -224,6 +224,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	// If a hightlight is active for cut and past, turn it off
+	// Woud be nice to get a notification when cut/paste menu goes
+	// away, but couldn't get it to work, so this kludge.
+	blitterView.highlight = FALSE;
+	
 	// Play click sound
 	if ([[Settings instance] clickSoundOn])
 		//AudioServicesPlaySystemSound(1105);

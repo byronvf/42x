@@ -80,6 +80,7 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 @synthesize imgFlagPrint;
 @synthesize navViewController;
 @synthesize shiftButton;
+@synthesize highlight;
 
 - (void)awakeFromNib
 {	
@@ -91,6 +92,8 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	imgFlagRad = [[UIImage imageNamed:@"imgFlagRad.png"] CGImage];
 	imgFlagRun = [[UIImage imageNamed:@"imgFlagRun.png"] CGImage];
 	imgFlagPrint = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
+	highlight = FALSE;
+	xRowHighlight = CGRectMake(28, 42, 284, 24); // Hightlight for x region
 }
 
 
@@ -131,6 +134,13 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 - (void)drawRect:(CGRect)rect 
 {	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	
+	if (highlight)
+	{
+		CGContextSetRGBFillColor(ctx, 0.60, 0.8, 1.0, 1.0);
+        CGContextFillRect(ctx, xRowHighlight);
+	}
+	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
 	if (rect.origin.y < 18) 
@@ -167,14 +177,23 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		return;
 	}
 	
-	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 60)
+	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 50)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
 		// to the print screen since the iPhone can't keep up with this, and it just 
 		// hoses up!  maybe this can be improved at some point.
 		firstTouch.x = -1;
 		[[self navViewController] switchToPrintView];		
-	}	
+	}
+	
+	if (firstTouch.y - [touch locationInView:self].y < -50)
+	{
+		//self.frame.size.height = 100;
+		//CGRect tmp = self.bounds;
+		//tmp.size.height = 100;
+		//self.bounds = tmp;
+		//[self setNeedsDisplay];
+	}
 }
 
 char cbuf[30];
@@ -183,13 +202,16 @@ char cbuf[30];
 	NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
 	pb.string = copyStr;
+	[self setNeedsDisplayInRect:xRowHighlight];
+	highlight = FALSE;
 }
 
 - (void)paste:(id)sender {
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
 	core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
+	[self setNeedsDisplayInRect:xRowHighlight];
+	highlight = FALSE;
 }
-
 
 - (BOOL) canBecomeFirstResponder {
 	return YES;
@@ -198,18 +220,21 @@ char cbuf[30];
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UIMenuController *mc = [UIMenuController sharedMenuController];
-	if (mc.menuVisible) mc.menuVisible = FALSE;					
+	if (mc.menuVisible) mc.menuVisible = FALSE;	
+	[self setNeedsDisplayInRect:xRowHighlight];
+	highlight = FALSE;
 }
-
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *touch = [touches anyObject];
     if (touch.tapCount == 2 && [self becomeFirstResponder]) {
-        CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
+        //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
         UIMenuController *mc = [UIMenuController sharedMenuController];
-        [mc setTargetRect:targetRect inView:self];
+        [mc setTargetRect:xRowHighlight inView:self];
         [mc setMenuVisible:YES animated:YES];
+		[self setNeedsDisplayInRect:xRowHighlight];
+		highlight = TRUE;
     }
 			
 	// Reset the swipe mode.

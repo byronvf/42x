@@ -36,6 +36,8 @@ extern BlitterView *blitterView;
 	
 	// keep track of swipe on screen for switching to the print view
 	CGPoint firstTouch;
+	BOOL highlight;
+	CGRect xRowHighlight;
 }
 
 @property CGImageRef imgFlagUpDown;
@@ -44,6 +46,7 @@ extern BlitterView *blitterView;
 @property CGImageRef imgFlagRad;
 @property CGImageRef imgFlagRun;
 @property CGImageRef imgFlagPrint;
+@property BOOL highlight;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
 
