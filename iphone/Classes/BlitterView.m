@@ -159,23 +159,22 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
  */
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	// If we are currently in the process of printing, then we don't allow flipping 
-	// to the print screen since the iPhone can't keep up with this, and it just 
-	// hoses up!  maybe this can be improved at some point.
-	if (!printingStarted)
+	NSArray* touchArray = [touches allObjects];
+	UITouch* touch = [touchArray objectAtIndex:0];
+	if (firstTouch.x == -1)
 	{
-		NSArray* touchArray = [touches allObjects];
-		UITouch* touch = [touchArray objectAtIndex:0];
-		if (firstTouchXPos == 0)
-		{
-			firstTouchXPos = [touch locationInView:self].x;
-		}
-		else if (firstTouchXPos - [touch locationInView:self].x > 60)
-		{
-			firstTouchXPos = 0;
-			[[self navViewController] switchToPrintView];
-		}
+		firstTouch = [touch locationInView:self];
+		return;
 	}
+	
+	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 60)
+	{
+		// If we are currently in the process of printing, then we don't allow flipping 
+		// to the print screen since the iPhone can't keep up with this, and it just 
+		// hoses up!  maybe this can be improved at some point.
+		firstTouch.x = -1;
+		[[self navViewController] switchToPrintView];		
+	}	
 }
 
 char cbuf[30];
@@ -213,7 +212,8 @@ char cbuf[30];
         [mc setMenuVisible:YES animated:YES];
     }
 			
-	firstTouchXPos = 0;	
+	// Reset the swipe mode.
+	firstTouch.x = -1;
 }
 
 @end

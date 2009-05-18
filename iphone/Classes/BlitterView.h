@@ -35,7 +35,7 @@ extern BlitterView *blitterView;
 	UIButton* shiftButton;
 	
 	// keep track of swipe on screen for switching to the print view
-	int firstTouchXPos;
+	CGPoint firstTouch;
 }
 
 @property CGImageRef imgFlagUpDown;
