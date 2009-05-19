@@ -21,6 +21,8 @@
 #import "free42.h"
 #import "Settings.h"
 #import "PrintViewController.h"
+#import <time.h>
+#import <sys/time.h>
 
 
 // Base name of 42s state file name, this will be prepended by the home directory
@@ -48,7 +50,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	cpuCount = 10;
+	cpuCount = 100;
 	return 1;
 }
 
@@ -265,7 +267,12 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	}
 	else
 	{
-   	  core_init(1, FREE42_VERSION);	
+		struct timeval tv, t1;
+		gettimeofday(&tv, NULL);
+		t1 = tv;
+		core_init(1, FREE42_VERSION);	
+		gettimeofday(&tv, NULL);
+		int foo = 4;
 	}
 	
 	if (statefile) fclose(statefile);
