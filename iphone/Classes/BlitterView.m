@@ -21,7 +21,6 @@
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
-#import "CalcViewController.h"
 
 BlitterView *blitterView; // Reference to this blitter so we can access from C methods
 
@@ -79,8 +78,18 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 @synthesize imgFlagRun;
 @synthesize imgFlagPrint;
 @synthesize navViewController;
+@synthesize calcViewController;
 @synthesize shiftButton;
 @synthesize highlight;
+
+- (void)setXHighlight
+{
+	// BaseRowHighlight is the starting first row of the display
+	// 3 for the display scale factor of 3
+	// 8 each row contains 8 pixel columns
+	xRowHighlight = baseRowHighlight;
+	xRowHighlight.origin.y += (dispRows - (core_menu() && ! menuKeys ? 2 : 1))*3*8;
+}
 
 - (void)awakeFromNib
 {	
@@ -93,9 +102,11 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	imgFlagRun = [[UIImage imageNamed:@"imgFlagRun.png"] CGImage];
 	imgFlagPrint = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
 	highlight = FALSE;
-	xRowHighlight = CGRectMake(28, 42, 284, 24); // Hightlight for x region
+	
+	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
+	[self setXHighlight];
+	firstTouch.x = -1;
 }
-
 
 - (void) annuncNeedsDisplay
 {
@@ -156,12 +167,13 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		// 3.0 - vert scale factor
 				
 		int hMax = ((rect.origin.y - 18) + rect.size.height)/3;
-		if (hMax > 16) hMax = 16;
-		drawBlitterDataToContext(ctx, displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
+		if (hMax > dispRows*8) hMax = dispRows*8;
+		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
 	}
 	
 }
 
+extern void redisplay();
 
 /*
  * The following two event handlers implement the swiping of the display 
@@ -175,25 +187,51 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	{
 		firstTouch = [touch locationInView:self];
 		return;
-	}
-	
-	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 50)
+	}	
+	else if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 50)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
 		// to the print screen since the iPhone can't keep up with this, and it just 
 		// hoses up!  maybe this can be improved at some point.
 		firstTouch.x = -1;
 		[[self navViewController] switchToPrintView];		
-	}
-	
-	if (firstTouch.y - [touch locationInView:self].y < -50)
+	}	
+	else if (firstTouch.y - [touch locationInView:self].y < -30)
 	{
-		//self.frame.size.height = 100;
-		//CGRect tmp = self.bounds;
-		//tmp.size.height = 100;
-		//self.bounds = tmp;
-		//[self setNeedsDisplay];
+		[calcViewController fourLineDisp];
 	}
+	else if (firstTouch.y - [touch locationInView:self].y > 30)
+	{
+		[calcViewController twoLineDisp];
+	}	
+}
+
+- (void) twoLineDisp
+{
+	dispRows = 2;
+	firstTouch.x == -1;
+	CGRect bounds = self.bounds;
+	CGPoint cent = self.center;
+	bounds.size.height = 68;
+	cent.y = bounds.size.height/2;
+	self.bounds = bounds;
+	self.center = cent;
+	redisplay();
+	[self setNeedsDisplay];	
+}
+
+- (void) fourLineDisp
+{
+	dispRows = 4;
+	firstTouch.x == -1;
+	CGRect bounds = self.bounds;
+	CGPoint cent = self.center;
+	bounds.size.height = 126;
+	cent.y = bounds.size.height/2;
+	self.bounds = bounds;
+	self.center = cent;
+	redisplay();
+	[self setNeedsDisplay];
 }
 
 char cbuf[30];
@@ -231,6 +269,7 @@ char cbuf[30];
     if (touch.tapCount == 2 && [self becomeFirstResponder]) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
         UIMenuController *mc = [UIMenuController sharedMenuController];
+		[self setXHighlight];
         [mc setTargetRect:xRowHighlight inView:self];
         [mc setMenuVisible:YES animated:YES];
 		[self setNeedsDisplayInRect:xRowHighlight];

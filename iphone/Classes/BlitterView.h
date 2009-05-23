@@ -17,6 +17,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class CalcViewController;
 @class NavViewController;
 @class BlitterView;
 
@@ -39,6 +40,9 @@ extern int cpuCount;
 	CGPoint firstTouch;
 	BOOL highlight;
 	CGRect xRowHighlight;
+	CGRect baseRowHighlight;
+	
+	CalcViewController* calcViewController;
 }
 
 @property CGImageRef imgFlagUpDown;
@@ -49,9 +53,12 @@ extern int cpuCount;
 @property CGImageRef imgFlagPrint;
 @property BOOL highlight;
 @property (nonatomic, retain) NavViewController* navViewController;
+@property (nonatomic, retain) CalcViewController* calcViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
 
 - (void) drawAnnunciators;
 - (void) annuncNeedsDisplay;
+- (void) twoLineDisp;
+- (void) fourLineDisp;
 
 @end

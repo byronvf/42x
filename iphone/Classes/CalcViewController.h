@@ -16,15 +16,12 @@
 // along with 42s.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <UIKit/UIKit.h>
-#include "blitterView.h"
+#include "BlitterView.h"
+#include "MenuView.h"
 
-@class TonePlayer;
 @class NavViewController;
-@class MenuView;
 
 extern int callKeydownAgain;
-extern const char *displayBuff;
-extern const char *menuBuff;
 
 @interface CalcViewController : UIViewController {
     IBOutlet UILabel *screen;
@@ -69,7 +66,6 @@ extern const char *menuBuff;
 	int alphaMenuActive;
 	int menuActive;
 	IBOutlet UITextField* textEntryField;
-	UIImage *bgBlankButtons;
 	
 	IBOutlet BlitterView *blitterView;
 	IBOutlet UIImageView *bgImageView;	
@@ -77,14 +73,13 @@ extern const char *menuBuff;
 	IBOutlet MenuView *menuView;
 	IBOutlet UIImageView *blankButtonsView;
 	
-	TonePlayer* tonePlayer;		
+	const char* displayBuff;	
 }
 
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
 @property (nonatomic, retain) UIImageView* blankButtonsView;
 @property (nonatomic, retain) MenuView *menuView;
-@property (nonatomic, retain) UIImage *bgBlankButtons;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) UILabel *screen;
 @property (nonatomic, retain) UIButton *b01;
@@ -124,9 +119,13 @@ extern const char *menuBuff;
 @property (nonatomic, retain) UIButton *b35;
 @property (nonatomic, retain) UIButton *b36;
 @property (nonatomic, retain) UIButton *b37;
+@property const char* displayBuff;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
+
+- (void) twoLineDisp;
+- (void) fourLineDisp;
 	
 @end
 

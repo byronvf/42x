@@ -21,9 +21,6 @@
 #import "free42.h"
 #import "Settings.h"
 #import "PrintViewController.h"
-#import <time.h>
-#import <sys/time.h>
-
 
 // Base name of 42s state file name, this will be prepended by the home directory
 static NSString* stateBaseName = @"/Documents/42s.state";
@@ -50,7 +47,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	cpuCount = 100;
+	cpuCount = 200;
 	return 1;
 }
 
@@ -198,6 +195,7 @@ NSString* CONFIG_KEYBOARD = @"keyboardOn";
 NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
 NSString* CONFIG_PRINT_BUF = @"printBuf";
 NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
+NSString* CONFIG_DISP_ROWS = @"dispRows";
 
 - (void)loadSettings
 {
@@ -228,13 +226,23 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	else
 		menuKeys = TRUE;	
 	
+	if ([defaults objectForKey:CONFIG_DISP_ROWS])
+		dispRows = [defaults integerForKey:CONFIG_DISP_ROWS];
+	else
+		dispRows = 2;
+	
+	// We always come up in 2 dispRows mode because it messes up
+	// the view layout if we don't, and it doesn't handle it property
+	// if we are in program mode.
+	// dispRows = 2;
+	
 	if ([defaults objectForKey:CONFIG_PRINT_BUF])
     {
 		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
 		NSMutableData *pbuf = [[NSMutableData alloc] init];
 		[pbuf setData:data];
 		[[navViewController printViewController] setPrintBuff:pbuf];
-	}	
+	}		
 }
 
 - (void)saveSettings
@@ -244,6 +252,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	[defaults setBool:[[Settings instance] clickSoundOn] forKey:CONFIG_KEY_CLICK_ON];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] autoPrintOn] forKey:CONFIG_AUTO_PRINT_ON];
+	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 
 	NSMutableData *pbuf = [[navViewController printViewController] printBuff];
@@ -267,12 +276,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	}
 	else
 	{
-		struct timeval tv, t1;
-		gettimeofday(&tv, NULL);
-		t1 = tv;
 		core_init(1, FREE42_VERSION);	
-		gettimeofday(&tv, NULL);
-		int foo = 4;
 	}
 	
 	if (statefile) fclose(statefile);
@@ -280,7 +284,7 @@ NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 	[self loadSettings];
 	
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];

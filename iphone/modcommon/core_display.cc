@@ -27,6 +27,7 @@
 
 // Place this here for now so we don't have to modify many files
 extern int menuKeys;
+extern int dispRows;
 
 /********************/
 /* HP-42S font data */
@@ -519,7 +520,7 @@ static char smallchars_map[128] =
 #endif
 
 
-#define DISPLAY_SIZE 408
+#define DISPLAY_SIZE 680
 static char display[DISPLAY_SIZE];
 
 static int is_dirty = 0;
@@ -822,7 +823,7 @@ static void mark_dirty(int top, int left, int bottom, int right) {
 void draw_char(int x, int y, char c) {
     int X, Y, h, v;
     unsigned char uc = (unsigned char) c;
-    if (x < 0 || x >= 22 || y < 0 || y >= 2)
+    if (x < 0 || x >= 22 || y < 0 || y >= dispRows)
 	return;
     if (uc >= 130)
 	uc -= 128;
@@ -881,6 +882,9 @@ static void draw_key(int n, int highlight, int hide_meta,
     int len2;
     int x, i;
     int fatdot = 31;
+    // pixel row for menu to start on. If not menuKeys, then the menu
+    // is on the display.
+    int menuRow = (dispRows - (menuKeys ? 0 : 1)) * 8;
 
     /* Note: the SST handling code uses a magic value of 2 in prgm_mode
      * so that we know *not* to suppress menu highlights while stepping. */
@@ -910,7 +914,7 @@ static void draw_key(int n, int highlight, int hide_meta,
 	swidth += cw;
     }
 
-    fill_rect(n * 22, menuKeys ? 17 : 9, 21, 7, 1);
+    fill_rect(n * 22, menuRow + 1, 21, 7, 1);
 	
     x = n * 22 + 10 - swidth / 2;
     len2 = highlight ? len + 1 : len;
@@ -931,7 +935,7 @@ static void draw_key(int n, int highlight, int hide_meta,
 	    b = smallchars[o + j];
 	    for (k = 0; k < 8; k++)
 		if ((b >> k) & 1)
-      display[(k + (menuKeys ? 16: 8)) * 17 + (x >> 3)] &= ~(1 << (x & 7));
+      display[(k + menuRow) * 17 + (x >> 3)] &= ~(1 << (x & 7));
 	    x++;
 	}
 	x++;
@@ -1077,6 +1081,32 @@ void display_y(int row) {
     clear_row(row);
     len = vartype2string(reg_y, buf, 20);
     draw_string(0, row, "\201\200", 2);
+    if (len > 20) {
+	draw_string(2, row, buf, 19);
+	draw_char(21, row, 26);
+    } else
+	draw_string(2, row, buf, len);
+}
+
+void display_z(int row) {
+    char buf[20];
+    int len;
+    clear_row(row);
+    len = vartype2string(reg_z, buf, 20);
+    draw_string(0, row, "z\200", 2);
+    if (len > 20) {
+	draw_string(2, row, buf, 19);
+	draw_char(21, row, 26);
+    } else
+	draw_string(2, row, buf, len);
+}
+
+void display_t(int row) {
+    char buf[20];
+    int len;
+    clear_row(row);
+    len = vartype2string(reg_t, buf, 20);
+    draw_string(0, row, "t\200", 2);
     if (len > 20) {
 	draw_string(2, row, buf, 19);
 	draw_char(21, row, 26);
@@ -1661,7 +1691,7 @@ void show() {
 
 void redisplay() {
     int menu_id;
-    int avail_rows = 2;
+    int avail_rows = dispRows;
     int i;
 
     if (mode_clall) {
@@ -1698,14 +1728,14 @@ void redisplay() {
 	menu_id = MENU_NONE;
     if (menu_id == MENU_CATALOG) {
 	draw_catalog();
-	avail_rows = menuKeys ? 2 : 1;
+	avail_rows = menuKeys ? dispRows : dispRows-1;
     } else if (menu_id == MENU_VARMENU) {
 	draw_varmenu();
 	if (varmenu_length == 0) {
 	    redisplay();
 	    return;
 	}
-	avail_rows = menuKeys ? 2 : 1;
+	avail_rows = menuKeys ? dispRows : dispRows-1;
     } else if (menu_id == MENU_CUSTOM1 || menu_id == MENU_CUSTOM2
 	    || menu_id == MENU_CUSTOM3) {
 	int r = menu_id - MENU_CUSTOM1;
@@ -1722,11 +1752,11 @@ void redisplay() {
 				  custommenu_length[r][i]);
 	    }
 	}
-	avail_rows = menuKeys ? 2 : 1;  
+	avail_rows = menuKeys ? dispRows : dispRows-1;  
     } else if (menu_id == MENU_PROGRAMMABLE) {
 	for (i = 0; i < 6; i++)
 	    draw_key(i, 0, 0, progmenu_label[i], progmenu_length[i]);
-	avail_rows = menuKeys ? 2: 1;
+	avail_rows = menuKeys ? dispRows: dispRows-1;
     } else if (menu_id != MENU_NONE) {
 	const menu_spec *m = menus + menu_id;
 	for (i = 0; i < 6; i++) {
@@ -1853,18 +1883,18 @@ void redisplay() {
 		draw_key(i, is_flag, 1, cmd->name, cmd->name_length);
 	    }
 	}
-	avail_rows = menuKeys ? 2 : 1;
+	avail_rows = menuKeys ? dispRows : dispRows-1;
     }
 
     if (!flags.f.prgm_mode &&
 	    (mode_command_entry || pending_command != CMD_NONE)) {
 	int cmd_row;
 	if (menu_id == MENU_NONE) {
-	    cmd_row = 1;
-	    avail_rows = 1;
+	    cmd_row = dispRows - 1;
+	    avail_rows = dispRows - 1;
 	} else {
-	    cmd_row = 0;
-	    avail_rows = 0;
+	    cmd_row = menuKeys ? dispRows - 1: dispRows - 2;
+	    avail_rows = menuKeys ? dispRows - 1: dispRows - 2;
 	}
 	if (mode_command_entry)
 	    display_incomplete_command(cmd_row);
@@ -1879,7 +1909,18 @@ void redisplay() {
 	} else if (avail_rows == 2) {
 	    if (!flags.f.message)
 		display_y(0);
-	    display_x(1);
+		display_x(1);
+	} else if (avail_rows == 3) {
+	    if (!flags.f.message)
+		display_z(0);
+		display_y(1);
+		display_x(2);
+	} else if (avail_rows == 4) {
+	    if (!flags.f.message)
+		display_t(0);
+		display_z(1);
+		display_y(2);
+		display_x(3);
 	}
     } else if (flags.f.prgm_mode && avail_rows != 0) {
 	if (mode_command_entry) {
@@ -1893,7 +1934,7 @@ void redisplay() {
 	    if (avail_rows == 1) {
 		if (!flags.f.message)
 		    display_prgm_line(0, 0);
-	    } else if (avail_rows == 2) {
+	    } else if (avail_rows > 1) {
 		if (!flags.f.message) {
 		    if (pc == -1)
 			prgm_highlight_row = 0;

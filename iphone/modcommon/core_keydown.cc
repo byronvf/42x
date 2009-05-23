@@ -1768,6 +1768,10 @@ void keydown_alpha_mode(int shift, int key) {
 
 // Place this here for now so we don't have to modify many files
 extern int menuKeys;
+extern int dispRows;
+
+extern void display_t(int);
+extern void display_z(int);
 
 void keydown_normal_mode(int shift, int key) {
     int command;
@@ -1778,9 +1782,9 @@ void keydown_normal_mode(int shift, int key) {
 	    print_command(CMD_NULL, NULL);
 	cmdline_length = 0;
 	if (get_front_menu() != NULL && ! menuKeys)
-	    cmdline_row = 0;
+	    cmdline_row = dispRows - 2;
 	else
-	    cmdline_row = 1;
+	    cmdline_row = dispRows - 1;
 	mode_number_entry = true;
 	if (flags.f.prgm_mode) {
 	    if (pc == -1)
@@ -1800,9 +1804,14 @@ void keydown_normal_mode(int shift, int key) {
 		flags.f.stack_lift_disable = 0;
 	    flags.f.numeric_data_input = 1;
 	    mode_varmenu = false;
-	    if (cmdline_row == 1)
-		display_y(0);
-	    else
+	    if (cmdline_row == dispRows - 1)
+            {
+                int row = 0;
+		if (dispRows > 3) display_t(row++);
+                if (dispRows > 2) display_z(row++);
+		display_y(row);
+            }
+            else
 		/* Force repaint of menu; it could be hidden due to a recent
 		 * two-line AVIEW command */
 		redisplay();

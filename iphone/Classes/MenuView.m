@@ -8,8 +8,13 @@
 
 #import "MenuView.h"
 #import "Utils.h"
+#import "CalcViewController.h"
+
+extern int dispRows;
 
 @implementation MenuView
+
+@synthesize calcViewController;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -21,6 +26,10 @@
 - (void)drawRect:(CGRect)rect {
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.85, 0.85, 0.85, 1.0);
+	
+	// 136 - size in bytes of one row.
+	// 17*2 - absorb a couple of pixel rows	
+	const char* menuBuff = calcViewController.displayBuff + dispRows*136 + 17*2;
 	
 	// 32 - vert pixel offset to begin drawing.
 	// 5  - pixel height of display

@@ -18,6 +18,7 @@
 #import <AudioToolbox/AudioServices.h>
 #import "CalcViewController.h"
 #import "core_main.h"
+#import "core_display.h"
 #import "Settings.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -82,9 +83,10 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 @synthesize blitterView;
 @synthesize bgImageView;
 @synthesize navViewController;
-@synthesize bgBlankButtons;
 @synthesize menuView;
 @synthesize blankButtonsView;
+@synthesize displayBuff;
+
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically
@@ -119,8 +121,6 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 					kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
-
-	bgBlankButtons  = [UIImage imageNamed:@"Default-BlankTop.png"];
 	menuActive = core_menu();
 	if (menuActive && menuKeys)
 	{
@@ -131,8 +131,11 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 		[blankButtonsView setAlpha:0.0];
 		[menuView setAlpha:0.0];
 	}
+				
+	blitterView.calcViewController = self;
+	menuView.calcViewController = self;
 	
-	//tonePlayer = [[TonePlayer alloc] init];
+	core_repaint_display();
 }
  
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -144,16 +147,9 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	[super didReceiveMemoryWarning];
 }
 
-
-const char *displayBuff;
-const char *menuBuff;
-
 void shell_blitter(const char *bits, int bytesperline, int x, int y,
 				   int width, int height)
-{	
-	displayBuff = bits;
-	menuBuff = bits + 272 + 17*2;
-	
+{		
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row
@@ -166,6 +162,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// If the viewCtrl is not initialized yet, don't try and use it
 	if (!viewCtrl) return;
 
+	viewCtrl.displayBuff = bits;
+	
 	if (core_menu() && menuKeys)
 	{
 		// The menu keys are in the third row of the display (> 16), so 
@@ -239,6 +237,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
 	
 	int keynum = (int)[sender tag];
+	if (menuKeys && core_menu() && dispRows == 4 && keynum < 13) keynum -= 6;
+	
 	if (keynum != 28)
 		[self cancelKeyTimer];
 	
@@ -420,6 +420,62 @@ void shell_request_timeout3(int delay)
 	return YES;
 }
 
+- (void) twoLineDisp
+{
+	if (dispRows == 2) return;
+	
+	// If we are entering something then change the line
+	// with the display.  Free42 uses this  to track the current row
+	// for entry.
+	cmdline_row -= 2;
+	
+	b01.enabled = TRUE;
+	b02.enabled = TRUE;
+	b03.enabled = TRUE;
+	b04.enabled = TRUE;
+	b05.enabled = TRUE;
+	b06.enabled = TRUE;
+
+	CGPoint cent = blankButtonsView.center;
+	cent.y = 108;
+	blankButtonsView.center = cent;
+
+	cent = menuView.center;
+	cent.y = 102;
+	menuView.center = cent;
+	
+	[blitterView twoLineDisp];
+}
+
+- (void) fourLineDisp
+{
+	if (dispRows == 4) return;
+	
+	// If we are entering something then change the line
+	// with the display.  Free42 uses this  to track the current row
+	// for entry.
+	cmdline_row += 2;
+	
+	b01.enabled = FALSE;
+	b02.enabled = FALSE;
+	b03.enabled = FALSE;
+	b04.enabled = FALSE;
+	b05.enabled = FALSE;
+	b06.enabled = FALSE;
+		
+	CGPoint cent;
+	
+	cent = menuView.center;
+	cent.y = 155;
+	menuView.center = cent;
+
+	cent = blankButtonsView.center;
+	cent.y = 161;
+	blankButtonsView.center = cent;
+	
+	[blitterView fourLineDisp];	
+}
+
 /**
  * This is a crude implementation which just plays a wave beep sound.
  * Needs to be further.
@@ -434,7 +490,6 @@ void shell_beeper(int frequency, int duration)
 	
 }
 
-
 /**
  * This is a big hack for when UINavigationController navigates back to this view.
  * Without this the bounds on the view gets messed up, so you can't push the 
@@ -446,6 +501,7 @@ void shell_beeper(int frequency, int duration)
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	[[self view] setFrame:rect];
 	[[self view] setBounds:rect];
+	if (dispRows == 4) [self fourLineDisp];	
 }
 
 - (void)dealloc {
@@ -488,8 +544,6 @@ void shell_beeper(int frequency, int duration)
 	[b36 dealloc];
 	[b37 dealloc];
 	[blitterView dealloc];
-	[tonePlayer dealloc];
-
 	[super dealloc];
 }
 
