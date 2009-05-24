@@ -135,13 +135,13 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		if (bufsize == 408)
+		if (bufsize == 680)
 		{
 			// We do this to convert the file state format from the old version
-			// to the new version that stores 3 lines of display.
+			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 136);
-			return 408;
+			memset((char*)buf+272, 0, 408);
+			return 680;
 		}
 		
 		return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
