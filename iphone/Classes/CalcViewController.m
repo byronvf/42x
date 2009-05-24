@@ -421,9 +421,7 @@ void shell_request_timeout3(int delay)
 }
 
 - (void) twoLineDisp
-{
-	if (dispRows == 2) return;
-	
+{	
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
@@ -449,8 +447,6 @@ void shell_request_timeout3(int delay)
 
 - (void) fourLineDisp
 {
-	if (dispRows == 4) return;
-	
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.

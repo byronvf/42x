@@ -196,11 +196,11 @@ extern void redisplay();
 		firstTouch.x = -1;
 		[[self navViewController] switchToPrintView];		
 	}	
-	else if (firstTouch.y - [touch locationInView:self].y < -30)
+	else if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
 	{
 		[calcViewController fourLineDisp];
 	}
-	else if (firstTouch.y - [touch locationInView:self].y > 30)
+	else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows == 4)
 	{
 		[calcViewController twoLineDisp];
 	}	

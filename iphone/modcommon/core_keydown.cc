@@ -28,6 +28,50 @@
 #include "core_variables.h"
 #include "shell.h"
 
+// Place this here for now so we don't have to modify many files
+extern int menuKeys;
+extern int dispRows;
+
+// New methods from core_display
+extern void display_t(int);
+extern void display_z(int);
+extern void large_display_prgm_line(int row, int line_offset, int line_disp_offset);
+
+
+int get_next_highlight_row()
+{
+    int highlight_row = prgm_highlight_row;
+    if (dispRows == 2) return 1;
+    int availRows = dispRows;
+    if (core_menu() && !menuKeys) availRows--;
+    if (prgms[current_prgm].text[pc] != CMD_END)
+         highlight_row++;
+    if (highlight_row >= availRows)
+	highlight_row = availRows - 1;
+    return highlight_row;
+}
+
+// Wrap the do_interactive for handling with large displays, if
+// display is size 2, then call through to do_interactive, otherwise
+// intercept.
+void do_interactive_wrap(int command)
+{
+    if (dispRows == 2) {
+	do_interactive(command);
+    } else {
+	int orig_row = prgm_highlight_row;
+	prgm_highlight_row = -1;
+	do_interactive(command);
+	if (prgm_highlight_row != -1) {
+	    // Test if do_interative modified prgm_highlight_row
+	    prgm_highlight_row = orig_row;
+	    prgm_highlight_row = get_next_highlight_row();
+	    redisplay();
+	} else {
+	    prgm_highlight_row = orig_row;
+	}
+    }	 
+}
 
 static int is_number_key(int shift, int key) KEYDOWN_SECT;
 static int is_number_key(int shift, int key) {
@@ -224,7 +268,8 @@ void keydown(int shift, int key) {
 	    arg.type = ARGTYPE_DOUBLE;
 	    arg.val_d = entered_number;
 	    store_command(pc, CMD_NUMBER, &arg);
-	    prgm_highlight_row = 1;
+            if (dispRows != 2)
+	        prgm_highlight_row = 1;
 	} else if ((flags.f.trace_print || flags.f.normal_print)
 		&& flags.f.printer_exists)
 	    deferred_print = 1;
@@ -250,10 +295,19 @@ void keydown(int shift, int key) {
 	if (flags.f.prgm_mode && mode_alpha_entry)
 	    finish_alpha_prgm_line();
 	clear_all_rtns();
-	if (key == KEY_UP)
+        int tmpline = prgm_highlight_row;
+	if (key == KEY_UP) {
+            tmpline--;
 	    bst();
-	else
+        } else {
+            tmpline++;
 	    sst();
+	}
+	if (dispRows > 2) {
+	    prgm_highlight_row = tmpline;
+	    if (pc == -1)
+		prgm_highlight_row = 0;
+	}		     
 	redisplay();
 	return;
     }
@@ -312,7 +366,12 @@ void keydown_number_entry(int shift, int key) {
 	mode_number_entry = false;
 	if (flags.f.prgm_mode) {
 	    pc = line2pc(pc2line(pc) - 1);
-	    prgm_highlight_row = 0;
+	    if (dispRows > 2) {
+		prgm_highlight_row--;
+		if (prgm_highlight_row < 0) prgm_highlight_row = 0;
+	    }
+	    else
+		prgm_highlight_row = 0;
 	    redisplay();
 	    return;
 	} else {
@@ -369,7 +428,12 @@ void keydown_number_entry(int shift, int key) {
 		    if (flags.f.prgm_mode) {
 			mode_number_entry = false;
 			pc = line2pc(pc2line(pc) - 1);
-			prgm_highlight_row = 0;
+			if (dispRows > 2) {
+			    prgm_highlight_row--;
+			    if (prgm_highlight_row < 0) prgm_highlight_row = 0;
+			}
+			else
+			    prgm_highlight_row = 0;
 			redisplay();
 			return;
 		    } else {
@@ -1651,7 +1715,12 @@ void keydown_alpha_mode(int shift, int key) {
 		    delete_command(pc);
 		    pc = line2pc(line - 1);
 		}
-		prgm_highlight_row = 0;
+		if (dispRows > 2) {
+		    prgm_highlight_row--;
+		    if (prgm_highlight_row < 0) prgm_highlight_row = 0;
+		}
+		else
+		    prgm_highlight_row = 0;
 		if (mode_alphamenu != MENU_ALPHA1
 			&& mode_alphamenu != MENU_ALPHA2)
 		    set_menu(MENULEVEL_ALPHA, menus[mode_alphamenu].parent);
@@ -1762,16 +1831,10 @@ void keydown_alpha_mode(int shift, int key) {
 	set_menu(MENULEVEL_ALPHA, MENU_NONE);
 	redisplay();
 	return;
-    } else
-	do_interactive(command);
+    }
+    else
+	do_interactive_wrap(command);
 }
-
-// Place this here for now so we don't have to modify many files
-extern int menuKeys;
-extern int dispRows;
-
-extern void display_t(int);
-extern void display_z(int);
 
 void keydown_normal_mode(int shift, int key) {
     int command;
@@ -1787,13 +1850,27 @@ void keydown_normal_mode(int shift, int key) {
 	    cmdline_row = dispRows - 1;
 	mode_number_entry = true;
 	if (flags.f.prgm_mode) {
+            int origpc = pc;
 	    if (pc == -1)
 		pc = 0;
 	    else if (prgms[current_prgm].text[pc] != CMD_END)
 		pc += get_command_length(current_prgm, pc);
-	    prgm_highlight_row = 1;
-	    if (cmdline_row == 1)
-		display_prgm_line(0, -1);
+	    if (dispRows == 2) {		   
+		prgm_highlight_row = 1;
+		if (cmdline_row == 1)
+		    display_prgm_line(0, -1);
+	    } else /* large display */{
+              large_display_prgm_line(prgm_highlight_row, -1, 0);
+                if (origpc == -1 || prgms[current_prgm].text[origpc] != CMD_END)
+		    prgm_highlight_row++;
+		if (prgm_highlight_row > cmdline_row)
+		    prgm_highlight_row = cmdline_row;
+                if (prgm_highlight_row+1 <= cmdline_row)
+                    large_display_prgm_line(prgm_highlight_row+1, 0, 1);
+                if (prgm_highlight_row+2 <= cmdline_row)
+                    large_display_prgm_line(prgm_highlight_row+2, 1, 1);
+		cmdline_row = prgm_highlight_row;
+            }
 	} else {
 	    if (!flags.f.stack_lift_disable) {
 		free_vartype(reg_t);
@@ -1828,7 +1905,12 @@ void keydown_normal_mode(int shift, int key) {
 		|| prgms[current_prgm].text[pc] != CMD_END)
 	    delete_command(pc);
 	pc = line2pc(line - 1);
-	prgm_highlight_row = 0;
+	if (dispRows > 2) {
+	    prgm_highlight_row--;
+	    if (prgm_highlight_row < 0) prgm_highlight_row = 0;
+	}
+	else
+	    prgm_highlight_row = 0;
 	redisplay();
 	return;
     }
@@ -1946,7 +2028,7 @@ void keydown_normal_mode(int shift, int key) {
 		if (flags.f.local_label) {
 		    if (menukey == 5) {
 			int cmd = shift ? CMD_GTO : CMD_XEQ;
-			do_interactive(cmd);
+			do_interactive_wrap(cmd);
 			return;
 		    } else {
 			pending_command = CMD_XEQ;
@@ -2031,7 +2113,7 @@ void keydown_normal_mode(int shift, int key) {
 				pending_command_arg.type = ARGTYPE_NONE;
 			    } else {
 				pending_command = CMD_NONE;
-				do_interactive(cmd);
+				do_interactive_wrap(cmd);
 				return;
 			    }
 			}
@@ -2144,7 +2226,7 @@ void keydown_normal_mode(int shift, int key) {
 		    if (level == MENULEVEL_TRANSIENT
 			    || !mode_plainmenu_sticky)
 			set_menu(level, MENU_NONE);
-		    do_interactive(cmd);
+		    do_interactive_wrap(cmd);
 		    return;
 		} else {
 		    int varindex = get_cat_item(menukey);
@@ -2242,7 +2324,7 @@ void keydown_normal_mode(int shift, int key) {
 		if (level == MENULEVEL_TRANSIENT
 			|| (level == MENULEVEL_PLAIN && !mode_plainmenu_sticky))
 		    set_menu(level, MENU_NONE);
-		do_interactive(cmd_id);
+		do_interactive_wrap(cmd_id);
 		return;
 	    }
 	}
@@ -2400,5 +2482,5 @@ void keydown_normal_mode(int shift, int key) {
     if (command == CMD_NONE)
 	return;
     else
-	do_interactive(command);
+	do_interactive_wrap(command);
 }

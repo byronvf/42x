@@ -1001,6 +1001,44 @@ static int prgmline2buf(char *buf, int len, int4 line, int highlight,
     return bufptr;
 }
 
+void large_display_prgm_line(int row, int line_offset, int line_disp_offset)
+{
+    int4 tmppc = pc;
+    int4 tmpline = pc2line(pc);
+    int cmd;
+    arg_struct arg;
+    char buf[44];
+    int bufptr;
+    int len = 22;
+    int validline = 1;  // Boolean
+
+    if (row == -1)
+	/* This means use both lines; used by SHOW */
+	len = 44;
+
+    tmpline += line_offset;
+    tmppc = line2pc(tmpline);
+    validline = tmpline == pc2line(tmppc);
+    get_next_command(&tmppc, &cmd, &arg, 0);
+    bufptr = prgmline2buf(buf, len, tmpline+line_disp_offset,
+			  line_offset+line_disp_offset == 0, cmd, &arg);
+
+    if (row == -1) {
+	clear_display();
+	if (bufptr <= 22)
+	    draw_string(0, 0, buf, bufptr);
+	else {
+	    draw_string(0, 0, buf, 22);
+	    draw_string(0, 1, buf + 22, bufptr - 22);
+	}
+    } else {
+	clear_row(row);
+        if (validline)
+            draw_string(0, row, buf, bufptr);
+    }    
+}
+
+
 void display_prgm_line(int row, int line_offset) {
     int4 tmppc = pc;
     int4 tmpline = pc2line(pc);
@@ -1026,8 +1064,9 @@ void display_prgm_line(int row, int line_offset) {
 	    if (tmpline != 0) {
 		tmppc = line2pc(tmpline);
 		get_next_command(&tmppc, &cmd, &arg, 0);
-	    }
+	    }		 
 	}
+	
     } else {
 	if (line_offset == 0) {
 	    /* Nothing to do */
@@ -1926,15 +1965,24 @@ void redisplay() {
 	if (mode_command_entry) {
 	    if (avail_rows == 1)
 		display_incomplete_command(0);
-	    else {
+	    else if (avail_rows == 2) {
 		display_prgm_line(0, -1);
 		display_incomplete_command(1);
+	    } else /* More than two available rows */ {
+		int r = 0;
+		while (r < avail_rows) {
+		    if (r == prgm_highlight_row)
+			display_incomplete_command(r);
+		    else
+			large_display_prgm_line(r, r - prgm_highlight_row, 0);
+		    r++;
+		}
 	    }
 	} else {
-	    if (avail_rows == 1) {
+	    if (avail_rows == 1) {		  
 		if (!flags.f.message)
 		    display_prgm_line(0, 0);
-	    } else if (avail_rows > 1) {
+	    } else if (avail_rows == 2) {
 		if (!flags.f.message) {
 		    if (pc == -1)
 			prgm_highlight_row = 0;
@@ -1951,7 +1999,35 @@ void redisplay() {
 		    }
 		} else
 		    display_prgm_line(1, 0);
-	    }
+	    } else /* More than two lines of display */ {
+                if (prgms[current_prgm].text[pc] == CMD_END) {
+                    int tmppc = 0;
+                    int tmpline = 1;
+                    // Calc what line then end of the program is at
+                    while (tmpline < avail_rows && prgms[current_prgm].text[tmppc] != CMD_END) {
+                        tmppc += get_command_length(current_prgm, tmppc);
+                        tmpline++;
+                    }
+                    prgm_highlight_row = tmpline;
+                }
+                if (prgm_highlight_row >= avail_rows)
+                    prgm_highlight_row = avail_rows-1;
+                if (prgm_highlight_row < 0)
+                    prgm_highlight_row = 0;
+		if (pc == -1)
+		    prgm_highlight_row = 0;
+		int r = 0;
+		int temp_highlight_row = prgm_highlight_row;
+		if (flags.f.message) {
+		    r = 1;
+		    if (temp_highlight_row == 0)
+			temp_highlight_row = 1;
+		}
+		while (r < avail_rows) {
+		    large_display_prgm_line(r, r-temp_highlight_row, 0);
+		    r++;
+		}
+	    }		 
 	}
     } else if (flags.f.alpha_mode && avail_rows != 0 && !flags.f.message) {
 	int avail = mode_alpha_entry ? 21 : 22;
