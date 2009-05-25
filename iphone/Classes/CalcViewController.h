@@ -64,7 +64,6 @@ extern int callKeydownAgain;
     IBOutlet UIButton *b37;
 	
 	int alphaMenuActive;
-	int menuActive;
 	IBOutlet UITextField* textEntryField;
 	
 	IBOutlet BlitterView *blitterView;

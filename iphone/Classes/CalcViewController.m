@@ -83,9 +83,9 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 @synthesize blitterView;
 @synthesize bgImageView;
 @synthesize navViewController;
-@synthesize menuView;
 @synthesize blankButtonsView;
 @synthesize displayBuff;
+@synthesize menuView;
 
 
 /*
@@ -121,8 +121,7 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 					kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
-	menuActive = core_menu();
-	if (menuActive && menuKeys)
+	if (core_menu() && menuKeys)
 	{
 		[blankButtonsView setAlpha:1.0];
 	}
@@ -171,12 +170,14 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if (height + y > 16)
 		{
 			[[viewCtrl menuView] setAlpha:1.0];
+			[[viewCtrl blankButtonsView] setAlpha:1.0];
 			[[viewCtrl menuView] setNeedsDisplay];
 		}
 	}
 	else
 	{  
 		[[viewCtrl menuView] setAlpha:0.0];
+		[[viewCtrl blankButtonsView] setAlpha:0.0];
 	} 
 }
 
@@ -280,18 +281,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		callKeydownAgain = core_keyup();
 	}
-		
-	if (!menuActive && core_menu())
-	{
-		menuActive = YES;
-		[blankButtonsView setAlpha:1.0];
-	}
-	else if (menuActive && !core_menu())
-	{	
-		menuActive = NO;
-		[blankButtonsView setAlpha:0.0];
-	}
-	
+			
 	if ([[Settings instance] keyboardOn])
 	{		
 		if( !alphaMenuActive && core_alpha_menu())
@@ -412,8 +402,6 @@ void shell_request_timeout3(int delay)
 	if (!core_alpha_menu())
 	{
 		[textEntryField resignFirstResponder];
-		[blankButtonsView setAlpha:0.0];
-		menuActive = FALSE;
 		alphaMenuActive = NO;
 	}
 		
