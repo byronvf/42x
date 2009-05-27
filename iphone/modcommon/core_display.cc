@@ -1001,7 +1001,7 @@ static int prgmline2buf(char *buf, int len, int4 line, int highlight,
     return bufptr;
 }
 
-void large_display_prgm_line(int row, int line_offset, int line_disp_offset)
+void large_display_prgm_line(int row, int line_offset, int line_disp_offset, bool dispGoose)
 {
     int4 tmppc = pc;
     int4 tmpline = pc2line(pc);
@@ -1021,7 +1021,7 @@ void large_display_prgm_line(int row, int line_offset, int line_disp_offset)
     validline = tmpline == pc2line(tmppc);
     get_next_command(&tmppc, &cmd, &arg, 0);
     bufptr = prgmline2buf(buf, len, tmpline+line_disp_offset,
-			  line_offset+line_disp_offset == 0, cmd, &arg);
+			  line_offset+line_disp_offset == 0 && dispGoose, cmd, &arg);
 
     if (row == -1) {
 	clear_display();
@@ -1970,11 +1970,19 @@ void redisplay() {
 		display_incomplete_command(1);
 	    } else /* More than two available rows */ {
 		int r = 0;
+		int l = 0;
+		int lineOffset = 0;
 		while (r < avail_rows) {
 		    if (r == prgm_highlight_row)
-			display_incomplete_command(r);
+			{
+				display_incomplete_command(r);
+				lineOffset = 1;
+			}
 		    else
-			large_display_prgm_line(r, r - prgm_highlight_row, 0);
+			{
+				large_display_prgm_line(r, l - prgm_highlight_row, lineOffset, false);
+				l++;
+			}			
 		    r++;
 		}
 	    }
@@ -2024,7 +2032,7 @@ void redisplay() {
 			temp_highlight_row = 1;
 		}
 		while (r < avail_rows) {
-		    large_display_prgm_line(r, r-temp_highlight_row, 0);
+		    large_display_prgm_line(r, r-temp_highlight_row, 0, true);
 		    r++;
 		}
 	    }		 

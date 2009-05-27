@@ -35,7 +35,20 @@ extern int dispRows;
 // New methods from core_display
 extern void display_t(int);
 extern void display_z(int);
-extern void large_display_prgm_line(int row, int line_offset, int line_disp_offset);
+extern void large_display_prgm_line(int row, int line_offset, int line_disp_offset, bool dispGoose);
+
+
+int num_prgm_lines()
+{
+	int tmppc = 0;
+	int tmpline = 1;
+	// Calc what line then end of the program is at
+	while (prgms[current_prgm].text[tmppc] != CMD_END) {
+		tmppc += get_command_length(current_prgm, tmppc);
+		tmpline++;
+	}
+	return tmpline;	
+}
 
 
 int get_next_highlight_row()
@@ -44,7 +57,7 @@ int get_next_highlight_row()
     if (dispRows == 2) return 1;
     int availRows = dispRows;
     if (core_menu() && !menuKeys) availRows--;
-    if (prgms[current_prgm].text[pc] != CMD_END)
+    if (prgms[current_prgm].text[pc] != CMD_END || num_prgm_lines() < availRows)
          highlight_row++;
     if (highlight_row >= availRows)
 	highlight_row = availRows - 1;
@@ -72,6 +85,32 @@ void do_interactive_wrap(int command)
 	}
     }	 
 }
+
+
+void finish_command_entry_wrap(bool val)
+{
+	if (dispRows == 2)
+	{
+		finish_command_entry(val);
+		return;
+	}
+	
+	int orig_row = prgm_highlight_row;
+	prgm_highlight_row = -1;
+	finish_command_entry(val);
+	if (prgm_highlight_row != -1) {
+	    // Test if do_interative modified prgm_highlight_row
+	    prgm_highlight_row = orig_row;
+	    //prgm_highlight_row = get_next_highlight_row();
+	    redisplay();
+	} else {
+	    prgm_highlight_row = orig_row;
+	}
+	
+	return;
+}	 
+
+
 
 static int is_number_key(int shift, int key) KEYDOWN_SECT;
 static int is_number_key(int shift, int key) {
@@ -268,7 +307,7 @@ void keydown(int shift, int key) {
 	    arg.type = ARGTYPE_DOUBLE;
 	    arg.val_d = entered_number;
 	    store_command(pc, CMD_NUMBER, &arg);
-            if (dispRows != 2)
+            if (dispRows == 2)
 	        prgm_highlight_row = 1;
 	} else if ((flags.f.trace_print || flags.f.normal_print)
 		&& flags.f.printer_exists)
@@ -619,12 +658,12 @@ void keydown_command_entry(int shift, int key) {
 	int menukey;
 	if (!shift && key == KEY_BSP) {
 	    pending_command = CMD_NULL;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 	if (key == KEY_EXIT) {
 	    pending_command = CMD_CANCELLED;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 	menukey = find_menu_key(key);
@@ -643,7 +682,7 @@ void keydown_command_entry(int shift, int key) {
 	    pending_command_arg.type =
 			incomplete_ind ? ARGTYPE_IND_STK : ARGTYPE_STK;
 	    pending_command_arg.val.stk = "LXYZT"[menukey];
-	    finish_command_entry(true);
+	    finish_command_entry_wrap(true);
 	    return;
 	}
 	squeak();
@@ -727,13 +766,13 @@ void keydown_command_entry(int shift, int key) {
 	if (menukey != -1) {
 	    pending_command = CMD_ASGN01 + menukey
 			    + 6 * (mode_commandmenu - MENU_CUSTOM1);
-	    finish_command_entry(true);
+	    finish_command_entry_wrap(true);
 	} else if (!shift && key == KEY_BSP) {
 	    pending_command = CMD_NULL;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	} else if (key == KEY_EXIT) {
 	    pending_command = CMD_CANCELLED;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	} else if (!shift && (key == KEY_UP || key == KEY_DOWN)) {
 	    mode_commandmenu += key == KEY_UP ? -1 : 1;
 	    if (mode_commandmenu < MENU_CUSTOM1)
@@ -765,7 +804,7 @@ void keydown_command_entry(int shift, int key) {
 	    case KEY_EXIT: case KEY_9: cmd += 8; break;
 	    case KEY_BSP:
 		pending_command = CMD_NULL;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 		return;
 	    default:
 		squeak();
@@ -861,7 +900,7 @@ void keydown_command_entry(int shift, int key) {
 			    pending_command_arg.val.text[i] =
 						labels[itemindex].name[i];
 		    }
-		    finish_command_entry(true);
+		    finish_command_entry_wrap(true);
 		    return;
 		}
 		pending_command = incomplete_command;
@@ -881,7 +920,7 @@ void keydown_command_entry(int shift, int key) {
 		if (!incomplete_ind && incomplete_command == CMD_XEQ)
 		    finish_xeq();
 		else
-		    finish_command_entry(true);
+		    finish_command_entry_wrap(true);
 		return;
 	    }
 	}
@@ -900,7 +939,7 @@ void keydown_command_entry(int shift, int key) {
 		redisplay();
 	    } else {
 		pending_command = CMD_CANCELLED;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 	    }
 	    return;
 	}
@@ -920,7 +959,7 @@ void keydown_command_entry(int shift, int key) {
 	    for (i = 0; i < pending_command_arg.length; i++)
 		pending_command_arg.val.text[i] =
 					varmenu_labeltext[menukey][i];
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 	if (!shift && (key == KEY_UP || key == KEY_DOWN)) {
@@ -940,7 +979,7 @@ void keydown_command_entry(int shift, int key) {
 	}
 	if (key == KEY_EXIT) {
 	    pending_command = CMD_CANCELLED;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
     } else if (mode_commandmenu == MENU_INTEG_PARAMS) {
@@ -959,12 +998,12 @@ void keydown_command_entry(int shift, int key) {
 	    pending_command_arg.length = length;
 	    for (i = 0; i < length; i++)
 		pending_command_arg.val.text[i] = name[i];
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 	if (key == KEY_EXIT) {
 	    pending_command = CMD_CANCELLED;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
     }
@@ -972,7 +1011,7 @@ void keydown_command_entry(int shift, int key) {
     if (!incomplete_alpha) {
 	if (key == KEY_EXIT) {
 	    pending_command = CMD_CANCELLED;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 
@@ -1036,7 +1075,7 @@ void keydown_command_entry(int shift, int key) {
 		&& key == KEY_DOT) {
 	    pending_command = CMD_GTODOTDOT;
 	    pending_command_arg.type = ARGTYPE_NONE;
-	    finish_command_entry(false);
+	    finish_command_entry_wrap(false);
 	    return;
 	}
 	    
@@ -1067,7 +1106,7 @@ void keydown_command_entry(int shift, int key) {
 		} else if (incomplete_command == CMD_GOTOCOLUMN) {
 		    matedit_goto(pending_command_arg.val.num, incomplete_num);
 		    pending_command = CMD_NONE;
-		    finish_command_entry(true);
+		    finish_command_entry_wrap(true);
 		    return;
 		}
 		pending_command = incomplete_command;
@@ -1075,7 +1114,7 @@ void keydown_command_entry(int shift, int key) {
 			    incomplete_ind ? ARGTYPE_IND_NUM : ARGTYPE_NUM;
 		pending_command_arg.length = incomplete_maxdigits;
 		pending_command_arg.val.num = incomplete_num;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 		return;
 	    }
 	}
@@ -1143,7 +1182,7 @@ void keydown_command_entry(int shift, int key) {
 		} else if (incomplete_command == CMD_GOTOCOLUMN) {
 		    matedit_goto(pending_command_arg.val.num, incomplete_num);
 		    pending_command = CMD_NONE;
-		    finish_command_entry(true);
+		    finish_command_entry_wrap(true);
 		    return;
 		}
 		pending_command = incomplete_command;
@@ -1154,7 +1193,7 @@ void keydown_command_entry(int shift, int key) {
 			incomplete_argtype == ARG_NUM11 && incomplete_num > 11)
 		    incomplete_num = 11;
 		pending_command_arg.val.num = incomplete_num;
-		finish_command_entry(true);
+		finish_command_entry_wrap(true);
 		return;
 	    } else
 		set_menu(MENULEVEL_COMMAND, MENU_NONE);
@@ -1166,7 +1205,7 @@ void keydown_command_entry(int shift, int key) {
 		    && !shift && key == KEY_BSP) {
 	    if (incomplete_length == 0) {
 		pending_command = CMD_NULL;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 		return;
 	    } else {
 		incomplete_length--;
@@ -1331,7 +1370,7 @@ void keydown_command_entry(int shift, int key) {
 	    const menu_spec *m;
 	    if (mode_commandmenu == MENU_NONE) {
 		pending_command = CMD_CANCELLED;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 		return;
 	    }
 	    if (mode_commandmenu == MENU_CATALOG) {
@@ -1349,7 +1388,7 @@ void keydown_command_entry(int shift, int key) {
 	    set_menu(MENULEVEL_COMMAND, m->parent);
 	    if (mode_commandmenu == MENU_NONE) {
 		pending_command = CMD_CANCELLED;
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 	    } else
 		redisplay();
 	    return;
@@ -1366,7 +1405,7 @@ void keydown_command_entry(int shift, int key) {
 					? CMD_KEYG : CMD_KEYX);
 		    else {
 			pending_command = CMD_NULL;
-			finish_command_entry(false);
+			finish_command_entry_wrap(false);
 		    }
 		} else {
 		    incomplete_length--;
@@ -1395,7 +1434,7 @@ void keydown_command_entry(int shift, int key) {
 		    } else if (incomplete_argtype == ARG_RVAR) {
 			if (incomplete_command == CMD_MVAR) {
 			    pending_command = CMD_NULL;
-			    finish_command_entry(false);
+			    finish_command_entry_wrap(false);
 			} else
 			    goto out_of_alpha;
 		    } else if (incomplete_argtype == ARG_MAT) {
@@ -1418,7 +1457,7 @@ void keydown_command_entry(int shift, int key) {
 		    redisplay();
 		} else {
 		    pending_command = CMD_NULL;
-		    finish_command_entry(false);
+		    finish_command_entry_wrap(false);
 		}
 		return;
 	    }
@@ -1538,7 +1577,7 @@ void keydown_command_entry(int shift, int key) {
 		pending_command_arg.type = ARGTYPE_LCLBL;
 		pending_command_arg.val.lclbl = incomplete_str[0];
 		set_menu(MENULEVEL_COMMAND, MENU_NONE);
-		finish_command_entry(false);
+		finish_command_entry_wrap(false);
 		return;
 	    } else {
 		pending_command_arg.type =
@@ -1550,7 +1589,7 @@ void keydown_command_entry(int shift, int key) {
 		if (!incomplete_ind && incomplete_command == CMD_XEQ)
 		    finish_xeq();
 		else
-		    finish_command_entry(true);
+		    finish_command_entry_wrap(true);
 		return;
 	    }
 	}
@@ -1860,17 +1899,22 @@ void keydown_normal_mode(int shift, int key) {
 		if (cmdline_row == 1)
 		    display_prgm_line(0, -1);
 	    } else /* large display */{
-              large_display_prgm_line(prgm_highlight_row, -1, 0);
-                if (origpc == -1 || prgms[current_prgm].text[origpc] != CMD_END)
-		    prgm_highlight_row++;
-		if (prgm_highlight_row > cmdline_row)
-		    prgm_highlight_row = cmdline_row;
-                if (prgm_highlight_row+1 <= cmdline_row)
-                    large_display_prgm_line(prgm_highlight_row+1, 0, 1);
-                if (prgm_highlight_row+2 <= cmdline_row)
-                    large_display_prgm_line(prgm_highlight_row+2, 1, 1);
-		cmdline_row = prgm_highlight_row;
-            }
+			prgm_highlight_row = get_next_highlight_row();
+			int r = 0;			
+			int l = 0;
+			int lineOffset = 0;
+			while (r <= cmdline_row)
+			{
+			  if (r != prgm_highlight_row)
+			  {
+                large_display_prgm_line(r, l-prgm_highlight_row, lineOffset, false);
+				l++;  
+			  }
+			  else lineOffset = 1;
+			  r++;
+			}
+			cmdline_row = prgm_highlight_row;
+		}
 	} else {
 	    if (!flags.f.stack_lift_disable) {
 		free_vartype(reg_t);
@@ -1906,7 +1950,13 @@ void keydown_normal_mode(int shift, int key) {
 	    delete_command(pc);
 	pc = line2pc(line - 1);
 	if (dispRows > 2) {
-	    prgm_highlight_row--;
+		int availRows = dispRows;
+		if (core_menu() && !menuKeys) availRows--;
+		int line = pc2line(pc);
+		if (line < prgm_highlight_row) {
+			prgm_highlight_row--;
+		}	
+		
 	    if (prgm_highlight_row < 0) prgm_highlight_row = 0;
 	}
 	else
