@@ -41,6 +41,7 @@ extern int cpuCount;
 	BOOL highlight;
 	CGRect xRowHighlight;
 	CGRect baseRowHighlight;
+	BOOL cutPaste;
 	
 	CalcViewController* calcViewController;
 }
@@ -52,6 +53,7 @@ extern int cpuCount;
 @property CGImageRef imgFlagRun;
 @property CGImageRef imgFlagPrint;
 @property BOOL highlight;
+@property BOOL cutPaste;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) CalcViewController* calcViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
@@ -60,5 +62,6 @@ extern int cpuCount;
 - (void) annuncNeedsDisplay;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
+- (void) shouldCutPaste;
 
 @end

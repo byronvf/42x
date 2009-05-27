@@ -18,9 +18,11 @@
 #import "BlitterView.h"
 #import "Utils.h"
 #import "core_main.h"
+#import "core_globals.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
+#import "core_keydown.h"
 
 BlitterView *blitterView; // Reference to this blitter so we can access from C methods
 
@@ -81,6 +83,7 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 @synthesize calcViewController;
 @synthesize shiftButton;
 @synthesize highlight;
+@synthesize cutPaste;
 
 - (void)setXHighlight
 {
@@ -106,6 +109,8 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
 	[self setXHighlight];
 	firstTouch.x = -1;
+	
+	[self shouldCutPaste];
 }
 
 - (void) annuncNeedsDisplay
@@ -142,6 +147,15 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20), [blitterView imgFlagRad]);		
 }	
 
+- (void)shouldCutPaste
+{
+	self.cutPaste = TRUE;
+	if (flags.f.prgm_mode)
+	{
+		self.cutPaste = FALSE;
+	}
+}
+
 - (void)drawRect:(CGRect)rect 
 {	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -175,6 +189,8 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 
 extern void redisplay();
 
+
+const int SCROLL_SPEED = 15;
 /*
  * The following two event handlers implement the swiping of the display 
  * to switch to the print view.  If the touches are far enough apart, then we switch 
@@ -187,7 +203,39 @@ extern void redisplay();
 	{
 		firstTouch = [touch locationInView:self];
 		return;
-	}	
+	}
+	else if (firstTouch.x > 260 && !mode_running)
+	{
+		cutPaste = FALSE;
+		CGPoint newPoint = [touch locationInView:self];
+		int len = newPoint.y - firstTouch.y;
+		if (len > SCROLL_SPEED)
+		{
+			keydown(0, flags.f.prgm_mode ? 23 : 9);
+			core_keyup();
+			len -= SCROLL_SPEED;
+		}
+		else if (len < -SCROLL_SPEED)
+		{
+			if (flags.f.prgm_mode)
+			{
+				keydown(0, 18);
+				core_keyup();
+			}
+			else
+			{
+				keydown(0, 9);
+				core_keyup();
+				keydown(0, 9);
+				core_keyup();
+				keydown(0, 9);
+				core_keyup();
+			}				
+			len += SCROLL_SPEED;	
+		}
+				
+		firstTouch.y = newPoint.y - len;
+	}
 	else if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 50)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
@@ -222,6 +270,7 @@ extern void redisplay();
 
 - (void) fourLineDisp
 {
+	
 	dispRows = 4;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
@@ -252,7 +301,7 @@ char cbuf[30];
 }
 
 - (BOOL) canBecomeFirstResponder {
-	return YES;
+	return TRUE;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -265,8 +314,9 @@ char cbuf[30];
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+	[self shouldCutPaste];
     UITouch *touch = [touches anyObject];
-    if (touch.tapCount == 2 && [self becomeFirstResponder]) {
+    if ([[touches anyObject] locationInView:self].x < 260 && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
         UIMenuController *mc = [UIMenuController sharedMenuController];
 		[self setXHighlight];
