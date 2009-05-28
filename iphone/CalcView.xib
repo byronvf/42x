@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="7.03">
 	<data>
 		<int key="IBDocument.SystemTarget">512</int>
-		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.SystemVersion">9J61</string>
 		<string key="IBDocument.InterfaceBuilderVersion">677</string>
-		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.AppKitVersion">949.46</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="175"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -146,7 +146,7 @@
 					<object class="IBUIButton" id="311305488">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{159, 132}, {48, 51}}</string>
+						<string key="NSFrame">{{159, 131}, {48, 52}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="IBUIBackgroundColor" ref="554135813"/>
 						<bool key="IBUIOpaque">NO</bool>
@@ -2285,7 +2285,6 @@
 							<reference ref="498445119"/>
 							<reference ref="204082929"/>
 							<reference ref="596889203"/>
-							<reference ref="726885872"/>
 							<reference ref="767015456"/>
 							<reference ref="1071449393"/>
 							<reference ref="75868913"/>
@@ -2300,6 +2299,7 @@
 							<reference ref="15774718"/>
 							<reference ref="366006359"/>
 							<reference ref="304434936"/>
+							<reference ref="726885872"/>
 						</object>
 						<reference key="parent" ref="360949347"/>
 					</object>
@@ -2631,7 +2631,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{124, 43}, {320, 460}}</string>
+					<string>{{150, 53}, {320, 460}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>

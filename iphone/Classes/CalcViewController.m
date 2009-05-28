@@ -469,6 +469,7 @@ void shell_request_timeout3(int delay)
 	b05.enabled = FALSE;
 	b06.enabled = FALSE;
 		
+	
 	CGPoint cent;
 	
 	cent = menuView.center;
@@ -478,6 +479,13 @@ void shell_request_timeout3(int delay)
 	cent = blankButtonsView.center;
 	cent.y = 161;
 	blankButtonsView.center = cent;
+	
+	[b07.superview bringSubviewToFront:b07];
+	[b08.superview bringSubviewToFront:b08];
+	[b09.superview bringSubviewToFront:b09];
+	[b10.superview bringSubviewToFront:b10];
+	[b11.superview bringSubviewToFront:b11];
+	[b12.superview bringSubviewToFront:b12];
 	
 	[blitterView fourLineDisp];	
 }
