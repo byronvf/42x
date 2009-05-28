@@ -1889,7 +1889,6 @@ void keydown_normal_mode(int shift, int key) {
 	    cmdline_row = dispRows - 1;
 	mode_number_entry = true;
 	if (flags.f.prgm_mode) {
-            int origpc = pc;
 	    if (pc == -1)
 		pc = 0;
 	    else if (prgms[current_prgm].text[pc] != CMD_END)

@@ -1749,7 +1749,7 @@ void redisplay() {
     if (flags.f.two_line_message)
 	return;
     if (flags.f.message)
-	clear_row(1);
+		for (int r=1; r < dispRows; r++) clear_row(r);		
     else
 	clear_display();
 
