@@ -18,6 +18,7 @@
 #import "BlitterView.h"
 #import "Utils.h"
 #import "core_main.h"
+#import "core_display.h"
 #import "core_globals.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
@@ -173,6 +174,9 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	
 	if (rect.origin.y + rect.size.height > 18)
 	{
+		float vertScale = 3.0;
+		if (dispRows > 2 && flags.f.prgm_mode) vertScale = 2.5;
+		
 		// 8 - horz pixel offset
 		// 18 - vert pixel offset to begin drawing.
 		// hMax - pixel height of display
@@ -180,15 +184,18 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
 				
-		int hMax = ((rect.origin.y - 18) + rect.size.height)/3;
+		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
 		if (hMax > dispRows*8) hMax = dispRows*8;
-		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, 3.0, -1, 17*8, 0);
+		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);
+	}
+	
+	if (rect.origin.y + rect.size.height > 121)
+	{
+		CGRect borderLine = CGRectMake(0, 122, 320, 4);
+		CGContextFillRect(ctx, borderLine);
 	}
 	
 }
-
-extern void redisplay();
-
 
 const int SCROLL_SPEED = 15;
 /*
@@ -248,7 +255,7 @@ const int SCROLL_SPEED = 15;
 	{
 		[calcViewController fourLineDisp];
 	}
-	else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows == 4)
+	else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
 	{
 		[calcViewController twoLineDisp];
 	}	
@@ -270,8 +277,10 @@ const int SCROLL_SPEED = 15;
 
 - (void) fourLineDisp
 {
-	
-	dispRows = 4;
+	if (flags.f.prgm_mode)
+		dispRows = 5;
+	else
+		dispRows = 4;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;

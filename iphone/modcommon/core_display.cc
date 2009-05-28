@@ -520,7 +520,7 @@ static char smallchars_map[128] =
 #endif
 
 
-#define DISPLAY_SIZE 680
+#define DISPLAY_SIZE 816
 static char display[DISPLAY_SIZE];
 
 static int is_dirty = 0;
@@ -1954,7 +1954,7 @@ void redisplay() {
 		display_z(0);
 		display_y(1);
 		display_x(2);
-	} else if (avail_rows == 4) {
+	} else if (avail_rows == 4 || avail_rows == 5) {
 	    if (!flags.f.message)
 		display_t(0);
 		display_z(1);

@@ -134,7 +134,8 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 	blitterView.calcViewController = self;
 	menuView.calcViewController = self;
 	
-	core_repaint_display();
+	// to initialize displayBuff;
+	redisplay();
 }
  
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -152,7 +153,12 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3)];
+	if (flags.f.prgm_mode)
+		[blitterView setNeedsDisplay];
+	else
+		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
+		// up dirtly bits just below the 4th row
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + 3)];
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
@@ -227,6 +233,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	bool old_prgm_mode = flags.f.prgm_mode;
+	
 	// If a hightlight is active for cut and past, turn it off
 	// Woud be nice to get a notification when cut/paste menu goes
 	// away, but couldn't get it to work, so this kludge.
@@ -238,7 +246,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
 	
 	int keynum = (int)[sender tag];
-	if (menuKeys && core_menu() && dispRows == 4 && keynum < 13) keynum -= 6;
+	if (menuKeys && core_menu() && dispRows > 2 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];
@@ -263,6 +271,16 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		// if the key is held down for 0.25 seconds, then flash the 
 		// key function.
 		[self performSelector:@selector(keyTimerEvent1) withObject:NULL afterDelay:0.25];
+	}
+	
+	if (flags.f.prgm_mode && !old_prgm_mode && dispRows > 2)
+	{
+		dispRows = 5;
+		redisplay();
+	}
+	else if (!flags.f.prgm_mode && old_prgm_mode && dispRows > 2)
+	{
+		dispRows = 4;
 	}
 }
 
@@ -413,7 +431,10 @@ void shell_request_timeout3(int delay)
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
-	cmdline_row -= 2;
+	if (flags.f.prgm_mode)
+		cmdline_row = 1;
+	else
+		cmdline_row -= 2;
 	
 	b01.enabled = TRUE;
 	b02.enabled = TRUE;
@@ -438,7 +459,8 @@ void shell_request_timeout3(int delay)
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
-	cmdline_row += 2;
+	if (!flags.f.prgm_mode)
+		cmdline_row += 2;
 	
 	b01.enabled = FALSE;
 	b02.enabled = FALSE;
@@ -485,7 +507,7 @@ void shell_beeper(int frequency, int duration)
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	[[self view] setFrame:rect];
 	[[self view] setBounds:rect];
-	if (dispRows == 4) [self fourLineDisp];	
+	if (dispRows > 2) [self fourLineDisp];	
 }
 
 - (void)dealloc {

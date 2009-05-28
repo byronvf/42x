@@ -135,13 +135,13 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		if (bufsize == 680)
+		if (bufsize == 816)
 		{
 			// We do this to convert the file state format from the old version
 			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 408);
-			return 680;
+			memset((char*)buf+272, 0, 544);
+			return 816;
 		}
 		
 		return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
@@ -230,12 +230,7 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 		dispRows = [defaults integerForKey:CONFIG_DISP_ROWS];
 	else
 		dispRows = 2;
-	
-	// We always come up in 2 dispRows mode because it messes up
-	// the view layout if we don't, and it doesn't handle it property
-	// if we are in program mode.
-	// dispRows = 2;
-	
+		
 	if ([defaults objectForKey:CONFIG_PRINT_BUF])
     {
 		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
@@ -267,6 +262,10 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
 	
+	// This needs to be initialized before we init incase an error occurs during
+	// load, and we must print an error message.
+	dispRows = 2;
+	
 	if (!oldStyleStateExists && statefile == NULL)
 	{
 		// We get here if this application has never been run, and there is 
@@ -282,7 +281,7 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	if (statefile) fclose(statefile);
 
 	[self loadSettings];
-	
+		
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 
