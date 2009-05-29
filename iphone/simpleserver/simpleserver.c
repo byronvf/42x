@@ -229,6 +229,16 @@ static int dir_item_compare(const void *va, const void *vb) {
     return strcmp(a->name, b->name);
 }
 
+
+static void redirect(int csock, const char* path)
+{
+    sockprintf(csock, "HTTP/1.0 302 Moved Temporarily\r\n");
+    sockprintf(csock, "Connection: close\r\n");
+    sockprintf(csock, "Location: %s/\r\n", path);
+    sockprintf(csock, "\r\n");    
+}
+
+
 static void do_get(int csock, const char *url) {
     int err;
     void *ptr;
@@ -269,12 +279,14 @@ static void do_get(int csock, const char *url) {
 	    fclose(file);
 	}
     } else if (url[strlen(url) - 1] != '/') {
-	sockprintf(csock, "HTTP/1.0 302 Moved Temporarily\r\n");
-	sockprintf(csock, "Connection: close\r\n");
-	sockprintf(csock, "Location: %s/\r\n", url);
-	sockprintf(csock, "\r\n");
+        redirect(csock, url);
 	if (type == 3)
 	    closedir((DIR *) ptr);
+    } else if (strcmp(url, "/") == 0) { // For now always open in
+                                        // memory directory
+        redirect(csock, "/memory");
+	if (type == 3)
+	    closedir((DIR *) ptr);        
     } else {
 	struct dir_item *dir_list = NULL;
 	int dir_length = 0;
@@ -391,7 +403,7 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, " <body>\n");
 	tbprintf(&tb, "  <h1>Index of %s</h1>\n", url);
 	tbprintf(&tb, "  <table><tr><th><img src=\"/icons/blank.gif\"></th><th>Name</th><th>Last modified</th><th>Size</th></tr><tr><th colspan=\"4\"><hr></th></tr>\n");
-	tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/back.gif\"></td><td><a href=\"..\">Parent directory</a></td><td>&nbsp;</td><td align=\"right\">&nbsp;</td></tr>\n");
+	//tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/back.gif\"></td><td><a href=\"..\">Parent directory</a></td><td>&nbsp;</td><td align=\"right\">&nbsp;</td></tr>\n");
 
 	for (i = 0; i < dir_length; i++) {
 	    dir_item *di = dir_array[i];
@@ -1009,3 +1021,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 #endif
+
+// Local Variables:
+// tab-width:8
+// c-basic-offset: 4
+// End:

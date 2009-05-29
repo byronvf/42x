@@ -246,7 +246,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
 	
 	int keynum = (int)[sender tag];
-	if (menuKeys && core_menu() && dispRows > 2 && keynum < 13) keynum -= 6;
+	if (core_menu() && dispRows > 2 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];

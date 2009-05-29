@@ -172,7 +172,6 @@ extern void handle_client(int);
 	}
 	
 	freeifaddrs(list); 
-
 	
 	if ([array count] == 0)
 		return NULL;
@@ -181,9 +180,12 @@ extern void handle_client(int);
 }
 
 
+#define PORT_START 8000
+#define NUM_TRIES 3
+
 - (void)startServer
 {	
-	int port = 9089;
+	int port = PORT_START-1;
 	NSString* ipAddr = [self getIpAddress];
 	NSString* msg = @"You are not connected to a wireless network";	
 	if (ipAddr)
@@ -196,7 +198,7 @@ extern void handle_client(int);
 		   // a few port numbers, then give up.
   		   status = [self init: ++port];
 		}
-		while(status == EADDRINUSE && port < 9095);			
+		while(status == EADDRINUSE && port < PORT_START + NUM_TRIES - 1);			
 		if (status)
 		{
 			// Something went wrong initializing...
@@ -211,14 +213,11 @@ extern void handle_client(int);
 	[addressLabel setText:msg];		
 }
 
-
 - (void)stopServer
 {
 	[[self class] cancelPreviousPerformRequestsWithTarget: self];	
 	close(ssock);
 }
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
