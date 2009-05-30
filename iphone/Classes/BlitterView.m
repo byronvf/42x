@@ -243,14 +243,6 @@ const int SCROLL_SPEED = 15;
 				
 		firstTouch.y = newPoint.y - len;
 	}
-	else if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 50)
-	{
-		// If we are currently in the process of printing, then we don't allow flipping 
-		// to the print screen since the iPhone can't keep up with this, and it just 
-		// hoses up!  maybe this can be improved at some point.
-		firstTouch.x = -1;
-		[[self navViewController] switchToPrintView];		
-	}	
 	else if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
 	{
 		[calcViewController fourLineDisp];
@@ -259,6 +251,17 @@ const int SCROLL_SPEED = 15;
 	{
 		[calcViewController twoLineDisp];
 	}	
+	
+	
+	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 60)
+	{
+		// If we are currently in the process of printing, then we don't allow flipping 
+		// to the print screen since the iPhone can't keep up with this, and it just 
+		// hoses up!  maybe this can be improved at some point.
+		firstTouch.x = -1;
+		[[self navViewController] switchToPrintView];		
+	}	
+	
 }
 
 - (void) twoLineDisp
@@ -294,19 +297,31 @@ const int SCROLL_SPEED = 15;
 
 char cbuf[30];
 - (void)copy:(id)sender {
-	core_copy(cbuf, 30);
-	NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-	UIPasteboard *pb = [UIPasteboard generalPasteboard];
-	pb.string = copyStr;
-	[self setNeedsDisplayInRect:xRowHighlight];
-	highlight = FALSE;
+	if (highlight)
+	{
+		core_copy(cbuf, 30);
+#ifdef CUTP
+		NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+		UIPasteboard *pb = [UIPasteboard generalPasteboard];
+		pb.string = copyStr;
+#endif		
+		
+		[self setNeedsDisplayInRect:xRowHighlight];
+		highlight = FALSE;
+	}
+	
 }
 
 - (void)paste:(id)sender {
-	UIPasteboard *pb = [UIPasteboard generalPasteboard];
-	core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
-	[self setNeedsDisplayInRect:xRowHighlight];
-	highlight = FALSE;
+	if (highlight)
+	{	
+#ifdef CUTP		
+		UIPasteboard *pb = [UIPasteboard generalPasteboard];
+		core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
+#endif		
+		[self setNeedsDisplayInRect:xRowHighlight];
+		highlight = FALSE;
+	}
 }
 
 - (BOOL) canBecomeFirstResponder {
@@ -315,14 +330,20 @@ char cbuf[30];
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+#ifdef CUTP	
 	UIMenuController *mc = [UIMenuController sharedMenuController];
-	if (mc.menuVisible) mc.menuVisible = FALSE;	
-	[self setNeedsDisplayInRect:xRowHighlight];
-	highlight = FALSE;
+	if (mc.menuVisible) mc.menuVisible = FALSE;
+	if (highlight)
+	{
+		[self setNeedsDisplayInRect:xRowHighlight];
+		highlight = FALSE;
+	}
+#endif
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+#ifdef CUTP	
 	[self shouldCutPaste];
     UITouch *touch = [touches anyObject];
     if ([[touches anyObject] locationInView:self].x < 260 && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
@@ -334,7 +355,7 @@ char cbuf[30];
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = TRUE;
     }
-			
+#endif	
 	// Reset the swipe mode.
 	firstTouch.x = -1;
 }

@@ -61,36 +61,6 @@ NSData* getStateData(NSString* key)
 	return data;
 }
 
-/* write_state
- * and read_state are basically routines that act like writing to a file
- * but actually use the iPhone's standardUserDefaults facility.  I have learned
- * that it is actually possible to read and wrte to a file so maybe
- * this isn't unecessary. An issue is that both shell_write_saved_state and shell_write
- * writes data in chunks through multiple invocations.  We don't know when the 
- * last call occurs so we must continually pulldata out of NSUserDefaults, append the
- * new chunk, then re-save.
- */
-bool write_state(NSString* key, bool *firstWrite, const void *buf, int4 nbytes)
-{
-	NSData *data = getStateData(key);
-	NSMutableData* mdata;
-	if (!data || *firstWrite)
-	{
-		mdata = [[NSMutableData alloc] initWithCapacity:1024];
-		// data will be false if this is the first time the app has ever been run
-		*firstWrite = FALSE;
-	}
-	else
-	{
-		mdata = [[NSMutableData alloc] initWithData:data];
-	}
-	
-	[mdata appendBytes:buf length:nbytes];	
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:mdata forKey:key];
-	return 1;	
-}
-
 int4 read_state(NSString* key, int *readUpTo, void *buf, int4 bufsize)
 {
 	NSData *data = getStateData(key);

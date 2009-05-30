@@ -122,7 +122,7 @@ extern int callKeydownAgain;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
-
+- (void)handlePopupKeyboard;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
 	

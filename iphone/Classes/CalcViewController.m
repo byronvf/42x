@@ -35,7 +35,58 @@ int enqueued = FALSE;
 int callKeydownAgain = FALSE;
 bool timer3active = FALSE;  // Keep track if the timer3 event is currently pending
 
+/*
+ This handler gets called whenever the run loop is about to sleep.  We us it to try
+ and do a better job at executing free42 programs, and handling key events.
+ */
 
+void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+	if (callKeydownAgain)
+	{
+		[viewCtrl performSelectorOnMainThread:@selector(keepRunning) withObject:NULL waitUntilDone:NO];
+	}
+}
+
+void shell_blitter(const char *bits, int bytesperline, int x, int y,
+				   int width, int height)
+{		
+	// Indicate that the blitter view needs to update the given region,
+	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
+	// The 18 is the base offset into the display, pass the flags row
+	if (flags.f.prgm_mode)
+		[blitterView setNeedsDisplay];
+	else
+		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
+		// up dirtly bits just below the 4th row
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + 3)];
+	
+	// If a program is running, force Free42 to pop out of core_keydown and
+	// service display, see shell_wants_cpu()
+	cpuCount = 0;
+	
+	// If the viewCtrl is not initialized yet, don't try and use it
+	if (!viewCtrl) return;
+	
+	viewCtrl.displayBuff = bits;
+	
+	if (core_menu() && menuKeys)
+	{
+		// The menu keys are in the third row of the display (> 16), so 
+		// don't bother updateing unless this area of the display has changed.
+		if (height + y > 16)
+		{
+			[[viewCtrl menuView] setAlpha:1.0];
+			[[viewCtrl blankButtonsView] setAlpha:1.0];
+			[[viewCtrl menuView] setNeedsDisplay];
+		}
+	}
+	else
+	{  
+		[[viewCtrl menuView] setAlpha:0.0];
+		[[viewCtrl blankButtonsView] setAlpha:0.0];
+	} 
+}
 
 /*
  * The CalcViewController manages the key pad portion of the calculator
@@ -94,31 +145,18 @@ bool timer3active = FALSE;  // Keep track if the timer3 event is currently pendi
 }
  */
 
-/*
- This handler gets called whenever the run loop is about to sleep.  We us it to try
- and do a better job at executing free42 programs, and handling key events.
- */
-
-void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
-{
-	if (callKeydownAgain)
-	{
-		[viewCtrl performSelectorOnMainThread:@selector(keepRunning) withObject:NULL waitUntilDone:NO];
-	}
-}
-
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	[blitterView setNavViewController:navViewController];
 	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
-
+	
     // Install the mySleepHandler run loop observer
     NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
     // Create a run loop observer and attach it to the run loop.
     CFRunLoopObserverContext  context = {0, self, NULL, NULL, NULL};
     CFRunLoopObserverRef    observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
-					kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
+															   kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
 	if (core_menu() && menuKeys)
@@ -130,61 +168,39 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 		[blankButtonsView setAlpha:0.0];
 		[menuView setAlpha:0.0];
 	}
-				
+	
 	blitterView.calcViewController = self;
 	menuView.calcViewController = self;
 	
 	// to initialize displayBuff;
 	redisplay();
 }
- 
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Return YES for supported orientations
 	return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning];
-}
 
-void shell_blitter(const char *bits, int bytesperline, int x, int y,
-				   int width, int height)
-{		
-	// Indicate that the blitter view needs to update the given region,
-	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
-	// The 18 is the base offset into the display, pass the flags row
-	if (flags.f.prgm_mode)
-		[blitterView setNeedsDisplay];
-	else
-		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
-		// up dirtly bits just below the 4th row
-		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + 3)];
-	
-	// If a program is running, force Free42 to pop out of core_keydown and
-	// service display, see shell_wants_cpu()
-	cpuCount = 0;
-	
-	// If the viewCtrl is not initialized yet, don't try and use it
-	if (!viewCtrl) return;
-
-	viewCtrl.displayBuff = bits;
-	
-	if (core_menu() && menuKeys)
-	{
-		// The menu keys are in the third row of the display (> 16), so 
-		// don't bother updateing unless this area of the display has changed.
-		if (height + y > 16)
+- (void)handlePopupKeyboard
+{
+	if ([[Settings instance] keyboardOn])
+	{		
+		if( !alphaMenuActive && core_alpha_menu())
 		{
-			[[viewCtrl menuView] setAlpha:1.0];
-			[[viewCtrl blankButtonsView] setAlpha:1.0];
-			[[viewCtrl menuView] setNeedsDisplay];
+			alphaMenuActive = YES;
+            set_menu(MENULEVEL_ALPHA, 1);
+			redisplay();
+			[textEntryField becomeFirstResponder];
+			textEntryField.text = @"";
 		}
-	}
-	else
-	{  
-		[[viewCtrl menuView] setAlpha:0.0];
-		[[viewCtrl blankButtonsView] setAlpha:0.0];
-	} 
+		else if( alphaMenuActive && !core_alpha_menu())
+		{
+			alphaMenuActive = NO;
+			[textEntryField resignFirstResponder];
+		}	
+	}	
+	
 }
 
 
@@ -225,6 +241,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if ([[Settings instance] autoPrintOn])
 			[navViewController switchToPrintView];
 	}
+	
+	// Test if we need to pop up the keyboard here, this can happen if
+	// a program is being run that activates the keyboard which otherwise
+	// the normal key handling would not detect.
+	[self handlePopupKeyboard];
 }
 
 
@@ -281,7 +302,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	else if (!flags.f.prgm_mode && old_prgm_mode && dispRows > 2)
 	{
 		dispRows = 4;
-	}
+	}	
+	
+	[self handlePopupKeyboard];	
 }
 
 
@@ -300,21 +323,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		callKeydownAgain = core_keyup();
 	}
 			
-	if ([[Settings instance] keyboardOn])
-	{		
-		if( !alphaMenuActive && core_alpha_menu())
-		{
-			alphaMenuActive = YES;
-			[textEntryField becomeFirstResponder];
-			textEntryField.text = @"";
-		}
-		else if( alphaMenuActive && !core_alpha_menu())
-		{
-			alphaMenuActive = NO;
-			[textEntryField resignFirstResponder];
-		}	
-	}
-	
 	timer3active = FALSE;
 	[self keepRunning];	
 }
