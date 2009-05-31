@@ -19,6 +19,7 @@
 #import "CalcViewController.h"
 #import "core_main.h"
 #import "core_display.h"
+#import "core_keydown.h"
 #import "Settings.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -173,6 +174,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	menuView.calcViewController = self;
 	
 	// to initialize displayBuff;
+	alphaMenuActive = FALSE;
+	[self handlePopupKeyboard];
 	redisplay();
 }
 
@@ -189,12 +192,12 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if( !alphaMenuActive && core_alpha_menu())
 		{
 			alphaMenuActive = YES;
-            set_menu(MENULEVEL_ALPHA, 1);
+			keydown(0, 23); // down key to place menu on special characters
 			redisplay();
 			[textEntryField becomeFirstResponder];
 			textEntryField.text = @"";
 		}
-		else if( alphaMenuActive && !core_alpha_menu())
+		else if(alphaMenuActive && !core_alpha_menu())
 		{
 			alphaMenuActive = NO;
 			[textEntryField resignFirstResponder];
@@ -425,12 +428,7 @@ void shell_request_timeout3(int delay)
 		if( !enqueued) core_keyup();
 	}
 	
-	if (!core_alpha_menu())
-	{
-		[textEntryField resignFirstResponder];
-		alphaMenuActive = NO;
-	}
-		
+	[self handlePopupKeyboard];	
 	return YES;
 }
 
