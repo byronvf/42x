@@ -559,11 +559,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREE42,
+					BCD_MATH,
+				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = 42s;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Distribution;
 		};

@@ -60,7 +60,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	else
 		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
 		// up dirtly bits just below the 4th row
-		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + 3)];
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + (height > 24 ? 3 : 0))];
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
