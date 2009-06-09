@@ -502,6 +502,9 @@ void shell_request_timeout3(int delay)
  */
 void shell_beeper(int frequency, int duration)
 {
+	if (![[Settings instance] beepSoundOn])
+		return;
+
 	const int cutoff_freqs[] = { 164, 220, 243, 275, 293, 324, 366, 418, 438, 550 };
 	for (int i = 0; i < 10; i++) {
 		if (frequency <= cutoff_freqs[i]) {
