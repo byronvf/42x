@@ -261,20 +261,13 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
     [window addSubview: [navViewController view]];
 	[window makeKeyAndVisible];
 			
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"click" ofType:@"wav"];
-	OSStatus status = AudioServicesCreateSystemSoundID(
-			    (CFURLRef)[NSURL  fileURLWithPath:path], &[Settings instance]->clickSoundId);
-	if (status)
-	{ 
-		NSLog(@"clicks sound load error:  %d", status);
-	}
-	
-	path = [[NSBundle mainBundle] pathForResource:@"beep_04" ofType:@"wav"];
-	status = AudioServicesCreateSystemSoundID(
-				(CFURLRef)[NSURL  fileURLWithPath:path], &[Settings instance]->beepSoundId);
-	if (status)
-	{ 
-		NSLog(@"beep sound load error:  %d", status);
+	const char *sound_names[] = { "tone0", "tone1", "tone2", "tone3", "tone4", "tone5", "tone6", "tone7", "tone8", "tone9", "squeak" };
+	for (int i = 0; i < 11; i++) {
+		NSString *name = [NSString stringWithCString:sound_names[i]];
+		NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"wav"];
+		OSStatus status = AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &[Settings instance]->soundIDs[i]);
+		if (status)
+			NSLog(@"error loading sound:  %d", name);
 	}
 }
 

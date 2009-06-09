@@ -29,8 +29,7 @@
 	
 	@public
 	
-	SystemSoundID clickSoundId;
-	SystemSoundID beepSoundId;
+	SystemSoundID soundIDs[11];
 }
 
 @property bool clickSoundOn;
