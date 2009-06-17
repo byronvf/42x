@@ -20,6 +20,7 @@
 #import "core_main.h"
 #import "core_display.h"
 #import "core_keydown.h"
+#import "shell.h"
 #import "Settings.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -266,8 +267,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	// Play click sound
 	if ([[Settings instance] clickSoundOn])
-		//AudioServicesPlaySystemSound(1105);
-		AudioServicesPlaySystemSound ([Settings instance]->clickSoundId);
+		AudioServicesPlaySystemSound(1105);
 	
 	int keynum = (int)[sender tag];
 	if (core_menu() && dispRows > 2 && keynum < 13) keynum -= 6;
@@ -502,12 +502,19 @@ void shell_request_timeout3(int delay)
  */
 void shell_beeper(int frequency, int duration)
 {
-	if ([[Settings instance] beepSoundOn])
-	  AudioServicesPlaySystemSound ([Settings instance]->beepSoundId);
+	if (![[Settings instance] beepSoundOn])
+		return;
 
-	//[viewCtrl->tonePlayer setSound:TRUE withVolume:32000.0];
-	//[viewCtrl->tonePlayer soundTone:frequency forDuration:duration/1000.0];
-	
+	const int cutoff_freqs[] = { 164, 220, 243, 275, 293, 324, 366, 418, 438, 550 };
+	for (int i = 0; i < 10; i++) {
+		if (frequency <= cutoff_freqs[i]) {
+			AudioServicesPlaySystemSound([Settings instance]->soundIDs[i]);
+			shell_delay(250);
+			return;
+		}
+	}
+	AudioServicesPlaySystemSound([Settings instance]->soundIDs[10]);
+	shell_delay(125);
 }
 
 /**
