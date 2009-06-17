@@ -1,4 +1,3 @@
-.hg
 *.d
 keymap2cc
 keymap.cc
