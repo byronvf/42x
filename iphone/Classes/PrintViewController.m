@@ -107,6 +107,8 @@ void shell_print(const char *text, int length,
 
 - (void)display
 {
+	[self initViews];
+	
 	UIScrollView* scrollView = (UIScrollView*)[self view];
 	int numVertPixel = [printBuff length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
@@ -146,8 +148,16 @@ void shell_print(const char *text, int length,
 	
 }
 
-- (void)awakeFromNib
+/**
+ * We use to call this from awakeFromNib, but we now do it lazily so we
+ * don't take the hit at load time.
+ */ 
+BOOL viewsInitialized = FALSE;
+- (void)initViews
 {	
+	if (viewsInitialized) return;
+
+	viewsInitialized = TRUE;
 	// Get the navigation item that represent this controller in the 
 	// navigation bar, and add our clear button to it
 	UIBarButtonItem* clearButton = 

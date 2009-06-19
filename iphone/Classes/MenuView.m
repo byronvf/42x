@@ -25,7 +25,7 @@ extern int dispRows;
 
 - (void)drawRect:(CGRect)rect {
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(ctx, 0.85, 0.85, 0.85, 1.0);
+	CGContextSetRGBFillColor(ctx, 0.85, 0.85, 0.85, 1.0);	
 	
 	// 136 - size in bytes of one row.
 	// 17*2 - absorb a couple of pixel rows	

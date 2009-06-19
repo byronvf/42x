@@ -232,8 +232,8 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
 	
-	// This needs to be initialized before we init incase an error occurs during
-	// load, and we must print an error message.
+	// This needs to be initialized before we init in case an error occurs during
+	// load, and core_init must display an error message on the LCD.
 	dispRows = 2;
 	
 	if (!oldStyleStateExists && statefile == NULL)
