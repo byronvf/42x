@@ -32,6 +32,7 @@ void shell_powerdown()
 @synthesize configViewController;
 @synthesize printViewController;
 @synthesize serverViewController;
+@synthesize calcViewController;
 
 
 /**
@@ -54,12 +55,13 @@ BOOL showingServerView;
 	showingServerView = FALSE;
 }
 
-
+/*
+ * Switch the view controlled by viewCtrl
+ */
 - (void)switchToView:(UIViewController*) viewCtrl
 {
-	[self setNavigationBarHidden:FALSE animated:TRUE];
+	[self setNavigationBarHidden:FALSE animated:FALSE];
 	[self pushViewController:viewCtrl animated:TRUE];
-	//[[viewCtrl navBar] pushNavigationItem:[viewCtrl navigationItem] animated:TRUE];
 }
 
 
@@ -71,38 +73,37 @@ BOOL showingServerView;
 }
 
 - (void)switchToServerView
-{
-    [self pushViewController:(UIViewController *)serverViewController animated:TRUE];	
+{	
+	[self switchToView:(UIViewController *)serverViewController];	
 }
 
-- (BOOL)navigationBar:(UINavigationBar *)nb shouldPopItem:(UINavigationItem *)item
+/*
+ * Intercept switching between views so we can test for the server view, and insert logic
+ */
+	
+- (void)navigationController:(UINavigationController *)navigationController 
+	   willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-
-	// If there are 2 views on the stack, then we are comming back to the main calc view
-	if ([[self viewControllers] count] == 2)
+	// There will be one view controller on the stack if returning to the calc view
+	if ([[self viewControllers] count] == 1)
 	{
   	    // When we come back to the calc view, rehide the navigation bar
 	    [self setNavigationBarHidden:TRUE animated:TRUE];
 	}
-	
-	// This method will be accepted by the super class... I don't know why 
-	// Obj-C has a problem with this, but the warning really annoys ME!!!!
-	[super navigationBar:nb shouldPopItem:item];
-	
-	return TRUE;
-}
-
-- (void)navigationController:(UINavigationController *)navigationController 
-	   willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+		
 	if (showingServerView)
 	{
+		// We don't want the server running in the background while not on the server
+		// view, so if we are switching away from the server view, stop the web server.
 		[serverViewController stopServer];
 		showingServerView = FALSE;
 	}		
 	
 	if (viewController == (UIViewController*)serverViewController)
 	{
+		// We are switching to the server view, so start up the web server. We do it 
+		// now so that the results of starting the server can be displayed on 
+		// the view before we switch in, for example server URL, or an error message.
 		showingServerView = TRUE;
 		[serverViewController startServer];
 	}
