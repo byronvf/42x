@@ -475,7 +475,6 @@ void shell_request_timeout3(int delay)
 	b05.enabled = FALSE;
 	b06.enabled = FALSE;
 		
-	
 	CGPoint cent;
 	
 	cent = menuView.center;
