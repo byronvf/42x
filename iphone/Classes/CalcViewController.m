@@ -139,6 +139,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize blankButtonsView;
 @synthesize displayBuff;
 @synthesize menuView;
+@synthesize keyPressed;
 
 
 /*
@@ -173,6 +174,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	blitterView.calcViewController = self;
 	menuView.calcViewController = self;
+	
+	keyPressed = false;
 	
 	// to initialize displayBuff;
 	alphaMenuActive = FALSE;
@@ -258,6 +261,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	keyPressed = TRUE;
 	bool old_prgm_mode = flags.f.prgm_mode;
 	
 	// If a hightlight is active for cut and past, turn it off
@@ -313,6 +317,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 - (void)buttonUp:(UIButton*)sender
 {
+	keyPressed = FALSE;
 	if (!enqueued && !timer3active)
 	{
 		// If the timer 3 event is active, we don't want to stop the timer on 

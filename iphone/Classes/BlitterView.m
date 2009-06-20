@@ -243,15 +243,23 @@ const int SCROLL_SPEED = 15;
 				
 		firstTouch.y = newPoint.y - len;
 	}
-	else if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
+	else if (!calcViewController.keyPressed)
 	{
-		[calcViewController fourLineDisp];
+		// changing the display mode causes a call to Free42's redisplay method.
+		// However redisplay is not intended to be called bettween a keydown and
+		// a keyup method calls.  So we don't allow it here.  This fixes a crash that
+		// occurred while switching to four line mode, and pressing the "EXIT" key
+		// at the same time.
+		
+		if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
+		{
+			[calcViewController fourLineDisp];
+		}
+		else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
+		{
+			[calcViewController twoLineDisp];
+		}	
 	}
-	else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
-	{
-		[calcViewController twoLineDisp];
-	}	
-	
 	
 	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 60)
 	{
