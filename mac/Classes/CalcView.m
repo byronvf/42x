@@ -15,9 +15,31 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
-#import <Cocoa/Cocoa.h>
+#import "CalcView.h"
+#import "Free42AppDelegate.h"
+#import "shell_skin.h"
 
-int main(int argc, char *argv[])
-{
-    return NSApplicationMain(argc,  (const char **) argv);
+@implementation CalcView
+
+- (id)initWithFrame:(NSRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code here.
+    }
+    return self;
 }
+
+- (void)drawRect:(NSRect)rect {
+	skin_repaint(&rect);
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+	NSPoint loc = [theEvent locationInWindow];
+	calc_mousedown((int) loc.x, (int) loc.y);
+}
+
+- (void)mouseUp:(NSEvent *)theEvent {
+	calc_mouseup();
+}
+	
+@end
