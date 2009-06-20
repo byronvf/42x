@@ -73,13 +73,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
  * The blitterView manages the calculators digital display
  */
 @implementation BlitterView
-
-@synthesize imgFlagUpDown;
-@synthesize imgFlagShift;
-@synthesize imgFlagGrad;
-@synthesize imgFlagRad;
-@synthesize imgFlagRun;
-@synthesize imgFlagPrint;
 @synthesize navViewController;
 @synthesize calcViewController;
 @synthesize shiftButton;
@@ -99,12 +92,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 {	
 	// Initialization code
 	blitterView = self; // We need a reference to this view outside the class
-	imgFlagUpDown = [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage];
-	imgFlagShift = [[UIImage imageNamed:@"imgFlagShift.png"] CGImage];
-	imgFlagGrad = [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage];
-	imgFlagRad = [[UIImage imageNamed:@"imgFlagRad.png"] CGImage];
-	imgFlagRun = [[UIImage imageNamed:@"imgFlagRun.png"] CGImage];
-	imgFlagPrint = [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage];
 	highlight = FALSE;
 	
 	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
@@ -129,23 +116,33 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
+	// We call UIImage directly since it caches the images.  This fixes a crash
+	// that would occur when the system would run low on memory and the pointer
+	// to the image stored in a variable would no longer be valid.
+	
 	if (flagUpDown)
-		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), [blitterView imgFlagUpDown]);
+		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), 
+						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18), [blitterView imgFlagShift]);
+		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18),
+						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
 	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18), [blitterView imgFlagPrint]);	
+		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18),
+						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18), [blitterView imgFlagRun]);	
+		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18),
+						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), [blitterView imgFlagGrad]);
+		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), 
+						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
 	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20), [blitterView imgFlagRad]);		
+		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20),
+						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
 
 - (void)shouldCutPaste
