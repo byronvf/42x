@@ -305,11 +305,9 @@ char cbuf[30];
 	if (highlight)
 	{
 		core_copy(cbuf, 30);
-#ifdef CUTP
 		NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 		UIPasteboard *pb = [UIPasteboard generalPasteboard];
 		pb.string = copyStr;
-#endif		
 		
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = FALSE;
@@ -320,10 +318,8 @@ char cbuf[30];
 - (void)paste:(id)sender {
 	if (highlight)
 	{	
-#ifdef CUTP		
 		UIPasteboard *pb = [UIPasteboard generalPasteboard];
 		core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
-#endif		
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = FALSE;
 	}
@@ -335,7 +331,6 @@ char cbuf[30];
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-#ifdef CUTP	
 	UIMenuController *mc = [UIMenuController sharedMenuController];
 	if (mc.menuVisible) mc.menuVisible = FALSE;
 	if (highlight)
@@ -343,12 +338,10 @@ char cbuf[30];
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = FALSE;
 	}
-#endif
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-#ifdef CUTP	
 	[self shouldCutPaste];
     UITouch *touch = [touches anyObject];
     if ([[touches anyObject] locationInView:self].x < 260 && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
@@ -360,7 +353,6 @@ char cbuf[30];
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = TRUE;
     }
-#endif	
 	// Reset the swipe mode.
 	firstTouch.x = -1;
 }
