@@ -24,6 +24,7 @@
 #import "PrintViewController.h"
 #import "NavViewController.h"
 #import "core_keydown.h"
+#import "core_helpers.h"
 
 BlitterView *blitterView; // Reference to this blitter so we can access from C methods
 
@@ -67,6 +68,18 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 		else
 			[[blitterView shiftButton] setImage:NULL forState:NULL];
 	}
+}
+
+
+void core_copy_reg(char *buf, int buflen, vartype *reg) {
+    int len = vartype2string(reg, buf, buflen - 1);
+    buf[len] = 0;
+    if (reg->type == TYPE_REAL || reg->type == TYPE_COMPLEX) {
+		/* Convert small-caps 'E' to regular 'e' */
+		while (--len >= 0)
+			if (buf[len] == 24)
+				buf[len] = 'e';
+    }
 }
 
 /**
@@ -301,7 +314,43 @@ const int SCROLL_SPEED = 15;
 }
 
 char cbuf[30];
-- (void)copy:(id)sender {
+- (void)selectAll:(id)sender {
+	if (highlight)
+	{
+		NSMutableString *nums = [NSMutableString stringWithCapacity:100];
+		NSString *str = NULL;
+				
+		core_copy_reg(cbuf, 30, reg_t);
+		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+		[nums appendString:str];
+		[nums appendString:@"\n"];
+		
+		core_copy_reg(cbuf, 30, reg_z);
+		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+		[nums appendString:str];
+		[nums appendString:@"\n"];
+
+		core_copy_reg(cbuf, 30, reg_y);
+		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+		[nums appendString:str];
+		[nums appendString:@"\n"];
+		
+		core_copy_reg(cbuf, 30, reg_x);
+		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+		[nums appendString:str];
+		[nums appendString:@"\n"];
+		
+		UIPasteboard *pb = [UIPasteboard generalPasteboard];
+		pb.string = nums;
+		
+		[self setNeedsDisplayInRect:xRowHighlight];
+		highlight = FALSE;
+	}
+	
+}
+
+
+- (void)select:(id)sender {
 	if (highlight)
 	{
 		core_copy(cbuf, 30);
@@ -311,16 +360,34 @@ char cbuf[30];
 		
 		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = FALSE;
-	}
-	
+	}	
 }
 
+/*
+ *  Handle paste
+ */
 - (void)paste:(id)sender {
 	if (highlight)
 	{	
 		UIPasteboard *pb = [UIPasteboard generalPasteboard];
-		core_paste([pb.string cStringUsingEncoding:NSASCIIStringEncoding]);
-		[self setNeedsDisplayInRect:xRowHighlight];
+	
+		// Handle multiple numbers.  We split by control character such
+		// as newlines and tabs, then disregard any blank lines, we feed the 
+		// trimmed results to Free42
+
+		NSArray *nums = [pb.string componentsSeparatedByCharactersInSet:
+						 [NSCharacterSet controlCharacterSet]];
+		NSEnumerator *enumerator = [nums objectEnumerator];
+		id num;
+		while(num = [enumerator nextObject])
+		{
+			NSString *trimmed = [num stringByTrimmingCharactersInSet:
+								[NSCharacterSet whitespaceCharacterSet]];
+			if ([trimmed length] != 0)
+				core_paste([trimmed cStringUsingEncoding:NSASCIIStringEncoding]);
+		}
+		
+		[self setNeedsDisplay];
 		highlight = FALSE;
 	}
 }
@@ -344,13 +411,15 @@ char cbuf[30];
 {
 	[self shouldCutPaste];
     UITouch *touch = [touches anyObject];
-    if ([[touches anyObject] locationInView:self].x < 260 && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
+    if ([[touches anyObject] locationInView:self].x < 260 
+		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
         UIMenuController *mc = [UIMenuController sharedMenuController];
 		[self setXHighlight];
         [mc setTargetRect:xRowHighlight inView:self];
         [mc setMenuVisible:YES animated:YES];
 		[self setNeedsDisplayInRect:xRowHighlight];
+		
 		highlight = TRUE;
     }
 	// Reset the swipe mode.
