@@ -36,7 +36,5 @@ extern BOOL printingStarted;
 @property (nonatomic, retain) NSMutableData* printBuff;
 
 - (void)display;
-- (void)initViews;
-
 @end
 

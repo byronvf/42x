@@ -19,6 +19,8 @@
 #import "CalcViewController.h"
 #import "NavViewController.h"
 
+#define PRINT_FILE_NAME @"/Documents/print.txt"
+
 @interface Free42AppDelegate : NSObject <UIApplicationDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet CalcViewController *viewController;
@@ -31,3 +33,4 @@
 
 @end
 
+extern FILE* printFile;

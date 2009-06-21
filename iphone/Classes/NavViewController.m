@@ -19,6 +19,7 @@
 #import "PrintViewController.h"
 #import "ServerViewController.h"
 #import "CalcViewController.h"
+#import "Free42AppDelegate.h"
 
 static NavViewController *navCtrl = NULL;
 
@@ -95,6 +96,9 @@ BOOL showingServerView;
 	}
 	else if (vc == (UIViewController*)serverViewController)
 	{
+		// Close the printer spool file effectively flushing it
+		if (printFile) fflush(printFile);
+		
 		// We are switching to the server view, so start up the web server. We do it 
 		// now so that the results of starting the server can be displayed on 
 		// the view before we switch in, for example server URL, or an error message.
