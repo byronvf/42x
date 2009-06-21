@@ -26,12 +26,6 @@ extern int cpuCount;
 
 @interface BlitterView : UIView {
 
-	CGImageRef imgFlagUpDown;
-	CGImageRef imgFlagShift;
-	CGImageRef imgFlagGrad;
-	CGImageRef imgFlagRad;
-	CGImageRef imgFlagRun;
-	CGImageRef imgFlagPrint;
 	NavViewController* navViewController;
 	
 	UIButton* shiftButton;
@@ -46,12 +40,6 @@ extern int cpuCount;
 	CalcViewController* calcViewController;
 }
 
-@property CGImageRef imgFlagUpDown;
-@property CGImageRef imgFlagShift;
-@property CGImageRef imgFlagGrad;
-@property CGImageRef imgFlagRad;
-@property CGImageRef imgFlagRun;
-@property CGImageRef imgFlagPrint;
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property (nonatomic, retain) NavViewController* navViewController;

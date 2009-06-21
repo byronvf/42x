@@ -18,18 +18,34 @@
 #import "PrintViewController.h"
 #include "Utils.h"
 #include "Free42AppDelegate.h"
+#include "shell_spool.h"
 
 static PrintViewController* printViewController;
 BOOL printingStarted = FALSE;
+
+extern NSString* printFileStr;
 
 // Keep track of the last position we printed so we can conveniently
 // place the printer screen at the beginning of this new output.
 static int lastPrintPosition = 0;
 
+static void writer(const char *text, int length)
+{
+	if (printFile) fwrite(text, 1, length, printFile);
+}	
+
+static void newliner()
+{
+	if (printFile) fputc('\n', printFile);
+}
+
+
 void shell_print(const char *text, int length,
 				 const char *bits, int bytesperline,
 				 int x, int y, int width, int height)
 {
+	shell_spool_txt(text, length, writer, newliner);
+	
 	NSMutableData* buf = [printViewController printBuff];
 	if (!printingStarted)
 	{
@@ -65,6 +81,11 @@ void shell_print(const char *text, int length,
 
 - (void)clearPrinter
 {
+	// Clear print file
+	if (printFile) fclose(printFile);
+	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];	
+	printFile = fopen([fileStr UTF8String], "w");	
+		
 	[view1 setFrame:CGRectMake(0,0,320,480)];
 	[view2 setFrame:CGRectMake(0,480,320,480)];
 	[view1 setOffset:0];
@@ -107,8 +128,6 @@ void shell_print(const char *text, int length,
 
 - (void)display
 {
-	[self initViews];
-	
 	UIScrollView* scrollView = (UIScrollView*)[self view];
 	int numVertPixel = [printBuff length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
@@ -148,16 +167,8 @@ void shell_print(const char *text, int length,
 	
 }
 
-/**
- * We use to call this from awakeFromNib, but we now do it lazily so we
- * don't take the hit at load time.
- */ 
-BOOL viewsInitialized = FALSE;
 - (void)initViews
 {	
-	if (viewsInitialized) return;
-
-	viewsInitialized = TRUE;
 	// Get the navigation item that represent this controller in the 
 	// navigation bar, and add our clear button to it
 	UIBarButtonItem* clearButton = 
@@ -181,6 +192,11 @@ BOOL viewsInitialized = FALSE;
 	[view1 setNeedsDisplay];
 	[view2 setNeedsDisplay];
 	
+}
+
+- (void) awakeFromNib
+{
+	[self initViews];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView 

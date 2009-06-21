@@ -18,6 +18,8 @@
 #import "NavViewController.h"
 #import "PrintViewController.h"
 #import "ServerViewController.h"
+#import "CalcViewController.h"
+#import "Free42AppDelegate.h"
 
 static NavViewController *navCtrl = NULL;
 
@@ -48,7 +50,6 @@ void shell_powerdown()
 
 /// Set to true when we are currently displaying the server view
 BOOL showingServerView;
-
 - (void)awakeFromNib
 {
 	navCtrl = self;	
@@ -60,7 +61,7 @@ BOOL showingServerView;
  */
 - (void)switchToView:(UIViewController*) viewCtrl
 {
-	[self setNavigationBarHidden:FALSE animated:FALSE];
+	[self setNavigationBarHidden:FALSE];
 	[self pushViewController:viewCtrl animated:TRUE];
 }
 
@@ -77,30 +78,27 @@ BOOL showingServerView;
 	[self switchToView:(UIViewController *)serverViewController];	
 }
 
-/*
- * Intercept switching between views so we can test for the server view, and insert logic
- */
-	
 - (void)navigationController:(UINavigationController *)navigationController 
-	   willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+	   willShowViewController:(UIViewController *)vc animated:(BOOL)animated
 {
 	// There will be one view controller on the stack if returning to the calc view
-	if ([[self viewControllers] count] == 1)
+	if (vc == (UIViewController*)calcViewController)
 	{
   	    // When we come back to the calc view, rehide the navigation bar
-	    [self setNavigationBarHidden:TRUE animated:TRUE];
+	    [self setNavigationBarHidden:TRUE animated:FALSE];
 	}
-		
-	if (showingServerView)
+	else if (showingServerView)
 	{
 		// We don't want the server running in the background while not on the server
 		// view, so if we are switching away from the server view, stop the web server.
 		[serverViewController stopServer];
 		showingServerView = FALSE;
-	}		
-	
-	if (viewController == (UIViewController*)serverViewController)
+	}
+	else if (vc == (UIViewController*)serverViewController)
 	{
+		// Close the printer spool file effectively flushing it
+		if (printFile) fflush(printFile);
+		
 		// We are switching to the server view, so start up the web server. We do it 
 		// now so that the results of starting the server can be displayed on 
 		// the view before we switch in, for example server URL, or an error message.

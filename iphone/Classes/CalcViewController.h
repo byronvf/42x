@@ -72,9 +72,12 @@ extern int callKeydownAgain;
 	IBOutlet MenuView *menuView;
 	IBOutlet UIImageView *blankButtonsView;
 	
-	const char* displayBuff;	
+	const char* displayBuff;
+	
+	BOOL keyPressed;
 }
 
+@property BOOL keyPressed;
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
 @property (nonatomic, retain) UIImageView* blankButtonsView;

@@ -22,6 +22,8 @@
 #import "Settings.h"
 #import "PrintViewController.h"
 
+FILE* printFile = NULL;  // shared in PrintViewController.m
+
 // Base name of 42s state file name, this will be prepended by the home directory
 static NSString* stateBaseName = @"/Documents/42s.state";
 
@@ -269,6 +271,10 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 		if (status)
 			NSLog(@"error loading sound:  %d", name);
 	}
+	
+	
+	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];	
+	printFile = fopen([fileStr UTF8String], "a");	
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -283,8 +289,10 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
     statefile = fopen([statepath UTF8String], "w");	
     core_quit();
-    fclose(statefile);	
+	if (statefile) fclose(statefile);	
 	[self saveSettings];
+	
+	if (printFile) fclose(printFile);	
 }
 
 - (void)dealloc {

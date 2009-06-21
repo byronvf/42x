@@ -401,7 +401,10 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, "  </style>\n");
 	tbprintf(&tb, " </head>\n");
 	tbprintf(&tb, " <body>\n");
-	tbprintf(&tb, "  <h1>Index of %s</h1>\n", url);
+	
+	tbprintf(&tb, " <br /><b>Print Output:</b> <a href=\"/print.txt\">print.txt</a><br />\n");
+	
+	tbprintf(&tb, "  <h2>Index of %s</h2>\n", url);
 	tbprintf(&tb, "  <table><tr><th><img src=\"/icons/blank.gif\"></th><th>Name</th><th>Last modified</th><th>Size</th></tr><tr><th colspan=\"4\"><hr></th></tr>\n");
 	//tbprintf(&tb, "   <tr><td valign=\"top\"><img src=\"/icons/back.gif\"></td><td><a href=\"..\">Parent directory</a></td><td>&nbsp;</td><td align=\"right\">&nbsp;</td></tr>\n");
 
@@ -431,7 +434,7 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, "   <tr><td colspan=\"4\"><form method=\"post\" enctype=\"multipart/form-data\">\n");
 	tbprintf(&tb, "    Upload file:<p>\n");
 	tbprintf(&tb, "    <input type=\"file\" name=\"filedata\"><p>\n");
-	tbprintf(&tb, "    <input type=\"submit\" value=\"Submit\">\n");
+	tbprintf(&tb, "    <input type=\"submit\" value=\"Import\">\n");
 	tbprintf(&tb, "   </form></td></tr>\n");
 	tbprintf(&tb, "   <tr><th colspan=\"4\"><hr></th></tr></table>\n");
 	tbprintf(&tb, "  <address>Free42 " VERSION " HTTP Server</address>\n");
