@@ -91,7 +91,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 @synthesize shiftButton;
 @synthesize highlight;
 @synthesize cutPaste;
-
 - (void)setXHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
@@ -221,7 +220,7 @@ const int SCROLL_SPEED = 15;
 		firstTouch = [touch locationInView:self];
 		return;
 	}
-	else if (firstTouch.x > 260 && !mode_running)
+	else if (firstTouch.x > 240 && !mode_running)
 	{
 		cutPaste = FALSE;
 		CGPoint newPoint = [touch locationInView:self];
@@ -411,7 +410,7 @@ char cbuf[30];
 {
 	[self shouldCutPaste];
     UITouch *touch = [touches anyObject];
-    if ([[touches anyObject] locationInView:self].x < 260 
+    if ([[touches anyObject] locationInView:self].x < 240 
 		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
         UIMenuController *mc = [UIMenuController sharedMenuController];

@@ -126,7 +126,7 @@ void shell_print(const char *text, int length,
 	}		
 }
 
-- (void)display
+- (void)displayPlotView
 {
 	UIScrollView* scrollView = (UIScrollView*)[self view];
 	int numVertPixel = [printBuff length]/18;
@@ -194,9 +194,36 @@ void shell_print(const char *text, int length,
 	
 }
 
+-(void)displayTextView
+{
+	// Experimental, but not being used at the moment.
+	/*
+	if (printFile) fflush(printFile);
+	
+	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
+	NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding
+												  error:NULL];	
+	textView.text = pout;
+	textView.font = [UIFont fontWithName:@"Courier-Bold" size:16];
+	textView.editable = FALSE;
+	UIColor* bgColor = [UIColor colorWithRed:0.94 green:0.91 blue:0.82 alpha:1.0];
+	[textView setBackgroundColor:bgColor];	
+	[self setView:textView];	
+	 */
+}
+
+-(void)display
+{
+	[self displayPlotView];
+}
+
 - (void) awakeFromNib
 {
 	[self initViews];
+	
+	
+	//plotView = (UIScrollView*)[self view];
+	//textView = [[UITextView alloc] init]; 
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView 

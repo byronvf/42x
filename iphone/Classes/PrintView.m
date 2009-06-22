@@ -18,6 +18,7 @@
 #import "PrintView.h"
 #include "PrintViewController.h"
 #include "Utils.h"
+#import "Free42AppDelegate.h"
 
 @implementation PrintView
 
@@ -29,6 +30,34 @@
 		// Initialization code
 	}
 	return self;
+}
+
+
+- (void)selectAll:(id)sender {
+
+	// flush file contents to file
+	if (printFile) fflush(printFile);
+
+	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
+	NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding
+												  error:NULL];	
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	pb.string = pout;	
+}	
+
+- (BOOL) canBecomeFirstResponder {
+	return TRUE;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    if (touch.tapCount == 2 && [self becomeFirstResponder]) {
+        CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero};
+        UIMenuController *mc = [UIMenuController sharedMenuController];
+        [mc setTargetRect:targetRect inView:self];
+        [mc setMenuVisible:YES animated:YES];
+    }
 }
 
 - (void)drawRect:(CGRect)rect 
