@@ -49,7 +49,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	cpuCount = 200;
+	cpuCount = 1000;
 	return 1;
 }
 
