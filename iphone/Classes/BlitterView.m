@@ -91,6 +91,7 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 @synthesize shiftButton;
 @synthesize highlight;
 @synthesize cutPaste;
+@synthesize selectAll;
 - (void)setXHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
@@ -109,7 +110,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
 	[self setXHighlight];
 	firstTouch.x = -1;
-	
 	[self shouldCutPaste];
 }
 
@@ -173,6 +173,15 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	if (highlight)
 	{
 		CGContextSetRGBFillColor(ctx, 0.60, 0.8, 1.0, 1.0);
+		if (selectAll)
+		{
+			// Make selection area larger for select all
+			CGRect rect = xRowHighlight;
+			int newy = 16;
+			rect.size.height = rect.size.height + (rect.origin.y - newy);
+			rect.origin.y = newy;
+			CGContextFillRect(ctx,rect);
+		}
         CGContextFillRect(ctx, xRowHighlight);
 	}
 	
@@ -281,6 +290,9 @@ const int SCROLL_SPEED = 15;
 	
 }
 
+/**
+ * Set the blitter in two line display mode
+ */
 - (void) twoLineDisp
 {
 	dispRows = 2;
@@ -295,6 +307,9 @@ const int SCROLL_SPEED = 15;
 	[self setNeedsDisplay];	
 }
 
+/**
+ * Set the blitter in four line display mode
+ */
 - (void) fourLineDisp
 {
 	if (flags.f.prgm_mode)
@@ -312,53 +327,61 @@ const int SCROLL_SPEED = 15;
 	[self setNeedsDisplay];
 }
 
-char cbuf[30];
 - (void)selectAll:(id)sender {
 	if (highlight)
 	{
-		NSMutableString *nums = [NSMutableString stringWithCapacity:100];
-		NSString *str = NULL;
-				
-		core_copy_reg(cbuf, 30, reg_t);
-		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-		[nums appendString:str];
-		[nums appendString:@"\n"];
-		
-		core_copy_reg(cbuf, 30, reg_z);
-		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-		[nums appendString:str];
-		[nums appendString:@"\n"];
-
-		core_copy_reg(cbuf, 30, reg_y);
-		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-		[nums appendString:str];
-		[nums appendString:@"\n"];
-		
-		core_copy_reg(cbuf, 30, reg_x);
-		str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-		[nums appendString:str];
-		[nums appendString:@"\n"];
-		
-		UIPasteboard *pb = [UIPasteboard generalPasteboard];
-		pb.string = nums;
-		
-		[self setNeedsDisplayInRect:xRowHighlight];
-		highlight = FALSE;
+		// The user selected all, so show edit menu again with new selection
+		// and highlight the entire stack.
+		selectAll = TRUE;
+		[self showEditMenu];
+		[self setNeedsDisplay];		
 	}
 	
 }
 
-
-- (void)select:(id)sender {
+char cbuf[30];
+- (void)copy:(id)sender {
 	if (highlight)
 	{
-		core_copy(cbuf, 30);
-		NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-		UIPasteboard *pb = [UIPasteboard generalPasteboard];
-		pb.string = copyStr;
+		if (selectAll)
+		{
+			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
+			NSString *str = NULL;
+			
+			core_copy_reg(cbuf, 30, reg_t);
+			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+			[nums appendString:str];
+			[nums appendString:@"\n"];
+			
+			core_copy_reg(cbuf, 30, reg_z);
+			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+			[nums appendString:str];
+			[nums appendString:@"\n"];
+			
+			core_copy_reg(cbuf, 30, reg_y);
+			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+			[nums appendString:str];
+			[nums appendString:@"\n"];
+			
+			core_copy_reg(cbuf, 30, reg_x);
+			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+			[nums appendString:str];
+			[nums appendString:@"\n"];
+			
+			UIPasteboard *pb = [UIPasteboard generalPasteboard];
+			pb.string = nums;
+			selectAll = FALSE;
+		}
+		else
+		{		
+			core_copy(cbuf, 30);
+			NSString *copyStr = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+			UIPasteboard *pb = [UIPasteboard generalPasteboard];
+			pb.string = copyStr;		
+		}
 		
-		[self setNeedsDisplayInRect:xRowHighlight];
 		highlight = FALSE;
+		[self setNeedsDisplay];
 	}	
 }
 
@@ -391,14 +414,29 @@ char cbuf[30];
 	}
 }
 
+/**
+ * Necessary to turn on cut / paste
+ */
 - (BOOL) canBecomeFirstResponder {
 	return TRUE;
+}
+
+/**
+ * Event handler called for cut/paste.  We use this to show only "Copy" 
+ * If the user selected "selectAll" on the first menu.
+ */
+- (BOOL) canPerformAction:(SEL)action withSender:(id)sender
+{
+	if (selectAll && (action == @selector(selectAll:) || action == @selector(paste:)))
+		return FALSE;
+	return [super canPerformAction:action withSender:sender];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UIMenuController *mc = [UIMenuController sharedMenuController];
 	if (mc.menuVisible) mc.menuVisible = FALSE;
+	selectAll = FALSE;
 	if (highlight)
 	{
 		[self setNeedsDisplayInRect:xRowHighlight];
@@ -406,19 +444,36 @@ char cbuf[30];
 	}
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	[self shouldCutPaste];
-    UITouch *touch = [touches anyObject];
-    if ([[touches anyObject] locationInView:self].x < 240 
-		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
+/**
+ * We use this to show the cut paste edit menu.  The perform selector after delay
+ * allows us to bring up the menu again with the new menu items if the user selects
+ * "selectAll". Why this works I'm not sure, snagged it from the forums.
+ */
+- (void)showEditMenu {
+	
+	UIMenuController *mc = [UIMenuController sharedMenuController];
+	if (!mc.menuVisible) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
-        UIMenuController *mc = [UIMenuController sharedMenuController];
 		[self setXHighlight];
         [mc setTargetRect:xRowHighlight inView:self];
         [mc setMenuVisible:YES animated:YES];
+	} else {
+		[self performSelector:@selector(showEditMenu) withObject:nil afterDelay:0.0];
+	}
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	[self shouldCutPaste];
+	
+	// If double tap, then bring up cut paste menu.  
+	
+    UITouch *touch = [touches anyObject];
+    if ([[touches anyObject] locationInView:self].x < 240 
+		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
+		[self setXHighlight];
 		[self setNeedsDisplayInRect:xRowHighlight];
-		
+		[self showEditMenu];
 		highlight = TRUE;
     }
 	// Reset the swipe mode.

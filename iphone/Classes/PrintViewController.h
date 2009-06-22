@@ -38,5 +38,6 @@ extern BOOL printingStarted;
 -(void)displayTextView;
 - (void)displayPlotView;
 - (void)display;
+- (void)setViewsHighlight:(BOOL)selected;
 @end
 

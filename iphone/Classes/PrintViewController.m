@@ -184,14 +184,32 @@ void shell_print(const char *text, int length,
 	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,480,320,480)];
 	[view1 setPrintViewController:self];
 	[view2 setPrintViewController:self];
+    [self setViewsHighlight:FALSE];
 	[[self view] addSubview: view1];
 	[[self view] addSubview: view2];	
-	UIColor* bgColor = [UIColor colorWithRed:0.94 green:0.91 blue:0.82 alpha:1.0];
-	[view1 setBackgroundColor:bgColor];
-	[view2 setBackgroundColor:bgColor];
 	[view1 setNeedsDisplay];
 	[view2 setNeedsDisplay];
 	
+}
+
+/**
+ * Used to show the print views as blue during cut/paste to indicate that the
+ * whole print output will be copied to the clipboard.  Calling with selected 
+ * False return the display to the normal color.
+ */
+- (void)setViewsHighlight:(BOOL)selected
+{
+	UIColor* bgColor = NULL;
+	if (selected)
+	{
+		bgColor = [UIColor colorWithRed:0.60 green:0.80 blue:1.0 alpha:1.0];
+	}
+	else
+	{
+		bgColor = [UIColor colorWithRed:0.94 green:0.91 blue:0.82 alpha:1.0];
+	}
+	[view1 setBackgroundColor:bgColor];
+	[view2 setBackgroundColor:bgColor];
 }
 
 -(void)displayTextView

@@ -32,8 +32,10 @@
 	return self;
 }
 
-
-- (void)selectAll:(id)sender {
+/**
+ * Cut/Paste, copy the entire print output directly from file to the clipboard.
+ */
+- (void)copy:(id)sender {
 
 	// flush file contents to file
 	if (printFile) fflush(printFile);
@@ -43,20 +45,26 @@
 												  error:NULL];	
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
 	pb.string = pout;	
+	[printViewController setViewsHighlight:FALSE];		
 }	
 
+/**
+ * Necessary to turn on Cut/Paste
+ */
 - (BOOL) canBecomeFirstResponder {
 	return TRUE;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    UITouch *touch = [touches anyObject];
+	// Test for double tap, if so bring up cut paste menu.
+    UITouch *touch = [touches anyObject];	
     if (touch.tapCount == 2 && [self becomeFirstResponder]) {
         CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero};
         UIMenuController *mc = [UIMenuController sharedMenuController];
         [mc setTargetRect:targetRect inView:self];
         [mc setMenuVisible:YES animated:YES];
+		[printViewController setViewsHighlight:TRUE];	
     }
 }
 
@@ -73,7 +81,6 @@
 	int length = buflength - adjOffset;
 	if (length > adjViewSize)
 		length = adjViewSize;
-
 	if (length > 0)
 		drawFastBlitDataToContext(ctx, beginBuf, 15, 0, length, 18, adjOffset);
 }
