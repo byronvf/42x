@@ -405,8 +405,14 @@ char cbuf[30];
 		{
 			NSString *trimmed = [num stringByTrimmingCharactersInSet:
 								[NSCharacterSet whitespaceCharacterSet]];
+			// Ignore blank lines
 			if ([trimmed length] != 0)
-				core_paste([trimmed cStringUsingEncoding:NSASCIIStringEncoding]);
+			{
+				// returns null if string can't be converted losslessly
+				const char* buf = [trimmed cStringUsingEncoding:NSASCIIStringEncoding];
+				if (buf != NULL)
+					core_paste([trimmed cStringUsingEncoding:NSASCIIStringEncoding]);
+			}
 		}
 		
 		[self setNeedsDisplay];
