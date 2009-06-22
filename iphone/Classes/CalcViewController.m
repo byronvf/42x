@@ -55,8 +55,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 {		
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
-	// The 18 is the base offset into the display, pass the flags row
-	[blitterView setNeedsDisplay];
+	// The 18 is the base offset into the display, pass the flags row 
 	if (flags.f.prgm_mode)
 		[blitterView setNeedsDisplay];
 	else
