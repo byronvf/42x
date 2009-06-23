@@ -55,6 +55,13 @@
 	return TRUE;
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UIMenuController *mc = [UIMenuController sharedMenuController];
+	if (mc.menuVisible) 	[printViewController setViewsHighlight:FALSE];	
+}
+
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	// Test for double tap, if so bring up cut paste menu.
