@@ -229,7 +229,7 @@ const int SCROLL_SPEED = 15;
 		firstTouch = [touch locationInView:self];
 		return;
 	}
-	else if (firstTouch.x > 240 && !mode_running)
+	else if (firstTouch.x > 260 && !mode_running)
 	{
 		cutPaste = FALSE;
 		CGPoint newPoint = [touch locationInView:self];
@@ -475,7 +475,7 @@ char cbuf[30];
 	// If double tap, then bring up cut paste menu.  
 	
     UITouch *touch = [touches anyObject];
-    if ([[touches anyObject] locationInView:self].x < 240 
+    if ([[touches anyObject] locationInView:self].x < 260 
 		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
 		[self setXHighlight];
 		[self setNeedsDisplayInRect:xRowHighlight];
