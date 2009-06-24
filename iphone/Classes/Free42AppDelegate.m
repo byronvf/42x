@@ -49,7 +49,7 @@ int shell_wants_cpu()
 		return 0;
 	}
 	
-	cpuCount = 200;
+	cpuCount = 500;
 	return 1;
 }
 
@@ -226,6 +226,10 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	[defaults setObject:pbuf forKey:@"printBuf"];
 }
 
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+	return YES;
+}
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {	
 	

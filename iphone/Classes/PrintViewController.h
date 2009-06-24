@@ -35,6 +35,9 @@ extern BOOL printingStarted;
 
 @property (nonatomic, retain) NSMutableData* printBuff;
 
+-(void)displayTextView;
+- (void)displayPlotView;
 - (void)display;
+- (void)setViewsHighlight:(BOOL)selected;
 @end
 

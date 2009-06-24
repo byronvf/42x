@@ -36,12 +36,14 @@ extern int cpuCount;
 	CGRect xRowHighlight;
 	CGRect baseRowHighlight;
 	BOOL cutPaste;
+	BOOL selectAll;
 	
 	CalcViewController* calcViewController;
 }
 
 @property BOOL highlight;
 @property BOOL cutPaste;
+@property BOOL selectAll;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) CalcViewController* calcViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
@@ -51,5 +53,6 @@ extern int cpuCount;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
 - (void) shouldCutPaste;
+- (void)showEditMenu;
 
 @end

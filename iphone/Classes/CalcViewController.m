@@ -55,7 +55,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 {		
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
-	// The 18 is the base offset into the display, pass the flags row
+	// The 18 is the base offset into the display, pass the flags row 
 	if (flags.f.prgm_mode)
 		[blitterView setNeedsDisplay];
 	else
@@ -442,10 +442,8 @@ void shell_request_timeout3(int delay)
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
-	if (flags.f.prgm_mode)
-		cmdline_row = 1;
-	else
-		cmdline_row -= 2;
+	cmdline_row = 1;
+	if (!menuKeys) cmdline_row--;
 	
 	b01.enabled = TRUE;
 	b02.enabled = TRUE;
@@ -471,7 +469,11 @@ void shell_request_timeout3(int delay)
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
 	if (!flags.f.prgm_mode)
-		cmdline_row += 2;
+	{
+		cmdline_row = 3;
+		// If we have on LCD menu then the cmdline row is above the menu
+		if (!menuKeys) cmdline_row--;
+	}
 	
 	b01.enabled = FALSE;
 	b02.enabled = FALSE;

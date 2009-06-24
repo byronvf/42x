@@ -25,6 +25,7 @@
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <stdarg.h>
+#include <netdb.h>
 
 #include "shell.h"
 #include "core_main.h"
@@ -140,8 +141,9 @@ extern void handle_client(int);
 }
 
 
-- (NSString*) getIpAddress
+- (NSString*) getHost
 {
+	NSString* addr;
 	struct ifaddrs *list;
 	if(getifaddrs(&list) < 0)
 	{
@@ -149,34 +151,29 @@ extern void handle_client(int);
 		return nil;
 	}
 	
-	NSMutableArray *array = [NSMutableArray array];
 	struct ifaddrs *cur;	
 	for(cur = list; cur != NULL; cur = cur->ifa_next)
 	{
-		if(cur->ifa_addr->sa_family != AF_INET)
-			continue;
+		if(cur->ifa_addr->sa_family != AF_INET) continue;
 		
 		struct sockaddr_in *addrStruct = (struct sockaddr_in *)cur->ifa_addr;
-		NSString *name = [NSString stringWithUTF8String:cur->ifa_name];
+		NSString *name = [NSString stringWithCString:cur->ifa_name];
 		// only the wireless interface begins with "en"
 		if ([name hasPrefix:@"en"])
 		{	
-			NSString *addr = [NSString stringWithUTF8String:inet_ntoa(addrStruct->sin_addr)];
-				[array addObject:
-				[NSDictionary dictionaryWithObjectsAndKeys:
-				   name, @"name",
-				   addr, @"address",
-				   [NSString stringWithFormat:@"%@ - %@", name, addr], @"formattedName",
-					nil]];
+			struct hostent *h = gethostbyaddr(&addrStruct->sin_addr, 
+											  sizeof(addrStruct->sin_addr), AF_INET);
+			// Test if we can use a DNS host name, otherwise use the IP
+			if (h != NULL)
+			    addr = [NSString stringWithCString:h->h_name];
+			else			
+				addr = [NSString stringWithCString:inet_ntoa(addrStruct->sin_addr)];
+			break;
 		}
 	}
 	
-	freeifaddrs(list); 
-	
-	if ([array count] == 0)
-		return NULL;
-	
-	return [[array objectAtIndex:0] valueForKey:@"address"];
+	freeifaddrs(list); 	
+	return addr;
 }
 
 
@@ -186,9 +183,9 @@ extern void handle_client(int);
 - (void)startServer
 {	
 	int port = PORT_START-1;
-	NSString* ipAddr = [self getIpAddress];
+	NSString* host = [self getHost];
 	NSString* msg = @"You are not connected to a wireless network";	
-	if (ipAddr)
+	if (host)
 	{
 		int status;
 		do
@@ -206,7 +203,8 @@ extern void handle_client(int);
 		}
 		else
 		{
-		    msg = [NSString stringWithFormat:@"http://%@:%i", ipAddr, port];
+			
+		    msg = [NSString stringWithFormat:@"http://%@:%i", host, port];
 		   [self handleRequest];
 		}
     }

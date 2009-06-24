@@ -18,6 +18,7 @@
 #import "PrintView.h"
 #include "PrintViewController.h"
 #include "Utils.h"
+#import "Free42AppDelegate.h"
 
 @implementation PrintView
 
@@ -29,6 +30,49 @@
 		// Initialization code
 	}
 	return self;
+}
+
+/**
+ * Cut/Paste, copy the entire print output directly from file to the clipboard.
+ */
+- (void)copy:(id)sender {
+
+	// flush file contents to file
+	if (printFile) fflush(printFile);
+
+	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
+	NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding
+												  error:NULL];	
+	UIPasteboard *pb = [UIPasteboard generalPasteboard];
+	pb.string = pout;	
+	[printViewController setViewsHighlight:FALSE];		
+}	
+
+/**
+ * Necessary to turn on Cut/Paste
+ */
+- (BOOL) canBecomeFirstResponder {
+	return TRUE;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UIMenuController *mc = [UIMenuController sharedMenuController];
+	if (mc.menuVisible) 	[printViewController setViewsHighlight:FALSE];	
+}
+
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	// Test for double tap, if so bring up cut paste menu.
+    UITouch *touch = [touches anyObject];	
+    if (touch.tapCount == 2 && [self becomeFirstResponder]) {
+        CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero};
+        UIMenuController *mc = [UIMenuController sharedMenuController];
+        [mc setTargetRect:targetRect inView:self];
+        [mc setMenuVisible:YES animated:YES];
+		[printViewController setViewsHighlight:TRUE];	
+    }
 }
 
 - (void)drawRect:(CGRect)rect 
@@ -44,7 +88,6 @@
 	int length = buflength - adjOffset;
 	if (length > adjViewSize)
 		length = adjViewSize;
-
 	if (length > 0)
 		drawFastBlitDataToContext(ctx, beginBuf, 15, 0, length, 18, adjOffset);
 }
