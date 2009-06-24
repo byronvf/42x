@@ -65,7 +65,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
-	cpuCount = 0;
+	// cpuCount = 0;
 	
 	// If the viewCtrl is not initialized yet, don't try and use it
 	if (!viewCtrl) return;

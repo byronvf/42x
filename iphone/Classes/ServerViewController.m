@@ -143,8 +143,8 @@ extern void handle_client(int);
 
 - (NSString*) getHost
 {
-	NSString* addr;
-	struct ifaddrs *list;
+	NSString* addr = NULL;
+	struct ifaddrs *list = NULL;
 	if(getifaddrs(&list) < 0)
 	{
 		perror("getifaddrs");
@@ -166,8 +166,12 @@ extern void handle_client(int);
 			// Test if we can use a DNS host name, otherwise use the IP
 			if (h != NULL)
 			    addr = [NSString stringWithCString:h->h_name];
-			else			
+
+			// If the dns name is longer then 20 characters, like an auto assign
+			// dns name, then we use the ip since it will probably be simpler to type
+			if (addr == NULL || [addr length] > 20)
 				addr = [NSString stringWithCString:inet_ntoa(addrStruct->sin_addr)];
+			
 			break;
 		}
 	}
