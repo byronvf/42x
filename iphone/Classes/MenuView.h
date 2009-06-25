@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 @class CalcViewController;
 @interface MenuView : UIView {
-	CalcViewController* calcViewController;
+	IBOutlet CalcViewController* calcViewController;
 }
 @property (nonatomic, retain) CalcViewController* calcViewController;
 @end

@@ -78,15 +78,15 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		// don't bother updateing unless this area of the display has changed.
 		if (height + y > 16)
 		{
-			[[viewCtrl menuView] setAlpha:1.0];
-			[[viewCtrl blankButtonsView] setAlpha:1.0];
+			[[viewCtrl menuView] setHidden:FALSE];
+			[[viewCtrl blankButtonsView] setHidden:FALSE];
 			[[viewCtrl menuView] setNeedsDisplay];
 		}
 	}
 	else
 	{  
-		[[viewCtrl menuView] setAlpha:0.0];
-		[[viewCtrl blankButtonsView] setAlpha:0.0];
+		[[viewCtrl menuView] setHidden:TRUE];
+		[[viewCtrl blankButtonsView] setHidden:TRUE];
 	} 
 }
 
@@ -148,11 +148,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 }
  */
 
-- (void)viewDidLoad {
-	[super viewDidLoad];
-	[blitterView setNavViewController:navViewController];
+- (void)awakeFromNib {
+
 	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
+	displayBuff = NULL;  // set to null until we initialize it in shell_blitter
 	
     // Install the mySleepHandler run loop observer
     NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
@@ -162,18 +162,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 															   kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
-	if (core_menu() && menuKeys)
-	{
-		[blankButtonsView setAlpha:1.0];
-	}
-	else
-	{
-		[blankButtonsView setAlpha:0.0];
-		[menuView setAlpha:0.0];
-	}
-	
-	blitterView.calcViewController = self;
-	menuView.calcViewController = self;
 	
 	keyPressed = false;
 	

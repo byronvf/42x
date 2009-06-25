@@ -86,7 +86,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
  * The blitterView manages the calculators digital display
  */
 @implementation BlitterView
-@synthesize navViewController;
 @synthesize calcViewController;
 @synthesize shiftButton;
 @synthesize highlight;
@@ -285,7 +284,7 @@ const int SCROLL_SPEED = 15;
 		// to the print screen since the iPhone can't keep up with this, and it just 
 		// hoses up!  maybe this can be improved at some point.
 		firstTouch.x = -1;
-		[[self navViewController] switchToPrintView];		
+		[[[self calcViewController] navViewController] switchToPrintView];		
 	}	
 	
 }

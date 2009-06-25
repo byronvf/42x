@@ -26,8 +26,6 @@ extern int cpuCount;
 
 @interface BlitterView : UIView {
 
-	NavViewController* navViewController;
-	
 	UIButton* shiftButton;
 	
 	// keep track of swipe on screen for switching to the print view
@@ -38,13 +36,12 @@ extern int cpuCount;
 	BOOL cutPaste;
 	BOOL selectAll;
 	
-	CalcViewController* calcViewController;
+	IBOutlet CalcViewController* calcViewController;
 }
 
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property BOOL selectAll;
-@property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) CalcViewController* calcViewController;
 @property (nonatomic, retain) UIButton* shiftButton;
 
