@@ -25,8 +25,6 @@ extern BlitterView *blitterView;
 extern int cpuCount;
 
 @interface BlitterView : UIView {
-
-	UIButton* shiftButton;
 	
 	// keep track of swipe on screen for switching to the print view
 	CGPoint firstTouch;
@@ -43,7 +41,6 @@ extern int cpuCount;
 @property BOOL cutPaste;
 @property BOOL selectAll;
 @property (nonatomic, retain) CalcViewController* calcViewController;
-@property (nonatomic, retain) UIButton* shiftButton;
 
 - (void) drawAnnunciators;
 - (void) annuncNeedsDisplay;

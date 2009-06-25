@@ -150,7 +150,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 - (void)awakeFromNib {
 
-	[blitterView setShiftButton:b28];
 	viewCtrl = self;	// Initialize our hack reference.
 	displayBuff = NULL;  // set to null until we initialize it in shell_blitter
 	

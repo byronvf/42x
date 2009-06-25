@@ -62,11 +62,9 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	if (shf != -1)
 	{
 		if (flagShift)
-		{
-			[[blitterView shiftButton] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
-		}
+			[[[blitterView calcViewController] b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
 		else
-			[[blitterView shiftButton] setImage:NULL forState:NULL];
+			[[[blitterView calcViewController] b28] setImage:NULL forState:NULL];
 	}
 }
 
@@ -87,7 +85,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
  */
 @implementation BlitterView
 @synthesize calcViewController;
-@synthesize shiftButton;
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
