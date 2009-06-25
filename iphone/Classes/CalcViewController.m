@@ -317,6 +317,14 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	if (!enqueued)
 	{
 		callKeydownAgain = core_keyup();
+		
+		// Whenever we start a program we set the cpuCount to 1000, which
+		// will force the display not to be updated for 1000 calls to 
+		// shell_needs_cpu.  This prevents flashing the display when running
+		// short programs.  Otherwise the goose flashes and ruins the 
+		// 42s zen!
+		if (callKeydownAgain)
+			cpuCount = 1000;		
 	}
 			
 	timer3active = FALSE;
