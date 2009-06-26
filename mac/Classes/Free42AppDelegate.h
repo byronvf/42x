@@ -39,16 +39,30 @@ extern char free42dirname[FILENAMELEN];
 void calc_mousedown(int x, int y);
 void calc_mouseup();
 
-@class ProgramListDelegate;
+@class ProgramListDataSource;
 @class CalcView;
 
 @interface Free42AppDelegate : NSObject {
 	NSWindow *mainWindow;
 	CalcView *calcView;
+	
 	NSWindow *printWindow;
+	
 	NSWindow *preferencesWindow;
+	NSButton *prefsSingularMatrix;
+	NSButton *prefsMatrixOutOfRange;
+	NSButton *prefsAutoRepeat;
+	NSButton *prefsPrintText;
+	NSTextField *prefsPrintTextFile;
+	NSButton *prefsPrintTextRaw;
+	NSButton *prefsPrintGIF;
+	NSTextField *prefsPrintGIFFile;
+	NSTextField *prefsPrintGIFMaxHeight;
+	
 	NSWindow *selectProgramsWindow;
-	ProgramListDelegate *programListDelegate;
+	NSTableView *programListView;
+	ProgramListDataSource *programListDataSource;
+	
 	NSWindow *aboutWindow;
 	NSTextField *aboutVersion;
 	NSTextField *aboutCopyright;
@@ -58,18 +72,37 @@ void calc_mouseup();
 @property (nonatomic, retain) IBOutlet CalcView *calcView;
 @property (nonatomic, retain) IBOutlet NSWindow *printWindow;
 @property (nonatomic, retain) IBOutlet NSWindow *preferencesWindow;
+@property (nonatomic, retain) IBOutlet NSButton *prefsSingularMatrix;
+@property (nonatomic, retain) IBOutlet NSButton *prefsMatrixOutOfRange;
+@property (nonatomic, retain) IBOutlet NSButton *prefsAutoRepeat;
+@property (nonatomic, retain) IBOutlet NSButton *prefsPrintText;
+@property (nonatomic, retain) IBOutlet NSTextField *prefsPrintTextFile;
+@property (nonatomic, retain) IBOutlet NSButton *prefsPrintTextRaw;
+@property (nonatomic, retain) IBOutlet NSButton *prefsPrintGIF;
+@property (nonatomic, retain) IBOutlet NSTextField *prefsPrintGIFFile;
+@property (nonatomic, retain) IBOutlet NSTextField *prefsPrintGIFMaxHeight;
 @property (nonatomic, retain) IBOutlet NSWindow *selectProgramsWindow;
-@property (nonatomic, retain) IBOutlet ProgramListDelegate *programListDelegate;
+@property (nonatomic, retain) IBOutlet NSTableView *programListView;
+@property (nonatomic, retain) IBOutlet ProgramListDataSource *programListDataSource;
 @property (nonatomic, retain) IBOutlet NSWindow *aboutWindow;
 @property (nonatomic, retain) IBOutlet NSTextField *aboutVersion;
 @property (nonatomic, retain) IBOutlet NSTextField *aboutCopyright;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 - (void)applicationWillTerminate:(NSNotification *)aNotification;
+- (void)windowWillClose:(NSNotification *)notification;
+
 - (IBAction) showAbout:(id)sender;
 - (IBAction) showPreferences:(id)sender;
+- (void) getPreferences;
+- (IBAction) browsePrintTextFile:(id)sender;
+- (IBAction) browsePrintGIFFile:(id)sender;
 - (IBAction) importPrograms:(id)sender;
 - (IBAction) exportPrograms:(id)sender;
+- (IBAction) exportProgramsCancel:(id)sender;
+- (IBAction) exportProgramsOK:(id)sender;
+- (IBAction) doCopy:(id)sender;
+- (IBAction) doPaste:(id)sender;
 + (const char *) getVersion;
 - (IBAction) menuNeedsUpdate:(NSMenu *)menu;
 - (void) selectSkin:(id)sender;

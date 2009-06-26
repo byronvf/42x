@@ -15,6 +15,7 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
+#import <AudioToolbox/AudioServices.h>
 #import <sys/stat.h>
 #import <sys/time.h>
 #import <pthread.h>
@@ -24,10 +25,11 @@
 #import "core_main.h"
 #import "core_display.h"
 #import "Free42AppDelegate.h"
-#import "ProgramListDelegate.h"
+#import "ProgramListDataSource.h"
 
 
 static Free42AppDelegate *instance = NULL;
+static SystemSoundID soundIDs[11];
 
 state_type state;
 char free42dirname[FILENAMELEN];
@@ -78,8 +80,18 @@ static void shell_keyup();
 @synthesize calcView;
 @synthesize printWindow;
 @synthesize preferencesWindow;
+@synthesize prefsSingularMatrix;
+@synthesize prefsMatrixOutOfRange;
+@synthesize prefsAutoRepeat;
+@synthesize prefsPrintText;
+@synthesize prefsPrintTextFile;
+@synthesize prefsPrintTextRaw;
+@synthesize prefsPrintGIF;
+@synthesize prefsPrintGIFFile;
+@synthesize prefsPrintGIFMaxHeight;
 @synthesize selectProgramsWindow;
-@synthesize programListDelegate;
+@synthesize programListView;
+@synthesize programListDataSource;
 @synthesize aboutWindow;
 @synthesize aboutVersion;
 @synthesize aboutCopyright;
@@ -91,6 +103,20 @@ static void shell_keyup();
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	instance = self;
 
+	/****************************/
+	/***** Create sound IDs *****/
+	/****************************/
+	
+	const char *sound_names[] = { "tone0", "tone1", "tone2", "tone3", "tone4", "tone5", "tone6", "tone7", "tone8", "tone9", "squeak" };
+	for (int i = 0; i < 11; i++) {
+		NSString *name = [NSString stringWithCString:sound_names[i]];
+		NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"wav"];
+		OSStatus status = AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundIDs[i]);
+		if (status)
+			NSLog(@"error loading sound:  %d", name);
+	}
+		
+	
 	/*****************************************************/
 	/***** Try to create the $HOME/.free42 directory *****/
 	/*****************************************************/
@@ -185,15 +211,66 @@ static void shell_keyup();
         fclose(statefile);
 }
 
+- (void)windowWillClose:(NSNotification *)notification {
+	NSWindow *window = [notification object];
+	if (window == aboutWindow || window == preferencesWindow || window == selectProgramsWindow) {
+		[NSApp stopModal];
+		if (window == preferencesWindow)
+			[instance getPreferences];
+	} else if (window == mainWindow)
+		[NSApp terminate:nil];
+}
+
 - (IBAction) showAbout:(id)sender {
 	const char *version = [Free42AppDelegate getVersion];
 	[aboutVersion setStringValue:[NSString stringWithFormat:@"Free42 %s", version]];
 	[aboutCopyright setStringValue:@"© 2004-2009 Thomas Okken"];
-	[aboutWindow makeKeyAndOrderFront:self];
+	[NSApp runModalForWindow:aboutWindow];
 }
 
 - (IBAction) showPreferences:(id)sender {
-	[preferencesWindow makeKeyAndOrderFront:self];
+	[prefsSingularMatrix setState:core_settings.matrix_singularmatrix];
+	[prefsMatrixOutOfRange setState:core_settings.matrix_outofrange];
+	[prefsAutoRepeat setState:core_settings.auto_repeat];
+	[prefsPrintText setState:state.printerToTxtFile];
+	[prefsPrintTextFile setStringValue:[NSString stringWithCString:state.printerTxtFileName encoding:NSUTF8StringEncoding]];
+	[prefsPrintTextRaw setState:core_settings.raw_text];
+	[prefsPrintGIF setState:state.printerToGifFile];
+	[prefsPrintGIFFile setStringValue:[NSString stringWithCString:state.printerGifFileName encoding:NSUTF8StringEncoding]];
+	[prefsPrintGIFMaxHeight setStringValue:[NSString stringWithFormat:@"%d", state.printerGifMaxLength]];
+	[NSApp runModalForWindow:preferencesWindow];
+}
+
+- (void) getPreferences {
+	core_settings.matrix_singularmatrix = [prefsSingularMatrix state];
+	core_settings.matrix_outofrange = [prefsMatrixOutOfRange state];
+	core_settings.auto_repeat = [prefsAutoRepeat state];
+	state.printerToTxtFile = [prefsPrintText state];
+	[[prefsPrintTextFile stringValue] getCString:state.printerTxtFileName maxLength:FILENAMELEN encoding:NSUTF8StringEncoding];
+	core_settings.raw_text = [prefsPrintTextRaw state];
+	state.printerToGifFile = [prefsPrintGIF state];
+	[[prefsPrintGIFFile stringValue] getCString:state.printerGifFileName maxLength:FILENAMELEN encoding:NSUTF8StringEncoding];
+	char buf[50];
+	[[prefsPrintGIFMaxHeight stringValue] getCString:buf maxLength:50 encoding:NSUTF8StringEncoding];
+	if (sscanf(buf, "%d", &state.printerGifMaxLength) == 1) {
+		if (state.printerGifMaxLength < 32)
+			state.printerGifMaxLength = 32;
+		else if (state.printerGifMaxLength > 32767)
+			state.printerGifMaxLength = 32767;
+	} else
+		state.printerGifMaxLength = 256;
+}
+
+- (IBAction) browsePrintTextFile:(id)sender {
+	NSSavePanel *saveDlg = [NSSavePanel savePanel];
+	if ([saveDlg runModalForDirectory:nil file:nil] == NSOKButton)
+		[prefsPrintTextFile setStringValue:[saveDlg filename]];
+}
+
+- (IBAction) browsePrintGIFFile:(id)sender {
+	NSSavePanel *saveDlg = [NSSavePanel savePanel];
+	if ([saveDlg runModalForDirectory:nil file:nil] == NSOKButton)
+		[prefsPrintGIFFile setStringValue:[saveDlg filename]];
 }
 
 - (IBAction) importPrograms:(id)sender {
@@ -228,30 +305,70 @@ static void shell_keyup();
 - (IBAction) exportPrograms:(id)sender {
 	char buf[10000];
 	int count = core_list_programs(buf, 10000);
-	[programListDelegate setProgramNames:buf count:count];
-	[selectProgramsWindow makeKeyAndOrderFront:self];
-#if 0
-	XmString *stringtab;
-	char *p = buf;
-	int i;
+	[programListDataSource setProgramNames:buf count:count];
+	[programListView reloadData];
+	[NSApp runModalForWindow:selectProgramsWindow];
+}
 
-	stringtab = (XmString *) malloc(count * sizeof(XmString));
-	// TODO - handle memory allocation failure
-	for (i = 0; i < count; i++) {
-		stringtab[i] = XmStringCreateLocalized(p);
-		p += strlen(p) + 1;
+- (IBAction) exportProgramsCancel:(id)sender {
+	[NSApp stopModal];
+	[selectProgramsWindow orderOut:self];
+}
+
+- (IBAction) exportProgramsOK:(id)sender {
+	[NSApp stopModal];
+	[selectProgramsWindow orderOut:self];
+	bool *selection = [programListDataSource getSelection];
+	int count = [programListDataSource numberOfRowsInTableView:nil];
+	NSSavePanel *saveDlg = [NSSavePanel savePanel];
+	if ([saveDlg runModalForDirectory:nil file:nil] == NSOKButton) {
+		NSString *fileName = [saveDlg filename];
+		char cFileName[1024];
+		[fileName getCString:cFileName maxLength:1024 encoding:NSUTF8StringEncoding];
+		export_file = fopen(cFileName, "w");
+		if (export_file == NULL) {
+			char buf[1000];
+			int err = errno;
+			snprintf(buf, 1000, "Could not open \"%s\" for writing:\n%s (%d)",
+					 cFileName, strerror(err), err);
+			show_message("Message", buf);
+		} else {
+			int *indexes = (int *) malloc(count * sizeof(int));
+			int selectionSize = 0;
+			for (int i = 0; i < count; i++)
+				if (selection[i])
+					indexes[selectionSize++] = i;
+			core_export_programs(selectionSize, indexes, NULL);
+			free(indexes);
+			if (export_file != NULL) {
+				fclose(export_file);
+				export_file = NULL;
+			}
+		}
 	}
-	XtVaSetValues(program_list, XmNitemCount, count,
-				  XmNitems, stringtab,
-				  NULL);
-	XmListDeselectAllItems(program_list);
-	for (i = 0; i < count; i++)
-		XmStringFree(stringtab[i]);
-	free(stringtab);
+}
 
-	XtManageChild(program_select_dialog);
-	no_gnome_resize(XtParent(program_select_dialog));
-#endif
+- (IBAction) doCopy:(id)sender {
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	NSArray *types = [NSArray arrayWithObjects: NSStringPboardType, nil];
+	[pb declareTypes:types owner:self];
+	char buf[100];
+	core_copy(buf, 100);
+	NSString *txt = [NSString stringWithCString:buf encoding:NSUTF8StringEncoding];
+	[pb setString:txt forType:NSStringPboardType];
+}
+
+- (IBAction) doPaste:(id)sender {
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	NSArray *types = [NSArray arrayWithObjects: NSStringPboardType, nil];
+	NSString *bestType = [pb availableTypeFromArray:types];
+	if (bestType != nil) {
+		NSString *txt = [pb stringForType:NSStringPboardType];
+		char buf[100];
+		[txt getCString:buf maxLength:100 encoding:NSUTF8StringEncoding];
+		core_paste(buf);
+		redisplay();
+	}
 }
 
 static char version[32] = "";
@@ -480,7 +597,7 @@ static void shell_keydown() {
 	}
 	
     if (quit_flag)
-		[NSApp terminate];
+		[NSApp terminate:nil];
     else if (keep_running)
 		[instance startRunner];
     else {
@@ -502,7 +619,7 @@ static void shell_keyup() {
     if (!enqueued) {
 		keep_running = core_keyup();
 		if (quit_flag)
-			[NSApp terminate];
+			[NSApp terminate:nil];
 		else if (keep_running)
 			[instance startRunner];
     } else if (keep_running) {
@@ -543,8 +660,16 @@ double shell_random_seed() {
 }
 
 void shell_beeper(int frequency, int duration) {
-	// TODO!
-	NSBeep();
+	const int cutoff_freqs[] = { 164, 220, 243, 275, 293, 324, 366, 418, 438, 550 };
+	for (int i = 0; i < 10; i++) {
+		if (frequency <= cutoff_freqs[i]) {
+			AudioServicesPlaySystemSound(soundIDs[i]);
+			shell_delay(250);
+			return;
+		}
+	}
+	AudioServicesPlaySystemSound(soundIDs[10]);
+	shell_delay(125);
 }
 
 int shell_low_battery() {

@@ -15,10 +15,10 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
-#import "ProgramListDelegate.h"
+#import "ProgramListDataSource.h"
 
 
-@implementation ProgramListDelegate
+@implementation ProgramListDataSource
 
 - (void) awakeFromNib {
 	count = 0;
@@ -52,12 +52,14 @@
 		free(names);
 		free(selected);
 	}
+	count = newCount;
 	names = (NSString **) malloc(count * sizeof(NSString *));
 	selected = (bool *) malloc(count * sizeof(bool));
 	const char *p = newNames;
 	for (int i = 0; i < newCount; i++) {
-		names[i] = [NSString stringWithCString:p encoding:NSUTF8StringEncoding];
+		names[i] = [[NSString stringWithCString:p encoding:NSUTF8StringEncoding] retain];
 		selected[i] = false;
+		p += strlen(p) + 1;
 	}
 }
 
