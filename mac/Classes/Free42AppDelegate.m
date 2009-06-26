@@ -24,6 +24,7 @@
 #import "core_main.h"
 #import "core_display.h"
 #import "Free42AppDelegate.h"
+#import "ProgramListDelegate.h"
 
 
 static Free42AppDelegate *instance = NULL;
@@ -78,6 +79,7 @@ static void shell_keyup();
 @synthesize printWindow;
 @synthesize preferencesWindow;
 @synthesize selectProgramsWindow;
+@synthesize programListDelegate;
 @synthesize aboutWindow;
 @synthesize aboutVersion;
 @synthesize aboutCopyright;
@@ -184,11 +186,14 @@ static void shell_keyup();
 }
 
 - (IBAction) showAbout:(id)sender {
-	// TODO: Add the VERSION file to the application bundle and read the version
-	// number from it
-	[aboutVersion setStringValue:@"Free42 1.4.49"];
+	const char *version = [Free42AppDelegate getVersion];
+	[aboutVersion setStringValue:[NSString stringWithFormat:@"Free42 %s", version]];
 	[aboutCopyright setStringValue:@"© 2004-2009 Thomas Okken"];
 	[aboutWindow makeKeyAndOrderFront:self];
+}
+
+- (IBAction) showPreferences:(id)sender {
+	[preferencesWindow makeKeyAndOrderFront:self];
 }
 
 - (IBAction) importPrograms:(id)sender {
@@ -221,7 +226,45 @@ static void shell_keyup();
 }
 
 - (IBAction) exportPrograms:(id)sender {
-	NSBeep();
+	char buf[10000];
+	int count = core_list_programs(buf, 10000);
+	[programListDelegate setProgramNames:buf count:count];
+	[selectProgramsWindow makeKeyAndOrderFront:self];
+#if 0
+	XmString *stringtab;
+	char *p = buf;
+	int i;
+
+	stringtab = (XmString *) malloc(count * sizeof(XmString));
+	// TODO - handle memory allocation failure
+	for (i = 0; i < count; i++) {
+		stringtab[i] = XmStringCreateLocalized(p);
+		p += strlen(p) + 1;
+	}
+	XtVaSetValues(program_list, XmNitemCount, count,
+				  XmNitems, stringtab,
+				  NULL);
+	XmListDeselectAllItems(program_list);
+	for (i = 0; i < count; i++)
+		XmStringFree(stringtab[i]);
+	free(stringtab);
+
+	XtManageChild(program_select_dialog);
+	no_gnome_resize(XtParent(program_select_dialog));
+#endif
+}
+
+static char version[32] = "";
+
++ (const char *) getVersion {
+	if (version[0] == 0) {
+		NSString *path = [[NSBundle mainBundle] pathForResource:@"VERSION" ofType:nil];
+		const char *cpath = [path cStringUsingEncoding:NSUTF8StringEncoding];
+		FILE *vfile = fopen(cpath, "r");
+		fscanf(vfile, "%s", version);
+		fclose(vfile);
+	}
+	return version;
 }
 
 - (IBAction) menuNeedsUpdate:(NSMenu *)menu {
