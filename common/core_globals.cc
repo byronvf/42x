@@ -529,6 +529,18 @@ vartype *reg_x = NULL;
 vartype *reg_y = NULL;
 vartype *reg_z = NULL;
 vartype *reg_t = NULL;
+#if BIGSTACK
+vartype *reg_0 = NULL;
+vartype *reg_1 = NULL;
+vartype *reg_2 = NULL;
+vartype *reg_3 = NULL;
+vartype *reg_4 = NULL;
+vartype *reg_5 = NULL;
+vartype *reg_6 = NULL;
+vartype *reg_7 = NULL;
+vartype *reg_8 = NULL;
+vartype *reg_top = NULL;
+#endif
 vartype *reg_lastx = NULL;
 int reg_alpha_length = 0;
 char reg_alpha[44];
@@ -582,6 +594,9 @@ bool mode_varmenu;
 bool mode_updown;
 int4 mode_sigma_reg;
 int mode_goose;
+#if BIGSTACK
+bool mode_bigstack = false;
+#endif
 
 phloat entered_number;
 int entered_string_length;
@@ -1064,6 +1079,32 @@ static bool persist_globals() {
 	goto done;
     if (!persist_vartype(reg_lastx))
 	goto done;
+#if BIGSTACK
+    if (!write_int(BIGSTACK_MAGIC))
+	goto done;
+    if (!persist_vartype(reg_0))
+	goto done;
+    if (!persist_vartype(reg_1))
+	goto done;
+    if (!persist_vartype(reg_2))
+	goto done;
+    if (!persist_vartype(reg_3))
+	goto done;
+    if (!persist_vartype(reg_4))
+	goto done;
+    if (!persist_vartype(reg_5))
+	goto done;
+    if (!persist_vartype(reg_6))
+	goto done;
+    if (!persist_vartype(reg_7))
+	goto done;
+    if (!persist_vartype(reg_8))
+	goto done;
+    if (!persist_vartype(reg_top))
+	goto done;
+    if (!write_bool(mode_bigstack))
+	goto done;
+#endif
     if (!write_int(reg_alpha_length))
 	goto done;
     if (!shell_write_saved_state(reg_alpha, 44))
@@ -1129,7 +1170,10 @@ static bool unpersist_globals() {
     array_list_capacity = 0;
     array_list = NULL;
     bool ret = false;
-
+#ifdef BIGSTACK
+    int bigmagic = 0;
+#endif
+	
     free_vartype(reg_x);
     if (!unpersist_vartype(&reg_x))
 	goto done;
@@ -1145,10 +1189,70 @@ static bool unpersist_globals() {
     free_vartype(reg_lastx);
     if (!unpersist_vartype(&reg_lastx))
 	goto done;
+#ifdef BIGSTACK
+    if (!read_int(&bigmagic))
+	goto done;
+	
+    if (bigmagic == BIGSTACK_MAGIC) {
+	free_vartype(reg_0);
+	if (!unpersist_vartype(&reg_0))
+	    goto done;
+	free_vartype(reg_1);
+	if (!unpersist_vartype(&reg_1))
+	    goto done;
+	free_vartype(reg_2);
+	if (!unpersist_vartype(&reg_2))
+	    goto done;
+	free_vartype(reg_3);
+	if (!unpersist_vartype(&reg_3))
+	    goto done;
+	free_vartype(reg_4);
+	if (!unpersist_vartype(&reg_4))
+	    goto done;
+	free_vartype(reg_5);
+	if (!unpersist_vartype(&reg_5))
+	    goto done;
+	free_vartype(reg_6);
+	if (!unpersist_vartype(&reg_6))
+	    goto done;
+	free_vartype(reg_7);
+	if (!unpersist_vartype(&reg_7))
+	    goto done;
+	free_vartype(reg_8);
+	if (!unpersist_vartype(&reg_8))
+	    goto done;
+	free_vartype(reg_top);
+	if (!unpersist_vartype(&reg_top))
+	    goto done;
+	if (!read_bool(&mode_bigstack))
+	    goto done;
+	if (!read_int(&reg_alpha_length)) {
+	    reg_alpha_length = 0;
+	    goto done;
+	}
+    }
+    else {		
+	/* The magic number did not match up, so this value 
+	   was intended for reg_alpha_length */		 
+	reg_alpha_length = bigmagic;
+
+	reg_0 = new_real(0);
+	reg_1 = new_real(0);
+	reg_2 = new_real(0);
+	reg_3 = new_real(0);
+	reg_4 = new_real(0);
+	reg_5 = new_real(0);
+	reg_6 = new_real(0);
+	reg_7 = new_real(0);
+	reg_8 = new_real(0);
+	reg_top = new_real(0);
+    }
+#else
     if (!read_int(&reg_alpha_length)) {
 	reg_alpha_length = 0;
 	goto done;
     }
+#endif
     if (shell_read_saved_state(reg_alpha, 44) != 44) {
 	reg_alpha_length = 0;
 	goto done;
@@ -2372,6 +2476,28 @@ void hard_reset(int bad_state_file) {
     vartype *regs;
 
     /* Clear stack */
+#ifdef BIGSTACK
+    free_vartype(reg_0);
+    free_vartype(reg_1);
+    free_vartype(reg_2);
+    free_vartype(reg_3);
+    free_vartype(reg_4);
+    free_vartype(reg_5);
+    free_vartype(reg_6);
+    free_vartype(reg_7);
+    free_vartype(reg_8);
+    free_vartype(reg_top);
+    reg_0 = new_real(0);
+    reg_1 = new_real(0);
+    reg_2 = new_real(0);
+    reg_3 = new_real(0);
+    reg_4 = new_real(0);
+    reg_5 = new_real(0);
+    reg_6 = new_real(0);
+    reg_7 = new_real(0);
+    reg_8 = new_real(0);
+    reg_top = new_real(0);
+#endif
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);

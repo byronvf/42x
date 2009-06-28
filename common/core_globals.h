@@ -261,6 +261,39 @@ typedef struct {
     char text[6];
 } vartype_string;
 
+#ifdef BIGSTACK
+
+/* We use this bit pattern to indicate in the state file that
+ * we have stored the extended stack.  If the extended stack was not 
+ * stored then we will load instead reg_alpha_length which can never be -3
+ */ 
+#define BIGSTACK_MAGIC -3
+
+#define SHIFT_BIG_STACK_UP \
+reg_top = reg_8; \
+reg_8 = reg_7; \
+reg_7 = reg_6; \
+reg_6 = reg_5; \
+reg_5 = reg_4; \
+reg_4 = reg_3; \
+reg_3 = reg_2; \
+reg_2 = reg_1; \
+reg_1 = reg_0; \
+reg_0 = reg_t;
+
+#define SHIFT_BIG_STACK_DOWN \
+reg_t = reg_0; \
+reg_0 = reg_1; \
+reg_1 = reg_2; \
+reg_2 = reg_3; \
+reg_3 = reg_4; \
+reg_4 = reg_5; \
+reg_5 = reg_6; \
+reg_6 = reg_7; \
+reg_7 = reg_8; \
+reg_8 = reg_top;
+
+#endif
 
 /******************/
 /* Emulator state */
@@ -271,6 +304,18 @@ extern vartype *reg_x;
 extern vartype *reg_y;
 extern vartype *reg_z;
 extern vartype *reg_t;
+#ifdef BIGSTACK
+extern vartype *reg_0;
+extern vartype *reg_1;
+extern vartype *reg_2;
+extern vartype *reg_3;
+extern vartype *reg_4;
+extern vartype *reg_5;
+extern vartype *reg_6;
+extern vartype *reg_7;
+extern vartype *reg_8;
+extern vartype *reg_top;
+#endif
 extern vartype *reg_lastx;
 extern int reg_alpha_length;
 extern char reg_alpha[44];
@@ -428,6 +473,9 @@ extern bool mode_varmenu;
 extern bool mode_updown;
 extern int4 mode_sigma_reg;
 extern int mode_goose;
+#if BIGSTACK
+extern bool mode_bigstack;
+#endif
 
 extern phloat entered_number;
 extern int entered_string_length;

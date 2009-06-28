@@ -245,12 +245,11 @@ const int SCROLL_SPEED = 15;
 			}
 			else
 			{
-				keydown(0, 9);
-				core_keyup();
-				keydown(0, 9);
-				core_keyup();
-				keydown(0, 9);
-				core_keyup();
+				for (int i=0; i< (mode_bigstack? 13: 3); i++)
+				{
+					keydown(0, 9);
+					core_keyup();
+				}
 			}				
 			len += SCROLL_SPEED;	
 		}

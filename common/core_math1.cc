@@ -341,8 +341,32 @@ static int finish_solve(int message) {
 	free_vartype(new_y);
 	free_vartype(new_z);
 	free_vartype(new_t);
+#if BIGSTACK
+	free_vartype(reg_0);
+	free_vartype(reg_1);
+	free_vartype(reg_2);
+	free_vartype(reg_3);
+	free_vartype(reg_4);
+	free_vartype(reg_5);
+	free_vartype(reg_6);
+	free_vartype(reg_7);
+	free_vartype(reg_8);
+	free_vartype(reg_top);
+#endif
 	return ERR_INSUFFICIENT_MEMORY;
     }
+#if BIGSTACK
+    free_vartype(reg_0);
+    free_vartype(reg_1);
+    free_vartype(reg_2);
+    free_vartype(reg_3);
+    free_vartype(reg_4);
+    free_vartype(reg_5);
+    free_vartype(reg_6);
+    free_vartype(reg_7);
+    free_vartype(reg_8);
+    free_vartype(reg_top);
+#endif
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);

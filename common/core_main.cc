@@ -80,6 +80,18 @@ void core_quit() {
     free_vartype(reg_y);
     free_vartype(reg_z);
     free_vartype(reg_t);
+#if BIGSTACK
+    free_vartype(reg_0);
+    free_vartype(reg_1);
+    free_vartype(reg_2);
+    free_vartype(reg_3);
+    free_vartype(reg_4);
+    free_vartype(reg_5);
+    free_vartype(reg_6);
+    free_vartype(reg_7);
+    free_vartype(reg_8);
+    free_vartype(reg_top);
+#endif
     free_vartype(reg_lastx);
     purge_all_vars();
     clear_all_prgms();

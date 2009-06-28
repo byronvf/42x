@@ -511,7 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Byron Foster";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -520,11 +520,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					FREE42,
 					BCD_MATH,
+					BIGSTACK,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "CB7F922C-950A-447D-8BC4-2CCC93F8AC18";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -537,6 +538,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					BIGSTACK,
 					FREE42,
 					BCD_MATH,
 				);
@@ -600,6 +602,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					BIGSTACK,
 					FREE42,
 					BCD_MATH,
 				);
