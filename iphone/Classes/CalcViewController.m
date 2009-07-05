@@ -189,22 +189,28 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	if ([[Settings instance] keyboardOn])
-	{		
-		if( !alphaMenuActive && core_alpha_menu())
+	{
+		if (alphaMenuActive)
+		{
+			// If the text field has nothing in it, then back space will
+			// never call the textField method, and the keyboard backspace
+			// will behave strangely, so we always fill it with something here.
+			textEntryField.text = @"XXX";
+			
+			if (!core_alpha_menu())
+			{
+				alphaMenuActive = NO;
+				[textEntryField resignFirstResponder];
+			}
+		}
+		else if (core_alpha_menu())
 		{
 			alphaMenuActive = YES;
 			keydown(0, 23); // down key to place menu on special characters
 			redisplay();
 			[textEntryField becomeFirstResponder];
-			NSString *alpha = [[NSString alloc] initWithBytes:reg_alpha 
-						length:reg_alpha_length encoding:NSASCIIStringEncoding];
-			textEntryField.text = [alpha autorelease];
 		}
-		else if(alphaMenuActive && !core_alpha_menu())
-		{
-			alphaMenuActive = NO;
-			[textEntryField resignFirstResponder];
-		}	
+		
 	}	
 	
 }
@@ -426,11 +432,32 @@ void shell_request_timeout3(int delay)
 			core_keydown(newChar + 1024, &enqueued, &repeat);
 			if( !enqueued) core_keyup();
 		}
-		else if( '\n' == newChar)
+		else if ( '\n' == newChar)
 		{
 			// End the edit
 			core_keydown(KEY_ENTER, &enqueued, &repeat);
 			if( !enqueued) core_keyup();
+		}
+		else if (newChar == 8364) // Euro
+		{
+		}
+		else if (newChar == 163) // British Pound
+		{
+			core_keydown(18 + 1024, &enqueued, &repeat);
+			if( !enqueued) core_keyup();
+		}
+		else if (newChar == 165) // Yen
+		{
+		}
+		else if (newChar == 8226) // Bullet
+		{
+			core_keydown(31 + 1024, &enqueued, &repeat);
+			if( !enqueued) core_keyup();
+		}
+		else
+		{
+			// We should never get here because all possible characters
+			// that are generated from the keyboard are handled above.
 		}
 	}
 	else
