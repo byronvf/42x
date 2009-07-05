@@ -157,7 +157,8 @@ extern void handle_client(int);
 		if(cur->ifa_addr->sa_family != AF_INET) continue;
 		
 		struct sockaddr_in *addrStruct = (struct sockaddr_in *)cur->ifa_addr;
-		NSString *name = [NSString stringWithCString:cur->ifa_name];
+		NSString *name = [NSString stringWithCString:cur->ifa_name
+											encoding:NSASCIIStringEncoding];
 		// only the wireless interface begins with "en"
 		if ([name hasPrefix:@"en"])
 		{	
@@ -165,12 +166,14 @@ extern void handle_client(int);
 											  sizeof(addrStruct->sin_addr), AF_INET);
 			// Test if we can use a DNS host name, otherwise use the IP
 			if (h != NULL)
-			    addr = [NSString stringWithCString:h->h_name];
+			    addr = [NSString stringWithCString:h->h_name 
+										  encoding:NSASCIIStringEncoding];
 
 			// If the dns name is longer then 20 characters, like an auto assign
 			// dns name, then we use the ip since it will probably be simpler to type
 			if (addr == NULL || [addr length] > 20)
-				addr = [NSString stringWithCString:inet_ntoa(addrStruct->sin_addr)];
+				addr = [NSString stringWithCString:inet_ntoa(addrStruct->sin_addr)
+							              encoding:NSASCIIStringEncoding];
 			
 			break;
 		}

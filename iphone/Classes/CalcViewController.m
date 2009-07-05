@@ -187,7 +187,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 - (void)handlePopupKeyboard
 {
-	NSAssert(free42init, @"Free42 has not been initialized");
+	NSAssert(free42init, @"Free42 has not been initialized");	
 	if ([[Settings instance] keyboardOn])
 	{		
 		if( !alphaMenuActive && core_alpha_menu())
@@ -196,7 +196,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			keydown(0, 23); // down key to place menu on special characters
 			redisplay();
 			[textEntryField becomeFirstResponder];
-			textEntryField.text = @"";
+			NSString *alpha = [[NSString alloc] initWithBytes:reg_alpha 
+						length:reg_alpha_length encoding:NSASCIIStringEncoding];
+			textEntryField.text = [alpha autorelease];
 		}
 		else if(alphaMenuActive && !core_alpha_menu())
 		{
