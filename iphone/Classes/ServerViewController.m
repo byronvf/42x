@@ -188,7 +188,7 @@ extern void handle_client(int);
 {	
 	int port = PORT_START-1;
 	NSString* host = [self getHost];
-	NSString* msg = @"You are not connected to a wireless network";	
+	NSString* msg = @"Sorry, you are not connected to a wireless network";	
 	if (host)
 	{
 		int status;
