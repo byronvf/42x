@@ -511,7 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Byron Foster";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -524,7 +524,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "CB7F922C-950A-447D-8BC4-2CCC93F8AC18";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};

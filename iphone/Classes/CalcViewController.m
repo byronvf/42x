@@ -24,6 +24,7 @@
 #import "Settings.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
+#import "Free42AppDelegate.h"
 #import "core_globals.h"
 
 const float SLOW_KEY_REPEAT_RATE = 0.2;  // Slow key repeat rate in seconds
@@ -52,23 +53,23 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 
 void shell_blitter(const char *bits, int bytesperline, int x, int y,
 				   int width, int height)
-{		
+{
+	// This happens during initialization
+	if (viewCtrl == NULL || ![viewCtrl isViewLoaded]) return;
+	
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
 	if (flags.f.prgm_mode)
-		[blitterView setNeedsDisplay];
+		[viewCtrl.blitterView setNeedsDisplay];
 	else
 		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
 		// up dirtly bits just below the 4th row
-		[blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + (height > 24 ? 3 : 0))];
+		[viewCtrl.blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + (height > 24 ? 3 : 0))];
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
 	// cpuCount = 0;
-	
-	// If the viewCtrl is not initialized yet, don't try and use it
-	if (!viewCtrl) return;
 	
 	viewCtrl.displayBuff = bits;
 	
@@ -158,15 +159,23 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
     // Create a run loop observer and attach it to the run loop.
     CFRunLoopObserverContext  context = {0, self, NULL, NULL, NULL};
     CFRunLoopObserverRef    observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
-															   kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
+				kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
 	
 	keyPressed = false;
-	
-	// to initialize displayBuff;
 	alphaMenuActive = FALSE;
-	[self handlePopupKeyboard];
+}
+
+- (void)viewDidLoad {
+	// if dispRows is zero, then we have not loaded the display settings.
+	NSAssert(dispRows != 0, @"We are not ready to display");
+	NSAssert(blitterView != NULL, @"Blitter view not ready");
+	NSAssert(blankButtonsView != NULL, @"Buttons View not ready");
+	NSAssert(menuView != NULL, @"Menu view not ready");
+	NSAssert(free42init, @"Free42 has not been initialized");
+	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
+	// core_init does not do this.
 	redisplay();
 }
 
@@ -178,6 +187,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 - (void)handlePopupKeyboard
 {
+	NSAssert(free42init, @"Free42 has not been initialized");
 	if ([[Settings instance] keyboardOn])
 	{		
 		if( !alphaMenuActive && core_alpha_menu())
@@ -433,7 +443,8 @@ void shell_request_timeout3(int delay)
 }
 
 - (void) twoLineDisp
-{	
+{
+	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
@@ -460,6 +471,7 @@ void shell_request_timeout3(int delay)
 
 - (void) fourLineDisp
 {
+	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
