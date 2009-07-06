@@ -158,7 +158,9 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 - (void)shouldCutPaste
 {
 	self.cutPaste = TRUE;
-	if (flags.f.prgm_mode)
+	// If in program mode, or alpha mode, then don't bring up cut and paste
+	// since it really doesn't make since.
+	if (flags.f.prgm_mode  || core_alpha_menu())
 	{
 		self.cutPaste = FALSE;
 	}

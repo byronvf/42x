@@ -177,6 +177,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
+	
+	// Bring up keyboard if this is the way the use left it when quiting.
+	[self handlePopupKeyboard];		
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -473,6 +476,7 @@ void shell_request_timeout3(int delay)
 
 - (void) twoLineDisp
 {
+	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
@@ -500,6 +504,7 @@ void shell_request_timeout3(int delay)
 
 - (void) fourLineDisp
 {
+	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row

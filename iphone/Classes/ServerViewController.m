@@ -209,8 +209,7 @@ extern void handle_client(int);
 		    msg = [NSString stringWithFormat:@"Error - %s (%i)", strerror(status), status];
 		}
 		else
-		{
-			
+		{			
 		    msg = [NSString stringWithFormat:@"http://%@:%i", host, port];
 		   [self handleRequest];
 		}
