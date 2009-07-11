@@ -34,3 +34,4 @@
 @end
 
 extern FILE* printFile;
+extern BOOL free42init;
