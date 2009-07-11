@@ -21,7 +21,6 @@
 @class NavViewController;
 @class BlitterView;
 
-extern BlitterView *blitterView;
 extern int cpuCount;
 
 @interface BlitterView : UIView {
