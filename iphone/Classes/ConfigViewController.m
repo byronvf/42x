@@ -95,9 +95,31 @@ int dispRows;
 	}
 	else
 	{
-       [[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://free42iphone.appspot.com/"]];
+		// Read Free42 version from VERSION file.
+		NSString *path = [[NSBundle mainBundle] pathForResource:@"VERSION" ofType:nil];
+		NSString *free42ver = [NSString stringWithContentsOfFile:path];
+		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet controlCharacterSet]];
+		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+		
+		NSString *title = [NSString stringWithFormat:@"42s Version %@\nFree42 Version %@", ver, free42ver];
+		
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
+		message:@"Licensed under GPL" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];	
+		[alert addButtonWithTitle:@"Web Site"];
+		[alert show];		
 	}
 }
+
+
+- (void)alertView: (UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	if (buttonIndex == 1)
+	{
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://free42iphone.appspot.com/"]];
+	}
+}
+
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Return YES for supported orientations
