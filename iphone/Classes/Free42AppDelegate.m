@@ -38,6 +38,12 @@ static FILE *statefile;
 // If we are loading from the old style state method NSUserDefaults
 BOOL oldStyleStateExists;
 
+// Persist format version, bumped when there are changes so we can convert
+static const int PERSIST_VERSION = 2;
+
+// Persist version stored
+static int persistVersion = 0;
+
 int cpuCount = 0;
 /*
  * The problem is that I'm not aware of a way we can test if an event is pending,
@@ -107,6 +113,7 @@ bool shell_write_saved_state(const void *buf, int4 nbytes)
 }
 
 int stateReadUpTo = 0;
+int readCnt = 0;
 int4 shell_read_saved_state(void *buf, int4 bufsize)
 {
 
@@ -118,23 +125,32 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
 			memset((char*)buf+272, 0, 544);
+			readCnt += 816;
 			return 816;
 		}
-		
-		return read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
+
+		int n = read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
+		readCnt += n;
+		return n;
 	}
 	
 
     if (statefile == NULL)
 		return -1;
-    else {
+    else 
+	{
 		int4 n = fread(buf, 1, bufsize, statefile);
-		if (n != bufsize && ferror(statefile)) {
+		if (n != bufsize && ferror(statefile)) 
+		{
 			fclose(statefile);
 			statefile = NULL;
 			return -1;
-		} else
+		} 
+		else
+		{
+			readCnt += n;
 			return n;
+		}
     }	
 	
 }
@@ -173,11 +189,14 @@ NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
 NSString* CONFIG_PRINT_BUF = @"printBuf";
 NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 NSString* CONFIG_DISP_ROWS = @"dispRows";
+NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 
 - (void)loadSettings
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
+	persistVersion = [defaults integerForKey:CONFIG_PERSIST_VERSION];
+	
 	if ([defaults objectForKey:CONFIG_KEY_CLICK_ON])
 		[[Settings instance] setClickSoundOn:[defaults boolForKey:CONFIG_KEY_CLICK_ON]];
 	else
@@ -192,11 +211,6 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 		[[Settings instance] setKeyboardOn:[defaults boolForKey:CONFIG_KEYBOARD]];
 	else
 		[[Settings instance] setKeyboardOn:TRUE];
-
-	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
-		[[Settings instance] setAutoPrintOn:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
-	else
-		[[Settings instance] setAutoPrintOn:TRUE];
 	
 	if ([defaults objectForKey:CONFIG_MENU_KEYS_BUF])
 		menuKeys = [defaults boolForKey:CONFIG_MENU_KEYS_BUF];
@@ -220,10 +234,10 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 - (void)saveSettings
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setInteger:PERSIST_VERSION forKey:CONFIG_PERSIST_VERSION];
 	[defaults setBool:[[Settings instance] beepSoundOn] forKey:CONFIG_BEEP_ON];
 	[defaults setBool:[[Settings instance] clickSoundOn] forKey:CONFIG_KEY_CLICK_ON];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
-	[defaults setBool:[[Settings instance] autoPrintOn] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 
@@ -237,6 +251,8 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {	
+
+	[self loadSettings];
 	
 	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 	statefile = fopen([statepath UTF8String], "r");
@@ -254,7 +270,12 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 	}
 	else
 	{
-		core_init(1, FREE42_VERSION);	
+		// If persistVersion is less then 2, then we are loading from
+		// FREE42_VERSION 11, pre bigstack
+		if (persistVersion < 2)
+			core_init(1, 11);
+	    else
+			core_init(1, FREE42_VERSION);
 	}
 	free42init = TRUE;
 	

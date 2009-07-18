@@ -251,10 +251,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 		// We use the printingStarted flag to turn on the and off the print aunnunciator
 		// since it is off now, we want to redisplay.
-		[blitterView annuncNeedsDisplay];
-		
-		if ([[Settings instance] autoPrintOn])
-			[navViewController switchToPrintView];
+		[blitterView annuncNeedsDisplay];		
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
