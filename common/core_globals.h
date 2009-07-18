@@ -263,12 +263,6 @@ typedef struct {
 
 #ifdef BIGSTACK
 
-/* We use this bit pattern to indicate in the state file that
- * we have stored the extended stack.  If the extended stack was not 
- * stored then we will load instead reg_alpha_length which can never be -3
- */ 
-#define BIGSTACK_MAGIC -3
-
 #define SHIFT_BIG_STACK_UP \
 reg_top = reg_8; \
 reg_8 = reg_7; \

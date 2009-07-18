@@ -594,7 +594,9 @@ bool mode_varmenu;
 bool mode_updown;
 int4 mode_sigma_reg;
 int mode_goose;
+
 #if BIGSTACK
+/* True if we are currently operating with the extended stack */
 bool mode_bigstack = false;
 #endif
 
@@ -1080,7 +1082,7 @@ static bool persist_globals() {
     if (!persist_vartype(reg_lastx))
 	goto done;
 #if BIGSTACK
-    if (!write_int(BIGSTACK_MAGIC))
+    if (!write_bool(true)) /* Yes, big stack block exists */
 	goto done;
     if (!persist_vartype(reg_0))
 	goto done;
@@ -1104,7 +1106,10 @@ static bool persist_globals() {
 	goto done;
     if (!write_bool(mode_bigstack))
 	goto done;
-#endif
+#else
+    if (!write_bool(false))  /* No, big stack block does not exist */
+	goto done;    
+#endif    
     if (!write_int(reg_alpha_length))
 	goto done;
     if (!shell_write_saved_state(reg_alpha, 44))
@@ -1162,18 +1167,16 @@ static bool persist_globals() {
     return ret;
 }
 
-static bool unpersist_globals() GLOBALS_SECT;
-static bool unpersist_globals() {
+static bool unpersist_globals(int4 ver) GLOBALS_SECT;
+static bool unpersist_globals(int4 ver) {
     int4 n;
     int i;
     array_count = 0;
     array_list_capacity = 0;
     array_list = NULL;
     bool ret = false;
-#ifdef BIGSTACK
-    int bigmagic = 0;
-#endif
-	
+    bool bigstack = false;
+
     free_vartype(reg_x);
     if (!unpersist_vartype(&reg_x))
 	goto done;
@@ -1189,11 +1192,30 @@ static bool unpersist_globals() {
     free_vartype(reg_lastx);
     if (!unpersist_vartype(&reg_lastx))
 	goto done;
+
+    if (ver >= 12)
+    {
+	/* we are on atleast version 12, so this block exists */
+	if (!read_bool(&bigstack))
+	    goto done;
+    }
+    
 #ifdef BIGSTACK
-    if (!read_int(&bigmagic))
-	goto done;
-	
-    if (bigmagic == BIGSTACK_MAGIC) {
+    if (!bigstack)
+    {	
+	reg_0 = new_real(0);
+	reg_1 = new_real(0);
+	reg_2 = new_real(0);
+	reg_3 = new_real(0);
+	reg_4 = new_real(0);
+	reg_5 = new_real(0);
+	reg_6 = new_real(0);
+	reg_7 = new_real(0);
+	reg_8 = new_real(0);
+	reg_top = new_real(0);
+    }
+    else
+    {	
 	free_vartype(reg_0);
 	if (!unpersist_vartype(&reg_0))
 	    goto done;
@@ -1226,33 +1248,13 @@ static bool unpersist_globals() {
 	    goto done;
 	if (!read_bool(&mode_bigstack))
 	    goto done;
-	if (!read_int(&reg_alpha_length)) {
-	    reg_alpha_length = 0;
-	    goto done;
-	}
     }
-    else {		
-	/* The magic number did not match up, so this value 
-	   was intended for reg_alpha_length */		 
-	reg_alpha_length = bigmagic;
-
-	reg_0 = new_real(0);
-	reg_1 = new_real(0);
-	reg_2 = new_real(0);
-	reg_3 = new_real(0);
-	reg_4 = new_real(0);
-	reg_5 = new_real(0);
-	reg_6 = new_real(0);
-	reg_7 = new_real(0);
-	reg_8 = new_real(0);
-	reg_top = new_real(0);
-    }
-#else
+#endif
+    
     if (!read_int(&reg_alpha_length)) {
 	reg_alpha_length = 0;
 	goto done;
     }
-#endif
     if (shell_read_saved_state(reg_alpha, 44) != 44) {
 	reg_alpha_length = 0;
 	goto done;
@@ -2339,7 +2341,7 @@ bool load_state(int4 ver) {
 
     if (!unpersist_display(ver))
 	return false;
-    if (!unpersist_globals())
+    if (!unpersist_globals(ver))
 	return false;
 
     if (ver < 4) {

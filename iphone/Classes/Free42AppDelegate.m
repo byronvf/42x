@@ -34,7 +34,7 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 1;
+static const int PERSIST_VERSION = 2;
 
 // Persist version stored
 static int persistVersion = 0;
@@ -246,6 +246,8 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {	
+
+	[self loadSettings];
 	
 	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 	statefile = fopen([statepath UTF8String], "r");
@@ -265,12 +267,15 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 	}
 	else
 	{
-		core_init(1, FREE42_VERSION);
+		// If persistVersion is less then 2, then we are loading from
+		// FREE42_VERSION 11, pre bigstack
+		if (persistVersion < 2)
+			core_init(1, 11);
+	    else
+			core_init(1, FREE42_VERSION);
 	}
 	
 	if (statefile) fclose(statefile);
-
-	[self loadSettings];
 		
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
