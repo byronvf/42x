@@ -26,7 +26,7 @@
 #import "core_keydown.h"
 #import "core_helpers.h"
 
-BlitterView *blitterView; // Reference to this blitter so we can access from C methods
+static BlitterView *blitterView; // Reference to this blitter so we can access from C methods
 
 static BOOL flagUpDown = false;
 static BOOL flagShift = false;
@@ -98,7 +98,9 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 }
 
 - (void)awakeFromNib
-{	
+{
+	NSAssert(free42init, @"Free42 has not been initialized");
+	
 	// Initialization code
 	blitterView = self; // We need a reference to this view outside the class
 	highlight = FALSE;
@@ -156,7 +158,9 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 - (void)shouldCutPaste
 {
 	self.cutPaste = TRUE;
-	if (flags.f.prgm_mode)
+	// If in program mode, or alpha mode, then don't bring up cut and paste
+	// since it really doesn't make since.
+	if (flags.f.prgm_mode  || core_alpha_menu())
 	{
 		self.cutPaste = FALSE;
 	}
@@ -197,7 +201,9 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 		// 17 - number of bytes per line, each byte is an 8 pixel bit map. 
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
-				
+		
+		NSAssert(calcViewController.displayBuff != NULL,
+				 @"Display buff not initialized");
 		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
 		if (hMax > dispRows*8) hMax = dispRows*8;
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);

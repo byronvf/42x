@@ -15,43 +15,12 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
-#import "AboutView.h"
-#import "shell_iphone.h"
+#import <Cocoa/Cocoa.h>
 
 
-@implementation AboutView
-
-@synthesize doneButton;
-@synthesize versionLabel;
-@synthesize copyrightLabel;
-
-- (id)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        // Initialization code
-    }
-    return self;
+@interface PrintView : NSView {
 }
 
-- (void) awakeFromNib {
-	[versionLabel setText:[NSString stringWithFormat:@"Free42 %s", [shell_iphone getVersion]]];
-	[copyrightLabel setText:@"© 2004-2009 Thomas Okken"];
-}
-
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-
-- (void) raised {
-	// start-up code
-}
-
-- (IBAction) done {
-	[shell_iphone showMain];
-}
-
-- (void)dealloc {
-    [super dealloc];
-}
-
+- (void) setNeedsDisplayInRectSafely:(CGRect) rect;
 
 @end

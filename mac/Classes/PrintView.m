@@ -15,12 +15,11 @@
  * along with this program; if not, see http://www.gnu.org/licenses/.
  *****************************************************************************/
 
-#import "CalcView.h"
-#import "Free42AppDelegate.h"
+#import "PrintView.h"
 #import "MyRect.h"
-#import "shell_skin.h"
 
-@implementation CalcView
+
+@implementation PrintView
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
@@ -31,48 +30,11 @@
 }
 
 - (void)drawRect:(NSRect)rect {
-	skin_repaint(&rect);
-}
-
-- (BOOL) acceptsFirstResponder {
-	return YES;
-}
-
-- (void)mouseDown:(NSEvent *)theEvent {
-	NSPoint loc = [theEvent locationInWindow];
-	calc_mousedown((int) loc.x, (int) loc.y);
-}
-
-- (void)mouseUp:(NSEvent *)theEvent {
-	calc_mouseup();
-}
-
-static NSString *unicode(NSString *src) {
-	char buf[1024] = "";
-	int len = [src length];
-	for (int i = 0; i < len; i++) {
-		unsigned short c = [src characterAtIndex:i];
-		if (i > 0)
-			strcat(buf, " ");
-		sprintf(buf + strlen(buf), "0x%x", c);
-	}
-	return [NSString stringWithCString:buf encoding:NSUTF8StringEncoding];
-}
-
-- (void)keyDown:(NSEvent *)theEvent {
-	if ([theEvent isARepeat])
-		return;
-	calc_keydown([theEvent characters], [theEvent modifierFlags], [theEvent keyCode]);
-}
-
-- (void)keyUp:(NSEvent *)theEvent {
-	if ([theEvent isARepeat])
-		return;
-	calc_keyup([theEvent characters], [theEvent modifierFlags], [theEvent keyCode]);
-}
-
-- (void)flagsChanged:(NSEvent *)theEvent {
-	calc_keymodifierschanged([theEvent modifierFlags]);
+	CGContextRef myContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+	CGContextSetRGBFillColor(myContext, 1.0, 0.0, 0.0, 1.0);
+	CGContextFillRect(myContext, CGRectMake(10, 10, 30, 30));
+	CGContextFillRect(myContext, CGRectMake(0, 50, 286, 30));
+	CGContextFillRect(myContext, CGRectMake(1, 90, 284, 30));
 }
 
 - (void) setNeedsDisplayInRectSafely2:(id) myrect {

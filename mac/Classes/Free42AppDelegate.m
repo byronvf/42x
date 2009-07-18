@@ -22,10 +22,12 @@
 #import "free42.h"
 #import "shell.h"
 #import "shell_skin.h"
+#import "shell_spool.h"
 #import "core_main.h"
 #import "core_display.h"
 #import "Free42AppDelegate.h"
 #import "ProgramListDataSource.h"
+#import "CalcView.h"
 
 
 static Free42AppDelegate *instance = NULL;
@@ -53,6 +55,10 @@ static int ckey = 0;
 static int skey;
 static unsigned char *macro;
 static int mouse_key;
+static unsigned short active_keycode = -1;
+static int just_pressed_shift = 0;
+static int keymap_length = 0;
+static keymap_entry *keymap = NULL;
 
 static bool timeout_active = false;
 static int timeout_which;
@@ -67,18 +73,32 @@ static int ann_run = 0;
 static int ann_g = 0;
 static int ann_rad = 0;
 
+static FILE *print_txt = NULL;
+static FILE *print_gif = NULL;
+static char print_gif_name[FILENAMELEN];
+static int gif_seq = -1;
+static int gif_lines;
+
 static void show_message(char *title, char *message);
+static void read_key_map(const char *keymapfilename);
 static void init_shell_state(int4 ver);
 static int read_shell_state(int4 *ver);
 static int write_shell_state();
 static void shell_keydown();
 static void shell_keyup();
 
+static void txt_writer(const char *text, int length);
+static void txt_newliner();
+static void gif_seeker(int4 pos);
+static void gif_writer(const char *text, int length);
+static bool is_file(const char *name);
+
 @implementation Free42AppDelegate
 
 @synthesize mainWindow;
 @synthesize calcView;
 @synthesize printWindow;
+@synthesize printView;
 @synthesize preferencesWindow;
 @synthesize prefsSingularMatrix;
 @synthesize prefsMatrixOutOfRange;
@@ -109,7 +129,7 @@ static void shell_keyup();
 	
 	const char *sound_names[] = { "tone0", "tone1", "tone2", "tone3", "tone4", "tone5", "tone6", "tone7", "tone8", "tone9", "squeak" };
 	for (int i = 0; i < 11; i++) {
-		NSString *name = [NSString stringWithCString:sound_names[i]];
+		NSString *name = [NSString stringWithCString:sound_names[i] encoding:NSUTF8StringEncoding];
 		NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"wav"];
 		OSStatus status = AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundIDs[i]);
 		if (status)
@@ -137,7 +157,7 @@ static void shell_keyup();
 	if (free42dir_exists) {
 		snprintf(statefilename, FILENAMELEN, "%s/.free42/state", home);
 		snprintf(printfilename, FILENAMELEN, "%s/.free42/print", home);
-		snprintf(keymapfilename, FILENAMELEN, "%s/.free42/keymap", home);
+		snprintf(keymapfilename, FILENAMELEN, "%s/.free42/keymap.txt", home);
 	} else {
 		statefilename[0] = 0;
 		printfilename[0] = 0;
@@ -149,7 +169,7 @@ static void shell_keyup();
 	/***** Read the key map *****/
 	/****************************/
 	
-	// TODO!
+	read_key_map(keymapfilename);
 	
 	
 	/***********************************************************/
@@ -188,6 +208,26 @@ static void shell_keyup();
 		[mainWindow setFrameOrigin:pt];
 	}
 	
+	sz.width = 301;
+	sz.height = state.printWindowKnown ? state.printWindowHeight : 600;
+	[printWindow setContentSize:sz];
+	
+	if (state.printWindowKnown) {
+		NSPoint pt;
+		pt.x = state.printWindowX;
+		pt.y = state.printWindowY;
+		[printWindow setFrameOrigin:pt];
+	}
+	
+	NSRect f;
+	f.origin.x = 0;
+	f.origin.y = 0;
+	f.size.width = 286;
+	f.size.height = 1000;
+	[printView setFrame:f];
+	
+	if (state.printWindowMapped)
+		[printWindow makeKeyAndOrderFront:self];
 	[mainWindow makeKeyAndOrderFront:self];
 	
 	core_init(init_mode, version);
@@ -200,9 +240,64 @@ static void shell_keyup();
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
+#if 0
+    FILE *printfile;
+    int n, length;
+	
+    printfile = fopen(printfilename, "w");
+    if (printfile != NULL) {
+		length = printout_bottom - printout_top;
+		if (length < 0)
+			length += PRINT_LINES;
+		n = fwrite(&length, 1, sizeof(int), printfile);
+		if (n != sizeof(int))
+			goto failed;
+		if (printout_bottom >= printout_top) {
+			n = fwrite(print_bitmap + PRINT_BYTESPERLINE * printout_top,
+					   1, PRINT_BYTESPERLINE * length, printfile);
+			if (n != PRINT_BYTESPERLINE * length)
+				goto failed;
+		} else {
+			n = fwrite(print_bitmap + PRINT_BYTESPERLINE * printout_top,
+					   1, PRINT_SIZE - PRINT_BYTESPERLINE * printout_top,
+					   printfile);
+			if (n != PRINT_SIZE - PRINT_BYTESPERLINE * printout_top)
+				goto failed;
+			n = fwrite(print_bitmap, 1,
+					   PRINT_BYTESPERLINE * printout_bottom, printfile);
+			if (n != PRINT_BYTESPERLINE * printout_bottom)
+				goto failed;
+		}
+		
+		fclose(printfile);
+		goto done;
+		
+	failed:
+		fclose(printfile);
+		remove(printfilename);
+		
+	done:
+		;
+    }
+#endif
+	
+    if (print_txt != NULL)
+		fclose(print_txt);
+	
+    if (print_gif != NULL) {
+		shell_finish_gif(gif_seeker, gif_writer);
+		fclose(print_gif);
+    }
+	
+    shell_spool_exit();
+	
 	state.mainWindowX = (int) mainWindow.frame.origin.x;
 	state.mainWindowY = (int) mainWindow.frame.origin.y;
 	state.mainWindowKnown = 1;
+	state.printWindowX = (int) printWindow.frame.origin.x;
+	state.printWindowY = (int) printWindow.frame.origin.y;
+	state.printWindowHeight = (int) [[printWindow contentView] frame].size.height;
+	state.printWindowKnown = 1;
     statefile = fopen(statefilename, "w");
     if (statefile != NULL)
         write_shell_state();
@@ -219,6 +314,8 @@ static void shell_keyup();
 			[instance getPreferences];
 	} else if (window == mainWindow)
 		[NSApp terminate:nil];
+	else if (window == printWindow)
+		state.printWindowMapped = 0;
 }
 
 - (IBAction) showAbout:(id)sender {
@@ -271,6 +368,16 @@ static void shell_keyup();
 	NSSavePanel *saveDlg = [NSSavePanel savePanel];
 	if ([saveDlg runModalForDirectory:nil file:nil] == NSOKButton)
 		[prefsPrintGIFFile setStringValue:[saveDlg filename]];
+}
+
+- (IBAction) showPrintOut:(id)sender {
+	if (!state.printWindowMapped) {
+		[printWindow makeKeyAndOrderFront:self];
+		state.printWindowMapped = 1;
+	}
+}
+
+- (IBAction) clearPrintOut:(id)sender {
 }
 
 - (IBAction) importPrograms:(id)sender {
@@ -404,6 +511,7 @@ static char version[32] = "";
 	p.y = frame.origin.y + frame.size.height;
 	[mainWindow setContentSize:sz];
 	[mainWindow setFrameTopLeftPoint:p];
+	[calcView setNeedsDisplayInRectSafely:CGRectMake(0, 0, w, h)];
 }
 
 - (void) mouseDown3 {
@@ -648,6 +756,151 @@ void calc_mouseup() {
 	}
 }
 
+void calc_keydown(NSString *characters, NSUInteger flags, unsigned short keycode) {
+	if (ckey != 0 && mouse_key)
+		return;
+	
+	int len = [characters length];
+	if (len == 0)
+		return;
+	unsigned short c = [characters characterAtIndex:0];
+	
+	bool printable = len == 1 && c >= 32 && c <= 126;
+	just_pressed_shift = 0;
+	
+	bool ctrl = (flags & NSControlKeyMask) != 0;
+	bool alt = (flags & NSAlternateKeyMask) != 0;
+	bool shift = (flags & (NSShiftKeyMask | NSAlphaShiftKeyMask)) != 0;
+	bool cshift = ann_shift != 0;
+	
+	if (ckey != 0) {
+		shell_keyup();
+		active_keycode = -1;
+	}
+	
+	if (!ctrl && !alt) {
+		if (printable && core_alpha_menu()) {
+			if (c >= 'a' && c <= 'z')
+				c = c + 'A' - 'a';
+			else if (c >= 'A' && c <= 'Z')
+				c = c + 'a' - 'A';
+			ckey = 1024 + c;
+			skey = -1;
+			macro = NULL;
+			shell_keydown();
+			mouse_key = 0;
+			active_keycode = keycode;
+			return;
+		} else if (core_hex_menu() && ((c >= 'a' && c <= 'f')
+									   || (c >= 'A' && c <= 'F'))) {
+			if (c >= 'a' && c <= 'f')
+				ckey = c - 'a' + 1;
+			else
+				ckey = c - 'A' + 1;
+			skey = -1;
+			macro = NULL;
+			shell_keydown();
+			mouse_key = 0;
+			active_keycode = keycode;
+			return;
+		}
+	}
+	
+	bool exact;
+	unsigned char *key_macro = skin_keymap_lookup(c, printable,
+												  ctrl, alt, shift, cshift, &exact);
+	if (key_macro == NULL || !exact) {
+		for (int i = 0; i < keymap_length; i++) {
+			keymap_entry *entry = keymap + i;
+			if (ctrl == entry->ctrl
+				&& alt == entry->alt
+				&& (printable || shift == entry->shift)
+				&& c == entry->keychar) {
+				if (cshift == entry->cshift) {
+					key_macro = entry->macro;
+					break;
+				} else {
+					if (key_macro == NULL)
+						key_macro = entry->macro;
+				}
+			}
+		}
+	}
+	if (key_macro != NULL) {
+		// A keymap entry is a sequence of zero or more calculator
+		// keystrokes (1..37) and/or macros (38..255). We expand
+		// macros here before invoking shell_keydown().
+		// If the keymap entry is one key, or two keys with the
+		// first being 'shift', we highlight the key in question
+		// by setting ckey; otherwise, we set ckey to -10, which
+		// means no skin key will be highlighted.
+		ckey = -10;
+		skey = -1;
+		if (key_macro[0] != 0)
+			if (key_macro[1] == 0)
+				ckey = key_macro[0];
+			else if (key_macro[2] == 0 && key_macro[0] == 28)
+				ckey = key_macro[1];
+		bool needs_expansion = false;
+		for (int j = 0; key_macro[j] != 0; j++)
+			if (key_macro[j] > 37) {
+				needs_expansion = true;
+				break;
+			}
+		if (needs_expansion) {
+			static unsigned char macrobuf[1024];
+			int p = 0;
+			for (int j = 0; key_macro[j] != 0 && p < 1023; j++) {
+				int c = key_macro[j];
+				if (c <= 37)
+					macrobuf[p++] = c;
+				else {
+					unsigned char *m = skin_find_macro(c);
+					if (m != NULL)
+						while (*m != 0 && p < 1023)
+							macrobuf[p++] = *m++;
+				}
+			}
+			macrobuf[p] = 0;
+			macro = macrobuf;
+		} else
+			macro = key_macro;
+		shell_keydown();
+		mouse_key = 0;
+		active_keycode = keycode;
+	}
+}
+
+void calc_keyup(NSString *characters, NSUInteger flags, unsigned short keycode) {
+	if (ckey != 0) {
+	    if (!mouse_key && keycode == active_keycode) {
+			shell_keyup();
+			active_keycode = -1;
+	    }
+	}
+}
+
+void calc_keymodifierschanged(NSUInteger flags) {
+	static bool shift_was_down = false;
+	bool shift_is_down = (flags & NSShiftKeyMask) != 0;
+	if (shift_is_down == shift_was_down)
+		return;
+	shift_was_down = shift_is_down;
+	if (shift_is_down) {
+		// Shift pressed
+		just_pressed_shift = 1;
+	} else {
+		// Shift released
+		if (ckey == 0 && just_pressed_shift) {
+			ckey = 28;
+			skey = -1;
+			macro = NULL;
+			shell_keydown();
+			shell_keyup();
+		}
+	}
+}
+
 static void show_message(char *title, char *message) {
 	// TODO!
 	fprintf(stderr, "%s\n", message);
@@ -733,7 +986,146 @@ void shell_powerdown() {
 void shell_print(const char *text, int length,
 				 const char *bits, int bytesperline,
 				 int x, int y, int width, int height) {
-	// TODO!
+#if 0
+    int xx, yy;
+    int oldlength, newlength;
+	
+    for (yy = 0; yy < height; yy++) {
+		int4 Y = (printout_bottom + 2 * yy) % PRINT_LINES;
+		for (xx = 0; xx < 143; xx++) {
+			int bit, px, py;
+			if (xx < width) {
+				char c = bits[(y + yy) * bytesperline + ((x + xx) >> 3)];
+				bit = (c & (1 << ((x + xx) & 7))) != 0;
+			} else
+				bit = 0;
+			for (px = xx * 2; px < (xx + 1) * 2; px++)
+				for (py = Y; py < Y + 2; py++)
+					if (bit)
+						print_bitmap[py * PRINT_BYTESPERLINE + (px >> 3)]
+						|= 1 << (px & 7);
+					else
+						print_bitmap[py * PRINT_BYTESPERLINE + (px >> 3)]
+						&= ~(1 << (px & 7));
+		}
+    }
+	
+    oldlength = printout_bottom - printout_top;
+    if (oldlength < 0)
+		oldlength += PRINT_LINES;
+    printout_bottom = (printout_bottom + 2 * height) % PRINT_LINES;
+    newlength = oldlength + 2 * height;
+	
+    if (newlength >= PRINT_LINES) {
+		int offset;
+		printout_top = (printout_bottom + 2) % PRINT_LINES;
+		newlength = PRINT_LINES - 2;
+		if (newlength != oldlength)
+			gtk_widget_set_size_request(print_widget, 286, newlength);
+		scroll_printout_to_bottom();
+		offset = 2 * height - newlength + oldlength;
+		if (print_gc == NULL)
+			print_gc = gdk_gc_new(print_widget->window);
+		gdk_draw_drawable(print_widget->window, print_gc, print_widget->window,
+						  0, offset, 0, 0, 286, oldlength - offset);
+		repaint_printout(0, newlength - 2 * height, 286, 2 * height);
+    } else {
+		gtk_widget_set_size_request(print_widget, 286, newlength);
+		// The resize request does not take effect immediately;
+		// if I call scroll_printout_to_bottom() now, the scrolling will take
+		// place *before* the resizing, leaving the scroll bar in the wrong
+		// position.
+		// I work around this by using a callback to finish the job.
+		g_signal_connect(G_OBJECT(print_widget), "configure-event",
+						 G_CALLBACK(print_widget_grew),
+						 (gpointer) new print_growth_info(oldlength, 2 * height));
+    }
+#endif
+	
+    if (state.printerToTxtFile) {
+		int err;
+		char buf[1000];
+		
+		if (print_txt == NULL) {
+			print_txt = fopen(state.printerTxtFileName, "a");
+			if (print_txt == NULL) {
+				err = errno;
+				state.printerToTxtFile = 0;
+				snprintf(buf, 1000, "Can't open \"%s\" for output:\n%s (%d)\nPrinting to text file disabled.", state.printerTxtFileName, strerror(err), err);
+				show_message("Message", buf);
+				goto done_print_txt;
+			}
+		}
+		
+		shell_spool_txt(text, length, txt_writer, txt_newliner);
+	done_print_txt:;
+    }
+	
+    if (state.printerToGifFile) {
+		int err;
+		char buf[1000];
+		
+		if (print_gif != NULL
+			&& gif_lines + height > state.printerGifMaxLength) {
+			shell_finish_gif(gif_seeker, gif_writer);
+			fclose(print_gif);
+			print_gif = NULL;
+		}
+		
+		if (print_gif == NULL) {
+			while (1) {
+				int len, p;
+				
+				gif_seq = (gif_seq + 1) % 10000;
+				
+				strcpy(print_gif_name, state.printerGifFileName);
+				len = strlen(print_gif_name);
+				
+				/* Strip ".gif" extension, if present */
+				if (len >= 4 &&
+					strcasecmp(print_gif_name + len - 4, ".gif") == 0) {
+					len -= 4;
+					print_gif_name[len] = 0;
+				}
+				
+				/* Strip ".[0-9]+", if present */
+				p = len;
+				while (p > 0 && print_gif_name[p] >= '0'
+					   && print_gif_name[p] <= '9')
+					p--;
+				if (p < len && p >= 0 && print_gif_name[p] == '.')
+					print_gif_name[p] = 0;
+				
+				/* Make sure we have enough space for the ".nnnn.gif" */
+				p = 1000 - 10;
+				print_gif_name[p] = 0;
+				p = strlen(print_gif_name);
+				snprintf(print_gif_name + p, 6, ".%04d", gif_seq);
+				strcat(print_gif_name, ".gif");
+				
+				if (!is_file(print_gif_name))
+					break;
+			}
+			print_gif = fopen(print_gif_name, "w+");
+			if (print_gif == NULL) {
+				err = errno;
+				state.printerToGifFile = 0;
+				snprintf(buf, 1000, "Can't open \"%s\" for output:\n%s (%d)\nPrinting to GIF file disabled.", print_gif_name, strerror(err), err);
+				show_message("Message", buf);
+				goto done_print_gif;
+			}
+			if (!shell_start_gif(gif_writer, state.printerGifMaxLength)) {
+				state.printerToGifFile = 0;
+				show_message("Message", "Not enough memory for the GIF encoder.\nPrinting to GIF file disabled.");
+				goto done_print_gif;
+			}
+			gif_lines = 0;
+		}
+		
+		shell_spool_gif(bits, bytesperline, x, y, width, height, gif_writer);
+		gif_lines += height;
+	done_print_gif:;
+    }
 }
 
 void shell_request_timeout3(int delay) {
@@ -818,6 +1210,47 @@ int shell_wants_cpu() {
 	return we_want_cpu;
 }
 
+static void read_key_map(const char *keymapfilename) {
+	FILE *keymapfile = fopen(keymapfilename, "r");
+	int kmcap = 0;
+	char line[1024];
+	int lineno = 0;
+
+	if (keymapfile == NULL) {
+		/* Try to create default keymap file */
+		keymapfile = fopen(keymapfilename, "wb");
+		if (keymapfile == NULL)
+			return;
+		NSString *path = [[NSBundle mainBundle] pathForResource:@"keymap" ofType:@"txt"];
+		[path getCString:line maxLength:1024 encoding:NSUTF8StringEncoding];
+		FILE *builtin_keymapfile = fopen(line, "r");
+		int n;
+		while ((n = fread(line, 1, 1024, builtin_keymapfile)) > 0)
+			fwrite(line, 1, n, keymapfile);
+		fclose(builtin_keymapfile);
+		fclose(keymapfile);
+
+		keymapfile = fopen(keymapfilename, "r");
+		if (keymapfile == NULL)
+			return;
+	}
+
+	while (fgets(line, 1024, keymapfile) != NULL) {
+		keymap_entry *entry = parse_keymap_entry(line, ++lineno);
+		if (entry == NULL)
+			continue;
+		/* Create new keymap entry */
+		if (keymap_length == kmcap) {
+			kmcap += 50;
+			keymap = (keymap_entry *) realloc(keymap, kmcap * sizeof(keymap_entry));
+			// TODO - handle memory allocation failure
+		}
+		memcpy(keymap + (keymap_length++), entry, sizeof(keymap_entry));
+	}
+
+	fclose(keymapfile);
+}
+
 static void init_shell_state(int4 version) {
     switch (version) {
         case -1:
@@ -896,4 +1329,63 @@ static int write_shell_state() {
 		return 0;
 	
 	return 1;
+}
+
+/* Callbacks used by shell_print() and shell_spool_txt() / shell_spool_gif() */
+
+static void txt_writer(const char *text, int length) {
+    int n;
+    if (print_txt == NULL)
+		return;
+    n = fwrite(text, 1, length, print_txt);
+    if (n != length) {
+		char buf[1000];
+		state.printerToTxtFile = 0;
+		fclose(print_txt);
+		print_txt = NULL;
+		snprintf(buf, 1000, "Error while writing to \"%s\".\nPrinting to text file disabled", state.printerTxtFileName);
+		show_message("Message", buf);
+    }
+}   
+
+static void txt_newliner() {
+    if (print_txt == NULL)
+		return;
+    fputc('\n', print_txt);
+    fflush(print_txt);
+}   
+
+static void gif_seeker(int4 pos) {
+    if (print_gif == NULL)
+		return;
+    if (fseek(print_gif, pos, SEEK_SET) == -1) {
+		char buf[1000];
+		state.printerToGifFile = 0;
+		fclose(print_gif);
+		print_gif = NULL;
+		snprintf(buf, 1000, "Error while seeking \"%s\".\nPrinting to GIF file disabled", print_gif_name);
+		show_message("Message", buf);
+    }
+}
+
+static void gif_writer(const char *text, int length) {
+    int n;
+    if (print_gif == NULL)
+		return;
+    n = fwrite(text, 1, length, print_gif);
+    if (n != length) {
+		char buf[1000];
+		state.printerToGifFile = 0;
+		fclose(print_gif);
+		print_gif = NULL;
+		snprintf(buf, 1000, "Error while writing to \"%s\".\nPrinting to GIF file disabled", print_gif_name);
+		show_message("Message", buf);
+    }
+}
+
+static bool is_file(const char *name) {
+    struct stat st;
+    if (stat(name, &st) == -1)
+		return false;
+    return S_ISREG(st.st_mode);
 }

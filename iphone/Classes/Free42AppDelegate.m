@@ -18,11 +18,16 @@
 #import <AudioToolbox/AudioServices.h>
 #import "Free42AppDelegate.h"
 #import "core_main.h"
+#import "core_display.h"
 #import "free42.h"
 #import "Settings.h"
 #import "PrintViewController.h"
 
 FILE* printFile = NULL;  // shared in PrintViewController.m
+
+// Set to true after we call init_core basically so we can use it
+// in assert calls to verify Free42 has been initialized.
+BOOL free42init = FALSE;
 
 // Base name of 42s state file name, this will be prepended by the home directory
 static NSString* stateBaseName = @"/Documents/42s.state";
@@ -254,9 +259,7 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
 	
-	// This needs to be initialized before we init in case an error occurs during
-	// load, and core_init must display an error message on the LCD.
-	dispRows = 2;
+	[self loadSettings];
 	
 	if (!oldStyleStateExists && statefile == NULL)
 	{
@@ -274,9 +277,10 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 	    else
 			core_init(1, FREE42_VERSION);
 	}
+	free42init = TRUE;
 	
 	if (statefile) fclose(statefile);
-		
+
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 
@@ -294,8 +298,7 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 		if (status)
 			NSLog(@"error loading sound:  %d", name);
 	}
-	
-	
+		
 	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];	
 	printFile = fopen([fileStr UTF8String], "a");	
 }
