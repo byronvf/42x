@@ -35,6 +35,7 @@ void drawBlitterDataToContext(CGContextRef ctx,   // Context to blit to
 		 int hrclip,         // horz clip, right
          int inv)            // If we should draw inverse
 {
+	assert(data);
 	// We draw free42's display to the context, then we scale it
 	// to fit
 	CGContextSaveGState(ctx);
@@ -81,6 +82,7 @@ void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to
 							  int byte_width,     // number of bytes per row
                               int offset)
 {
+	assert(data);
 	// We draw free42's display to the context, then we scale it
 	// to fit
 	UInt32* ui = (UInt32*)CGBitmapContextGetData(ctx);

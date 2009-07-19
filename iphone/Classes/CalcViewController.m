@@ -65,6 +65,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
+	assert(viewCtrl.blitterView);
 	if (flags.f.prgm_mode)
 		[viewCtrl.blitterView setNeedsDisplay];
 	else
@@ -78,6 +79,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 	if (core_menu() && menuKeys)
 	{
+		assert(viewCtrl.menuView);
+		assert(viewCtrl.blankButtonsView);
 		// The menu keys are in the third row of the display (> 16), so 
 		// don't bother updateing unless this area of the display has changed.
 		if (height + y > 16)
@@ -177,6 +180,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	NSAssert(blankButtonsView != NULL, @"Buttons View not ready");
 	NSAssert(menuView != NULL, @"Menu view not ready");
 	NSAssert(free42init, @"Free42 has not been initialized");
+	
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();

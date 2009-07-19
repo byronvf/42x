@@ -168,7 +168,12 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 
 - (void)drawRect:(CGRect)rect 
 {	
-	// if (calcViewController.displayBuff == NULL) return;
+#ifdef DEBUG	
+	NSAssert(calcViewController && calcViewController.displayBuff, 
+			 @"viewController not initialized");
+#else
+	if (calcViewController.displayBuff == NULL) return;	
+#endif
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	

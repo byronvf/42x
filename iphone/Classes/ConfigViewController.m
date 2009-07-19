@@ -87,6 +87,14 @@ int dispRows;
 	}
 }
 
+#if DEV_REL
+  #define MOD @" dev"
+#elif BETA_REL
+  #define MOD @" beta"
+#else
+  #define MOD @""
+#endif
+
 - (void)buttonDown:(UIButton*)sender
 {
 	if (sender == gotoServerButton)
@@ -102,7 +110,7 @@ int dispRows;
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 		
-		NSString *title = [NSString stringWithFormat:@"42s Version %@\nFree42 Version %@", ver, free42ver];
+		NSString *title = [NSString stringWithFormat:@"42s Version %@%@\nFree42 Version %@", ver, MOD, free42ver];
 		
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
 		message:@"Licensed under GPL" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];	
