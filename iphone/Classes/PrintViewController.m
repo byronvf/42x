@@ -59,8 +59,8 @@ void shell_print(const char *text, int length,
 			[buf appendBytes:bits length:18*9];
 	} else {
 		// PRLCD
-		if ([buf length] < 18 * 16 * MAX_PRINT_LINES) {
-			for (int i = 0; i < 16; i++) {
+		if ([buf length] < 18 * 8 * dispRows * MAX_PRINT_LINES) {
+			for (int i = 0; i <  8*dispRows; i++) {
 				[buf appendBytes:(bits + i * 17) length:17];
 				[buf increaseLengthBy:1];
 			}
