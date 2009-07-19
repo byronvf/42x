@@ -54,9 +54,14 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 void shell_blitter(const char *bits, int bytesperline, int x, int y,
 				   int width, int height)
 {
-	// This happens during initialization
-	if (viewCtrl == NULL || ![viewCtrl isViewLoaded]) return;
+	// If we have a viewCtrl, initialize the displayBuff, this is rather brittle
+	// and has caused much Grief... The initialization order is important, and
+	// can cause startup locks if not carefull.
+	if (viewCtrl) viewCtrl.displayBuff = bits;
 	
+	// This happens during initialization
+	if (!viewCtrl || ![viewCtrl isViewLoaded]) return;
+		
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
@@ -70,9 +75,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
 	// cpuCount = 0;
-	
-	viewCtrl.displayBuff = bits;
-	
+		
 	if (core_menu() && menuKeys)
 	{
 		// The menu keys are in the third row of the display (> 16), so 

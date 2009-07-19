@@ -24,6 +24,9 @@ extern int dispRows;
 }
 
 - (void)drawRect:(CGRect)rect {
+
+	//if (calcViewController.displayBuff == NULL) return;	
+	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);	
 	

@@ -168,6 +168,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 
 - (void)drawRect:(CGRect)rect 
 {	
+	// if (calcViewController.displayBuff == NULL) return;
+	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	if (highlight)
@@ -202,8 +204,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
 		
-		NSAssert(calcViewController.displayBuff != NULL,
-				 @"Display buff not initialized");
 		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
 		if (hMax > dispRows*8) hMax = dispRows*8;
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);
