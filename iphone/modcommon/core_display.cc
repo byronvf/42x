@@ -662,7 +662,7 @@ void clear_display() {
     int i;
     for (i = 0; i < DISPLAY_SIZE; i++)
 	display[i] = 0;
-    mark_dirty(0, 0, 16, 131);
+    mark_dirty(0, 0, 8*dispRows, 131);
 }
 
 void flush_display() {
@@ -674,7 +674,7 @@ void flush_display() {
 }
 
 void repaint_display() {
-    shell_blitter(display, 17, 0, 0, 131, 16);
+    shell_blitter(display, 17, 0, 0, 131, 8*dispRows);
 }
 
 void draw_pixel(int x, int y) {
@@ -2056,7 +2056,7 @@ void redisplay() {
 }
 
 void print_display() {
-    shell_print("<lcd>", 5, display, 17, 0, 0, 131, 16);
+    shell_print("<lcd>", 5, display, 17, 0, 0, 131, 8*dispRows);
 }
 
 typedef struct {

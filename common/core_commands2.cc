@@ -444,10 +444,9 @@ static void aview_helper() {
     line_length[line] = i - line_start[line];
     flags.f.message = 1;
     flags.f.two_line_message = line == 1;
+    clear_row(0);
     if (flags.f.two_line_message || program_running())
-	clear_display();
-    else
-	clear_row(0);
+	clear_row(1);
     for (i = 0; i <= line; i++)
 	draw_string(0, i, reg_alpha + line_start[i], line_length[i]);
     flush_display();
