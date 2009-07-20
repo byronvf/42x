@@ -27,7 +27,8 @@
 #import "core_helpers.h"
 #import "shell_spool.h"
 
-static BlitterView *blitterView; // Reference to this blitter so we can access from C methods
+// Reference to this blitter so we can access from C methods
+static BlitterView *blitterView = NULL; 
 
 static BOOL flagUpDown = false;
 static BOOL flagShift = false;
@@ -56,12 +57,11 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagGrad = setFlag(flagGrad, g);
 	flagRad = setFlag(flagRad, rad) && !flagGrad;
 	flagRun = setFlag(flagRun, run);
-
-#if DEBUG 
-	assert(blitterView);  // blitterView must be initialized
-#else
-	return;
-#endif	
+	
+	
+	// If this is being called from Free42 initialization before the view
+	// has been loaded.
+	if (!blitterView) return;
 	
 	// Only update the flags region of the display
 	[blitterView annuncNeedsDisplay];
@@ -173,15 +173,21 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	}
 }
 
-static int llength = 23;
+// size 21 gives us a max size of 20 characters (plus the null terminator) this
+// is the same max size of the standard stack display, so we can show any number
+// in last x as the stack would display it.
+static int llength = 21;
 - (void)drawLastX
 {
 	char lxstr[llength];
 	memset(lxstr, 0, llength);
-	// llength - 1 so we know there is will always be a null terminator
+	// llength - 1 so we know there will be room for at least one null terminator
 	vartype2string(reg_lastx, lxstr, llength-1);
+
+	// Quick and dirty character conversion... 
 	for (char *c = lxstr; *c; c++)
 	{
+		// Look for all chars not in the standard ascii printable set.
 		if (*c < ' ' ||  *c > '~')
 		{
 			if (*c == 24) 
@@ -196,12 +202,14 @@ static int llength = 23;
 	NSString *wprefix = @"L ";
 
 	// If the number is very long, then we drop "L " prefix because it will start to crowd
-	// The annuciators, and potetially will begin to overlap
-	if (strlen(lxstr) > 19)
+	// The annunciators, and potetially will begin to overlap
+	if (strlen(lxstr) > 18)
 		wprefix = lval;
 	else
 		wprefix = [wprefix stringByAppendingString:lval];
-	
+
+	// Draw the lastx register right justified in the upper right hand corner of the LCD in
+	// the annunciator row.
 	UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
 	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentRight];
