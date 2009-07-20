@@ -17,6 +17,7 @@
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioServices.h>
+#include "core_globals.h"
 
 
 @interface Settings : NSObject {
@@ -25,7 +26,6 @@
 	bool clickSoundOn;
 	bool beepSoundOn;
 	bool keyboardOn;
-	bool autoPrintOn;
 	
 	@public
 	
@@ -35,8 +35,6 @@
 @property bool clickSoundOn;
 @property bool beepSoundOn;
 @property bool keyboardOn;
-@property bool autoPrintOn;
-
 + (Settings*)instance;
 
 @end

@@ -47,5 +47,6 @@ extern int cpuCount;
 - (void) fourLineDisp;
 - (void) shouldCutPaste;
 - (void)showEditMenu;
+- (void)drawLastX;
 
 @end

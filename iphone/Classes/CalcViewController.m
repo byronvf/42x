@@ -258,10 +258,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 		// We use the printingStarted flag to turn on the and off the print aunnunciator
 		// since it is off now, we want to redisplay.
-		[blitterView annuncNeedsDisplay];
-		
-		if ([[Settings instance] autoPrintOn])
-			[navViewController switchToPrintView];
+		[blitterView annuncNeedsDisplay];		
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
@@ -329,6 +326,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	[self handlePopupKeyboard];	
 }
 
+static vartype *last_lreg = NULL;
 
 - (void)buttonUp:(UIButton*)sender
 {
@@ -353,7 +351,15 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if (callKeydownAgain)
 			cpuCount = 1000;		
 	}
-			
+
+    // Test if the x register has changed, and if so, redisplay it
+	if (last_lreg != reg_lastx)
+    {
+		// The aanuciator ara includes the last x display
+		[self.blitterView annuncNeedsDisplay];
+		last_lreg = reg_lastx;
+	}
+
 	timer3active = FALSE;
 	[self keepRunning];	
 }

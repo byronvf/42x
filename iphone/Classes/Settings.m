@@ -23,7 +23,6 @@
 @synthesize clickSoundOn;
 @synthesize beepSoundOn;
 @synthesize keyboardOn;
-@synthesize autoPrintOn;
 
 static Settings* settings;
 

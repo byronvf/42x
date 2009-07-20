@@ -1916,7 +1916,17 @@ void keydown_normal_mode(int shift, int key) {
 		}
 	} else {
 	    if (!flags.f.stack_lift_disable) {
+#ifdef BIGSTACK
+                if (mode_bigstack)
+                {
+                    free_vartype(reg_top);
+                    SHIFT_BIG_STACK_UP
+                }
+                else
+                    free_vartype(reg_t);
+#else
 		free_vartype(reg_t);
+#endif
 		reg_t = reg_z;
 		reg_z = reg_y;
 		reg_y = dup_vartype(reg_x);

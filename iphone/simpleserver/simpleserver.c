@@ -33,10 +33,6 @@
 #include "../../common/core_main.h"
 #endif
 
-#ifndef VERSION
-#define VERSION ""
-#endif
-
 /* TODO:
  * The code is currently not thread-safe; it uses static
  * buffers. That should be fixed before it can be considered ready
@@ -437,7 +433,7 @@ static void do_get(int csock, const char *url) {
 	tbprintf(&tb, "    <input type=\"submit\" value=\"Import\">\n");
 	tbprintf(&tb, "   </form></td></tr>\n");
 	tbprintf(&tb, "   <tr><th colspan=\"4\"><hr></th></tr></table>\n");
-	tbprintf(&tb, "  <address>Free42 " VERSION " HTTP Server</address>\n");
+	tbprintf(&tb, "  <address>42S HTTP Server</address>\n");
 	tbprintf(&tb, " </body>\n");
 	tbprintf(&tb, "</html>\n");
 

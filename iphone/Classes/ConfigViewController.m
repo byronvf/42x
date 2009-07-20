@@ -25,7 +25,7 @@
 @synthesize clickSoundSwitch;
 @synthesize beepSoundSwitch;
 @synthesize keyboardSwitch;
-@synthesize autoPrintSwitch;
+@synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
 @synthesize gotoServerButton;
 
@@ -58,7 +58,7 @@ int dispRows;
 	[clickSoundSwitch setOn:[[Settings instance] clickSoundOn]];	
 	[beepSoundSwitch setOn:[[Settings instance] beepSoundOn]];	
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
-	[autoPrintSwitch setOn:[[Settings instance] autoPrintOn]];
+	[bigStackSwitch setOn:mode_bigstack];
 	[menuKeysSwitch setOn:menuKeys];
 }
 
@@ -76,9 +76,9 @@ int dispRows;
 	{
 		[[Settings instance] setKeyboardOn:[sender isOn]];
 	}	
-	else if (sender == autoPrintSwitch)
+	else if (sender == bigStackSwitch)
 	{
-		[[Settings instance] setAutoPrintOn:[sender isOn]];
+		mode_bigstack = [sender isOn];
 	}
 	else if (sender == menuKeysSwitch)
 	{
