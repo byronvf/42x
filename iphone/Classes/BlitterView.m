@@ -25,6 +25,7 @@
 #import "NavViewController.h"
 #import "core_keydown.h"
 #import "core_helpers.h"
+#import "shell_spool.h"
 
 static BlitterView *blitterView; // Reference to this blitter so we can access from C methods
 
@@ -56,6 +57,12 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagRad = setFlag(flagRad, rad) && !flagGrad;
 	flagRun = setFlag(flagRun, run);
 
+#if DEBUG 
+	assert(blitterView);  // blitterView must be initialized
+#else
+	return;
+#endif	
+	
 	// Only update the flags region of the display
 	[blitterView annuncNeedsDisplay];
 		
@@ -135,23 +142,23 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18),
+		CGContextDrawImage(ctx, CGRectMake(35, -3, 30, 18),
 						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
 	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18),
+		CGContextDrawImage(ctx, CGRectMake(65, -1, 32, 18),
 						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18),
+		CGContextDrawImage(ctx, CGRectMake(100, -1, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), 
+		CGContextDrawImage(ctx, CGRectMake(120, -2, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
 	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20),
+		CGContextDrawImage(ctx, CGRectMake(120, -1, 24, 20),
 						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
 
@@ -164,6 +171,41 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	{
 		self.cutPaste = FALSE;
 	}
+}
+
+static int llength = 23;
+- (void)drawLastX
+{
+	char lxstr[llength];
+	memset(lxstr, 0, llength);
+	// llength - 1 so we know there is will always be a null terminator
+	vartype2string(reg_lastx, lxstr, llength-1);
+	for (char *c = lxstr; *c; c++)
+	{
+		if (*c < ' ' ||  *c > '~')
+		{
+			if (*c == 24) 
+				*c = 'e'; // The exponent character
+			else if (*c == 26)
+				*c = '+'; // The continuation char, indicates number too long for buffer
+			else
+				*c = 1; // All other chars, this looks like a box glyph when displayed
+		}			
+	}
+	NSString *lval = [[NSString alloc] initWithCString:lxstr encoding:NSASCIIStringEncoding];
+	NSString *wprefix = @"L ";
+
+	// If the number is very long, then we drop "L " prefix because it will start to crowd
+	// The annuciators, and potetially will begin to overlap
+	if (strlen(lxstr) > 19)
+		wprefix = lval;
+	else
+		wprefix = [wprefix stringByAppendingString:lval];
+	
+	UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
+	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
+	 alignment:UITextAlignmentRight];
+	[lval release];
 }
 
 - (void)drawRect:(CGRect)rect 
@@ -187,8 +229,11 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	if (rect.origin.y < 18) 
+	if (rect.origin.y < 18)
+	{
 		[self drawAnnunciators];	
+		[self drawLastX];	
+	}
 	
 	if (rect.origin.y + rect.size.height > 18)
 	{
@@ -213,8 +258,7 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	{
 		CGRect borderLine = CGRectMake(0, 122, 320, 4);
 		CGContextFillRect(ctx, borderLine);
-	}
-	
+	}	
 }
 
 const int SCROLL_SPEED = 15;
