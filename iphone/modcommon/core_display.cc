@@ -1925,8 +1925,18 @@ void redisplay() {
 	avail_rows = menuKeys ? dispRows : dispRows-1;
     }
 
+	/* Added the test for CMD_CANCELLED because in 42s we can call redisplay
+	 * outside the usual keydown or keyup event.  This fixed a bug when quiting
+	 * a command then exiting, when restarting pending_command would be set to
+	 * CMD_CANCELLED and would crash in display_command because of a call to
+	 * const command_spec *cmd = cmdlist(pending_command), and cmd would then be
+	 * derefenced.  this call chain occured when calling redisplay() from view loading
+	 * on startup.
+	 */
+	
     if (!flags.f.prgm_mode &&
-	    (mode_command_entry || pending_command != CMD_NONE)) {
+	    (mode_command_entry || 
+		 (pending_command != CMD_NONE && pending_command != CMD_CANCELLED))) {
 	int cmd_row;
 	if (menu_id == MENU_NONE) {
 	    cmd_row = dispRows - 1;
