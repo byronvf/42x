@@ -406,6 +406,22 @@ char cbuf[30];
 			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
 			NSString *str = NULL;
 
+			if (dispRows > 5)
+			{
+				core_copy_reg(cbuf, 30, reg_1);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
+
+			if (dispRows > 4)
+			{
+				core_copy_reg(cbuf, 30, reg_0);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
+
 			if (dispRows > 3)
 			{
 				core_copy_reg(cbuf, 30, reg_t);

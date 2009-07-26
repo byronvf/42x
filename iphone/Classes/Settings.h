@@ -27,6 +27,11 @@
 	bool beepSoundOn;
 	bool keyboardOn;
 	
+	// Indicates if we have used the PRLCD command which prints the LCD
+	// to the display.  If so, then we must turn off the striping in the
+	// print view becuase it will no longer align.
+	bool printedPRLCD;
+	
 	@public
 	
 	SystemSoundID soundIDs[11];
@@ -35,6 +40,7 @@
 @property bool clickSoundOn;
 @property bool beepSoundOn;
 @property bool keyboardOn;
+@property bool printedPRLCD;
 + (Settings*)instance;
 
 @end

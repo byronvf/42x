@@ -16,6 +16,7 @@
 // along with 42s.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "PrintViewController.h"
+#import "Settings.h"
 #include "Utils.h"
 #include "Free42AppDelegate.h"
 #include "shell_spool.h"
@@ -63,6 +64,7 @@ void shell_print(const char *text, int length,
 			for (int i = 0; i <  8*dispRows; i++) {
 				[buf appendBytes:(bits + i * 17) length:17];
 				[buf increaseLengthBy:1];
+				[[Settings instance] setPrintedPRLCD:TRUE];
 			}
 		}
 	}
@@ -91,6 +93,7 @@ void shell_print(const char *text, int length,
 	[view1 setOffset:0];
 	[view2 setOffset:480];
 	[printBuff setLength:0];	
+	[[Settings instance] setPrintedPRLCD:FALSE];
 	[self display];
 }
 

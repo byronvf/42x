@@ -190,6 +190,7 @@ NSString* CONFIG_PRINT_BUF = @"printBuf";
 NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
 NSString* CONFIG_DISP_ROWS = @"dispRows";
 NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
+NSString* CONFIG_PRLCD = @"prlcd";
 
 - (void)loadSettings
 {
@@ -217,6 +218,11 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 	else
 		menuKeys = TRUE;	
 	
+	if ([defaults objectForKey:CONFIG_PRLCD])
+		[[Settings instance] setPrintedPRLCD:[defaults boolForKey:CONFIG_PRLCD]];
+	else
+		[[Settings instance] setPrintedPRLCD:FALSE];
+	
 	if ([defaults objectForKey:CONFIG_DISP_ROWS])
 		dispRows = [defaults integerForKey:CONFIG_DISP_ROWS];
 	else
@@ -238,6 +244,7 @@ NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 	[defaults setBool:[[Settings instance] beepSoundOn] forKey:CONFIG_BEEP_ON];
 	[defaults setBool:[[Settings instance] clickSoundOn] forKey:CONFIG_KEY_CLICK_ON];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
+	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 

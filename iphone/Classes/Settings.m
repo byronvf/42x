@@ -23,6 +23,7 @@
 @synthesize clickSoundOn;
 @synthesize beepSoundOn;
 @synthesize keyboardOn;
+@synthesize printedPRLCD;
 
 static Settings* settings;
 
