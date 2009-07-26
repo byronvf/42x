@@ -171,6 +171,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	keyPressed = false;
 	alphaMenuActive = FALSE;
+	keyboardToggleActive = FALSE;
 }
 
 - (void)viewDidLoad {
@@ -184,9 +185,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
-	
-	// Bring up keyboard if this is the way the use left it when quiting.
-	[self handlePopupKeyboard];		
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -195,10 +193,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 }
 
 
-- (void)handlePopupKeyboard
+/* If toggle = true, then toggle the keyboard such that if it is not displayed
+ * then display it, and vsversa.
+ */
+- (void)handlePopupKeyboard: (BOOL)toggle
 {
-	NSAssert(free42init, @"Free42 has not been initialized");	
-	if ([[Settings instance] keyboardOn])
+	NSAssert(free42init, @"Free42 has not been initialized");
+	if (core_alpha_menu())
 	{
 		if (alphaMenuActive)
 		{
@@ -206,23 +207,42 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// never call the textField method, and the keyboard backspace
 			// will behave strangely, so we always fill it with something here.
 			textEntryField.text = @"XXX";
-			
-			if (!core_alpha_menu())
-			{
-				alphaMenuActive = NO;
-				[textEntryField resignFirstResponder];
-			}
 		}
-		else if (core_alpha_menu())
+		
+		if ([[Settings instance] keyboardOn] && !alphaMenuActive &&
+			!keyboardToggleActive)
 		{
-			alphaMenuActive = YES;
+			// If autoshowkeyboard is on and we are switching to alpha menu
+			// then display the keyboard.
+			alphaMenuActive = TRUE;
 			keydown(0, 23); // down key to place menu on special characters
 			redisplay();
 			[textEntryField becomeFirstResponder];
+			return;
 		}
-		
-	}	
 	
+		if (toggle)
+		{
+			keyboardToggleActive = TRUE;
+			if (alphaMenuActive)
+			{
+				alphaMenuActive = FALSE;
+				[textEntryField resignFirstResponder];
+			}
+			else
+			{
+				alphaMenuActive = TRUE;
+				[textEntryField becomeFirstResponder];
+			}
+		}
+	}
+	else
+	{
+		// If we are not in alpha menu mode, then dismiss the keyboard no matter what
+		if (alphaMenuActive) [textEntryField resignFirstResponder];
+		alphaMenuActive = FALSE;
+		keyboardToggleActive = FALSE;
+	}
 }
 
 
@@ -264,7 +284,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Test if we need to pop up the keyboard here, this can happen if
 	// a program is being run that activates the keyboard which otherwise
 	// the normal key handling would not detect.
-	[self handlePopupKeyboard];
+	[self handlePopupKeyboard:FALSE];
 }
 
 
@@ -323,7 +343,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		dispRows = 4;
 	}	
 	
-	[self handlePopupKeyboard];	
+	[self handlePopupKeyboard:FALSE];	
 }
 
 static vartype *last_lreg = NULL;
@@ -483,7 +503,7 @@ void shell_request_timeout3(int delay)
 		if( !enqueued) core_keyup();
 	}
 	
-	[self handlePopupKeyboard];	
+	[self handlePopupKeyboard:FALSE];	
 	return YES;
 }
 

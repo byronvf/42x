@@ -540,6 +540,11 @@ char cbuf[30];
 		[self showEditMenu];
 		highlight = TRUE;
     }
+	else if ([[touches anyObject] locationInView:self].x < 260 && touch.tapCount == 1)
+	{
+		[calcViewController handlePopupKeyboard:true];
+	}
+	
 	// Reset the swipe mode.
 	firstTouch.x = -1;
 }

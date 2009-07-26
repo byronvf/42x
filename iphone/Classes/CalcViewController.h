@@ -63,7 +63,9 @@ extern int callKeydownAgain;
     IBOutlet UIButton *b36;
     IBOutlet UIButton *b37;
 	
-	int alphaMenuActive;
+	BOOL alphaMenuActive;
+	BOOL keyboardToggleActive;
+	
 	IBOutlet UITextField* textEntryField;
 	
 	IBOutlet BlitterView *blitterView;
@@ -125,7 +127,7 @@ extern int callKeydownAgain;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
-- (void)handlePopupKeyboard;
+- (void)handlePopupKeyboard:(BOOL)toggle;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
 	
