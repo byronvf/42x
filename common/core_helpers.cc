@@ -181,6 +181,9 @@ void recall_two_results(vartype *x, vartype *y) {
 	    SHIFT_BIG_STACK_UP
 	    free_vartype(reg_top);
 	    SHIFT_BIG_STACK_UP
+		
+		/* reg_t has been coppied to both reg_0 and reg_1 at this point so correct */
+		reg_0 = reg_z;
 	}
 	else
 	{
