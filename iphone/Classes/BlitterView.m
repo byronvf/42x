@@ -180,9 +180,9 @@ static int llength = 21;
 - (void)drawLastX
 {
 	char lxstr[llength];
-	memset(lxstr, 0, llength);
 	// llength - 1 so we know there will be room for at least one null terminator
-	vartype2string(reg_lastx, lxstr, llength-1);
+	int len = vartype2string(reg_lastx, lxstr, llength-1);
+	lxstr[len] = 0;
 
 	// Quick and dirty character conversion... 
 	for (char *c = lxstr; *c; c++)
