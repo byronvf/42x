@@ -405,26 +405,38 @@ char cbuf[30];
 		{
 			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
 			NSString *str = NULL;
+
+			if (dispRows > 3)
+			{
+				core_copy_reg(cbuf, 30, reg_t);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_t);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 2)
+			{
+				core_copy_reg(cbuf, 30, reg_z);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_z);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 1)
+			{
+				core_copy_reg(cbuf, 30, reg_y);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_y);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
-			
-			core_copy_reg(cbuf, 30, reg_x);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 0)
+			{				
+				core_copy_reg(cbuf, 30, reg_x);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
 			UIPasteboard *pb = [UIPasteboard generalPasteboard];
 			pb.string = nums;
