@@ -90,6 +90,12 @@ void core_quit() {
     free_vartype(reg_6);
     free_vartype(reg_7);
     free_vartype(reg_8);
+    free_vartype(reg_9);
+    free_vartype(reg_10);
+    free_vartype(reg_11);
+    free_vartype(reg_12);
+    free_vartype(reg_13);
+    free_vartype(reg_14);
     free_vartype(reg_top);
 #endif
     free_vartype(reg_lastx);

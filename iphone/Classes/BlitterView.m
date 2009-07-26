@@ -308,7 +308,7 @@ const int SCROLL_SPEED = 15;
 			}
 			else
 			{
-				for (int i=0; i< (mode_bigstack? 13: 3); i++)
+				for (int i=0; i< (mode_bigstack? 19: 3); i++)
 				{
 					keydown(0, 9);
 					core_keyup();

@@ -744,6 +744,12 @@ int docmd_clv(arg_struct *arg) {
 int docmd_clst(arg_struct *arg) {
 #ifdef BIGSTACK
     free_vartype(reg_top);
+    free_vartype(reg_14);
+    free_vartype(reg_13);
+    free_vartype(reg_12);
+    free_vartype(reg_11);
+    free_vartype(reg_10);
+    free_vartype(reg_9);
     free_vartype(reg_8);
     free_vartype(reg_7);
     free_vartype(reg_6);
@@ -762,6 +768,12 @@ int docmd_clst(arg_struct *arg) {
     reg_6 = new_real(0);
     reg_7 = new_real(0);
     reg_8 = new_real(0);
+    reg_9 = new_real(0);
+    reg_10 = new_real(0);
+    reg_11 = new_real(0);
+    reg_12 = new_real(0);
+    reg_13 = new_real(0);
+    reg_14 = new_real(0);
     reg_top = new_real(0);
 #endif
     free_vartype(reg_x);
@@ -840,6 +852,12 @@ int docmd_clall(arg_struct *arg) {
     /* Clear all registers */
 #ifdef BIGSTACK
     free_vartype(reg_top);
+    free_vartype(reg_14);
+    free_vartype(reg_13);
+    free_vartype(reg_12);
+    free_vartype(reg_11);
+    free_vartype(reg_10);
+    free_vartype(reg_9);
     free_vartype(reg_8);
     free_vartype(reg_7);
     free_vartype(reg_6);
@@ -858,6 +876,12 @@ int docmd_clall(arg_struct *arg) {
     reg_6 = new_real(0);
     reg_7 = new_real(0);
     reg_8 = new_real(0);
+    reg_9 = new_real(0);
+    reg_10 = new_real(0);
+    reg_11 = new_real(0);
+    reg_12 = new_real(0);
+    reg_13 = new_real(0);
+    reg_14 = new_real(0);
     reg_top = new_real(0);    
 #endif
     free_vartype(reg_x);
