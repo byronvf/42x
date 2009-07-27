@@ -87,6 +87,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
     }
 }
 
+char lastxbuf[LASTXBUF_SIZE];
+
 /**
  * The blitterView manages the calculators digital display
  */
@@ -95,6 +97,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
+
+
 - (void)setXHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
@@ -173,32 +177,42 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	}
 }
 
-// size 21 gives us a max size of 20 characters (plus the null terminator) this
-// is the same max size of the standard stack display, so we can show any number
-// in last x as the stack would display it.
-static int llength = 21;
 - (void)drawLastX
 {
-	char lxstr[llength];
-	// llength - 1 so we know there will be room for at least one null terminator
-	int len = vartype2string(reg_lastx, lxstr, llength-1);
-	lxstr[len] = 0;
+	// a utf8 conversion, we provide room incase we need double byte characters
+	int lxbufsize = LASTXBUF_SIZE*2;
+	char lxstr[lxbufsize]; 
 
-	// Quick and dirty character conversion... 
-	for (char *c = lxstr; *c; c++)
+	// Quick and dirty character conversion... lxbufsize - so we alway have room for
+	// a 4 byte char and a null terminator.
+	int idx = 0;
+	for (char *c = lastxbuf; *c && idx < lxbufsize - 4; c++)
 	{
 		// Look for all chars not in the standard ascii printable set.
-		if (*c < ' ' ||  *c > '~')
+		if (*c >= ' ' &&  *c <= '~')
+			lxstr[idx++] = *c;
+		else if (*c == 24) // The exponent character
+			lxstr[idx++] = 'e'; 
+		else if (*c == 26) // The continuation char, indicates number too long for buffer
+			lxstr[idx++] = '+'; 
+		else if (*c == 23) // The angle sign glyph
 		{
-			if (*c == 24) 
-				*c = 'e'; // The exponent character
-			else if (*c == 26)
-				*c = '+'; // The continuation char, indicates number too long for buffer
-			else
-				*c = 1; // All other chars, this looks like a box glyph when displayed
-		}			
+			lxstr[idx++] = 0xE2;
+			lxstr[idx++] = 0x88;
+			lxstr[idx++] = 0xA0;
+		}
+		else
+		{
+			// All other characters we can't convert are displayed as as a box
+			// glyph, however, this shouldn't happen
+			lxstr[idx++] = 0xE2;
+			lxstr[idx++] = 0x97;
+			lxstr[idx++] = 0xBB;
+		}
 	}
-	NSString *lval = [[NSString alloc] initWithCString:lxstr encoding:NSASCIIStringEncoding];
+	lxstr[idx] = 0; // null terminate
+	
+	NSString *lval = [[NSString alloc] initWithUTF8String:lxstr];
 	NSString *wprefix = @"L ";
 
 	// If the number is very long, then we drop "L " prefix because it will start to crowd
@@ -210,7 +224,8 @@ static int llength = 21;
 
 	// Draw the lastx register right justified in the upper right hand corner of the LCD in
 	// the annunciator row.
-	UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
+	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
+	UIFont *font = [UIFont systemFontOfSize:15];
 	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentRight];
 	[lval release];

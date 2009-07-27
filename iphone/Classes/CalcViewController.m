@@ -26,6 +26,7 @@
 #import "NavViewController.h"
 #import "Free42AppDelegate.h"
 #import "core_globals.h"
+#import "core_helpers.h"
 
 const float SLOW_KEY_REPEAT_RATE = 0.2;  // Slow key repeat rate in seconds
 const float FAST_KEY_REPEAT_RATE = 0.1;  // Fast key repeat rate in seconds
@@ -172,6 +173,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	keyPressed = false;
 	alphaMenuActive = FALSE;
 	keyboardToggleActive = FALSE;
+	lastxbuf[0] = 0;
 }
 
 - (void)viewDidLoad {
@@ -185,6 +187,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
+	[self testUpdateLastX];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -346,8 +349,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	[self handlePopupKeyboard:FALSE];	
 }
 
-static vartype *last_lreg = NULL;
-
 - (void)buttonUp:(UIButton*)sender
 {
 	keyPressed = FALSE;
@@ -372,17 +373,35 @@ static vartype *last_lreg = NULL;
 			cpuCount = 1000;		
 	}
 
-    // Test if the x register has changed, and if so, redisplay it
-	if (last_lreg != reg_lastx)
-    {
-		// The aanuciator ara includes the last x display
-		[self.blitterView annuncNeedsDisplay];
-		last_lreg = reg_lastx;
-	}
-
+	[self testUpdateLastX];
+	
 	timer3active = FALSE;
 	[self keepRunning];	
 }
+
+/* Test if we should update the lastx display.  We create a new string
+ * from reg_lastx and compare it to our existing string lastxbuf 
+ * if the are different, then we update the display
+ */
+
+- (void)testUpdateLastX
+{
+	NSAssert(self.blitterView, @"BlitterView not ready");
+	NSAssert(free42init, @"Free42 not initialized");
+	char lxstr[LASTXBUF_SIZE];
+	// llength - 1 so we know there will be room for at least one null terminator
+	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-1);
+	lxstr[len] = 0;
+	
+    // Test if the x register has changed, and if so, redisplay it
+	if (strcmp(lastxbuf, lxstr) != 0)
+    {
+		// The aanuciator ara includes the last x display
+		strcpy(lastxbuf, lxstr);
+		[self.blitterView annuncNeedsDisplay];
+	}	
+}
+
 
 // *******************************  Timer and key repeat handling *************************
 

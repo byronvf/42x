@@ -130,6 +130,7 @@ extern int callKeydownAgain;
 - (void)handlePopupKeyboard:(BOOL)toggle;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
+- (void)testUpdateLastX;
 	
 @end
 
