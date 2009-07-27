@@ -65,14 +65,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	
 	// Only update the flags region of the display
 	[blitterView annuncNeedsDisplay];
-		
-	if (shf != -1)
-	{
-		if (flagShift)
-			[[[blitterView calcViewController] b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
-		else
-			[[[blitterView calcViewController] b28] setImage:NULL forState:NULL];
-	}
 }
 
 
@@ -125,7 +117,17 @@ char lastxbuf[LASTXBUF_SIZE];
 - (void) annuncNeedsDisplay
 {
 	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];	
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
+	
+	if (flagShift)
+		[[calcViewController b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
+	else
+		[[calcViewController b28] setImage:NULL forState:NULL];
+
+	if (flagUpDown)
+		[[calcViewController updnGlowView] setHidden:FALSE];
+	else
+		[[calcViewController updnGlowView] setHidden:TRUE];	
 }
 
 /**

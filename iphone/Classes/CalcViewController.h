@@ -69,6 +69,7 @@ extern int callKeydownAgain;
 	IBOutlet UITextField* textEntryField;
 	
 	IBOutlet BlitterView *blitterView;
+	IBOutlet UIImageView *updnGlowView;
 	IBOutlet UIImageView *bgImageView;	
 	IBOutlet NavViewController* navViewController;
 	IBOutlet MenuView *menuView;
@@ -82,6 +83,7 @@ extern int callKeydownAgain;
 @property BOOL keyPressed;
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
+@property (nonatomic, retain) UIImageView* updnGlowView;
 @property (nonatomic, retain) UIImageView* blankButtonsView;
 @property (nonatomic, retain) MenuView *menuView;
 @property (nonatomic, retain) NavViewController* navViewController;

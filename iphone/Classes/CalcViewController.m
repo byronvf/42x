@@ -143,6 +143,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize b37;
 @synthesize blitterView;
 @synthesize bgImageView;
+@synthesize updnGlowView;
 @synthesize navViewController;
 @synthesize blankButtonsView;
 @synthesize displayBuff;
