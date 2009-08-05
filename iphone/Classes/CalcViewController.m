@@ -205,6 +205,21 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	NSAssert(free42init, @"Free42 has not been initialized");
 	if (core_alpha_menu())
 	{
+		if (toggle)
+		{
+			keyboardToggleActive = TRUE;
+			if (alphaMenuActive)
+			{
+				alphaMenuActive = FALSE;
+				[textEntryField resignFirstResponder];
+			}
+			else
+			{
+				alphaMenuActive = TRUE;
+				[textEntryField becomeFirstResponder];
+			}
+		}
+		
 		if (alphaMenuActive)
 		{
 			// If the text field has nothing in it, then back space will
@@ -225,20 +240,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			return;
 		}
 	
-		if (toggle)
-		{
-			keyboardToggleActive = TRUE;
-			if (alphaMenuActive)
-			{
-				alphaMenuActive = FALSE;
-				[textEntryField resignFirstResponder];
-			}
-			else
-			{
-				alphaMenuActive = TRUE;
-				[textEntryField becomeFirstResponder];
-			}
-		}
 	}
 	else
 	{
