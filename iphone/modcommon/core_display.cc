@@ -1988,25 +1988,25 @@ void redisplay() {
 	if (avail_rows == 1) {
 	    if (!flags.f.message) display_x(0);
 	} else if (avail_rows == 2) {
-	    if (!flags.f.message || !flags.f.two_line_message) display_y(0);
+	    if (!flags.f.message && !flags.f.two_line_message) display_y(0);
 		if (!flags.f.two_line_message) display_x(1);
 	} else if (avail_rows == 3) {
-	    if (!flags.f.message || !flags.f.two_line_message) display_z(0);
+	    if (!flags.f.message && !flags.f.two_line_message) display_z(0);
 		if (!flags.f.two_line_message) display_y(1);
 		display_x(2);
 	} else if (avail_rows == 4) {
-	    if (!flags.f.message || !flags.f.two_line_message) display_t(0);
+	    if (!flags.f.message && !flags.f.two_line_message) display_t(0);
 		if (!flags.f.two_line_message) display_z(1);
 		display_y(2);
 		display_x(3);		
 	} else if (avail_rows == 5) {
-	    if (!flags.f.message || !flags.f.two_line_message) display_0(0);
+	    if (!flags.f.message && !flags.f.two_line_message) display_0(0);
 		if (!flags.f.two_line_message) display_t(1);
 		display_z(2);
 		display_y(3);
 		display_x(4);		
 	} else if (avail_rows == 6 || avail_rows == 7) {
-	    if (!flags.f.message || !flags.f.two_line_message) display_1(0);
+	    if (!flags.f.message && !flags.f.two_line_message) display_1(0);
 		if (!flags.f.two_line_message) display_0(1);
 		display_t(2);
 		display_z(3);
