@@ -35,6 +35,8 @@ extern int dispRows;
 // New methods from core_display
 extern void display_t(int);
 extern void display_z(int);
+extern void display_0(int);
+extern void display_1(int);
 extern void large_display_prgm_line(int row, int line_offset, int line_disp_offset, bool dispGoose);
 
 
@@ -1937,9 +1939,11 @@ void keydown_normal_mode(int shift, int key) {
 	    if (cmdline_row == dispRows - 1)
             {
                 int row = 0;
-		if (dispRows > 3) display_t(row++);
+				if (dispRows > 5) display_1(row++);
+				if (dispRows > 4) display_0(row++);
+				if (dispRows > 3) display_t(row++);
                 if (dispRows > 2) display_z(row++);
-		display_y(row);
+				display_y(row);
             }
             else
 		/* Force repaint of menu; it could be hidden due to a recent

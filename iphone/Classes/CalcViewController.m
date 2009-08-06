@@ -84,7 +84,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		assert(viewCtrl.blankButtonsView);
 		// The menu keys are in the third row of the display (> 16), so 
 		// don't bother updateing unless this area of the display has changed.
-		if (height + y > 16)
+		if (height + y > 16 || [viewCtrl menuView].hidden)
 		{
 			[[viewCtrl menuView] setHidden:FALSE];
 			[[viewCtrl blankButtonsView] setHidden:FALSE];
@@ -272,18 +272,21 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// We are not processing a key event, so pass 0,
 	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
 	
-	if (!callKeydownAgain && printingStarted)
+	if (!callKeydownAgain)
 	{
-		// We set printingStarted to true in the shell_print method to indicate 
-		// that printing has begun.  For each line out output Free42 returns from
-		// core_keydown, but returns true if ther are more lines. If we get
-		// to this point it means that there are no more lines to print, so
-		// our print buffer is full and now display the print view.
-		printingStarted = FALSE;
+		if (printingStarted)
+		{
+			// We set printingStarted to true in the shell_print method to indicate
+			// that printing has begun.  For each line out output Free42 returns from
+			// core_keydown, but returns true if ther are more lines. If we get
+			// to this point it means that there are no more lines to print, so
+			// our print buffer is full and now display the print view.
+			printingStarted = FALSE;
 		
-		// We use the printingStarted flag to turn on the and off the print aunnunciator
-		// since it is off now, we want to redisplay.
-		[blitterView annuncNeedsDisplay];		
+			// We use the printingStarted flag to turn on the and off the print 
+			// aunnunciator since it is off now, we want to redisplay.
+			[blitterView annuncNeedsDisplay];		
+		}
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if

@@ -520,7 +520,8 @@ static char smallchars_map[128] =
 #endif
 
 
-#define DISPLAY_SIZE 816
+#define MAX_DISPLAY_ROWS 6
+#define DISPLAY_SIZE 136 * MAX_DISPLAY_ROWS
 static char display[DISPLAY_SIZE];
 
 static int is_dirty = 0;
@@ -1153,6 +1154,33 @@ void display_t(int row) {
 	draw_string(2, row, buf, len);
 }
 
+void display_0(int row) {
+    char buf[20];
+    int len;
+    clear_row(row);
+    len = vartype2string(reg_0, buf, 20);
+    draw_string(0, row, "~\200", 2);
+    if (len > 20) {
+		draw_string(2, row, buf, 19);
+		draw_char(21, row, 26);
+    } else
+		draw_string(2, row, buf, len);
+}
+
+void display_1(int row) {
+    char buf[20];
+    int len;
+    clear_row(row);
+    len = vartype2string(reg_1, buf, 20);
+    draw_string(0, row, "~\200", 2);
+    if (len > 20) {
+		draw_string(2, row, buf, 19);
+		draw_char(21, row, 26);
+    } else
+		draw_string(2, row, buf, len);
+}
+
+
 void display_incomplete_command(int row) {
     char buf[40];
     int bufptr = 0;
@@ -1746,12 +1774,17 @@ void redisplay() {
 	return;
     }
 
-    if (flags.f.two_line_message)
-	return;
-    if (flags.f.message)
+	// If we have a two line message, and only have two lines 
+	// of display, then we have nothing to do, and no room for the menu
+	if (flags.f.two_line_message && dispRows == 2 && !menuKeys)
+		return;
+	
+	if (flags.f.two_line_message)
+		for (int r=2; r < dispRows; r++) clear_row(r);		
+	else if (flags.f.message)
 		for (int r=1; r < dispRows; r++) clear_row(r);		
-    else
-	clear_display();
+	else
+		clear_display();
 
     if (mode_commandmenu != MENU_NONE)
 	menu_id = mode_commandmenu;
@@ -1924,7 +1957,7 @@ void redisplay() {
 	}
 	avail_rows = menuKeys ? dispRows : dispRows-1;
     }
-
+	
 	/* Added the test for CMD_CANCELLED because in 42s we can call redisplay
 	 * outside the usual keydown or keyup event.  This fixed a bug when quiting
 	 * a command then exiting, when restarting pending_command would be set to
@@ -1953,24 +1986,34 @@ void redisplay() {
 
     if (!flags.f.alpha_mode && !flags.f.prgm_mode) {
 	if (avail_rows == 1) {
-	    if (!flags.f.message)
-		display_x(0);
+	    if (!flags.f.message) display_x(0);
 	} else if (avail_rows == 2) {
-	    if (!flags.f.message)
-		display_y(0);
-		display_x(1);
+	    if (!flags.f.message || !flags.f.two_line_message) display_y(0);
+		if (!flags.f.two_line_message) display_x(1);
 	} else if (avail_rows == 3) {
-	    if (!flags.f.message)
-		display_z(0);
-		display_y(1);
+	    if (!flags.f.message || !flags.f.two_line_message) display_z(0);
+		if (!flags.f.two_line_message) display_y(1);
 		display_x(2);
-	} else if (avail_rows == 4 || avail_rows == 5) {
-	    if (!flags.f.message)
-		display_t(0);
-		display_z(1);
+	} else if (avail_rows == 4) {
+	    if (!flags.f.message || !flags.f.two_line_message) display_t(0);
+		if (!flags.f.two_line_message) display_z(1);
 		display_y(2);
-		display_x(3);
-	}
+		display_x(3);		
+	} else if (avail_rows == 5) {
+	    if (!flags.f.message || !flags.f.two_line_message) display_0(0);
+		if (!flags.f.two_line_message) display_t(1);
+		display_z(2);
+		display_y(3);
+		display_x(4);		
+	} else if (avail_rows == 6 || avail_rows == 7) {
+	    if (!flags.f.message || !flags.f.two_line_message) display_1(0);
+		if (!flags.f.two_line_message) display_0(1);
+		display_t(2);
+		display_z(3);
+		display_y(4);		
+		display_x(5);		
+	} 
+	
     } else if (flags.f.prgm_mode && avail_rows != 0) {
 	if (mode_command_entry) {
 	    if (avail_rows == 1)
