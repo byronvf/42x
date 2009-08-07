@@ -1256,9 +1256,12 @@ void display_error(int error, int print) {
 	print_text(errors[error].text, errors[error].length, 1);
 }
 
-void display_command(int row) {
+void display_command(int row) {	
     char buf[22];
     int bufptr = 0;
+	// Make sure we are called only when we have a valid command
+	// commands less then 0, or not true commands
+	assert(pending_command >= 0);
     const command_spec *cmd = cmdlist(pending_command);
     int *the_menu;
     int catsect;
@@ -1965,11 +1968,16 @@ void redisplay() {
 	 * const command_spec *cmd = cmdlist(pending_command), and cmd would then be
 	 * derefenced.  this call chain occured when calling redisplay() from view loading
 	 * on startup.
+	 *
+	 * Update -- We now simply test if pending_command is >=0 to make sure we have
+	 * a valid command, this fixed a crash when during the execution of "SHOW" 
+	 * the LCD was switched to 4 line display mode, which would for a call
+	 * to redisplay.
+	 *
 	 */
 	
     if (!flags.f.prgm_mode &&
-	    (mode_command_entry || 
-		 (pending_command != CMD_NONE && pending_command != CMD_CANCELLED))) {
+	    (mode_command_entry || pending_command >= 0)) {
 	int cmd_row;
 	if (menu_id == MENU_NONE) {
 	    cmd_row = dispRows - 1;
