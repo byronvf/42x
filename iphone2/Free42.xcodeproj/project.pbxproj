@@ -41,6 +41,7 @@
 		E91CC1D40F8C1FE900EE702C /* simpleserver.c in Sources */ = {isa = PBXBuildFile; fileRef = E91CC1D30F8C1FE900EE702C /* simpleserver.c */; };
 		E91CC1D60F8C200800EE702C /* icons.c in Sources */ = {isa = PBXBuildFile; fileRef = E91CC1D50F8C200800EE702C /* icons.c */; };
 		E93F2B560F894D9000CE8542 /* shell_spool.cc in Sources */ = {isa = PBXBuildFile; fileRef = E93F2B540F894D9000CE8542 /* shell_spool.cc */; };
+		E94DE6C61011E9AE005E6B19 /* about-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E94DE6C51011E9AE005E6B19 /* about-icon.png */; };
 		E98DD7510F8C198A0089D9FA /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E98DD7500F8C198A0089D9FA /* AudioToolbox.framework */; };
 		E98DD7670F8C1A210089D9FA /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75C0F8C1A210089D9FA /* squeak.wav */; };
 		E98DD7680F8C1A210089D9FA /* tone0.wav in Resources */ = {isa = PBXBuildFile; fileRef = E98DD75D0F8C1A210089D9FA /* tone0.wav */; };
@@ -66,6 +67,7 @@
 		E9BA0EAE0F9224F00087EBFB /* AboutView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BA0EAD0F9224F00087EBFB /* AboutView.m */; };
 		E9C92F8B0FE424FE00DC292C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = E9C92F8A0FE424FE00DC292C /* Default.png */; };
 		E9CD216B0FA39C41008E1E65 /* SelectFileView.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CD216A0FA39C41008E1E65 /* SelectFileView.m */; };
+		E9CFD938101CD39500C26700 /* bcdfloat2.cc in Sources */ = {isa = PBXBuildFile; fileRef = E9CFD936101CD39500C26700 /* bcdfloat2.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +134,7 @@
 		E91CC1D50F8C200800EE702C /* icons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icons.c; path = simpleserver/icons.c; sourceTree = "<group>"; };
 		E93F2B540F894D9000CE8542 /* shell_spool.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shell_spool.cc; path = ../common/shell_spool.cc; sourceTree = SOURCE_ROOT; };
 		E93F2B550F894D9000CE8542 /* shell_spool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shell_spool.h; path = ../common/shell_spool.h; sourceTree = SOURCE_ROOT; };
+		E94DE6C51011E9AE005E6B19 /* about-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "about-icon.png"; sourceTree = "<group>"; };
 		E98DD7500F8C198A0089D9FA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E98DD75C0F8C1A210089D9FA /* squeak.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = squeak.wav; sourceTree = "<group>"; };
 		E98DD75D0F8C1A210089D9FA /* tone0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone0.wav; sourceTree = "<group>"; };
@@ -168,6 +171,9 @@
 		E9C92F8A0FE424FE00DC292C /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		E9CD21690FA39C41008E1E65 /* SelectFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectFileView.h; sourceTree = "<group>"; };
 		E9CD216A0FA39C41008E1E65 /* SelectFileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectFileView.m; sourceTree = "<group>"; };
+		E9CFD935101CD39500C26700 /* bcd2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcd2.h; path = ../common/bcd2.h; sourceTree = SOURCE_ROOT; };
+		E9CFD936101CD39500C26700 /* bcdfloat2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcdfloat2.cc; path = ../common/bcdfloat2.cc; sourceTree = SOURCE_ROOT; };
+		E9CFD937101CD39500C26700 /* bcdfloat2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcdfloat2.h; path = ../common/bcdfloat2.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +254,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E94DE6C51011E9AE005E6B19 /* about-icon.png */,
 				E9C92F8A0FE424FE00DC292C /* Default.png */,
 				E98FA4830F913E2900DED348 /* icon.png */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -285,6 +292,9 @@
 		E9B16DF70F88ECCB002BB9B2 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				E9CFD935101CD39500C26700 /* bcd2.h */,
+				E9CFD936101CD39500C26700 /* bcdfloat2.cc */,
+				E9CFD937101CD39500C26700 /* bcdfloat2.h */,
 				E93F2B540F894D9000CE8542 /* shell_spool.cc */,
 				E93F2B550F894D9000CE8542 /* shell_spool.h */,
 				E91005A20F893F8900B68C27 /* bcd.cc */,
@@ -400,6 +410,7 @@
 				E9031C8F0FF68FB10023F9EC /* builtin_skins.txt in Resources */,
 				E9031C920FF68FCD0023F9EC /* Ehrling42sm.gif in Resources */,
 				E9031C930FF68FCD0023F9EC /* Ehrling42sm.layout in Resources */,
+				E94DE6C61011E9AE005E6B19 /* about-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +474,7 @@
 				E9BA0E800F9224700087EBFB /* SelectSkinView.m in Sources */,
 				E9BA0EAE0F9224F00087EBFB /* AboutView.m in Sources */,
 				E9CD216B0FA39C41008E1E65 /* SelectFileView.m in Sources */,
+				E9CFD938101CD39500C26700 /* bcdfloat2.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
