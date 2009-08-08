@@ -26,6 +26,7 @@
 #import "NavViewController.h"
 #import "Free42AppDelegate.h"
 #import "core_globals.h"
+#import "core_helpers.h"
 
 const float SLOW_KEY_REPEAT_RATE = 0.2;  // Slow key repeat rate in seconds
 const float FAST_KEY_REPEAT_RATE = 0.1;  // Fast key repeat rate in seconds
@@ -54,12 +55,18 @@ void mySleepHandler (CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 void shell_blitter(const char *bits, int bytesperline, int x, int y,
 				   int width, int height)
 {
-	// This happens during initialization
-	if (viewCtrl == NULL || ![viewCtrl isViewLoaded]) return;
+	// If we have a viewCtrl, initialize the displayBuff, this is rather brittle
+	// and has caused much Grief... The initialization order is important, and
+	// can cause startup locks if not carefull.
+	if (viewCtrl) viewCtrl.displayBuff = bits;
 	
+	// This happens during initialization
+	if (!viewCtrl || ![viewCtrl isViewLoaded]) return;
+		
 	// Indicate that the blitter view needs to update the given region,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
+	assert(viewCtrl.blitterView);
 	if (flags.f.prgm_mode)
 		[viewCtrl.blitterView setNeedsDisplay];
 	else
@@ -70,14 +77,14 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
 	// cpuCount = 0;
-	
-	viewCtrl.displayBuff = bits;
-	
+		
 	if (core_menu() && menuKeys)
 	{
+		assert(viewCtrl.menuView);
+		assert(viewCtrl.blankButtonsView);
 		// The menu keys are in the third row of the display (> 16), so 
 		// don't bother updateing unless this area of the display has changed.
-		if (height + y > 16)
+		if (height + y > 16 || [viewCtrl menuView].hidden)
 		{
 			[[viewCtrl menuView] setHidden:FALSE];
 			[[viewCtrl blankButtonsView] setHidden:FALSE];
@@ -136,6 +143,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize b37;
 @synthesize blitterView;
 @synthesize bgImageView;
+@synthesize updnGlowView;
 @synthesize navViewController;
 @synthesize blankButtonsView;
 @synthesize displayBuff;
@@ -165,6 +173,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	keyPressed = false;
 	alphaMenuActive = FALSE;
+	keyboardToggleActive = FALSE;
+	lastxbuf[0] = 0;
 }
 
 - (void)viewDidLoad {
@@ -174,12 +184,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	NSAssert(blankButtonsView != NULL, @"Buttons View not ready");
 	NSAssert(menuView != NULL, @"Menu view not ready");
 	NSAssert(free42init, @"Free42 has not been initialized");
+	
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
-	
-	// Bring up keyboard if this is the way the use left it when quiting.
-	[self handlePopupKeyboard];		
+	[self testUpdateLastX];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -188,34 +197,57 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 }
 
 
-- (void)handlePopupKeyboard
+/* If toggle = true, then toggle the keyboard such that if it is not displayed
+ * then display it, and vsversa.
+ */
+- (void)handlePopupKeyboard: (BOOL)toggle
 {
-	NSAssert(free42init, @"Free42 has not been initialized");	
-	if ([[Settings instance] keyboardOn])
+	NSAssert(free42init, @"Free42 has not been initialized");
+	if (core_alpha_menu())
 	{
+		if (toggle)
+		{
+			keyboardToggleActive = TRUE;
+			if (alphaMenuActive)
+			{
+				alphaMenuActive = FALSE;
+				[textEntryField resignFirstResponder];
+			}
+			else
+			{
+				alphaMenuActive = TRUE;
+				[textEntryField becomeFirstResponder];
+			}
+		}
+		
 		if (alphaMenuActive)
 		{
 			// If the text field has nothing in it, then back space will
 			// never call the textField method, and the keyboard backspace
 			// will behave strangely, so we always fill it with something here.
 			textEntryField.text = @"XXX";
-			
-			if (!core_alpha_menu())
-			{
-				alphaMenuActive = NO;
-				[textEntryField resignFirstResponder];
-			}
 		}
-		else if (core_alpha_menu())
+		
+		if ([[Settings instance] keyboardOn] && !alphaMenuActive &&
+			!keyboardToggleActive)
 		{
-			alphaMenuActive = YES;
+			// If autoshowkeyboard is on and we are switching to alpha menu
+			// then display the keyboard.
+			alphaMenuActive = TRUE;
 			keydown(0, 23); // down key to place menu on special characters
 			redisplay();
 			[textEntryField becomeFirstResponder];
+			return;
 		}
-		
-	}	
 	
+	}
+	else
+	{
+		// If we are not in alpha menu mode, then dismiss the keyboard no matter what
+		if (alphaMenuActive) [textEntryField resignFirstResponder];
+		alphaMenuActive = FALSE;
+		keyboardToggleActive = FALSE;
+	}
 }
 
 
@@ -240,27 +272,27 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// We are not processing a key event, so pass 0,
 	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
 	
-	if (!callKeydownAgain && printingStarted)
+	if (!callKeydownAgain)
 	{
-		// We set printingStarted to true in the shell_print method to indicate 
-		// that printing has begun.  For each line out output Free42 returns from
-		// core_keydown, but returns true if ther are more lines. If we get
-		// to this point it means that there are no more lines to print, so
-		// our print buffer is full and now display the print view.
-		printingStarted = FALSE;
+		if (printingStarted)
+		{
+			// We set printingStarted to true in the shell_print method to indicate
+			// that printing has begun.  For each line out output Free42 returns from
+			// core_keydown, but returns true if ther are more lines. If we get
+			// to this point it means that there are no more lines to print, so
+			// our print buffer is full and now display the print view.
+			printingStarted = FALSE;
 		
-		// We use the printingStarted flag to turn on the and off the print aunnunciator
-		// since it is off now, we want to redisplay.
-		[blitterView annuncNeedsDisplay];
-		
-		if ([[Settings instance] autoPrintOn])
-			[navViewController switchToPrintView];
+			// We use the printingStarted flag to turn on the and off the print 
+			// aunnunciator since it is off now, we want to redisplay.
+			[blitterView annuncNeedsDisplay];		
+		}
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
 	// a program is being run that activates the keyboard which otherwise
 	// the normal key handling would not detect.
-	[self handlePopupKeyboard];
+	[self handlePopupKeyboard:FALSE];
 }
 
 
@@ -319,9 +351,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		dispRows = 4;
 	}	
 	
-	[self handlePopupKeyboard];	
+	[self handlePopupKeyboard:FALSE];	
 }
-
 
 - (void)buttonUp:(UIButton*)sender
 {
@@ -346,10 +377,36 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if (callKeydownAgain)
 			cpuCount = 1000;		
 	}
-			
+
+	[self testUpdateLastX];
+	
 	timer3active = FALSE;
 	[self keepRunning];	
 }
+
+/* Test if we should update the lastx display.  We create a new string
+ * from reg_lastx and compare it to our existing string lastxbuf 
+ * if the are different, then we update the display
+ */
+
+- (void)testUpdateLastX
+{
+	NSAssert(self.blitterView, @"BlitterView not ready");
+	NSAssert(free42init, @"Free42 not initialized");
+	char lxstr[LASTXBUF_SIZE];
+	// llength - 1 so we know there will be room for at least one null terminator
+	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-1);
+	lxstr[len] = 0;
+	
+    // Test if the x register has changed, and if so, redisplay it
+	if (strcmp(lastxbuf, lxstr) != 0)
+    {
+		// The aanuciator ara includes the last x display
+		strcpy(lastxbuf, lxstr);
+		[self.blitterView annuncNeedsDisplay];
+	}	
+}
+
 
 // *******************************  Timer and key repeat handling *************************
 
@@ -470,7 +527,7 @@ void shell_request_timeout3(int delay)
 		if( !enqueued) core_keyup();
 	}
 	
-	[self handlePopupKeyboard];	
+	[self handlePopupKeyboard:FALSE];	
 	return YES;
 }
 

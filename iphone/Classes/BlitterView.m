@@ -25,8 +25,10 @@
 #import "NavViewController.h"
 #import "core_keydown.h"
 #import "core_helpers.h"
+#import "shell_spool.h"
 
-static BlitterView *blitterView; // Reference to this blitter so we can access from C methods
+// Reference to this blitter so we can access from C methods
+static BlitterView *blitterView = NULL; 
 
 static BOOL flagUpDown = false;
 static BOOL flagShift = false;
@@ -55,17 +57,14 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	flagGrad = setFlag(flagGrad, g);
 	flagRad = setFlag(flagRad, rad) && !flagGrad;
 	flagRun = setFlag(flagRun, run);
-
+	
+	
+	// If this is being called from Free42 initialization before the view
+	// has been loaded.
+	if (!blitterView) return;
+	
 	// Only update the flags region of the display
 	[blitterView annuncNeedsDisplay];
-		
-	if (shf != -1)
-	{
-		if (flagShift)
-			[[[blitterView calcViewController] b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
-		else
-			[[[blitterView calcViewController] b28] setImage:NULL forState:NULL];
-	}
 }
 
 
@@ -80,6 +79,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
     }
 }
 
+char lastxbuf[LASTXBUF_SIZE];
+
 /**
  * The blitterView manages the calculators digital display
  */
@@ -88,6 +89,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
+
+
 - (void)setXHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
@@ -114,7 +117,17 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 - (void) annuncNeedsDisplay
 {
 	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];	
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
+	
+	if (flagShift)
+		[[calcViewController b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
+	else
+		[[calcViewController b28] setImage:NULL forState:NULL];
+
+	if (flagUpDown)
+		[[calcViewController updnGlowView] setHidden:FALSE];
+	else
+		[[calcViewController updnGlowView] setHidden:TRUE];	
 }
 
 /**
@@ -135,23 +148,23 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(50, -3, 30, 18),
+		CGContextDrawImage(ctx, CGRectMake(35, -3, 30, 18),
 						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
 	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(80, -1, 32, 18),
+		CGContextDrawImage(ctx, CGRectMake(65, -1, 32, 18),
 						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(115, -1, 18, 18),
+		CGContextDrawImage(ctx, CGRectMake(100, -1, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(155, -2, 30, 20), 
+		CGContextDrawImage(ctx, CGRectMake(120, -2, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
 	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(185, -1, 24, 20),
+		CGContextDrawImage(ctx, CGRectMake(120, -1, 24, 20),
 						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
 
@@ -166,8 +179,69 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	}
 }
 
+- (void)drawLastX
+{
+	// a utf8 conversion, we provide room incase we need double byte characters
+	int lxbufsize = LASTXBUF_SIZE*2;
+	char lxstr[lxbufsize]; 
+
+	// Quick and dirty character conversion... lxbufsize - so we alway have room for
+	// a 4 byte char and a null terminator.
+	int idx = 0;
+	for (char *c = lastxbuf; *c && idx < lxbufsize - 4; c++)
+	{
+		// Look for all chars not in the standard ascii printable set.
+		if (*c >= ' ' &&  *c <= '~')
+			lxstr[idx++] = *c;
+		else if (*c == 24) // The exponent character
+			lxstr[idx++] = 'e'; 
+		else if (*c == 26) // The continuation char, indicates number too long for buffer
+			lxstr[idx++] = '+'; 
+		else if (*c == 23) // The angle sign glyph
+		{
+			lxstr[idx++] = 0xE2;
+			lxstr[idx++] = 0x88;
+			lxstr[idx++] = 0xA0;
+		}
+		else
+		{
+			// All other characters we can't convert are displayed as as a box
+			// glyph, however, this shouldn't happen
+			lxstr[idx++] = 0xE2;
+			lxstr[idx++] = 0x97;
+			lxstr[idx++] = 0xBB;
+		}
+	}
+	lxstr[idx] = 0; // null terminate
+	
+	NSString *lval = [[NSString alloc] initWithUTF8String:lxstr];
+	NSString *wprefix = @"L ";
+
+	// If the number is very long, then we drop "L " prefix because it will start to crowd
+	// The annunciators, and potetially will begin to overlap
+	if (strlen(lxstr) > 18)
+		wprefix = lval;
+	else
+		wprefix = [wprefix stringByAppendingString:lval];
+
+	// Draw the lastx register right justified in the upper right hand corner of the LCD in
+	// the annunciator row.
+	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
+	UIFont *font = [UIFont systemFontOfSize:15];
+	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
+	 alignment:UITextAlignmentRight];
+	[lval release];
+}
+
 - (void)drawRect:(CGRect)rect 
 {	
+#ifdef DEBUG	
+	NSAssert(calcViewController && calcViewController.displayBuff, 
+			 @"viewController not initialized");
+#else
+	if (calcViewController.displayBuff == NULL) return;	
+#endif
+	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	if (highlight)
@@ -187,8 +261,11 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	if (rect.origin.y < 18) 
+	if (rect.origin.y < 18)
+	{
 		[self drawAnnunciators];	
+		[self drawLastX];	
+	}
 	
 	if (rect.origin.y + rect.size.height > 18)
 	{
@@ -202,8 +279,6 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
 		
-		NSAssert(calcViewController.displayBuff != NULL,
-				 @"Display buff not initialized");
 		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
 		if (hMax > dispRows*8) hMax = dispRows*8;
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);
@@ -213,8 +288,7 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 	{
 		CGRect borderLine = CGRectMake(0, 122, 320, 4);
 		CGContextFillRect(ctx, borderLine);
-	}
-	
+	}	
 }
 
 const int SCROLL_SPEED = 15;
@@ -251,12 +325,11 @@ const int SCROLL_SPEED = 15;
 			}
 			else
 			{
-				keydown(0, 9);
-				core_keyup();
-				keydown(0, 9);
-				core_keyup();
-				keydown(0, 9);
-				core_keyup();
+				for (int i=0; i< (mode_bigstack? 19: 3); i++)
+				{
+					keydown(0, 9);
+					core_keyup();
+				}
 			}				
 			len += SCROLL_SPEED;	
 		}
@@ -349,26 +422,54 @@ char cbuf[30];
 		{
 			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
 			NSString *str = NULL;
+
+			if (dispRows > 5)
+			{
+				core_copy_reg(cbuf, 30, reg_1);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
+
+			if (dispRows > 4)
+			{
+				core_copy_reg(cbuf, 30, reg_0);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
+
+			if (dispRows > 3)
+			{
+				core_copy_reg(cbuf, 30, reg_t);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_t);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 2)
+			{
+				core_copy_reg(cbuf, 30, reg_z);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_z);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 1)
+			{
+				core_copy_reg(cbuf, 30, reg_y);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
-			core_copy_reg(cbuf, 30, reg_y);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
-			
-			core_copy_reg(cbuf, 30, reg_x);
-			str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
-			[nums appendString:str];
-			[nums appendString:@"\n"];
+			if (dispRows > 0)
+			{				
+				core_copy_reg(cbuf, 30, reg_x);
+				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
+				[nums appendString:str];
+				[nums appendString:@"\n"];
+			}
 			
 			UIPasteboard *pb = [UIPasteboard generalPasteboard];
 			pb.string = nums;
@@ -484,6 +585,11 @@ char cbuf[30];
 		[self showEditMenu];
 		highlight = TRUE;
     }
+	else if ([[touches anyObject] locationInView:self].x < 260 && touch.tapCount == 1)
+	{
+		[calcViewController handlePopupKeyboard:true];
+	}
+	
 	// Reset the swipe mode.
 	firstTouch.x = -1;
 }

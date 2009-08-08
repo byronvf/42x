@@ -116,12 +116,6 @@ extern void handle_client(int);
 	
 	unsigned int n = sizeof(ca);
 	csock = accept(ssock, (struct sockaddr *) &ca, &n);
-	
-	// csock inherits NONBLOCK from the server socket. the simple web
-	// server requires the socket to block, so we clear the non-block flag here.
-	int flags = fcntl(csock, F_GETFL);
-	fcntl(csock, F_SETFL, flags & ~O_NONBLOCK);
-	
 	if (csock == -1) {
 		// If we fall out because of non blocking, and no sockets waiting
 		err = errno;
@@ -133,6 +127,11 @@ extern void handle_client(int);
 		return 1;
 	}
 	
+	// csock inherits NONBLOCK from the server socket. the simple web
+	// server requires the socket to block, so we clear the non-block flag here.
+	int flags = fcntl(csock, F_GETFL);
+	fcntl(csock, F_SETFL, flags & ~O_NONBLOCK);
+		
 	handle_client(csock);
 	close(csock);
 	// Check sooner since there are probably additional requests.

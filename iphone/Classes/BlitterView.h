@@ -23,9 +23,15 @@
 
 extern int cpuCount;
 
+// size 21 gives us a max size of 20 characters (plus the null terminator) this
+// is the same max size of the standard stack display, so we can show any number
+// in last x as the stack would display it.
+#define LASTXBUF_SIZE 21
+extern char lastxbuf[LASTXBUF_SIZE];
+
 @interface BlitterView : UIView {
 	
-	// keep track of swipe on screen for switching to the print view
+	// keep track of swipe on screen for switching to the print view	
 	CGPoint firstTouch;
 	BOOL highlight;
 	CGRect xRowHighlight;
@@ -39,6 +45,7 @@ extern int cpuCount;
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property BOOL selectAll;
+
 @property (nonatomic, retain) CalcViewController* calcViewController;
 
 - (void) drawAnnunciators;
@@ -46,6 +53,7 @@ extern int cpuCount;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
 - (void) shouldCutPaste;
-- (void)showEditMenu;
+- (void) showEditMenu;
+- (void) drawLastX;
 
 @end

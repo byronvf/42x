@@ -63,10 +63,13 @@ extern int callKeydownAgain;
     IBOutlet UIButton *b36;
     IBOutlet UIButton *b37;
 	
-	int alphaMenuActive;
+	BOOL alphaMenuActive;
+	BOOL keyboardToggleActive;
+	
 	IBOutlet UITextField* textEntryField;
 	
 	IBOutlet BlitterView *blitterView;
+	IBOutlet UIImageView *updnGlowView;
 	IBOutlet UIImageView *bgImageView;	
 	IBOutlet NavViewController* navViewController;
 	IBOutlet MenuView *menuView;
@@ -80,6 +83,7 @@ extern int callKeydownAgain;
 @property BOOL keyPressed;
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
+@property (nonatomic, retain) UIImageView* updnGlowView;
 @property (nonatomic, retain) UIImageView* blankButtonsView;
 @property (nonatomic, retain) MenuView *menuView;
 @property (nonatomic, retain) NavViewController* navViewController;
@@ -125,9 +129,10 @@ extern int callKeydownAgain;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
-- (void)handlePopupKeyboard;
+- (void)handlePopupKeyboard:(BOOL)toggle;
 - (void) twoLineDisp;
 - (void) fourLineDisp;
+- (void)testUpdateLastX;
 	
 @end
 

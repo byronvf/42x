@@ -31,4 +31,13 @@ const int PRINT_YOFFSET = 5;
 @property (nonatomic, retain) PrintViewController* printViewController;
 @property (nonatomic) int offset;
 
+
+- (void) drawFastBlitDataToContext: 
+(CGContextRef) ctx   // Context to blit to 
+							  data:(const char*) data  // data buffer to read from, size is in bytes is height*byte_width
+						   xoffset:(int) xoffset        // horz offset for drawing to the context
+						   yoffset:(int) yoffset        // vert offset for drawing to the context
+							height:(int) height         // pixel height of data in the data buffer.
+						byte_width:(int) byte_width;     // number of bytes per row
+
 @end

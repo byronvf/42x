@@ -17,6 +17,7 @@
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioServices.h>
+#include "core_globals.h"
 
 
 @interface Settings : NSObject {
@@ -25,7 +26,11 @@
 	bool clickSoundOn;
 	bool beepSoundOn;
 	bool keyboardOn;
-	bool autoPrintOn;
+	
+	// Indicates if we have used the PRLCD command which prints the LCD
+	// to the display.  If so, then we must turn off the striping in the
+	// print view becuase it will no longer align.
+	bool printedPRLCD;
 	
 	@public
 	
@@ -35,8 +40,7 @@
 @property bool clickSoundOn;
 @property bool beepSoundOn;
 @property bool keyboardOn;
-@property bool autoPrintOn;
-
+@property bool printedPRLCD;
 + (Settings*)instance;
 
 @end
