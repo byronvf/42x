@@ -887,7 +887,7 @@ void phloat_init() {
 
     d = 1;
     max_pow2 = 0;
-    while (finite(d)) {
+    while (isfinite(d)) {
 	max_pow2++;
 	d *= 2;
     }

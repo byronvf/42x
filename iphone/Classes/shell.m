@@ -76,3 +76,9 @@ uint4 shell_get_mem()
 }
 
 
+#ifndef BCD_MATH
+shell_bcd_table_struct *shell_get_bcd_table() SHELL1_SECT {return NULL;}
+shell_bcd_table_struct *shell_put_bcd_table(shell_bcd_table_struct *bcdtab,
+											uint4 size) SHELL1_SECT {return bcdtab;}
+void shell_release_bcd_table(shell_bcd_table_struct *bcdtab) SHELL1_SECT {free(bcdtab);}
+#endif 
