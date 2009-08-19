@@ -1,0 +1,85 @@
+
+An interesting discussion here:
+
+http://www.hpmuseum.org/cgi-sys/cgiwrap/hpmuseum/archv016.cgi?read=103356#103356
+
+With the improved accuracy in Free42 1.4.53 the savage benchmark
+returns the following value:
+
+2500 . 00000 00000 00001 704613
+
+Which is better then the value reported in the thread of:
+
+2500 . 00000 00000 00729 71836 3
+
+The below routine attempte to apply Rosenbaum's suggestion of rounding
+to even.  However, it didn't seem to make a difference.  the number
+returned is about the same as the current rounding scheme.  Now, the
+routine may not work correctly, or I don't understand how it fits in to
+BCD...
+
+Another issue is that it seems that even with the improved accuracy
+the transcendtals are not correct to the full 25 digits, for example
+sin(3) (rad).
+
+I added this file so that if given time I can revisit this
+issue.
+
+from bcdfloat.cc, round-to-even instead of round away from zero:
+
+int BCDFloat::_round25() 
+{
+  // round d_[P] into the mantissa and mask off digits after 25.
+  /*
+    int i;
+    int v;
+    if (d_[0] < 10)
+    v = d_[P-1] + (d_[P] >= 5000);
+    else if (d_[0] < 100)
+    v = (((((int4) d_[P-1])+5)*3277)>>15)*10;
+    else if (d_[0] < 1000)
+    v = (((((int4) d_[P-1])+50)*5243)>>19)*100;
+    else
+    v = (((((int4) d_[P-1])+500)*8389)>>23)*1000;
+  */
+	
+  int v = d_[P-1];
+  if (d_[0] < 10)
+  {
+    v += (d_[P] > 5000 || (d_[P] == 5000 && v&1));
+  }
+  else if (d_[0] < 100)
+  {
+    int r = v%10;
+    v -= r;
+    if (r >= 5 || (r ==5 && (d_[P] || (v/10)&1))) v += 10;
+  }
+  else if (d_[0] < 1000)
+  {
+    int r = v%100;
+    v -= r;
+    if (r > 50 || (r == 50 && (d_[P] || (v/100)&1))) v += 100;
+  }
+  else
+  {
+    int r = v%1000;
+    v -= r;
+    if (r > 500 || (r == 500 && (d_[P] || (v/1000)&1))) v += 1000;
+  }
+	
+  int i = P-1;
+  while (v >= BASE)
+  {
+    d_[i] = v - BASE;
+    if (!i)
+    {
+      // shift
+      _rshift();
+      d_[0] = 1;
+      return 1;
+    }
+    v = d_[--i]+1;
+  }
+  d_[i] = v;
+  return 0;
+}
