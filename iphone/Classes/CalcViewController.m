@@ -188,7 +188,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
-	[self testUpdateLastX];
+	[self testUpdateLastX:FALSE];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -378,7 +378,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			cpuCount = 1000;		
 	}
 
-	[self testUpdateLastX];
+	[self testUpdateLastX:FALSE];
 	
 	timer3active = FALSE;
 	[self keepRunning];	
@@ -386,13 +386,23 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 /* Test if we should update the lastx display.  We create a new string
  * from reg_lastx and compare it to our existing string lastxbuf 
- * if the are different, then we update the display
+ * if they are different, then we update the display.  
+ * force - indicates if we should force a repant of the annuc area, we do 
+ * this when toggling the showLastX setting.
  */
 
-- (void)testUpdateLastX
+- (void)testUpdateLastX: (BOOL) force
 {
-	NSAssert(self.blitterView, @"BlitterView not ready");
+	NSAssert(blitterView, @"BlitterView not ready");
 	NSAssert(free42init, @"Free42 not initialized");
+
+	if (force)
+	{
+		[blitterView annuncNeedsDisplay];
+	}
+		
+	if (![[Settings instance] showLastX]) return;
+	
 	char lxstr[LASTXBUF_SIZE];
 	// llength - 1 so we know there will be room for at least one null terminator
 	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-1);
@@ -401,9 +411,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
     // Test if the x register has changed, and if so, redisplay it
 	if (strcmp(lastxbuf, lxstr) != 0)
     {
-		// The aanuciator ara includes the last x display
+		// The anunciator area includes the last x display
 		strcpy(lastxbuf, lxstr);
-		[self.blitterView annuncNeedsDisplay];
+		[blitterView annuncNeedsDisplay];
 	}	
 }
 

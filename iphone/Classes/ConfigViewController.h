@@ -31,9 +31,11 @@ extern int dispRows;
 	NavViewController* navViewController;
 	IBOutlet UIButton* gotoServerButton;
 	IBOutlet UISwitch* menuKeysSwitch;
+	IBOutlet UISwitch* lastXSwitch;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
+@property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;

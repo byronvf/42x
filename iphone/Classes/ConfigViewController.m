@@ -18,11 +18,13 @@
 #import "ConfigViewController.h"
 #import "Settings.h"
 #import "NavViewController.h"
+#import "CalcViewController.h"
 #import "core_main.h"
 
 @implementation ConfigViewController
 
 @synthesize clickSoundSwitch;
+@synthesize lastXSwitch;
 @synthesize beepSoundSwitch;
 @synthesize keyboardSwitch;
 @synthesize bigStackSwitch;
@@ -58,6 +60,7 @@ int dispRows;
 	[clickSoundSwitch setOn:[[Settings instance] clickSoundOn]];	
 	[beepSoundSwitch setOn:[[Settings instance] beepSoundOn]];	
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
+	[lastXSwitch setOn:[[Settings instance] showLastX]];	
 	[bigStackSwitch setOn:mode_bigstack];
 	[menuKeysSwitch setOn:menuKeys];
 }
@@ -85,6 +88,11 @@ int dispRows;
 		menuKeys = [sender isOn];
 		core_repaint_display();
 	}
+	else if (sender == lastXSwitch)
+	{
+		[[Settings instance] setShowLastX:[sender isOn]];
+		[[navViewController calcViewController] testUpdateLastX:TRUE];
+	}		
 }
 
 #if DEV_REL

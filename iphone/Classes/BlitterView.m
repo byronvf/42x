@@ -24,6 +24,7 @@
 #import "PrintViewController.h"
 #import "NavViewController.h"
 #import "core_keydown.h"
+#import "Settings.h"
 #import "core_helpers.h"
 #import "shell_spool.h"
 
@@ -181,6 +182,8 @@ char lastxbuf[LASTXBUF_SIZE];
 
 - (void)drawLastX
 {
+	if (![[Settings instance] showLastX]) return;
+	
 	// a utf8 conversion, we provide room incase we need double byte characters
 	int lxbufsize = LASTXBUF_SIZE*2;
 	char lxstr[lxbufsize]; 
