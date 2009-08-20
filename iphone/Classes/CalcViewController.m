@@ -500,13 +500,14 @@ void shell_request_timeout3(int delay)
 		{
 			// Adding an alpha character
 			core_keydown(newChar + 1024, &enqueued, &repeat);
-			if( !enqueued) core_keyup();
+			if( !enqueued) core_keyup();			
 		}
 		else if ( '\n' == newChar)
 		{
 			// End the edit
 			core_keydown(KEY_ENTER, &enqueued, &repeat);
-			if( !enqueued) core_keyup();
+			if( !enqueued) core_keyup();			
+			[self keepRunning];			
 		}
 		else if (newChar == 8364) // Euro
 		{
