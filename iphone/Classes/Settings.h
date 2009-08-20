@@ -26,6 +26,7 @@
 	bool clickSoundOn;
 	bool beepSoundOn;
 	bool keyboardOn;
+	bool showLastX;
 	
 	// Indicates if we have used the PRLCD command which prints the LCD
 	// to the display.  If so, then we must turn off the striping in the
@@ -37,6 +38,7 @@
 	SystemSoundID soundIDs[11];
 }
 
+@property bool showLastX;
 @property bool clickSoundOn;
 @property bool beepSoundOn;
 @property bool keyboardOn;

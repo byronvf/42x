@@ -188,7 +188,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
 	// core_init does not do this.
 	redisplay();
-	[self testUpdateLastX];
+	[self testUpdateLastX:FALSE];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -234,8 +234,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// If autoshowkeyboard is on and we are switching to alpha menu
 			// then display the keyboard.
 			alphaMenuActive = TRUE;
-			keydown(0, 23); // down key to place menu on special characters
+			
+			// Set the menu display to the next alpha menu which contains
+			// the special characters.  This is better for the user for
+			// easy access to special 42s chars while the iphone keyboard is up
+			set_menu(MENULEVEL_ALPHA, (menus + mode_alphamenu)->next);
 			redisplay();
+			
 			[textEntryField becomeFirstResponder];
 			return;
 		}
@@ -378,7 +383,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			cpuCount = 1000;		
 	}
 
-	[self testUpdateLastX];
+	[self testUpdateLastX:FALSE];
 	
 	timer3active = FALSE;
 	[self keepRunning];	
@@ -386,13 +391,23 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 /* Test if we should update the lastx display.  We create a new string
  * from reg_lastx and compare it to our existing string lastxbuf 
- * if the are different, then we update the display
+ * if they are different, then we update the display.  
+ * force - indicates if we should force a repant of the annuc area, we do 
+ * this when toggling the showLastX setting.
  */
 
-- (void)testUpdateLastX
+- (void)testUpdateLastX: (BOOL) force
 {
-	NSAssert(self.blitterView, @"BlitterView not ready");
+	NSAssert(blitterView, @"BlitterView not ready");
 	NSAssert(free42init, @"Free42 not initialized");
+
+	if (force)
+	{
+		[blitterView annuncNeedsDisplay];
+	}
+		
+	if (![[Settings instance] showLastX]) return;
+	
 	char lxstr[LASTXBUF_SIZE];
 	// llength - 1 so we know there will be room for at least one null terminator
 	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-1);
@@ -401,9 +416,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
     // Test if the x register has changed, and if so, redisplay it
 	if (strcmp(lastxbuf, lxstr) != 0)
     {
-		// The aanuciator ara includes the last x display
+		// The anunciator area includes the last x display
 		strcpy(lastxbuf, lxstr);
-		[self.blitterView annuncNeedsDisplay];
+		[blitterView annuncNeedsDisplay];
 	}	
 }
 
@@ -490,13 +505,14 @@ void shell_request_timeout3(int delay)
 		{
 			// Adding an alpha character
 			core_keydown(newChar + 1024, &enqueued, &repeat);
-			if( !enqueued) core_keyup();
+			if( !enqueued) core_keyup();			
 		}
 		else if ( '\n' == newChar)
 		{
 			// End the edit
 			core_keydown(KEY_ENTER, &enqueued, &repeat);
-			if( !enqueued) core_keyup();
+			if( !enqueued) core_keyup();			
+			[self keepRunning];			
 		}
 		else if (newChar == 8364) // Euro
 		{
