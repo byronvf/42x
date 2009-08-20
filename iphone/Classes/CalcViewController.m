@@ -237,8 +237,14 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			
 			// Set the menu display to the next alpha menu which contains
 			// the special characters.  This is better for the user for
-			// easy access to special 42s chars while the iphone keyboard is up
-			set_menu(MENULEVEL_ALPHA, (menus + mode_alphamenu)->next);
+			// easy access to special 42s chars while the iphone keyboard is up				
+			
+			// save a temp version of the pending command, this fixes a problem
+			// where while in alpha mode pressint ASTO ST X would not work, because
+			// keydown would cancel the pending command.
+			int tmp_pending_command = pending_command;
+			keydown(0, 23);
+			pending_command = tmp_pending_command;
 			redisplay();
 			
 			[textEntryField becomeFirstResponder];
