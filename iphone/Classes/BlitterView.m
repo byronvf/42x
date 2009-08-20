@@ -357,7 +357,7 @@ const int SCROLL_SPEED = 15;
 		}	
 	}
 	
-	if (!printingStarted && firstTouch.x - [touch locationInView:self].x > 60)
+	if (firstTouch.x - [touch locationInView:self].x > 60)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
 		// to the print screen since the iPhone can't keep up with this, and it just 
