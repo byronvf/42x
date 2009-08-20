@@ -234,8 +234,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// If autoshowkeyboard is on and we are switching to alpha menu
 			// then display the keyboard.
 			alphaMenuActive = TRUE;
-			keydown(0, 23); // down key to place menu on special characters
+			
+			// Set the menu display to the next alpha menu which contains
+			// the special characters.  This is better for the user for
+			// easy access to special 42s chars while the iphone keyboard is up
+			set_menu(MENULEVEL_ALPHA, (menus + mode_alphamenu)->next);
 			redisplay();
+			
 			[textEntryField becomeFirstResponder];
 			return;
 		}
