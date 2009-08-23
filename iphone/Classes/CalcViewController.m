@@ -298,6 +298,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// aunnunciator since it is off now, we want to redisplay.
 			[blitterView annuncNeedsDisplay];		
 		}
+		
+		// Update the lastx display if necessary
+		[self testUpdateLastX:FALSE];	
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
@@ -389,8 +392,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			cpuCount = 1000;		
 	}
 
-	[self testUpdateLastX:FALSE];
-	
 	timer3active = FALSE;
 	[self keepRunning];	
 }
