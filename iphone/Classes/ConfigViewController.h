@@ -28,13 +28,17 @@ extern int dispRows;
 	IBOutlet UISwitch* beepSoundSwitch;
 	IBOutlet UISwitch* keyboardSwitch;
 	IBOutlet UISwitch* bigStackSwitch;
-	NavViewController* navViewController;
-	IBOutlet UIButton* gotoServerButton;
 	IBOutlet UISwitch* menuKeysSwitch;
 	IBOutlet UISwitch* lastXSwitch;
+	IBOutlet UISwitch* largeLCD;
+	
+	IBOutlet UIButton* gotoServerButton;
+	
+	IBOutlet NavViewController* navViewController;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
+@property (nonatomic, retain) UISwitch* largeLCD;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;

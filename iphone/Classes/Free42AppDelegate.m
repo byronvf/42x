@@ -192,6 +192,7 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 NSString* CONFIG_SHOW_LASTX = @"showLastX";
 NSString* CONFIG_PRLCD = @"prlcd";
+NSString* CONFIG_LARGE_LCD = @"largelcd";
 
 - (void)loadSettings
 {
@@ -234,6 +235,10 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	else
 		[[Settings instance] setShowLastX:TRUE];
 	
+	if ([defaults objectForKey:CONFIG_LARGE_LCD])
+		[[Settings instance] setLargeLCD:[defaults boolForKey:CONFIG_LARGE_LCD]];
+	else
+		[[Settings instance] setLargeLCD:FALSE];
 	
 	if ([defaults objectForKey:CONFIG_PRINT_BUF])
     {
@@ -253,6 +258,7 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	[defaults setBool:[[Settings instance] showLastX] forKey:CONFIG_SHOW_LASTX];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
+	[defaults setBool:[[Settings instance] largeLCD] forKey:CONFIG_LARGE_LCD];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 
@@ -273,8 +279,6 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	statefile = fopen([statepath UTF8String], "r");
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
-	
-	[self loadSettings];
 	
 	if (!oldStyleStateExists && statefile == NULL)
 	{
@@ -297,8 +301,9 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	if (statefile) fclose(statefile);
 
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-
+	
+	[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+		
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
 	[navViewController setDelegate:navViewController];

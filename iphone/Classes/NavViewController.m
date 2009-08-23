@@ -20,13 +20,14 @@
 #import "ServerViewController.h"
 #import "CalcViewController.h"
 #import "Free42AppDelegate.h"
+#import "Settings.h"
 
 static NavViewController *navCtrl = NULL;
 
 void shell_powerdown()
-{
-	[navCtrl switchToView:[navCtrl configViewController]];
-	[[navCtrl configViewController] setNavViewController:navCtrl];
+{	
+	assert(navCtrl);
+	[navCtrl switchToConfigView];
 }	
 
 @implementation NavViewController
@@ -47,7 +48,6 @@ void shell_powerdown()
 	return self;
 }
 
-
 /// Set to true when we are currently displaying the server view
 BOOL showingServerView;
 - (void)awakeFromNib
@@ -61,16 +61,24 @@ BOOL showingServerView;
  */
 - (void)switchToView:(UIViewController*) viewCtrl
 {
-	[self setNavigationBarHidden:FALSE];
 	[self pushViewController:viewCtrl animated:TRUE];
 }
 
+- (void)switchToConfigView
+{
+	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
+	[self setNavigationBarHidden:FALSE];
+
+	[self switchToView:configViewController];
+}
 
 - (void)switchToPrintView
 {
-	[self switchToView:(UIViewController*)printViewController];
+	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
+	[self setNavigationBarHidden:FALSE];
+	[self switchToView:printViewController];
+		
 	[printViewController display];
-	
 }
 
 - (void)switchToServerView
@@ -85,9 +93,11 @@ BOOL showingServerView;
 	if (vc == (UIViewController*)calcViewController)
 	{
   	    // When we come back to the calc view, rehide the navigation bar
-	    [self setNavigationBarHidden:TRUE animated:FALSE];
+	    [self setNavigationBarHidden:TRUE animated:FALSE];		
+		[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
 	}
-	else if (showingServerView)
+	
+	if (showingServerView)
 	{
 		// We don't want the server running in the background while not on the server
 		// view, so if we are switching away from the server view, stop the web server.
@@ -107,6 +117,23 @@ BOOL showingServerView;
 	}
 }
 
+/**
+ * Are main reason to override this is for tricky status bar handling.  For the status
+ * bar to be overlayed on top of the view, the status bar needs to be hidden, then
+ * once the view is displayed, the status bar is made visible.  We want the status bar 
+ * to always be visible on all other views accept the calc view.  For the calc view
+ * if we are not using the largeLCD then we want to first render the calc view, then 
+ * show the status bar so it will overlay on top of the LCD.   the NavViewController
+ * handles all status bar trickery.
+ */
+- (void)navigationController:(UINavigationController *)navigationController 
+	  didShowViewController:(UIViewController *)vc animated:(BOOL)animated
+{
+	if (vc == (UIViewController*)calcViewController)
+	{			
+		[[UIApplication sharedApplication] setStatusBarHidden:[[Settings instance] largeLCD]];
+	}
+}	
 /*
  Implement loadView if you want to create a view hierarchy programmatically
 - (void)loadView {

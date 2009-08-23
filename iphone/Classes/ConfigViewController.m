@@ -30,6 +30,7 @@
 @synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
 @synthesize gotoServerButton;
+@synthesize largeLCD;
 
 @synthesize navViewController;
 
@@ -63,6 +64,7 @@ int dispRows;
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
 	[bigStackSwitch setOn:mode_bigstack];
 	[menuKeysSwitch setOn:menuKeys];
+	[largeLCD setOn:[[Settings instance] largeLCD]];
 }
 
 - (void)buttonUp:(UISwitch*)sender
@@ -92,7 +94,11 @@ int dispRows;
 	{
 		[[Settings instance] setShowLastX:[sender isOn]];
 		[[navViewController calcViewController] testUpdateLastX:TRUE];
-	}		
+	}
+	else if (sender == largeLCD)
+	{
+		[[Settings instance] setLargeLCD:[sender isOn]];
+	}
 }
 
 #if DEV_REL

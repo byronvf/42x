@@ -174,7 +174,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	keyPressed = false;
 	alphaMenuActive = FALSE;
 	keyboardToggleActive = FALSE;
-	lastxbuf[0] = 0;
+	lastxbuf[0] = 0;	
 }
 
 - (void)viewDidLoad {
