@@ -37,6 +37,9 @@ static BOOL flagGrad = false;
 static BOOL flagRad = false;
 static BOOL flagRun = false;
 
+// Height of the annuciator line
+#define ASTAT_HEIGHT 18
+
 /**
  * Returns the new value of 'flag' based on the value of 'code' based
  * on values passed in from shell_annuciators
@@ -90,7 +93,7 @@ char lastxbuf[LASTXBUF_SIZE];
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
-
+@synthesize statusBarOffset;
 
 - (void)setXHighlight
 {
@@ -109,7 +112,11 @@ char lastxbuf[LASTXBUF_SIZE];
 	blitterView = self; // We need a reference to this view outside the class
 	highlight = FALSE;
 	
-	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
+	// Initialize offsetDisp if we need to compensate for the top statusbar
+	statusBarOffset = [[Settings instance] largeLCD] ? 0 : 20;
+	
+	baseRowHighlight = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24); // Hightlight for x region
+	
 	[self setXHighlight];
 	firstTouch.x = -1;
 	[self shouldCutPaste];
@@ -118,7 +125,7 @@ char lastxbuf[LASTXBUF_SIZE];
 - (void) annuncNeedsDisplay
 {
 	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
+	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, ASTAT_HEIGHT)];
 	
 	if (flagShift)
 		[[calcViewController b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
@@ -145,27 +152,27 @@ char lastxbuf[LASTXBUF_SIZE];
 	// to the image stored in a variable would no longer be valid.
 	
 	if (flagUpDown)
-		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), 
+		CGContextDrawImage(ctx, CGRectMake(6, 2 + statusBarOffset, 40, 12), 
 						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(35, -3, 30, 18),
+		CGContextDrawImage(ctx, CGRectMake(35, -3 + statusBarOffset, 30, 18),
 						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
 	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(65, -1, 32, 18),
+		CGContextDrawImage(ctx, CGRectMake(65, -1 + statusBarOffset, 32, 18),
 						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(100, -1, 18, 18),
+		CGContextDrawImage(ctx, CGRectMake(100, -1 + statusBarOffset, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(120, -2, 30, 20), 
+		CGContextDrawImage(ctx, CGRectMake(120, -2 + statusBarOffset, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
 	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(120, -1, 24, 20),
+		CGContextDrawImage(ctx, CGRectMake(120, -1 + statusBarOffset, 24, 20),
 						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
 
@@ -231,7 +238,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	// the annunciator row.
 	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
 	UIFont *font = [UIFont systemFontOfSize:15];
-	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
+	[wprefix drawInRect:CGRectMake(140, -2 + statusBarOffset, 178, 14) 
+			   withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentRight];
 	[lval release];
 }
@@ -264,16 +272,15 @@ char lastxbuf[LASTXBUF_SIZE];
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	if (rect.origin.y < 18)
+	if (rect.origin.y < ASTAT_HEIGHT + statusBarOffset)
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
 	}
 	
-	if (rect.origin.y + rect.size.height > 18)
+	if (rect.origin.y + rect.size.height > ASTAT_HEIGHT + statusBarOffset)
 	{
-		float vertScale = 3.0;
-		if (dispRows > 2 && flags.f.prgm_mode) vertScale = 2.5;
+		float vertScale = [self getDispVertScale];
 		
 		// 8 - horz pixel offset
 		// 18 - vert pixel offset to begin drawing.
@@ -282,16 +289,46 @@ char lastxbuf[LASTXBUF_SIZE];
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
 		
-		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
+		int hMax = ((rect.origin.y - (ASTAT_HEIGHT + statusBarOffset)) + rect.size.height)/vertScale + 1;
 		if (hMax > dispRows*8) hMax = dispRows*8;
-		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);
+		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, ASTAT_HEIGHT + statusBarOffset,
+								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
-	if (rect.origin.y + rect.size.height > 121)
+	if (rect.origin.y + rect.size.height > 142)
 	{
-		CGRect borderLine = CGRectMake(0, 122, 320, 4);
+		CGRect borderLine = CGRectMake(0, 143, 320, 3);
 		CGContextFillRect(ctx, borderLine);
 	}	
+}
+
+/*
+ * translate a row that needsd to be updated into a rectangle region
+ */
+- (void)setDisplayUpdateRow:(int) l h:(int) h
+{
+	// +3 for fudge so that when switching between 5 to 4 row mode, we clean
+	// up dirtly bits just below the 4th row
+	float vscale= [self getDispVertScale];
+	
+	// Small kludge, if we are just updating the top row, then in the case we are flying the 
+	// goose we trim one pixel off the blitter update rect, this prevents the second row
+	// of the display from getting the top pixel row from being deleted. this only happens
+	// hwne vscale is 2.8
+	int hs = (h*8)*vscale + 1;
+	if (hs == 23) hs = 22;
+		
+	[self setNeedsDisplayInRect:CGRectMake(0, 
+		[self statusBarOffset] + ASTAT_HEIGHT + (l*8)*vscale, 320, hs)];	
+}
+
+- (float)getDispVertScale
+{
+	float vertScale = 3.0;
+	if (dispRows == 3) vertScale = 2.8;
+	else if (dispRows > 3) vertScale = 2.5;
+
+	return vertScale;
 }
 
 const int SCROLL_SPEED = 15;
@@ -347,13 +384,13 @@ const int SCROLL_SPEED = 15;
 		// occurred while switching to four line mode, and pressing the "EXIT" key
 		// at the same time.
 		
-		if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
+		if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows < 4)
 		{
-			[calcViewController fourLineDisp];
+			[calcViewController doubleLCD];
 		}
 		else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
 		{
-			[calcViewController twoLineDisp];
+			[calcViewController singleLCD];
 		}	
 	}
 	
@@ -371,13 +408,15 @@ const int SCROLL_SPEED = 15;
 /**
  * Set the blitter in two line display mode
  */
-- (void) twoLineDisp
+- (void) singleLCD
 {
 	dispRows = 2;
+	if ([[Settings instance] largeLCD]) dispRows = 3;
+	
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 68;
+	bounds.size.height = 88;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;
@@ -388,16 +427,17 @@ const int SCROLL_SPEED = 15;
 /**
  * Set the blitter in four line display mode
  */
-- (void) fourLineDisp
+- (void) doubleLCD
 {
-	if (flags.f.prgm_mode)
-		dispRows = 5;
-	else
-		dispRows = 4;
+	dispRows = 4;
+	if ([[Settings instance] largeLCD]) dispRows = 6;
+		
+	if (flags.f.prgm_mode) dispRows += 1;
+			
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 126;
+	bounds.size.height = 146;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;

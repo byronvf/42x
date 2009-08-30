@@ -520,7 +520,7 @@ static char smallchars_map[128] =
 #endif
 
 
-#define MAX_DISPLAY_ROWS 6
+#define MAX_DISPLAY_ROWS 8
 #define DISPLAY_SIZE 136 * MAX_DISPLAY_ROWS
 static char display[DISPLAY_SIZE];
 

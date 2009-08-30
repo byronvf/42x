@@ -20,6 +20,7 @@
 #import "NavViewController.h"
 #import "CalcViewController.h"
 #import "core_main.h"
+#import "core_display.h"
 
 @implementation ConfigViewController
 
@@ -98,6 +99,7 @@ int dispRows;
 	else if (sender == largeLCD)
 	{
 		[[Settings instance] setLargeLCD:[sender isOn]];
+		[[navViewController calcViewController] resetLCD];
 	}
 }
 

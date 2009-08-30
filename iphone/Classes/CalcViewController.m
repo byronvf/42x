@@ -70,9 +70,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	if (flags.f.prgm_mode)
 		[viewCtrl.blitterView setNeedsDisplay];
 	else
-		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
-		// up dirtly bits just below the 4th row
-		[viewCtrl.blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + (height > 24 ? 3 : 0))];
+	{
+		int low = y/8;
+		int high = (y+height)/8;
+		[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
+	}
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
@@ -554,7 +556,19 @@ void shell_request_timeout3(int delay)
 	return YES;
 }
 
-- (void) twoLineDisp
+
+- (void) resetLCD
+{
+	// Initialize offsetDisp if we need to compensate for the top statusbar
+	[blitterView setStatusBarOffset:[[Settings instance] largeLCD] ? 0 : 20];
+	
+	if (dispRows < 4)
+		[self singleLCD];
+	else
+		[self doubleLCD];
+}
+
+- (void) singleLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
@@ -572,17 +586,17 @@ void shell_request_timeout3(int delay)
 	b06.enabled = TRUE;
 
 	CGPoint cent = blankButtonsView.center;
-	cent.y = 108;
+	cent.y = 120;
 	blankButtonsView.center = cent;
 
 	cent = menuView.center;
-	cent.y = 102;
+	cent.y = 121;
 	menuView.center = cent;
 	
-	[blitterView twoLineDisp];
+	[blitterView singleLCD];
 }
 
-- (void) fourLineDisp
+- (void) doubleLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
@@ -606,11 +620,11 @@ void shell_request_timeout3(int delay)
 	CGPoint cent;
 	
 	cent = menuView.center;
-	cent.y = 155;
+	cent.y = 174;
 	menuView.center = cent;
 
 	cent = blankButtonsView.center;
-	cent.y = 161;
+	cent.y = 174;
 	blankButtonsView.center = cent;
 	
 	[b07.superview bringSubviewToFront:b07];
@@ -620,7 +634,7 @@ void shell_request_timeout3(int delay)
 	[b11.superview bringSubviewToFront:b11];
 	[b12.superview bringSubviewToFront:b12];
 	
-	[blitterView fourLineDisp];	
+	[blitterView doubleLCD];	
 }
 
 /**
@@ -655,7 +669,7 @@ void shell_beeper(int frequency, int duration)
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	[[self view] setFrame:rect];
 	[[self view] setBounds:rect];
-	if (dispRows > 2) [self fourLineDisp];	
+	[self resetLCD];
 }
 
 - (void)dealloc {
