@@ -272,7 +272,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	if (rect.origin.y < ASTAT_HEIGHT + statusBarOffset)
+	// DispRows of 4 or 7 means that we are displaying in program mode with a largeLCD
+	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && [self shouldDisplayAnnunc])
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
@@ -290,8 +291,24 @@ char lastxbuf[LASTXBUF_SIZE];
 		// 3.0 - vert scale factor
 		
 		int hMax = ((rect.origin.y - (ASTAT_HEIGHT + statusBarOffset)) + rect.size.height)/vertScale + 1;
-		if (hMax > dispRows*8) hMax = dispRows*8;
-		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, ASTAT_HEIGHT + statusBarOffset,
+		// If in program mode just display the who thing, we don't try and be smart about
+		// the update region.
+		if (hMax > dispRows*8 || flags.f.prgm_mode) hMax = dispRows*8;
+		int vertoffset = statusBarOffset;
+		
+		if ([self shouldDisplayAnnunc])
+		{
+			vertoffset += ASTAT_HEIGHT;
+		}
+		else
+		{		
+			// If in program mode then create a little buffer at the top
+			if (dispRows == 7) vertoffset += 2;	
+			if (dispRows == 4) vertoffset += 5;
+			if (dispRows == 6) vertoffset += 2;
+		}
+		
+		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
@@ -300,6 +317,52 @@ char lastxbuf[LASTXBUF_SIZE];
 		CGRect borderLine = CGRectMake(0, 143, 320, 3);
 		CGContextFillRect(ctx, borderLine);
 	}	
+}
+
+
+/**
+ * Return true if we should display the annunciator status line, false otherwise. 
+ * In program mode we don't display the annuciator line, and use this space for 
+ * one additional line of program display.
+ */
+- (BOOL)shouldDisplayAnnunc
+{
+	if (flags.f.prgm_mode)
+	{
+		if ([[Settings instance] largeLCD]) return FALSE;
+		if (self.bounds.size.height > 100) return FALSE;
+		
+		// If we are useing smallLCD and the LCD is not expanded, then we WILL
+		// display the annuciator line for backward compatibility with HP-42S
+	}
+	return TRUE;
+}
+
+/*
+ * Set the number of display rows given the various display settings.  Free42
+ * will use dispRows to determine how many rows to render.
+ */
+- (void)setNumDisplayRows
+{
+	if ([[Settings instance] largeLCD])
+	{
+		dispRows = 3;
+		if (self.bounds.size.height > 100)
+			dispRows = 6;
+		if (flags.f.prgm_mode) dispRows += 1;		
+	}
+	else
+	{
+		dispRows = 2;
+		if (self.bounds.size.height > 100)
+		{
+			dispRows = 5;
+			if (flags.f.prgm_mode) 
+				dispRows = 6;
+		}
+	}
+	
+	redisplay();
 }
 
 /*
@@ -384,11 +447,11 @@ const int SCROLL_SPEED = 15;
 		// occurred while switching to four line mode, and pressing the "EXIT" key
 		// at the same time.
 		
-		if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows < 4)
+		if (firstTouch.y - [touch locationInView:self].y < -30 && self.bounds.size.height < 100)
 		{
 			[calcViewController doubleLCD];
 		}
-		else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
+		else if (firstTouch.y - [touch locationInView:self].y > 30 && self.bounds.size.height > 100)
 		{
 			[calcViewController singleLCD];
 		}	
@@ -410,9 +473,6 @@ const int SCROLL_SPEED = 15;
  */
 - (void) singleLCD
 {
-	dispRows = 2;
-	if ([[Settings instance] largeLCD]) dispRows = 3;
-	
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
@@ -420,7 +480,6 @@ const int SCROLL_SPEED = 15;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;
-	redisplay();
 	[self setNeedsDisplay];	
 }
 
@@ -429,19 +488,13 @@ const int SCROLL_SPEED = 15;
  */
 - (void) doubleLCD
 {
-	dispRows = 4;
-	if ([[Settings instance] largeLCD]) dispRows = 6;
-		
-	if (flags.f.prgm_mode) dispRows += 1;
-			
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 146;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
-	self.center = cent;
-	redisplay();
+	self.center = cent;	
 	[self setNeedsDisplay];
 }
 

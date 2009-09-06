@@ -357,14 +357,15 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		[self performSelector:@selector(keyTimerEvent1) withObject:NULL afterDelay:0.25];
 	}
 	
-	if (flags.f.prgm_mode && !old_prgm_mode && dispRows > 2)
+	if (flags.f.prgm_mode && !old_prgm_mode)
 	{
-		dispRows = 5;
-		redisplay();
+		[blitterView setNeedsDisplay];
+		[blitterView setNumDisplayRows];
 	}
-	else if (!flags.f.prgm_mode && old_prgm_mode && dispRows > 2)
+	else if (!flags.f.prgm_mode && old_prgm_mode)
 	{
-		dispRows = 4;
+		[blitterView setNeedsDisplay];
+		[blitterView setNumDisplayRows];
 	}	
 	
 	[self handlePopupKeyboard:FALSE];	
@@ -572,10 +573,15 @@ void shell_request_timeout3(int delay)
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
+	
+	
+	[blitterView singleLCD];
+	[blitterView setNumDisplayRows];
+		
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
-	cmdline_row = 1;
+	cmdline_row = dispRows-1;
 	if (!menuKeys) cmdline_row--;
 	
 	b01.enabled = TRUE;
@@ -592,20 +598,22 @@ void shell_request_timeout3(int delay)
 	cent = menuView.center;
 	cent.y = 121;
 	menuView.center = cent;
-	
-	[blitterView singleLCD];
 }
 
 - (void) doubleLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
+	
+	[blitterView doubleLCD];	
+	[blitterView setNumDisplayRows];
+	
 	// If we are entering something then change the line
-	// with the display.  Free42 uses this  to track the current row
+	// with the display.  Free42 uses this to track the current row
 	// for entry.
 	if (!flags.f.prgm_mode)
 	{
-		cmdline_row = 3;
+		cmdline_row = dispRows-1;
 		// If we have on LCD menu then the cmdline row is above the menu
 		if (!menuKeys) cmdline_row--;
 	}
@@ -632,9 +640,7 @@ void shell_request_timeout3(int delay)
 	[b09.superview bringSubviewToFront:b09];
 	[b10.superview bringSubviewToFront:b10];
 	[b11.superview bringSubviewToFront:b11];
-	[b12.superview bringSubviewToFront:b12];
-	
-	[blitterView doubleLCD];	
+	[b12.superview bringSubviewToFront:b12];	
 }
 
 /**

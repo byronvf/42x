@@ -57,7 +57,9 @@ extern char lastxbuf[LASTXBUF_SIZE];
 - (void) shouldCutPaste;
 - (void) showEditMenu;
 - (void) drawLastX;
-- (void)setDisplayUpdateRow:(int) l h:(int) h;
-- (float)getDispVertScale;
+- (void) setDisplayUpdateRow:(int) l h:(int) h;
+- (float) getDispVertScale;
+- (void) setNumDisplayRows;
+- (BOOL) shouldDisplayAnnunc;
 
 @end
