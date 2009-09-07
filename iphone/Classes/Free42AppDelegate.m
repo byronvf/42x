@@ -39,7 +39,7 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 2;
+static const int PERSIST_VERSION = 3;
 
 // Persist version stored
 static int persistVersion = 0;
@@ -119,14 +119,14 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		if (bufsize == 816)
+		if (bufsize == 1088)
 		{
 			// We do this to convert the file state format from the old version
 			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 544);
-			readCnt += 816;
-			return 816;
+			memset((char*)buf+272, 0, 816);
+			readCnt += 1088;
+			return 1088;
 		}
 
 		int n = read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
@@ -134,7 +134,20 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 		return n;
 	}
 	
-
+	if (persistVersion < 3 && bufsize == 1088)
+	{
+		int4 n = fread(buf, 1, 816, statefile);
+		if (n != 816 && ferror(statefile)) 
+		{
+			fclose(statefile);
+			statefile = NULL;
+			return -1;
+		} 
+        memset((char*)buf+816, 0, 272);
+		readCnt += 1088;
+		return 1088;
+	}
+	
     if (statefile == NULL)
 		return -1;
     else 

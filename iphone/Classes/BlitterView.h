@@ -61,5 +61,6 @@ extern char lastxbuf[LASTXBUF_SIZE];
 - (float) getDispVertScale;
 - (void) setNumDisplayRows;
 - (BOOL) shouldDisplayAnnunc;
+- (void)drawScrollBar;
 
 @end

@@ -71,6 +71,17 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	[blitterView annuncNeedsDisplay];
 }
 
+static int num_prgm_lines() {
+    int4 pc = 0;
+    int4 lines = 1;
+    prgm_struct *prgm = prgms + current_prgm;	
+    while (prgm->text[pc] != CMD_END) {
+		pc += get_command_length(current_prgm, pc);
+		lines++;
+    }
+	return lines;
+}
+
 
 void core_copy_reg(char *buf, int buflen, vartype *reg) {
     int len = vartype2string(reg, buf, buflen - 1);
@@ -117,6 +128,9 @@ char lastxbuf[LASTXBUF_SIZE];
 	
 	baseRowHighlight = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24); // Hightlight for x region
 	
+	//[self setContentSize:CGSizeMake(320, 480)];
+	//[self setContentOffset:CGPointMake(0, 240) animated:FALSE];
+	
 	[self setXHighlight];
 	firstTouch.x = -1;
 	[self shouldCutPaste];
@@ -124,9 +138,6 @@ char lastxbuf[LASTXBUF_SIZE];
 
 - (void) annuncNeedsDisplay
 {
-	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, ASTAT_HEIGHT)];
-	
 	if (flagShift)
 		[[calcViewController b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
 	else
@@ -136,6 +147,11 @@ char lastxbuf[LASTXBUF_SIZE];
 		[[calcViewController updnGlowView] setHidden:FALSE];
 	else
 		[[calcViewController updnGlowView] setHidden:TRUE];	
+	
+	
+	// Only update the flags region of the display
+	if ([self shouldDisplayAnnunc])
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, ASTAT_HEIGHT)];
 }
 
 /**
@@ -316,9 +332,46 @@ char lastxbuf[LASTXBUF_SIZE];
 	{
 		CGRect borderLine = CGRectMake(0, 143, 320, 3);
 		CGContextFillRect(ctx, borderLine);
-	}	
+	}
+	
+	if (flags.f.prgm_mode) [self drawScrollBar];
 }
 
+/**
+ * Display the right hand scroll bar used to indicate the current window position
+ * in program mode.
+ */
+- (void)drawScrollBar
+{
+	NSAssert(free42init, @"Free42 has not been initialized");
+	
+	int insetTop = 2;
+	int insetBot = 5;
+	
+	int offset = insetTop;
+	int fullheight = self.bounds.size.height - (insetTop + insetBot);
+	int barheight = fullheight;
+	
+	if (![[Settings instance] largeLCD])
+	{	
+		offset += 20;
+		fullheight -= 20;
+	}
+
+	int lines = num_prgm_lines() + 1;
+	if (dispRows < lines)
+		barheight = dispRows*fullheight/lines;
+
+	int startline = pc2line(pc) - prgm_highlight_row;
+	if (startline < 0) startline = 0;  // This shoudn't happen, but just in case
+	offset += startline*fullheight/lines;
+			
+	CGRect bar = CGRectMake(313, offset, 5, barheight);
+	
+	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.40);	
+	CGContextFillRect(ctx, bar);	
+}
 
 /**
  * Return true if we should display the annunciator status line, false otherwise. 
@@ -327,6 +380,7 @@ char lastxbuf[LASTXBUF_SIZE];
  */
 - (BOOL)shouldDisplayAnnunc
 {
+	NSAssert(free42init, @"Free42 has not been initialized");
 	if (flags.f.prgm_mode)
 	{
 		if ([[Settings instance] largeLCD]) return FALSE;
@@ -387,10 +441,10 @@ char lastxbuf[LASTXBUF_SIZE];
 
 - (float)getDispVertScale
 {
-	float vertScale = 3.0;
-	if (dispRows == 3) vertScale = 2.8;
-	else if (dispRows > 3) vertScale = 2.5;
-
+	float vertScale = 2.5;
+	if (dispRows == 2) vertScale = 3.0;
+	else if (dispRows == 3) vertScale = 2.8;
+	
 	return vertScale;
 }
 
