@@ -482,7 +482,7 @@ const int SCROLL_SPEED = 15;
 			}
 			else
 			{
-				for (int i=0; i< (mode_bigstack? 19: 3); i++)
+				for (int i=0; i< stacksize-1; i++)
 				{
 					keydown(0, 9);
 					core_keyup();
@@ -573,17 +573,17 @@ char cbuf[30];
 			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
 			NSString *str = NULL;
 
-			if (dispRows > 5)
+			if (dispRows > 5 && bigstack_head != NULL && bigstack_head->next != NULL)
 			{
-				core_copy_reg(cbuf, 30, reg_1);
+				core_copy_reg(cbuf, 30, bigstack_head->next->var);
 				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 				[nums appendString:str];
 				[nums appendString:@"\n"];
 			}
 
-			if (dispRows > 4)
+			if (dispRows > 4 && bigstack_head != NULL)
 			{
-				core_copy_reg(cbuf, 30, reg_0);
+				core_copy_reg(cbuf, 30, bigstack_head->var);
 				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 				[nums appendString:str];
 				[nums appendString:@"\n"];

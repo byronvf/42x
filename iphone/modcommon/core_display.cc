@@ -1156,9 +1156,10 @@ void display_t(int row) {
 
 void display_0(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_0, buf, 20);
+    if (bigstack_head != NULL)	
+	len = vartype2string(bigstack_head->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {
 		draw_string(2, row, buf, 19);
@@ -1169,9 +1170,10 @@ void display_0(int row) {
 
 void display_1(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_1, buf, 20);
+    if (bigstack_head != NULL && bigstack_head->next != NULL)
+	len = vartype2string(bigstack_head->next->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {
 		draw_string(2, row, buf, 19);
@@ -1443,7 +1445,11 @@ static int fcn_cat[] = {
     CMD_CLST,     CMD_CLV,       CMD_CLX,      CMD_CLSIGMA,    CMD_COMB,    CMD_COMPLEX,
     CMD_CORR,     CMD_COS,       CMD_COSH,     CMD_CPXRES,     CMD_CPX_T,   CMD_CROSS,
     CMD_CUSTOM,   CMD_DECM,      CMD_DEG,      CMD_DEL,        CMD_DELAY,   CMD_DELR,
-    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,        CMD_DSE,     CMD_EDIT,
+    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,   
+#ifdef BIGSTACK
+    CMD_DROP,
+#endif
+    CMD_DSE,     CMD_EDIT,
     CMD_EDITN,    CMD_END,       CMD_ENG,      CMD_ENTER,      CMD_EXITALL, CMD_EXPF,
     CMD_E_POW_X,  CMD_E_POW_X_1, CMD_FC_T,     CMD_FCC_T,      CMD_FCSTX,   CMD_FCSTY,
     CMD_FIX,      CMD_FNRM,      CMD_FP,       CMD_FS_T,       CMD_FSC_T,   CMD_GAMMA,

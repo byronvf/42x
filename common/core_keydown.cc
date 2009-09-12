@@ -93,7 +93,18 @@ static void view(const char *varname, int varlength) {
     }
 }
 
+#ifdef BIGSTACK
+/* Wrapper so we can capture the last pending command needed to detect
+   double tap of BSP for DROP functionality */
+extern void keydown_wrap(int, int);
+void keydown(int shift, int key) {    
+    keydown_wrap(shift, key);    
+    last_pending_command = pending_command;
+}
+void keydown_wrap(int shift, int key) {    
+#else
 void keydown(int shift, int key) {
+#endif
     int *menu;
 
     pending_command = CMD_NONE;
@@ -283,6 +294,10 @@ void keydown(int shift, int key) {
 	keydown_alpha_mode(shift, key);
     else
 	keydown_normal_mode(shift, key);
+
+    #if BIGSTACK	
+       last_pending_command = pending_command;
+    #endif    
 }
 
 void keydown_number_entry(int shift, int key) {
@@ -1791,10 +1806,7 @@ void keydown_normal_mode(int shift, int key) {
 	    if (!flags.f.stack_lift_disable) {
 #ifdef BIGSTACK
                 if (mode_bigstack)
-                {
-                    free_vartype(reg_top);
-                    SHIFT_BIG_STACK_UP
-                }
+                    shift_big_stack_up();
                 else
                     free_vartype(reg_t);
 #else
@@ -2331,7 +2343,11 @@ void keydown_normal_mode(int shift, int key) {
 	    case KEY_ENTER: command = CMD_ENTER; break;
 	    case KEY_SWAP: command = CMD_SWAP; break;
 	    case KEY_CHS: command = basekeys() ? CMD_BASECHS : CMD_CHS; break;
+#ifdef BIGSTACK			
+	    case KEY_BSP: command = CMD_CLX; if (last_pending_command == CMD_CLX) command = CMD_DROP; break;
+#else			
 	    case KEY_BSP: command = CMD_CLX; break;
+#endif			
 	    case KEY_DIV: command = basekeys() ? CMD_BASEDIV : CMD_DIV; break;
 	    case KEY_DOWN: command = CMD_SST; break;
 	    case KEY_MUL: command = basekeys() ? CMD_BASEMUL : CMD_MUL; break;

@@ -46,8 +46,7 @@ int docmd_enter(arg_struct *arg) {
 #ifdef BIGSTACK
     if (mode_bigstack)
     {
-	free_vartype(reg_top);
-	SHIFT_BIG_STACK_UP
+	shift_big_stack_up();
     }
     else
 	free_vartype(reg_t);
@@ -70,6 +69,18 @@ int docmd_swap(arg_struct *arg) {
     return ERR_NONE;
 }
 
+#ifdef BIGSTACK
+int docmd_drop(arg_struct *arg)
+{
+    free_vartype(reg_x);
+    reg_x = reg_y;
+    reg_y = reg_z;
+    reg_z = reg_t;
+    shift_big_stack_down();
+    return ERR_NONE;
+}
+#endif	
+
 int docmd_rdn(arg_struct *arg) {
     vartype *temp = reg_x;
     reg_x = reg_y;
@@ -78,8 +89,19 @@ int docmd_rdn(arg_struct *arg) {
 #ifdef BIGSTACK
     if (mode_bigstack)
     {
-	SHIFT_BIG_STACK_DOWN;
-	reg_top = temp;
+	if (bigstack_head == NULL) {
+	    reg_t = temp;
+	} else {
+	    stack_item *si = bigstack_head;
+	    reg_t = si->var;
+	    while(si->next != NULL)
+		si = si->next;
+	    si->next = new_stack_item(temp);
+	    si->next->next = NULL;
+	    si = bigstack_head;
+	    bigstack_head = bigstack_head->next;
+	    free_stack_item(si);
+	}
     }
     else
 	reg_t = temp;
@@ -207,8 +229,7 @@ int docmd_complex(arg_struct *arg) {
 	    if (mode_bigstack)
 	    {
 		reg_z = reg_t;
-		SHIFT_BIG_STACK_DOWN
-		reg_top = dup_vartype(reg_top);
+		shift_big_stack_down();
 	    }
 	    else
 		reg_z = dup_vartype(reg_t);
@@ -229,10 +250,7 @@ int docmd_complex(arg_struct *arg) {
 	    reg_lastx = reg_x;
 #ifdef BIGSTACK
 	    if (mode_bigstack)
-	    {
-		free_vartype(reg_top);
-		SHIFT_BIG_STACK_UP
-	    }
+		shift_big_stack_up();
 	    else
 		free_vartype(reg_t);
 #else
@@ -304,8 +322,7 @@ int docmd_complex(arg_struct *arg) {
 		if (mode_bigstack)
 		{
 		    reg_z = reg_t;
-		    SHIFT_BIG_STACK_DOWN
-		    reg_top = dup_vartype(reg_top);
+		    shift_big_stack_down();
 		}
 		else
 		    reg_z = dup_vartype(reg_t);
@@ -353,10 +370,7 @@ int docmd_complex(arg_struct *arg) {
 	    reg_lastx = reg_x;
 #ifdef BIGSTACK
 	    if (mode_bigstack)
-	    {
-		free_vartype(reg_top);
-		SHIFT_BIG_STACK_UP
-	    }
+		shift_big_stack_up();
 	    else
 		free_vartype(reg_t);
 #else
@@ -742,47 +756,20 @@ int docmd_clv(arg_struct *arg) {
 }
 
 int docmd_clst(arg_struct *arg) {
-#ifdef BIGSTACK
-	if (mode_bigstack)
-	{
-		free_vartype(reg_top);
-		free_vartype(reg_14);
-		free_vartype(reg_13);
-		free_vartype(reg_12);
-		free_vartype(reg_11);
-		free_vartype(reg_10);
-		free_vartype(reg_9);
-		free_vartype(reg_8);
-		free_vartype(reg_7);
-		free_vartype(reg_6);
-		free_vartype(reg_5);
-		free_vartype(reg_4);
-		free_vartype(reg_3);
-		free_vartype(reg_2);
-		free_vartype(reg_1);
-		free_vartype(reg_0);
-		reg_0 = new_real(0);
-		reg_1 = new_real(0);
-		reg_2 = new_real(0);
-		reg_3 = new_real(0);
-		reg_4 = new_real(0);
-		reg_5 = new_real(0);
-		reg_6 = new_real(0);
-		reg_7 = new_real(0);
-		reg_8 = new_real(0);
-		reg_9 = new_real(0);
-		reg_10 = new_real(0);
-		reg_11 = new_real(0);
-		reg_12 = new_real(0);
-		reg_13 = new_real(0);
-		reg_14 = new_real(0);
-		reg_top = new_real(0);
-	}
-#endif
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);
     free_vartype(reg_t);
+#ifdef BIGSTACK
+	if (mode_bigstack)
+	{
+	    while(bigstack_head != NULL)
+	    {		
+		shift_big_stack_down();
+		free_vartype(reg_t);
+	    }	    
+	}
+#endif
     reg_x = new_real(0);
     reg_y = new_real(0);
     reg_z = new_real(0);
@@ -853,44 +840,17 @@ int docmd_clall(arg_struct *arg) {
     vartype *regs;
 
     /* Clear all registers */
-#ifdef BIGSTACK
-    free_vartype(reg_top);
-    free_vartype(reg_14);
-    free_vartype(reg_13);
-    free_vartype(reg_12);
-    free_vartype(reg_11);
-    free_vartype(reg_10);
-    free_vartype(reg_9);
-    free_vartype(reg_8);
-    free_vartype(reg_7);
-    free_vartype(reg_6);
-    free_vartype(reg_5);
-    free_vartype(reg_4);
-    free_vartype(reg_3);
-    free_vartype(reg_2);
-    free_vartype(reg_1);
-    free_vartype(reg_0);
-    reg_0 = new_real(0);
-    reg_1 = new_real(0);
-    reg_2 = new_real(0);
-    reg_3 = new_real(0);
-    reg_4 = new_real(0);
-    reg_5 = new_real(0);
-    reg_6 = new_real(0);
-    reg_7 = new_real(0);
-    reg_8 = new_real(0);
-    reg_9 = new_real(0);
-    reg_10 = new_real(0);
-    reg_11 = new_real(0);
-    reg_12 = new_real(0);
-    reg_13 = new_real(0);
-    reg_14 = new_real(0);
-    reg_top = new_real(0);    
-#endif
     free_vartype(reg_x);
     free_vartype(reg_y);
     free_vartype(reg_z);
     free_vartype(reg_t);
+#ifdef BIGSTACK
+    while(bigstack_head != NULL)
+    {
+	shift_big_stack_down();
+	free_vartype(reg_t);
+    }
+#endif
     free_vartype(reg_lastx);
     reg_x = new_real(0);
     reg_y = new_real(0);

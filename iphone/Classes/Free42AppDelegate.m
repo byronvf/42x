@@ -39,7 +39,7 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 3;
+static const int PERSIST_VERSION = 4;
 
 // Persist version stored
 static int persistVersion = 0;
@@ -306,7 +306,9 @@ NSString* CONFIG_LARGE_LCD = @"largelcd";
 		// FREE42_VERSION 11, pre bigstack
 		if (persistVersion < 2)
 			core_init(1, 11);
-	    else
+	    else if (persistVersion == 3)
+			core_init(1, 12);
+		else
 			core_init(1, FREE42_VERSION);
 	}
 	free42init = TRUE;

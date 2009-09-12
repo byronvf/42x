@@ -1289,40 +1289,18 @@ int docmd_prstk(arg_struct *arg) {
     shell_annunciators(-1, -1, 1, -1, -1, -1);
     print_text(NULL, 0, 1);
 #if BIGSTACK
-    if (mode_bigstack)
+    if (mode_bigstack && bigstack_head != NULL)
     {
-	len = vartype2string(reg_top, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_14, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_13, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_12, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_11, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_10, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_9, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_8, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_7, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_6, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_5, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_4, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_3, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_2, buf, 100);
-	print_wide("~=", 2, buf, len);
-	len = vartype2string(reg_1, buf, 100);
-	print_wide("1=", 2, buf, len);
-	len = vartype2string(reg_0, buf, 100);
-	print_wide("0=", 2, buf, len);
+	vartype* lastvar = NULL;
+	stack_item *si = NULL;
+	while(si != bigstack_head) {
+	  si = bigstack_head;
+	  while(si->next != NULL && si->next->var != lastvar)
+	      si = si->next;
+	  lastvar = si->var;
+	  len = vartype2string(lastvar, buf, 100);
+	  print_wide("~=", 2, buf, len);
+  	}
     }	 
 #endif
     len = vartype2string(reg_t, buf, 100);
@@ -1633,10 +1611,7 @@ int docmd_number(arg_struct *arg) {
     else {
 #ifdef BIGSTACK
 	if (mode_bigstack)
-	{
-	    free_vartype(reg_top);
-	    SHIFT_BIG_STACK_UP
-	}
+	    shift_big_stack_up();
 	else
 	    free_vartype(reg_t);
 #else
@@ -1744,8 +1719,18 @@ int docmd_rup(arg_struct *arg) {
 #ifdef BIGSTACK
     if (mode_bigstack)
     {
-	reg_x = reg_top;
-	SHIFT_BIG_STACK_UP
+	if (bigstack_head == NULL) {
+	    reg_x = reg_t;
+	} else {
+	    stack_item *si = new_stack_item(reg_t);
+	    si->next = bigstack_head;
+	    bigstack_head = si;
+	    while (si->next->next != NULL)
+		si = si->next;
+	    reg_x = si->next->var;
+	    free_stack_item(si->next);
+	    si->next == NULL;
+	}
     }
     else
 	reg_x = reg_t;
@@ -1800,10 +1785,7 @@ int docmd_dim_t(arg_struct *arg) {
     reg_lastx = reg_x;
 #if BIGSTACK
     if (mode_bigstack)
-    {
-	free_vartype(reg_top);
-	SHIFT_BIG_STACK_UP
-    }
+	shift_big_stack_up();
     else
 	free_vartype(reg_t);
 #else
