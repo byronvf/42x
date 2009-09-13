@@ -150,8 +150,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	
 	
 	// Only update the flags region of the display
-	if ([self shouldDisplayAnnunc])
-		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, ASTAT_HEIGHT)];
+	[self annuciatorNeedsUpdate];
 }
 
 /**
@@ -390,6 +389,19 @@ char lastxbuf[LASTXBUF_SIZE];
 		// display the annuciator line for backward compatibility with HP-42S
 	}
 	return TRUE;
+}
+
+
+- (void)annuciatorNeedsUpdate
+{
+	if ([self shouldDisplayAnnunc])
+	{
+		int v = ASTAT_HEIGHT;
+		// If we are not int largeLCD mode, then include the iphone statusbar region
+		if (![[Settings instance] largeLCD]) v += 20;
+			
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, v)];
+	}
 }
 
 /*

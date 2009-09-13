@@ -2913,6 +2913,7 @@ stack_item* new_stack_item(vartype* v) {
 	stack_item_pool = stack_item_pool->next;
     }
     si->var = v;
+	si->next = NULL;
 	return si;
 }
 
