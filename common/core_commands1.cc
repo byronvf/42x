@@ -76,7 +76,10 @@ int docmd_drop(arg_struct *arg)
     reg_x = reg_y;
     reg_y = reg_z;
     reg_z = reg_t;
-    shift_big_stack_down();
+    if (mode_bigstack)
+	shift_big_stack_down();
+    else
+	reg_t = dup_vartype(reg_t);
     return ERR_NONE;
 }
 #endif	
