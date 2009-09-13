@@ -2962,6 +2962,7 @@ void shift_big_stack_up() {
 	    si = bigstack_head;
 	    while (si->next->next != NULL)
 		si = si->next;
+		free_vartype(si->next->var);
 	    free_stack_item(si->next);
 	    si->next = NULL;
 	    stacksize--;
