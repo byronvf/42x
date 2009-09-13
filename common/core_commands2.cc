@@ -1725,15 +1725,21 @@ int docmd_rup(arg_struct *arg) {
 	    stack_item *si = new_stack_item(reg_t);
 	    si->next = bigstack_head;
 	    bigstack_head = si;
-	    while (si->next->next != NULL)
-		si = si->next;
-	    reg_x = si->next->var;
-	    free_stack_item(si->next);
-	    si->next == NULL;
+	    stack_item *prevsi = si;
+	    while (si->next != NULL) {
+		prevsi = si;
+	    si = si->next;
+	    }
+	    assert(si != prevsi);
+	    prevsi->next = NULL;
+	    reg_x = si->var;
+	    free_stack_item(si);
 	}
     }
     else
 	reg_x = reg_t;
+	
+    assert(big_stack_verify() == 0);	
 #else
     reg_x = reg_t;
 #endif

@@ -87,6 +87,7 @@ int docmd_rdn(arg_struct *arg) {
     reg_y = reg_z;
     reg_z = reg_t;
 #ifdef BIGSTACK
+	assert(big_stack_verify() == 0);
     if (mode_bigstack)
     {
 	if (bigstack_head == NULL) {
@@ -105,6 +106,8 @@ int docmd_rdn(arg_struct *arg) {
     }
     else
 	reg_t = temp;
+	
+	assert(big_stack_verify() == 0);
 #else
     reg_t = temp;
 #endif
@@ -769,6 +772,7 @@ int docmd_clst(arg_struct *arg) {
 		free_vartype(reg_t);
 	    }	    
 	}
+    assert(big_stack_verify() == 0);
 #endif
     reg_x = new_real(0);
     reg_y = new_real(0);

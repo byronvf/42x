@@ -2902,7 +2902,8 @@ static bool convert_programs() {
 
 #ifdef BIGSTACK
 
-static stack_item* stack_item_pool = NULL; 
+static stack_item* stack_item_pool = NULL;
+static int MAX_STACK_SIZE = 40;
 
 stack_item* new_stack_item(vartype* v) {
     stack_item* si = NULL;
@@ -2910,16 +2911,40 @@ stack_item* new_stack_item(vartype* v) {
 	si = (stack_item*)malloc(sizeof(stack_item));
     else {	
 	si = stack_item_pool;
-	stack_item_pool = stack_item_pool->next;
+	stack_item_pool = si->next;
     }
     si->var = v;
-	si->next = NULL;
-	return si;
+    si->next = NULL;
+    return si;
 }
 
 void free_stack_item(stack_item* si) {
-    si->next = stack_item_pool;
+    si->next = stack_item_pool;	
     stack_item_pool = si;    
+	si->var = NULL;
+}
+
+/* Debug method to verify the integrity of the stack */
+int big_stack_verify() {
+	stack_item *si = bigstack_head;
+	int size = 0;
+	while (si != NULL) {
+	    si = si->next;
+	    size++;
+	    /* If size is crazy big then we are probably in an infinite loop. */
+	    if (size > MAX_STACK_SIZE*10) {
+			return 1;
+		}
+	}
+	size += 4;
+	if (size != stacksize) {
+		return 2;
+	}
+	if (size > MAX_STACK_SIZE)  {
+		return 3;
+	}
+	
+	return 0;
 }
 
 void shift_big_stack_up() {
@@ -2929,9 +2954,26 @@ void shift_big_stack_up() {
 	si->next = bigstack_head;
 	bigstack_head = si;
 	stacksize++;
+	
+	if (stacksize > MAX_STACK_SIZE) {
+	    /* Stack has grown too big, so remove last element, not
+	       the most efficient method, but well behaving programs
+	       should not trash the stack either */
+	    si = bigstack_head;
+	    while (si->next->next != NULL)
+		si = si->next;
+	    free_stack_item(si->next);
+	    si->next = NULL;
+	    stacksize--;
+	    assert(stacksize == MAX_STACK_SIZE);
+	}	
     }
-	else
-		free_vartype(reg_t);
+    else {
+	/* We can't move reg_t into the extended stack so we free it
+	   here, calling code depends on this behavior */
+	free_vartype(reg_t);
+    }
+	assert(big_stack_verify() == 0);    
 }
 
 void shift_big_stack_down() {
@@ -2946,6 +2988,7 @@ void shift_big_stack_down() {
 	free_stack_item(si);
 	stacksize--;
     }
+    assert(big_stack_verify() == 0);    
 }
 
 void clean_stack_item_pool() {

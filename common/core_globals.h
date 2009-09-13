@@ -278,7 +278,7 @@ void free_stack_item(stack_item* si) GLOBALS_SECT;
 void shift_big_stack_up() GLOBALS_SECT;
 void shift_big_stack_down() GLOBALS_SECT;
 void clean_stack_item_pool() GLOBALS_SECT;
-
+int big_stack_verify() GLOBALS_SECT;
 #endif
 
 /******************/
