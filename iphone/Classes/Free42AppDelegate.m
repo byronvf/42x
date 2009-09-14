@@ -119,14 +119,14 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		if (bufsize == 1088)
+		if (bufsize == 1360)
 		{
 			// We do this to convert the file state format from the old version
 			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 816);
-			readCnt += 1088;
-			return 1088;
+			memset((char*)buf+272, 0, 1088);
+			readCnt += 1360;
+			return 1360;
 		}
 
 		int n = read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
@@ -134,7 +134,7 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 		return n;
 	}
 	
-	if (persistVersion < 3 && bufsize == 1088)
+    if (persistVersion < 3 && bufsize == 1360)
 	{
 		int4 n = fread(buf, 1, 816, statefile);
 		if (n != 816 && ferror(statefile)) 
@@ -143,9 +143,9 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 			statefile = NULL;
 			return -1;
 		} 
-        memset((char*)buf+816, 0, 272);
-		readCnt += 1088;
-		return 1088;
+        memset((char*)buf+816, 0, 544);
+		readCnt += 1360;
+		return 1360;
 	}
 	
     if (statefile == NULL)
