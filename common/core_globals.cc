@@ -591,6 +591,8 @@ int stacksize = 4;  /* stack size is always at least 4 */
 int last_pending_command = CMD_NONE;
 #endif
 
+bool cllcd_cmd = false;
+
 phloat entered_number;
 int entered_string_length;
 char entered_string[15];

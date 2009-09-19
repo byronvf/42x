@@ -452,6 +452,9 @@ extern bool mode_bigstack;
 extern int stacksize;
 #endif
 
+// Indicates if we are currently executing the cllcd command
+extern bool cllcd_cmd;
+
 extern phloat entered_number;
 extern int entered_string_length;
 extern char entered_string[15];

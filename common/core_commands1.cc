@@ -833,8 +833,8 @@ int docmd_clkeys(arg_struct *arg) {
 int docmd_cllcd(arg_struct *arg) {
     clear_display();
     flush_display();
-    flags.f.message = 1;
-    flags.f.two_line_message = 1;
+	// Indicate to redisplay() not to draw anything.
+	cllcd_cmd = true;
     return ERR_NONE;
 }
 
