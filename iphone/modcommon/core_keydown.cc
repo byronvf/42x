@@ -27,10 +27,12 @@
 #include "core_tables.h"
 #include "core_variables.h"
 #include "shell.h"
+#include "core_globals.h"
 
 // Place this here for now so we don't have to modify many files
 extern int menuKeys;
 extern int dispRows;
+extern bool ignore_menu;
 
 // New methods from core_display
 extern void display_t(int);
@@ -331,12 +333,13 @@ void keydown(int shift, int key) {
     }
 
     if (flags.f.prgm_mode && (key == KEY_UP || key == KEY_DOWN)
-	    && (shift || get_front_menu() == NULL)) {
+	    && (shift || ignore_menu || get_front_menu() == NULL)) {
 	/* Stepping through the program in prgm mode */
 	if (flags.f.prgm_mode && mode_alpha_entry)
 	    finish_alpha_prgm_line();
 	clear_all_rtns();
-        int tmpline = prgm_highlight_row;
+	/* bst and sst assume 2 line display, so we use tmpline to work around this */
+	int tmpline = prgm_highlight_row;
 	if (key == KEY_UP) {
             tmpline--;
 	    bst();

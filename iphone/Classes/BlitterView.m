@@ -20,6 +20,8 @@
 #import "core_main.h"
 #import "core_display.h"
 #import "core_globals.h"
+#import "core_commands1.h"
+#import "core_commands2.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -27,6 +29,8 @@
 #import "Settings.h"
 #import "core_helpers.h"
 #import "shell_spool.h"
+
+BOOL ignore_menu = FALSE;
 
 // Reference to this blitter so we can access from C methods
 static BlitterView *blitterView = NULL; 
@@ -53,6 +57,41 @@ BOOL setFlag(BOOL flag, int code)
 	else // flag == -1
 		return flag;
 }
+
+void swipevert(BOOL up)
+{
+	if (flags.f.prgm_mode)
+	{
+		if (up)
+		{
+			ignore_menu = TRUE;
+			keydown(0, 23); // KEY_DWN
+			core_keyup();
+			ignore_menu = FALSE;
+		}
+		else
+		{
+			ignore_menu = TRUE;
+			keydown(0, 18);  // KEY_UP
+			core_keyup();
+			ignore_menu = FALSE;
+		}
+	}		
+	else
+	{
+		if (up)
+		{
+			keydown(0, 9);			
+			core_keyup();
+		}
+		else
+		{
+			keydown(0, 9);			
+			pending_command = CMD_RUP;
+			core_keyup();
+		}
+	}
+}	
 
 void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 {
@@ -481,17 +520,13 @@ const int SCROLL_SPEED = 15;
 		int len = newPoint.y - firstTouch.y;
 		if (len > SCROLL_SPEED)
 		{
-			keydown(0, flags.f.prgm_mode ? 23 : 9);
-			core_keyup();
+			swipevert(TRUE);
 			len -= SCROLL_SPEED;
 		}
 		else if (len < -SCROLL_SPEED)
 		{
-			if (flags.f.prgm_mode)
-			{
-				keydown(0, 18);
-				core_keyup();
-			}
+			swipevert(FALSE);
+			/*
 			else
 			{
 				for (int i=0; i< stacksize-1; i++)
@@ -500,6 +535,7 @@ const int SCROLL_SPEED = 15;
 					core_keyup();
 				}
 			}				
+			 */
 			len += SCROLL_SPEED;	
 		}
 				
