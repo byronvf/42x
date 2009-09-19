@@ -39,6 +39,39 @@ int enqueued = FALSE;
 int callKeydownAgain = FALSE;
 bool timer3active = FALSE;  // Keep track if the timer3 event is currently pending
 
+/**
+ *  This is a copy from core_main.c to handle multiple lines.  The change 
+ *  is that we never redisplay in row 1 when not in dispRow > 2.  We need
+ *  this to currectly display commands when the key is held down.  We make 
+ *  a copy of it here, because multi line display code has not been intergrated
+ *  into Free42 yet.  In fact, with overlay menus, it's never necessary to display
+ *  the second row.
+ */
+void my_core_keytimeout1() {
+    if (pending_command == CMD_LINGER1 || pending_command == CMD_LINGER2)
+		return;
+    if (pending_command == CMD_RUN || pending_command == CMD_SST) {
+		int saved_pending_command = pending_command;
+		if (pc == -1)
+			pc = 0;
+		prgm_highlight_row = 1;
+		flags.f.prgm_mode = 2; /* HACK - magic value to tell redisplay() */
+		/* not to suppress option menu highlights */
+		pending_command = CMD_NONE;
+		redisplay();
+		flags.f.prgm_mode = 0;
+		pending_command = saved_pending_command;
+    } else if (pending_command != CMD_NONE && pending_command != CMD_CANCELLED
+			   && (cmdlist(pending_command)->flags & FLAG_NO_SHOW) == 0) {
+		display_command(0);
+		/* If the program catalog was left up by GTO or XEQ,
+		 * don't paint over it */
+		if (!dispRows > 2 && (mode_transientmenu == MENU_NONE || pending_command == CMD_NULL))
+			display_x(1);
+		flush_display();
+    }
+}
+
 /*
  This handler gets called whenever the run loop is about to sleep.  We us it to try
  and do a better job at executing free42 programs, and handling key events.
@@ -456,7 +489,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 - (void)keyTimerEvent1
 {
 	[self cancelKeyTimer];
-	core_keytimeout1();
+	my_core_keytimeout1();
 	[self performSelector:@selector(keyTimerEvent2) withObject:NULL afterDelay:2.0];
 }
 

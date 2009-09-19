@@ -58,10 +58,19 @@ BOOL setFlag(BOOL flag, int code)
 		return flag;
 }
 
+/* 
+ * Handle swiping vertically on the right side of the display. We could call methods
+ * at a finer grain, for example docmd_rup, or sst(), but there is additional logic
+ * we need in keydown and keyup, for example exiting number_entry_mode.
+ */
 void swipevert(BOOL up)
 {
 	if (flags.f.prgm_mode)
 	{
+		// We are in program mode, we want to set ingore_menu to true so that
+		// the keydown method ignores the case the menu is up, which would normally
+		// be interpredted as a change in menu for key up or down. However, 
+		// we want scrolling to work even when the menu is up.
 		if (up)
 		{
 			ignore_menu = TRUE;
@@ -86,7 +95,9 @@ void swipevert(BOOL up)
 		}
 		else
 		{
-			keydown(0, 9);			
+			keydown(0, 9);
+			// Change the pending command to roll up, so the docmd_rup method is called
+			// internally.
 			pending_command = CMD_RUP;
 			core_keyup();
 		}
