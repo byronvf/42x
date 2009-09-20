@@ -363,7 +363,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound(1105);
 	
 	int keynum = (int)[sender tag];
-	if (core_menu() && dispRows > 3 && keynum < 13) keynum -= 6;
+	if (core_menu() && dispRows > 4 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];
