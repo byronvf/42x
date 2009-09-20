@@ -61,6 +61,12 @@ int command2buf(char *buf, int len, int cmd, const arg_struct *arg) DISPLAY_SECT
 #define MENULEVEL_PLAIN     3
 #define MENULEVEL_APP       4
 
+#ifdef BIGLCD
+#define MAX_DISPLAY_ROWS 10
+#else
+#define MAX_DISPLAY_ROWS 2
+#endif
+
 int appmenu_exitcallback_1(int menuid) COMMANDS3_SECT;
 int appmenu_exitcallback_2(int menuid) COMMANDS5_SECT;
 int appmenu_exitcallback_3(int menuid) COMMANDS4_SECT;

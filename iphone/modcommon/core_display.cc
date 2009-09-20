@@ -519,8 +519,6 @@ static char smallchars_map[128] =
 #pragma warning(pop)
 #endif
 
-
-#define MAX_DISPLAY_ROWS 10
 #define DISPLAY_SIZE 136 * MAX_DISPLAY_ROWS
 static char display[DISPLAY_SIZE];
 
@@ -685,14 +683,14 @@ void draw_pixel(int x, int y) {
 
 void draw_pattern(phloat dx, phloat dy, const char *pattern, int pattern_width){
     int x, y, h, v, hmin, hmax, vmin, vmax;
-    if (dx + pattern_width < 1 || dx > 131 || dy + 8 < 1 || dy > 16)
+    if (dx + pattern_width < 1 || dx > 131 || dy + 8 < 1 || dy > MAX_DISPLAY_ROWS*8)
 	return;
     x = dx < 0 ? to_int(-floor(-dx + 0.5)) : to_int(floor(dx + 0.5));
     y = dy < 0 ? to_int(-floor(-dy + 0.5)) : to_int(floor(dy + 0.5));
     hmin = x < 1 ? 1 - x : 0;
     hmax = x + pattern_width > 132 ? 132 - x : pattern_width;
     vmin = y < 1 ? 1 - y : 0;
-    vmax = y + 8 > 17 ? 17 - y : 8;
+    vmax = y + 8 > MAX_DISPLAY_ROWS*8+1 ? MAX_DISPLAY_ROWS*8+1 - y : 8;
     x--;
     y--;
     if (flags.f.agraph_control1) {

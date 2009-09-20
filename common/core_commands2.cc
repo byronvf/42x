@@ -726,7 +726,7 @@ int docmd_agraph(arg_struct *arg) {
 		phloat y = ((vartype_real *) reg_y)->x;
 		draw_pattern(x, y, reg_alpha, reg_alpha_length);
 		flush_display();
-		flags.f.message = flags.f.two_line_message = 1;
+		cllcd_cmd = true;
 		return ERR_NONE;
 	    } else if (reg_y->type == TYPE_STRING)
 		return ERR_ALPHA_DATA_IS_INVALID;
@@ -738,7 +738,7 @@ int docmd_agraph(arg_struct *arg) {
 	    phloat y = ((vartype_complex *) reg_y)->im;
 	    draw_pattern(x, y, reg_alpha, reg_alpha_length);
 	    flush_display();
-	    flags.f.message = flags.f.two_line_message = 1;
+	    cllcd_cmd = true;
 	    return ERR_NONE;
 	}
 	case TYPE_COMPLEXMATRIX: {
@@ -749,7 +749,7 @@ int docmd_agraph(arg_struct *arg) {
 		draw_pattern(cm->array->data[i], cm->array->data[i + 1],
 			     reg_alpha, reg_alpha_length);
 	    flush_display();
-	    flags.f.message = flags.f.two_line_message = 1;
+	    cllcd_cmd = true;
 	    return ERR_NONE;
 	}
 	case TYPE_STRING:
@@ -770,18 +770,18 @@ static void pixel_helper(phloat dx, phloat dy) {
     if (x < 0) {
 	x = -x;
 	if (x >= 1 && x <= 131)
-	    for (i = 0; i < 16; i++)
+	    for (i = 0; i < MAX_DISPLAY_ROWS*8; i++)
 		draw_pixel(x - 1, i);
 	dot = 0;
     }
     if (y < 0) {
 	y = -y;
-	if (y >= 1 && y <= 16)
+	if (y >= 1 && y <= MAX_DISPLAY_ROWS*8)
 	    for (i = 0; i < 131; i++)
 		draw_pixel(i, y - 1);
 	dot = 0;
     }
-    if (dot && x >= 1 && x <= 131 && y >= 1 && y <= 16)
+    if (dot && x >= 1 && x <= 131 && y >= 1 && y <= MAX_DISPLAY_ROWS*8)
 	draw_pixel(x - 1, y - 1);
 }
 
@@ -791,7 +791,7 @@ int docmd_pixel(arg_struct *arg) {
 	    pixel_helper(((vartype_real *) reg_x)->x,
 			 ((vartype_real *) reg_y)->x);
 	    flush_display();
-	    flags.f.message = flags.f.two_line_message = 1;
+	    cllcd_cmd = true;  // Tells redisplay() not to clear the display
 	    return ERR_NONE;
 	} else if (reg_y->type == TYPE_STRING)
 	    return ERR_ALPHA_DATA_IS_INVALID;
@@ -801,7 +801,7 @@ int docmd_pixel(arg_struct *arg) {
 	pixel_helper(((vartype_complex *) reg_x)->re,
 		     ((vartype_complex *) reg_x)->im);
 	flush_display();
-	flags.f.message = flags.f.two_line_message = 1;
+	cllcd_cmd = true;
 	return ERR_NONE;
     } else if (reg_x->type == TYPE_COMPLEXMATRIX) {
 	vartype_complexmatrix *m = (vartype_complexmatrix *) reg_x;
@@ -810,7 +810,7 @@ int docmd_pixel(arg_struct *arg) {
 	for (i = 0; i < size; i += 2)
 	    pixel_helper(m->array->data[i], m->array->data[i + 1]);
 	flush_display();
-	flags.f.message = flags.f.two_line_message = 1;
+	cllcd_cmd = true;
 	return ERR_NONE;
     } else if (reg_x->type == TYPE_STRING)
 	return ERR_ALPHA_DATA_IS_INVALID;

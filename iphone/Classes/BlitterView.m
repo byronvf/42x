@@ -486,8 +486,6 @@ char lastxbuf[LASTXBUF_SIZE];
  */
 - (void)setDisplayUpdateRow:(int) l h:(int) h
 {
-	// +3 for fudge so that when switching between 5 to 4 row mode, we clean
-	// up dirtly bits just below the 4th row
 	float vscale= [self getDispVertScale];
 	
 	// Small kludge, if we are just updating the top row, then in the case we are flying the 
