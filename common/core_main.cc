@@ -2265,7 +2265,11 @@ void do_interactive(int command) {
 	    store_command_after(&pc, command, &arg);
 	    if (command == CMD_END)
 		pc = 0;
+#ifdef BIGLCD	  
+	    prgm_highlight_row = get_next_highlight_row();
+#else
 	    prgm_highlight_row = 1;
+#endif
 	    redisplay();
 	} else {
 	    incomplete_saved_pc = pc;
@@ -2273,8 +2277,12 @@ void do_interactive(int command) {
 	    if (pc == -1)
 		pc = 0;
 	    else if (prgms[current_prgm].text[pc] != CMD_END)
-		pc += get_command_length(current_prgm, pc);
+		pc += get_command_length(current_prgm, pc);	  
+#ifdef BIGLCD
+	    prgm_highlight_row = get_next_highlight_row();
+#else
 	    prgm_highlight_row = 1;
+#endif
 	    start_incomplete_command(command);
 	}
     } else {
@@ -2572,7 +2580,12 @@ void finish_command_entry(bool refresh) {
 	    if (inserting_an_end)
 		/* current_prgm was already incremented by store_command() */
 		pc = 0;
+#ifdef BIGLCD
+	    if (!incomplete_command)
+	    prgm_highlight_row = get_next_highlight_row();
+#else
 	    prgm_highlight_row = 1;
+#endif
 	    pending_command = CMD_NONE;
 	    redisplay();
 	} 
@@ -2675,9 +2688,13 @@ void start_alpha_prgm_line() {
 	pc = 0;
     else if (prgms[current_prgm].text[pc] != CMD_END)
 	pc += get_command_length(current_prgm, pc);
+#ifdef BIGLCD
+    prgm_highlight_row = get_next_highlight_row();
+#else
     prgm_highlight_row = 1;
     if (cmdline_row == 1)
 	display_prgm_line(0, -1);
+#endif
     entered_string_length = 0;
     mode_alpha_entry = true;
 }
@@ -2694,7 +2711,9 @@ void finish_alpha_prgm_line() {
 	for (i = 0; i < entered_string_length; i++)
 	    arg.val.text[i] = entered_string[i];
 	store_command(pc, CMD_STRING, &arg);
+#ifndef BIGLCD
 	prgm_highlight_row = 1;
+#endif
     }
     mode_alpha_entry = false;
 }

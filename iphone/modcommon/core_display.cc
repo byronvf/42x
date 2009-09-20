@@ -2105,10 +2105,18 @@ void redisplay() {
 			temp_highlight_row = 1;
 		}
 		while (r < avail_rows) {
+			if (mode_alpha_entry) {
+				if (r <= prgm_highlight_row)
+					large_display_prgm_line(r, r-temp_highlight_row, 0, true);
+				else
+					large_display_prgm_line(r, r-temp_highlight_row-1, 1, true);
+			}					
+			else {
 		    large_display_prgm_line(r, r-temp_highlight_row, 0, true);
-		    r++;
+			}
+			r++;
 		}
-	    }		 
+	    }
 	}
     } else if (flags.f.alpha_mode && avail_rows != 0 && !flags.f.message) {
 	int avail = mode_alpha_entry ? 21 : 22;

@@ -32,9 +32,9 @@
 		ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */ = {isa = PBXBuildFile; fileRef = ED26D23F0F6AB1D100F285A2 /* simpleserver.c */; };
 		ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26D2640F6AB70E00F285A2 /* ServerViewController.m */; };
 		ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED26D2730F6AB7F400F285A2 /* ServerView.xib */; };
+		ED2CF2CC1066A46200145263 /* core_keydown.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED2CF2CB1066A46200145263 /* core_keydown.cc */; };
 		ED361AB60FB973A700C432A1 /* MenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED361AB50FB973A700C432A1 /* MenuView.m */; };
 		ED361D900FBA3AFF00C432A1 /* core_display.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED361D8F0FBA3AFF00C432A1 /* core_display.cc */; };
-		ED361D920FBA3B1000C432A1 /* core_keydown.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED361D910FBA3B1000C432A1 /* core_keydown.cc */; };
 		ED366418100B339D00293D2C /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = ED366417100B339D00293D2C /* VERSION */; };
 		ED3DF9FE0E52E6C4000044AF /* bcd.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED3DF9CB0E52E6C4000044AF /* bcd.cc */; };
 		ED3DF9FF0E52E6C4000044AF /* bcdfloat.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED3DF9CD0E52E6C4000044AF /* bcdfloat.cc */; };
@@ -116,10 +116,10 @@
 		ED26D2630F6AB70E00F285A2 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
 		ED26D2640F6AB70E00F285A2 /* ServerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerViewController.m; sourceTree = "<group>"; };
 		ED26D2730F6AB7F400F285A2 /* ServerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ServerView.xib; sourceTree = "<group>"; };
+		ED2CF2CB1066A46200145263 /* core_keydown.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_keydown.cc; path = ../common/core_keydown.cc; sourceTree = SOURCE_ROOT; };
 		ED361AB40FB973A700C432A1 /* MenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuView.h; sourceTree = "<group>"; };
 		ED361AB50FB973A700C432A1 /* MenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuView.m; sourceTree = "<group>"; };
 		ED361D8F0FBA3AFF00C432A1 /* core_display.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_display.cc; path = modcommon/core_display.cc; sourceTree = "<group>"; };
-		ED361D910FBA3B1000C432A1 /* core_keydown.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_keydown.cc; path = modcommon/core_keydown.cc; sourceTree = "<group>"; };
 		ED366417100B339D00293D2C /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = VERSION; path = ../VERSION; sourceTree = SOURCE_ROOT; };
 		ED3DF9CB0E52E6C4000044AF /* bcd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcd.cc; path = ../common/bcd.cc; sourceTree = SOURCE_ROOT; };
 		ED3DF9CC0E52E6C4000044AF /* bcd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcd.h; path = ../common/bcd.h; sourceTree = SOURCE_ROOT; };
@@ -323,6 +323,7 @@
 		ED3DF9C10E52E691000044AF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				ED2CF2CB1066A46200145263 /* core_keydown.cc */,
 				ED0C58DF0F88940B00C2BD7C /* icons.c */,
 				ED26D23F0F6AB1D100F285A2 /* simpleserver.c */,
 				ED3DF9CB0E52E6C4000044AF /* bcd.cc */,
@@ -352,7 +353,6 @@
 				ED3DF9E00E52E6C4000044AF /* core_globals.h */,
 				ED3DF9E10E52E6C4000044AF /* core_helpers.cc */,
 				ED3DF9E20E52E6C4000044AF /* core_helpers.h */,
-				ED361D910FBA3B1000C432A1 /* core_keydown.cc */,
 				ED3DF9E40E52E6C4000044AF /* core_keydown.h */,
 				ED3DF9E50E52E6C4000044AF /* core_linalg1.cc */,
 				ED3DF9E60E52E6C4000044AF /* core_linalg1.h */,
@@ -515,8 +515,8 @@
 				ED0C58E00F88940B00C2BD7C /* icons.c in Sources */,
 				ED361AB60FB973A700C432A1 /* MenuView.m in Sources */,
 				ED361D900FBA3AFF00C432A1 /* core_display.cc in Sources */,
-				ED361D920FBA3B1000C432A1 /* core_keydown.cc in Sources */,
 				E96280FC101CD52400AF16AC /* bcdfloat2.cc in Sources */,
+				ED2CF2CC1066A46200145263 /* core_keydown.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,6 +541,7 @@
 					DEBUG,
 					FREE42,
 					BCD_MATH,
+					BIGLCD,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
@@ -559,6 +560,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					BIGLCD,
 					IPHONE,
 					NO_SINCOS,
 					BIGSTACK,
@@ -627,6 +629,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					BIGLCD,
 					IPHONE,
 					NO_SINCOS,
 					BIGSTACK,
