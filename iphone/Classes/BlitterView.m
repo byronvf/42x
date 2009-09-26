@@ -30,8 +30,6 @@
 #import "core_helpers.h"
 #import "shell_spool.h"
 
-BOOL ignore_menu = FALSE;
-
 // Reference to this blitter so we can access from C methods
 static BlitterView *blitterView = NULL; 
 

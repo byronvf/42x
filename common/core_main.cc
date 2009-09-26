@@ -310,8 +310,16 @@ void core_keytimeout1() {
 	display_command(0);
 	/* If the program catalog was left up by GTO or XEQ,
 	 * don't paint over it */
+#ifdef BIGLCD
+	/*  display_x(1) addresses non overlay menus such that the menu is replaced
+	    with displaying the x register, if we are not using overlay menus or
+	    the display is greater then 2 lines then we don't need this */
+	if (dispRows <= 2 && (mode_transientmenu == MENU_NONE || pending_command == CMD_NULL))
+	    display_x(1);
+#else	
 	if (mode_transientmenu == MENU_NONE || pending_command == CMD_NULL)
 	    display_x(1);
+#endif	
 	flush_display();
     }
 }
@@ -324,6 +332,9 @@ void core_keytimeout2() {
 	    && (cmdlist(pending_command)->flags & FLAG_NO_SHOW) == 0) {
 	clear_row(0);
 	draw_string(0, 0, "NULL", 4);
+#ifdef BIGLCD
+	if (dispRows <= 2)
+#endif
 	display_x(1);
 	flush_display();
 	pending_command = CMD_CANCELLED;

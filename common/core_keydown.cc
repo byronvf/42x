@@ -30,18 +30,6 @@
 #include "core_globals.h"
 
 #if BIGLCD
-// Place this here for now so we don't have to modify many files
-extern int menuKeys;
-extern int dispRows;
-extern bool ignore_menu;
-
-// New methods from core_display
-extern void display_t(int);
-extern void display_z(int);
-extern void display_0(int);
-extern void display_1(int);
-extern void large_display_prgm_line(int row, int line_offset, int line_disp_offset, bool dispGoose);
-
 /* Return the total number of lines the current program the pc points to has. */
 int num_prgm_lines()
 {

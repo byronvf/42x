@@ -25,10 +25,6 @@
 #include "core_variables.h"
 #include "shell.h"
 
-// Place this here for now so we don't have to modify many files
-extern int menuKeys;
-extern int dispRows;
-
 /********************/
 /* HP-42S font data */
 /********************/
@@ -43,6 +39,9 @@ extern int dispRows;
 #pragma warning(disable: 4309)
 #endif
 
+int dispRows = 2; 
+bool ignore_menu = FALSE;
+bool menuKeys = FALSE;
 
 static char bigchars[130][5] =
     {

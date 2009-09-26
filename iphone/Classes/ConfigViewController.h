@@ -20,9 +20,6 @@
 
 @class NavViewController;
 
-extern int menuKeys;
-extern int dispRows;
-
 @interface ConfigViewController : UIViewController {
 	IBOutlet UISwitch* clickSoundSwitch;
 	IBOutlet UISwitch* beepSoundSwitch;

@@ -18,6 +18,7 @@
 #import "PrintViewController.h"
 #import "Settings.h"
 #include "Utils.h"
+#include "core_display.h"
 #include "Free42AppDelegate.h"
 #include "shell_spool.h"
 
