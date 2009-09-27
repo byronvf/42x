@@ -183,6 +183,10 @@ extern error_spec errors[];
 #define MENU_INTEG         62
 #define MENU_INTEG_PARAMS  63
 
+#ifdef BIGSTACK
+#define MENU_CLEAR3        64
+#endif
+
 
 typedef struct {
     int menuid;

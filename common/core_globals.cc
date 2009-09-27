@@ -241,14 +241,22 @@ menu_spec menus[] = {
 			{ 0x2000 + CMD_ALL,      0, "" },
 			{ 0x2000 + CMD_RDXDOT,   0, "" },
 			{ 0x2000 + CMD_RDXCOMMA, 0, "" } } },
+#ifdef BIGSTACK
+    { /* MENU_CLEAR1 */ MENU_NONE, MENU_CLEAR2, MENU_CLEAR3,
+#else
     { /* MENU_CLEAR1 */ MENU_NONE, MENU_CLEAR2, MENU_CLEAR2,
+#endif
 		      { { 0x1000 + CMD_CLSIGMA, 0, "" },
 			{ 0x1000 + CMD_CLP,     0, "" },
 			{ 0x1000 + CMD_CLV,     0, "" },
 			{ 0x1000 + CMD_CLST,    0, "" },
 			{ 0x1000 + CMD_CLA,     0, "" },
 			{ 0x1000 + CMD_CLX,     0, "" } } },
+#ifdef BIGSTACK      
+    { /* MENU_CLEAR2 */ MENU_NONE, MENU_CLEAR3, MENU_CLEAR2,
+#else
     { /* MENU_CLEAR2 */ MENU_NONE, MENU_CLEAR1, MENU_CLEAR1,
+#endif      
 		      { { 0x1000 + CMD_CLRG,   0, "" },
 			{ 0x1000 + CMD_DEL,    0, "" },
 			{ 0x1000 + CMD_CLKEYS, 0, "" },
@@ -513,7 +521,16 @@ menu_spec menus[] = {
 			{ 0,                 3, "ACC"  },
 			{ 0x1000 + CMD_NULL, 0, ""     },
 			{ 0x1000 + CMD_NULL, 0, ""     },
-			{ 0,                 1, "\003" } } }
+			{ 0,                 1, "\003" } } },
+#ifdef BIGSTACK
+    { /* MENU_CLEAR3 */ MENU_NONE, MENU_CLEAR1, MENU_CLEAR2,
+		      { { 0x1000 + CMD_DROP, 0, "" },
+			{ 0x1000 + CMD_NULL, 0, "" },
+			{ 0x1000 + CMD_NULL, 0, "" },
+			{ 0x1000 + CMD_NULL, 0, "" },
+			{ 0x1000 + CMD_NULL, 0, "" },
+			{ 0x1000 + CMD_NULL, 0, "" } } },
+#endif
 };
 
 
