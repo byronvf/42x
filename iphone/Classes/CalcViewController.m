@@ -67,14 +67,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
 	assert(viewCtrl.blitterView);
-	if (flags.f.prgm_mode)
-		[viewCtrl.blitterView setNeedsDisplay];
-	else
-	{
-		int low = y/8;
-		int high = (y+height)/8;
-		[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
-	}
+	int low = y/8;
+	int high = (y+height)/8;
+	[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
@@ -84,9 +79,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		assert(viewCtrl.menuView);
 		assert(viewCtrl.blankButtonsView);
-		// The menu keys are in the third row of the display (> 16), so 
+		// The menu keys are in the rows just beyond dispRows, so 
 		// don't bother updateing unless this area of the display has changed.
-		if (height + y > 16 || [viewCtrl menuView].hidden)
+		if (height + y > dispRows*8 || [viewCtrl menuView].hidden)
 		{
 			[[viewCtrl menuView] setHidden:FALSE];
 			[[viewCtrl blankButtonsView] setHidden:FALSE];

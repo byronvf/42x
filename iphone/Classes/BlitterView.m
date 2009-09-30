@@ -492,9 +492,12 @@ char lastxbuf[LASTXBUF_SIZE];
 	// hwne vscale is 2.8
 	int hs = (h*8)*vscale + 1;
 	if (hs == 23) hs = 22;
-		
-	[self setNeedsDisplayInRect:CGRectMake(0, 
-		[self statusBarOffset] + ASTAT_HEIGHT + (l*8)*vscale, 320, hs)];	
+
+	int top = [self statusBarOffset] + (l*8)*vscale;	
+	if ([self shouldDisplayAnnunc])
+		top += ASTAT_HEIGHT;
+			
+	[self setNeedsDisplayInRect:CGRectMake(0, top, 320, hs)];	
 }
 
 - (float)getDispVertScale
