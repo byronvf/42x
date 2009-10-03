@@ -154,13 +154,19 @@ char lastxbuf[LASTXBUF_SIZE];
 @synthesize selectAll;
 @synthesize statusBarOffset;
 
-- (void)setXHighlight
+- (void)setSelectHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
-	// 3 for the display scale factor of 3
-	// 8 each row contains 8 pixel columns
-	xRowHighlight = baseRowHighlight;
-	xRowHighlight.origin.y += (dispRows - (core_menu() && ! menuKeys ? 2 : 1))*3*8;
+	selectRect.origin.y = ASTAT_HEIGHT + statusBarOffset;
+	if (selectAll)
+	{
+		selectRect.size.height = dispRows*[self getDispVertScale]*8;
+	}
+	else
+	{
+		selectRect.origin.y += (dispRows - 1) * [self getDispVertScale]*8;
+		selectRect.size.height = [self getDispVertScale]*8;
+	}
 }
 
 - (void)awakeFromNib
@@ -174,12 +180,10 @@ char lastxbuf[LASTXBUF_SIZE];
 	// Initialize offsetDisp if we need to compensate for the top statusbar
 	statusBarOffset = [[Settings instance] largeLCD] ? 0 : 20;
 	
-	baseRowHighlight = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24); // Hightlight for x region
+	// Hightlight for x region
+	selectRect = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24);
 	
-	//[self setContentSize:CGSizeMake(320, 480)];
-	//[self setContentOffset:CGPointMake(0, 240) animated:FALSE];
-	
-	[self setXHighlight];
+	[self setSelectHighlight];
 	firstTouch.x = -1;
 	[self shouldCutPaste];
 }
@@ -194,8 +198,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (flagUpDown)
 		[[calcViewController updnGlowView] setHidden:FALSE];
 	else
-		[[calcViewController updnGlowView] setHidden:TRUE];	
-	
+		[[calcViewController updnGlowView] setHidden:TRUE];
 	
 	// Only update the flags region of the display
 	[self annuciatorNeedsUpdate];
@@ -321,16 +324,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (highlight)
 	{
 		CGContextSetRGBFillColor(ctx, 0.60, 0.8, 1.0, 1.0);
-		if (selectAll)
-		{
-			// Make selection area larger for select all
-			CGRect rect = xRowHighlight;
-			int newy = 16;
-			rect.size.height = rect.size.height + (rect.origin.y - newy);
-			rect.origin.y = newy;
-			CGContextFillRect(ctx,rect);
-		}
-        CGContextFillRect(ctx, xRowHighlight);
+        CGContextFillRect(ctx, selectRect);
 	}
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
@@ -617,6 +611,7 @@ const int SCROLL_SPEED = 15;
 		// and highlight the entire stack.
 		selectAll = TRUE;
 		[self showEditMenu];
+		[self setSelectHighlight];
 		[self setNeedsDisplay];		
 	}
 	
@@ -756,7 +751,7 @@ char cbuf[30];
 	selectAll = FALSE;
 	if (highlight)
 	{
-		[self setNeedsDisplayInRect:xRowHighlight];
+		[self setNeedsDisplayInRect:selectRect];
 		highlight = FALSE;
 	}
 }
@@ -771,8 +766,8 @@ char cbuf[30];
 	UIMenuController *mc = [UIMenuController sharedMenuController];
 	if (!mc.menuVisible) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
-		[self setXHighlight];
-        [mc setTargetRect:xRowHighlight inView:self];
+		[self setSelectHighlight];
+        [mc setTargetRect:selectRect inView:self];
         [mc setMenuVisible:YES animated:YES];
 	} else {
 		[self performSelector:@selector(showEditMenu) withObject:nil afterDelay:0.0];
@@ -788,8 +783,8 @@ char cbuf[30];
     UITouch *touch = [touches anyObject];
     if ([[touches anyObject] locationInView:self].x < 260 
 		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
-		[self setXHighlight];
-		[self setNeedsDisplayInRect:xRowHighlight];
+		[self setSelectHighlight];
+		[self setNeedsDisplayInRect:selectRect];
 		[self showEditMenu];
 		highlight = TRUE;
     }

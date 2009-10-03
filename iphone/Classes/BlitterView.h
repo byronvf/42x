@@ -34,8 +34,7 @@ extern char lastxbuf[LASTXBUF_SIZE];
 	// keep track of swipe on screen for switching to the print view	
 	CGPoint firstTouch;
 	BOOL highlight;
-	CGRect xRowHighlight;
-	CGRect baseRowHighlight;
+	CGRect selectRect;
 	BOOL cutPaste;
 	BOOL selectAll;
 	int statusBarOffset;
