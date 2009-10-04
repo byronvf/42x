@@ -48,7 +48,8 @@ void shell_print(const char *text, int length,
 {
 	shell_spool_txt(text, length, writer, newliner);
 	
-	NSMutableData* buf = [printViewController printBuff];
+	assert(printViewController);
+	NSMutableData* buf = [printViewController getBuff];
 	if (!printingStarted)
 	{
 		printingStarted = TRUE;
@@ -73,14 +74,7 @@ void shell_print(const char *text, int length,
 
 @implementation PrintViewController
 
-@synthesize printBuff;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-		// Initialization code
-	}
-	return self;
-}
+@synthesize printBuffer;
 
 - (void)clearPrinter
 {
@@ -93,7 +87,7 @@ void shell_print(const char *text, int length,
 	[view2 setFrame:CGRectMake(0,480,320,480)];
 	[view1 setOffset:0];
 	[view2 setOffset:480];
-	[printBuff setLength:0];	
+	[[self getBuff] setLength:0];	
 	[[Settings instance] setPrintedPRLCD:FALSE];
 	[self display];
 }
@@ -133,7 +127,7 @@ void shell_print(const char *text, int length,
 - (void)displayPlotView
 {
 	UIScrollView* scrollView = (UIScrollView*)[self view];
-	int numVertPixel = [printBuff length]/18;
+	int numVertPixel = [[self getBuff] length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
 	numVertPixel += PRINT_YOFFSET;
  	numVertPixel < 480 ? 480 : numVertPixel;
@@ -146,7 +140,7 @@ void shell_print(const char *text, int length,
 		CGRect frame = [scrollView frame];
 		// If there is not enough content to fill the print view, then don't
 		// try and reposition.
-		int buflength = [printBuff length]/18;
+		int buflength = [[self getBuff] length]/18;
 		if (frame.size.height < buflength*PRINT_VERT_SCALE)
 		{
 			if (frame.size.height > (buflength - lastPrintPosition)*PRINT_VERT_SCALE)
@@ -168,31 +162,6 @@ void shell_print(const char *text, int length,
 	}		
 
     [self rePosition:(UIScrollView*)[self view] force:TRUE];
-	
-}
-
-- (void)initViews
-{	
-	// Get the navigation item that represent this controller in the 
-	// navigation bar, and add our clear button to it
-	UIBarButtonItem* clearButton = 
-	[[UIBarButtonItem alloc] initWithTitle:@"Clear"
-		style:UIBarButtonItemStylePlain target:self action:@selector(clearPrinter)];
-	UINavigationItem* item = [self navigationItem];	
-	[item setRightBarButtonItem:clearButton animated:FALSE];
-
-	// Initialize the two views we will use to tile the scroll view.
-	printViewController = self;
-	if (!printBuff) printBuff = [[NSMutableData alloc] init];
-	view1 = [[PrintView alloc] initWithFrame:CGRectMake(0,0,320,480)];	
-	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,480,320,480)];
-	[view1 setPrintViewController:self];
-	[view2 setPrintViewController:self];
-    [self setViewsHighlight:FALSE];
-	[[self view] addSubview: view1];
-	[[self view] addSubview: view2];	
-	[view1 setNeedsDisplay];
-	[view2 setNeedsDisplay];
 	
 }
 
@@ -239,55 +208,75 @@ void shell_print(const char *text, int length,
 	[self displayPlotView];
 }
 
-- (void) awakeFromNib
-{
-	[self initViews];
-	
-	
-	//plotView = (UIScrollView*)[self view];
-	//textView = [[UITextView alloc] init]; 
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView 
 {
 	[self rePosition:scrollView force:FALSE];
 }
 
-- (void)blitToView:(UIView *)view  offset:(int)offset
+- (NSMutableData*) getBuff
 {
+	if (printBuffer == NULL)
+	{
+		printBuffer = [[NSMutableData alloc] init];
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		if ([defaults objectForKey:CONFIG_PRINT_BUF])
+		{
+			NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
+			[printBuffer setData:data];
+		}		
+		
+	}
+	return printBuffer;		
+}
+
+- (void)awakeFromNib {
+	// Get the navigation item that represent this controller in the 
+	// navigation bar, and add our clear button to it
+	UIBarButtonItem* clearButton = 
+	[[UIBarButtonItem alloc] initWithTitle:@"Clear"
+									 style:UIBarButtonItemStylePlain target:self action:@selector(clearPrinter)];
+	UINavigationItem* item = [self navigationItem];	
+	[item setRightBarButtonItem:clearButton animated:FALSE];
 	
+	// Initialize the two views we will use to tile the scroll view.
+	printViewController = self;
 }
 
-/*
- Implement loadView if you want to create a view hierarchy programmatically
-- (void)loadView {
-}
- */
-
-/*
- If you need to do additional setup after loading the view, override viewDidLoad.
 - (void)viewDidLoad {
+	
+	view1 = [[PrintView alloc] initWithFrame:CGRectMake(0,0,320,480)];	
+	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,480,320,480)];
+	[view1 setPrintViewController:self];
+	[view2 setPrintViewController:self];
+    [self setViewsHighlight:FALSE];
+	[[self view] addSubview: view1];
+	[[self view] addSubview: view2];	
+	[view1 setNeedsDisplay];
+	[view2 setNeedsDisplay];
 }
- */
 
+- (void)viewDidUnload {
+	[self releasePrintBuffer];
+	[view1 release];
+	view1 = NULL;
+	[view2 release];
+	view2 = NULL;
+}
+
+- (void)releasePrintBuffer
+{
+	if (printBuffer != NULL)
+	{
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		[defaults setObject:printBuffer forKey:CONFIG_PRINT_BUF];	
+		[printBuffer release];		
+		printBuffer = NULL;
+	}
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Return YES for supported orientations
 	return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning];	
-//	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Allert"
-//	    message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
-//	[alert show];
-}
-
-
-- (void)dealloc {
-	[printBuff dealloc];
-	[super dealloc];
 }
 
 @end

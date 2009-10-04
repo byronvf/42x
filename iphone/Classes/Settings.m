@@ -26,6 +26,7 @@
 @synthesize showLastX;
 @synthesize printedPRLCD;
 @synthesize showStatusBar;
+@synthesize autoPrint;
 
 static Settings* settings;
 

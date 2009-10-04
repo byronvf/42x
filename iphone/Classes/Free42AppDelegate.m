@@ -195,18 +195,6 @@ bool prgmFirstWrite = TRUE;
 @synthesize viewController;
 @synthesize navViewController;
 
-NSString* CONFIG_KEY_CLICK_ON = @"keyClickOn";
-NSString* CONFIG_BEEP_ON = @"beepOn";
-NSString* CONFIG_KEYBOARD = @"keyboardOn";
-NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
-NSString* CONFIG_PRINT_BUF = @"printBuf";
-NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
-NSString* CONFIG_DISP_ROWS = @"dispRows";
-NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
-NSString* CONFIG_SHOW_LASTX = @"showLastX";
-NSString* CONFIG_PRLCD = @"prlcd";
-NSString* CONFIG_SHOW_STATUS_BAR = @"showStatusBar";
-
 - (void)loadSettings
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -253,13 +241,6 @@ NSString* CONFIG_SHOW_STATUS_BAR = @"showStatusBar";
 	else
 		[[Settings instance] setShowStatusBar:TRUE];
 	
-	if ([defaults objectForKey:CONFIG_PRINT_BUF])
-    {
-		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
-		NSMutableData *pbuf = [[NSMutableData alloc] init];
-		[pbuf setData:data];
-		[[navViewController printViewController] setPrintBuff:pbuf];
-	}		
 }
 
 - (void)saveSettings
@@ -274,9 +255,8 @@ NSString* CONFIG_SHOW_STATUS_BAR = @"showStatusBar";
 	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
-
-	NSMutableData *pbuf = [[navViewController printViewController] printBuff];
-	[defaults setObject:pbuf forKey:@"printBuf"];
+	
+	[[navViewController printViewController] releasePrintBuffer];
 }
 
 

@@ -28,16 +28,19 @@ extern BOOL printingStarted;
 
 @interface PrintViewController : UIViewController {
 
-	NSMutableData* printBuff;	
+	NSMutableData* printBuffer;	
 	PrintView* view1;
 	PrintView* view2;
 }
 
-@property (nonatomic, retain) NSMutableData* printBuff;
+@property (nonatomic, retain) NSMutableData* printBuffer;
 
 -(void)displayTextView;
 - (void)displayPlotView;
 - (void)display;
 - (void)setViewsHighlight:(BOOL)selected;
+- (NSMutableData*) getBuff;
+- (void)releasePrintBuffer;
+
 @end
 

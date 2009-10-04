@@ -20,6 +20,18 @@
 
 @class NavViewController;
 
+#define CONFIG_PRINT_BUF @"printBuf"
+#define CONFIG_KEY_CLICK_ON @"keyClickOn"
+#define CONFIG_BEEP_ON @"beepOn"
+#define CONFIG_KEYBOARD @"keyboardOn"
+#define CONFIG_AUTO_PRINT_ON @"autoPrintOn"
+#define CONFIG_MENU_KEYS_BUF @"menuKeys"
+#define CONFIG_DISP_ROWS @"dispRows"
+#define CONFIG_PERSIST_VERSION @"persistVersion"
+#define CONFIG_SHOW_LASTX @"showLastX"
+#define CONFIG_PRLCD @"prlcd"
+#define CONFIG_SHOW_STATUS_BAR @"showStatusBar"
+
 @interface ConfigViewController : UITableViewController {
 	UISwitch* clickSoundSwitch;
 	UISwitch* beepSoundSwitch;

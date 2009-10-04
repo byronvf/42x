@@ -70,7 +70,7 @@
 
 - (void)drawRect:(CGRect)rect 
 {	
-	NSMutableData* buf = [printViewController printBuff];
+	NSMutableData* buf = [printViewController getBuff];
 	NSAssert(buf, @"print buffer not initialized");
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	// 5 - 5 pixels of top margin

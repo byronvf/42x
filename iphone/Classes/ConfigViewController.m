@@ -44,8 +44,7 @@
 	return s;
 }
 
-- (void)awakeFromNib
-{
+- (void)viewDidLoad {
 	clickSoundSwitch = [self makeSwitch];
 	beepSoundSwitch = [self makeSwitch];
 	keyboardSwitch = [self makeSwitch];
@@ -56,22 +55,23 @@
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
-
+	
 	aboutButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[aboutButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
 }
 
-/*
- Implement loadView if you want to create a view hierarchy programmatically
-- (void)loadView {
+- (void)viewDidUnload {
+	[clickSoundSwitch release];
+	[beepSoundSwitch release];
+	[keyboardSwitch release];
+	[lastXSwitch release];
+	[bigStackSwitch release];
+	[menuKeysSwitch release];
+	[statusBarSwitch release];
+	[gotoServerButton release];
+	[aboutButton release];	
 }
- */
 
-/*
- If you need to do additional setup after loading the view, override viewDidLoad.
-- (void)viewDidLoad {
-}
- */
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -252,21 +252,5 @@
 	
     return cell;
 }
-
-
-
-- (void)dealloc {
-	[super dealloc];
-	[clickSoundSwitch release];
-	[beepSoundSwitch release];
-	[keyboardSwitch release];
-	[lastXSwitch release];
-	[bigStackSwitch release];
-	[menuKeysSwitch release];
-	[statusBarSwitch release];
-	[gotoServerButton release];
-	[aboutButton release];
-}
-
 
 @end

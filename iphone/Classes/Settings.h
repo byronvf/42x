@@ -28,6 +28,7 @@
 	bool keyboardOn;
 	bool showLastX;
 	bool showStatusBar;
+	bool autoPrint;
 	
 	// Indicates if we have used the PRLCD command which prints the LCD
 	// to the display.  If so, then we must turn off the striping in the
@@ -45,6 +46,7 @@
 @property bool keyboardOn;
 @property bool printedPRLCD;
 @property bool showStatusBar;
+@property bool autoPrint;
 + (Settings*)instance;
 
 @end
