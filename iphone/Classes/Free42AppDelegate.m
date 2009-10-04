@@ -205,7 +205,7 @@ NSString* CONFIG_DISP_ROWS = @"dispRows";
 NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
 NSString* CONFIG_SHOW_LASTX = @"showLastX";
 NSString* CONFIG_PRLCD = @"prlcd";
-NSString* CONFIG_LARGE_LCD = @"largelcd";
+NSString* CONFIG_SHOW_STATUS_BAR = @"showStatusBar";
 
 - (void)loadSettings
 {
@@ -248,10 +248,10 @@ NSString* CONFIG_LARGE_LCD = @"largelcd";
 	else
 		[[Settings instance] setShowLastX:TRUE];
 	
-	if ([defaults objectForKey:CONFIG_LARGE_LCD])
-		[[Settings instance] setLargeLCD:[defaults boolForKey:CONFIG_LARGE_LCD]];
+	if ([defaults objectForKey:CONFIG_SHOW_STATUS_BAR])
+		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
 	else
-		[[Settings instance] setLargeLCD:FALSE];
+		[[Settings instance] setShowStatusBar:TRUE];
 	
 	if ([defaults objectForKey:CONFIG_PRINT_BUF])
     {
@@ -271,7 +271,7 @@ NSString* CONFIG_LARGE_LCD = @"largelcd";
 	[defaults setBool:[[Settings instance] showLastX] forKey:CONFIG_SHOW_LASTX];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
-	[defaults setBool:[[Settings instance] largeLCD] forKey:CONFIG_LARGE_LCD];
+	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 

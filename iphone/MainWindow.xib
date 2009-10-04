@@ -8,7 +8,6 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="10"/>
 			<integer value="2"/>
 			<integer value="12"/>
 		</object>
@@ -84,7 +83,6 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="IBUIViewController" id="943309135">
 						<object class="IBUINavigationItem" key="IBUINavigationItem" id="707641311">
-							<reference key="IBUINavigationBar"/>
 							<string key="IBUITitle">42S</string>
 						</object>
 						<reference key="IBUIParentViewController" ref="716404806"/>
@@ -314,7 +312,7 @@
 					<string>{{474, 95}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>ConfigViewController</string>
-					<string>{{294, 440}, {320, 480}}</string>
+					<string>{{577, 399}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>NavViewController</string>
 					<string>{{35, 52}, {320, 480}}</string>
@@ -329,7 +327,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 						</object>
 					</object>
-					<string>{{35, 580}, {320, 480}}</string>
+					<string>{{23, 218}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>Free42AppDelegate</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -361,7 +359,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">84</int>
+			<int key="maxID">88</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -500,7 +498,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">ConfigViewController</string>
-					<string key="superclassName">UIViewController</string>
+					<string key="superclassName">UITableViewController</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
@@ -535,7 +533,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">ConfigViewController</string>
-					<string key="superclassName">UIViewController</string>
+					<string key="superclassName">UITableViewController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>

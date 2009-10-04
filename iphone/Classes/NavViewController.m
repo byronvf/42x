@@ -131,7 +131,7 @@ BOOL showingServerView;
 {
 	if (vc == (UIViewController*)calcViewController)
 	{			
-		[[UIApplication sharedApplication] setStatusBarHidden:[[Settings instance] largeLCD]];
+		[[UIApplication sharedApplication] setStatusBarHidden:![[Settings instance] showStatusBar]];
 	}
 }	
 /*

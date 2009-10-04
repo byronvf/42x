@@ -27,7 +27,7 @@
 	bool beepSoundOn;
 	bool keyboardOn;
 	bool showLastX;
-	bool largeLCD;
+	bool showStatusBar;
 	
 	// Indicates if we have used the PRLCD command which prints the LCD
 	// to the display.  If so, then we must turn off the striping in the
@@ -44,7 +44,7 @@
 @property bool beepSoundOn;
 @property bool keyboardOn;
 @property bool printedPRLCD;
-@property bool largeLCD;
+@property bool showStatusBar;
 + (Settings*)instance;
 
 @end

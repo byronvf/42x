@@ -30,16 +30,35 @@
 @synthesize keyboardSwitch;
 @synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
+@synthesize statusBarSwitch;
+
 @synthesize gotoServerButton;
-@synthesize largeLCD;
+@synthesize aboutButton;
 
 @synthesize navViewController;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-		// Initialization code
-	}
-	return self;
+- (UISwitch*)makeSwitch
+{
+	UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,0,0)];
+	[s addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+	return s;
+}
+
+- (void)awakeFromNib
+{
+	clickSoundSwitch = [self makeSwitch];
+	beepSoundSwitch = [self makeSwitch];
+	keyboardSwitch = [self makeSwitch];
+	lastXSwitch = [self makeSwitch];
+	bigStackSwitch = [self makeSwitch];
+	menuKeysSwitch = [self makeSwitch];
+	statusBarSwitch = [self makeSwitch];
+	
+	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
+
+	aboutButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	[aboutButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
 }
 
 /*
@@ -62,10 +81,10 @@
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
 	[bigStackSwitch setOn:mode_bigstack];
 	[menuKeysSwitch setOn:menuKeys];
-	[largeLCD setOn:[[Settings instance] largeLCD]];
+	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 }
 
-- (void)buttonUp:(UISwitch*)sender
+- (void)switchChange:(UISwitch*)sender
 {
 	if (sender == clickSoundSwitch)
 	{
@@ -93,9 +112,9 @@
 		[[Settings instance] setShowLastX:[sender isOn]];
 		[[navViewController calcViewController] testUpdateLastX:TRUE];
 	}
-	else if (sender == largeLCD)
+	else if (sender == statusBarSwitch)
 	{
-		[[Settings instance] setLargeLCD:[sender isOn]];
+		[[Settings instance] setShowStatusBar:[sender isOn]];
 		[[navViewController calcViewController] resetLCD];
 	}
 }
@@ -154,8 +173,98 @@
 }
 
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 5;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	switch (section)
+	{
+		case 0: return 1;
+		case 1: return 2;
+		case 2: return 3;
+		case 3: return 1;
+		case 4: return 1;
+		default: return 0;
+	}
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+	switch (section)
+	{
+		case 0: return @"Behavior";
+		case 1: return @"Sound";
+		case 2: return @"Display";
+		case 3: return NULL;
+		case 4: return NULL;
+		default: return @"What???";
+	}
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *MyIdentifier = @"switch";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] 
+				 initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
+    }
+	if (indexPath.section == 0 && indexPath.row == 0)  // Behavior Section
+	{
+		cell.textLabel.text = @"Dynamic Stack";
+		cell.accessoryView = bigStackSwitch;
+	}
+	else if (indexPath.section == 1 && indexPath.row == 0) // Sound Section
+	{
+		cell.textLabel.text = @"Key clicks";
+		cell.accessoryView = clickSoundSwitch;
+	}
+	else if (indexPath.section == 1 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Beeps and Tones";
+		cell.accessoryView = beepSoundSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 0) // Display Section
+	{
+		cell.textLabel.text = @"Show Last X";
+		cell.accessoryView = lastXSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Overlay menu on keys";
+		cell.accessoryView = menuKeysSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 2)
+	{
+		cell.textLabel.text = @"iPhone status bar";
+		cell.accessoryView = statusBarSwitch;
+	}
+	else if  (indexPath.section == 3 && indexPath.row == 0) // Import Export
+	{
+		cell.textLabel.text = @"Import and Export Programs";
+		cell.accessoryView = gotoServerButton;
+	}
+	else if  (indexPath.section == 4 && indexPath.row == 0) // About
+	{
+		cell.textLabel.text = @"About";
+		cell.accessoryView = aboutButton;
+	}
+	
+    return cell;
+}
+
+
+
 - (void)dealloc {
 	[super dealloc];
+	[clickSoundSwitch release];
+	[beepSoundSwitch release];
+	[keyboardSwitch release];
+	[lastXSwitch release];
+	[bigStackSwitch release];
+	[menuKeysSwitch release];
+	[statusBarSwitch release];
+	[gotoServerButton release];
+	[aboutButton release];
 }
 
 

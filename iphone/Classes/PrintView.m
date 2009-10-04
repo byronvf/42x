@@ -25,13 +25,6 @@
 @synthesize printViewController;
 @synthesize offset;
 
-- (id)initWithFrame:(CGRect)frame {
-	if (self = [super initWithFrame:frame]) {
-		// Initialization code
-	}
-	return self;
-}
-
 /**
  * Cut/Paste, copy the entire print output directly from file to the clipboard.
  */

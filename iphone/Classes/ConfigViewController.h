@@ -20,28 +20,33 @@
 
 @class NavViewController;
 
-@interface ConfigViewController : UIViewController {
-	IBOutlet UISwitch* clickSoundSwitch;
-	IBOutlet UISwitch* beepSoundSwitch;
-	IBOutlet UISwitch* keyboardSwitch;
-	IBOutlet UISwitch* bigStackSwitch;
-	IBOutlet UISwitch* menuKeysSwitch;
-	IBOutlet UISwitch* lastXSwitch;
-	IBOutlet UISwitch* largeLCD;
+@interface ConfigViewController : UITableViewController {
+	UISwitch* clickSoundSwitch;
+	UISwitch* beepSoundSwitch;
+	UISwitch* keyboardSwitch;
+	UISwitch* bigStackSwitch;
+	UISwitch* menuKeysSwitch;
+	UISwitch* lastXSwitch;
+	UISwitch* statusBarSwitch;
 	
-	IBOutlet UIButton* gotoServerButton;
+	UIButton* gotoServerButton;
+	UIButton* aboutButton;
 	
 	IBOutlet NavViewController* navViewController;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
-@property (nonatomic, retain) UISwitch* largeLCD;
+@property (nonatomic, retain) UISwitch* statusBarSwitch;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* bigStackSwitch;
 @property (nonatomic, retain) UIButton* gotoServerButton;
+@property (nonatomic, retain) UIButton* aboutButton;
 @property (nonatomic, retain) NavViewController* navViewController;
+
+- (UISwitch*)makeSwitch;
+- (void)switchChange:(UISwitch*)sender;
 
 @end

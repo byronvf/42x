@@ -556,7 +556,7 @@ void shell_request_timeout3(int delay)
 - (void) resetLCD
 {
 	// Initialize offsetDisp if we need to compensate for the top statusbar
-	[blitterView setStatusBarOffset:[[Settings instance] largeLCD] ? 0 : 20];
+	[blitterView setStatusBarOffset:[[Settings instance] showStatusBar] ? 20 : 0];
 	
 	if (dispRows < 4)
 		[self singleLCD];

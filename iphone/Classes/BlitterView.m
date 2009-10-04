@@ -178,7 +178,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	highlight = FALSE;
 	
 	// Initialize offsetDisp if we need to compensate for the top statusbar
-	statusBarOffset = [[Settings instance] largeLCD] ? 0 : 20;
+	statusBarOffset = [[Settings instance] showStatusBar] ? 20 : 0;
 	
 	// Hightlight for x region
 	selectRect = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24);
@@ -393,7 +393,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	int fullheight = self.bounds.size.height - (insetTop + insetBot);
 	int barheight = fullheight;
 	
-	if (![[Settings instance] largeLCD])
+	if ([[Settings instance] showStatusBar])
 	{	
 		offset += 20;
 		fullheight -= 20;
@@ -424,7 +424,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	NSAssert(free42init, @"Free42 has not been initialized");
 	if (flags.f.prgm_mode)
 	{
-		if ([[Settings instance] largeLCD]) return FALSE;
+		if (![[Settings instance] showStatusBar]) return FALSE;
 		if (self.bounds.size.height > 100) return FALSE;
 		
 		// If we are useing smallLCD and the LCD is not expanded, then we WILL
@@ -440,7 +440,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	{
 		int v = ASTAT_HEIGHT;
 		// If we are not int largeLCD mode, then include the iphone statusbar region
-		if (![[Settings instance] largeLCD]) v += 20;
+		if ([[Settings instance] showStatusBar]) v += 20;
 			
 		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, v)];
 	}
@@ -452,7 +452,7 @@ char lastxbuf[LASTXBUF_SIZE];
  */
 - (void)setNumDisplayRows
 {
-	if ([[Settings instance] largeLCD])
+	if (![[Settings instance] showStatusBar])
 	{
 		dispRows = 3;
 		if (self.bounds.size.height > 100)

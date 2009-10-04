@@ -25,7 +25,7 @@
 @synthesize keyboardOn;
 @synthesize showLastX;
 @synthesize printedPRLCD;
-@synthesize largeLCD;
+@synthesize showStatusBar;
 
 static Settings* settings;
 

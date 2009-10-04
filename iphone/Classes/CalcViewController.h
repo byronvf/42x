@@ -134,6 +134,6 @@ extern int callKeydownAgain;
 - (void) doubleLCD;
 - (void) resetLCD;
 - (void)testUpdateLastX: (BOOL) force;
-	
+
 @end
 
