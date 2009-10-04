@@ -40,6 +40,7 @@
 	UISwitch* menuKeysSwitch;
 	UISwitch* lastXSwitch;
 	UISwitch* statusBarSwitch;
+	UISwitch* autoPrintSwitch;
 	
 	UIButton* gotoServerButton;
 	UIButton* aboutButton;
@@ -49,6 +50,7 @@
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
 @property (nonatomic, retain) UISwitch* statusBarSwitch;
+@property (nonatomic, retain) UISwitch* autoPrintSwitch;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;

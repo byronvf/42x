@@ -293,7 +293,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 			// We use the printingStarted flag to turn on the and off the print 
 			// aunnunciator since it is off now, we want to redisplay.
-			[blitterView annuncNeedsDisplay];		
+			[blitterView annuncNeedsDisplay];
+			if ([[Settings instance] autoPrint])
+				[navViewController switchToPrintView];
 		}
 		
 		// Update the lastx display if necessary

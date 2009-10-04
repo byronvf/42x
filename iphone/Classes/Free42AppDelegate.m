@@ -240,6 +240,15 @@ bool prgmFirstWrite = TRUE;
 		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
 	else
 		[[Settings instance] setShowStatusBar:TRUE];
+
+	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
+		[[Settings instance] setAutoPrint:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
+	else
+	{
+		// If AUTO_PRINT is not defined then if user is updating then keep current behavior
+		// Otherwise if this is a new install then turn autoprint on.
+		[[Settings instance] setAutoPrint:(persistVersion >= 4 || persistVersion == 0)];
+	}
 	
 }
 
@@ -253,6 +262,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
 	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
+	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
 	

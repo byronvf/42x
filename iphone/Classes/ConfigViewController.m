@@ -31,6 +31,7 @@
 @synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
 @synthesize statusBarSwitch;
+@synthesize autoPrintSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -52,6 +53,7 @@
 	bigStackSwitch = [self makeSwitch];
 	menuKeysSwitch = [self makeSwitch];
 	statusBarSwitch = [self makeSwitch];
+	autoPrintSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -68,6 +70,7 @@
 	[bigStackSwitch release];
 	[menuKeysSwitch release];
 	[statusBarSwitch release];
+	[autoPrintSwitch release];
 	[gotoServerButton release];
 	[aboutButton release];	
 }
@@ -82,6 +85,7 @@
 	[bigStackSwitch setOn:mode_bigstack];
 	[menuKeysSwitch setOn:menuKeys];
 	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
+	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
 }
 
 - (void)switchChange:(UISwitch*)sender
@@ -116,6 +120,10 @@
 	{
 		[[Settings instance] setShowStatusBar:[sender isOn]];
 		[[navViewController calcViewController] resetLCD];
+	}
+	else if (sender == autoPrintSwitch)
+	{
+		[[Settings instance] setAutoPrint:[sender isOn]];
 	}
 }
 
@@ -182,7 +190,7 @@
 	{
 		case 0: return 1;
 		case 1: return 2;
-		case 2: return 3;
+		case 2: return 4;
 		case 3: return 1;
 		case 4: return 1;
 		default: return 0;
@@ -216,7 +224,7 @@
 	}
 	else if (indexPath.section == 1 && indexPath.row == 0) // Sound Section
 	{
-		cell.textLabel.text = @"Key clicks";
+		cell.textLabel.text = @"Key Clicks";
 		cell.accessoryView = clickSoundSwitch;
 	}
 	else if (indexPath.section == 1 && indexPath.row == 1)
@@ -231,13 +239,18 @@
 	}
 	else if (indexPath.section == 2 && indexPath.row == 1)
 	{
-		cell.textLabel.text = @"Overlay menu on keys";
+		cell.textLabel.text = @"Overlay Menu on Keys";
 		cell.accessoryView = menuKeysSwitch;
 	}
 	else if (indexPath.section == 2 && indexPath.row == 2)
 	{
-		cell.textLabel.text = @"iPhone status bar";
+		cell.textLabel.text = @"iPhone Status Bar";
 		cell.accessoryView = statusBarSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 3)
+	{
+		cell.textLabel.text = @"Auto Show Print View";
+		cell.accessoryView = autoPrintSwitch;
 	}
 	else if  (indexPath.section == 3 && indexPath.row == 0) // Import Export
 	{
