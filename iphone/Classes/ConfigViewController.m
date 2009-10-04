@@ -207,6 +207,7 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] 
 				 initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 	if (indexPath.section == 0 && indexPath.row == 0)  // Behavior Section
 	{
