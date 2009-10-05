@@ -89,7 +89,7 @@
 	[menuKeysSwitch setOn:menuKeys];
 	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
-	[RPLEnterSwitch setOn:TRUE];
+	[RPLEnterSwitch setOn:mode_rpl_enter];
 }
 
 - (void)switchChange:(UISwitch*)sender
@@ -131,7 +131,7 @@
 	}
 	else if (sender == RPLEnterSwitch)
 	{
-		//[[Settings instance] setAutoPrint:[sender isOn]];
+		mode_rpl_enter = [sender isOn];
 	}
 }
 

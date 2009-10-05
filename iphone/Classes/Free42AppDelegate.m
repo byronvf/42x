@@ -240,7 +240,7 @@ bool prgmFirstWrite = TRUE;
 		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
 	else
 		[[Settings instance] setShowStatusBar:TRUE];
-
+	
 	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
 		[[Settings instance] setAutoPrint:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
 	else
@@ -264,7 +264,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
-	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
+	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
 	
 	[[navViewController printViewController] releasePrintBuffer];
 }
@@ -302,6 +302,14 @@ bool prgmFirstWrite = TRUE;
 			core_init(1, FREE42_VERSION);
 	}
 	free42init = TRUE;
+	
+	if (persistVersion < 4)
+	{
+		// If this is an early version, then move the setting for big stack to flag 32
+		// rpl_enter_mode is set with what mode_bigstack used to be from the persist file
+		flags.f.f32 = mode_rpl_enter;
+		mode_rpl_enter = FALSE;
+	}
 	
 	if (statefile) fclose(statefile);
 

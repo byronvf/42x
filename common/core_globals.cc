@@ -603,7 +603,7 @@ int mode_goose;
 #if BIGSTACK
 stack_item *bigstack_head = NULL;
 /* True if we are currently operating with the extended stack */
-bool mode_bigstack = false;
+bool mode_rpl_enter = false;
 int stacksize = 4;  /* stack size is always at least 4 */
 int last_pending_command = CMD_NONE;
 #endif
@@ -1108,7 +1108,7 @@ static bool persist_globals() {
     /* make sure the stack size we save is in fact the size of the
        stack we saved. */
     assert(stackcnt == stacksize);
-    if (!write_bool(mode_bigstack))
+    if (!write_bool(mode_rpl_enter))
 	goto done;	
 #else
     if (!write_bool(false))  /* No, big stack block does not exist */
@@ -1231,7 +1231,7 @@ static bool unpersist_globals(int4 ver) {
 		lastsi->next = si;
 	    lastsi = si;
 	}
-	if (!read_bool(&mode_bigstack))
+	if (!read_bool(&mode_rpl_enter))
 	    goto done;
     }
 #endif

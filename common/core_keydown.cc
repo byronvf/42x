@@ -261,14 +261,25 @@ void keydown(int shift, int key) {
 	    arg.val_d = entered_number;
 	    store_command(pc, CMD_NUMBER, &arg);
 #ifdef BIGLCD	    
-            if (dispRows == 2)
-	        prgm_highlight_row = 1;
+	    if (dispRows == 2)
+		prgm_highlight_row = 1;
 #else
 	    prgm_highlight_row = 1;
-#endif	    
+#endif
+		
 	} else if ((flags.f.trace_print || flags.f.normal_print)
 		&& flags.f.printer_exists)
 	    deferred_print = 1;
+#ifdef BIGSTACK
+	if (mode_rpl_enter && key == KEY_ENTER)
+	{
+	    // If rpl entry and we are finishing number entry, then we exit here
+	    // instead of continueing on which would insert and ENTER command also
+	    pending_command = CMD_NONE;
+	    redisplay();
+	    return;
+	}	
+#endif
     }
 
     if (mode_command_entry && shift && (key == KEY_UP || key == KEY_DOWN)) {
@@ -354,6 +365,8 @@ void keydown(int shift, int key) {
 	keydown_normal_mode(shift, key);
 
 #if BIGSTACK	
+	// Used to track the last commnd to implement drop on the second
+	// click of KEY_BSP
     last_pending_command = pending_command;
 #endif
 }

@@ -452,7 +452,7 @@ extern bool mode_updown;
 extern int4 mode_sigma_reg;
 extern int mode_goose;
 #if BIGSTACK
-extern bool mode_bigstack;  // This is not being used at this point,
+extern bool mode_rpl_enter; // This is not being used at this point,
 			    // uses flags.f.f32 now.
 extern int stacksize;
 #endif
