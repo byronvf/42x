@@ -486,6 +486,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	// hwne vscale is 2.8
 	int hs = (h*8)*vscale + 1;
 	if (hs == 23) hs = 22;
+	
+	if (dispRows == 4) hs += 5;
 
 	int top = [self statusBarOffset] + (l*8)*vscale;	
 	if ([self shouldDisplayAnnunc])
