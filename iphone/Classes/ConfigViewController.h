@@ -41,6 +41,7 @@
 	UISwitch* lastXSwitch;
 	UISwitch* statusBarSwitch;
 	UISwitch* autoPrintSwitch;
+	UISwitch* RPLEnterSwitch;
 	
 	UIButton* gotoServerButton;
 	UIButton* aboutButton;
@@ -56,6 +57,7 @@
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* bigStackSwitch;
+@property (nonatomic, retain) UISwitch* RPLEnterSwitch;
 @property (nonatomic, retain) UIButton* gotoServerButton;
 @property (nonatomic, retain) UIButton* aboutButton;
 @property (nonatomic, retain) NavViewController* navViewController;

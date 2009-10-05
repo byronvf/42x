@@ -138,7 +138,7 @@ void recall_result(vartype *v) {
 	free_vartype(reg_x);
     else {
 #ifdef BIGSTACK
-	if (mode_bigstack)
+	if (flags.f.f32)
 	    shift_big_stack_up();
 	else
 	    free_vartype(reg_t);
@@ -157,7 +157,7 @@ void recall_result(vartype *v) {
 void recall_two_results(vartype *x, vartype *y) {
     if (flags.f.stack_lift_disable) {
 #ifdef BIGSTACK
-	if (mode_bigstack)
+	if (flags.f.f32)
 	    shift_big_stack_up();
 	else
 	    free_vartype(reg_t);
@@ -169,7 +169,7 @@ void recall_two_results(vartype *x, vartype *y) {
 	reg_z = reg_y;
     } else {
 #ifdef BIGSTACK
-	if (mode_bigstack)
+	if (flags.f.f32)
 	{
 	    shift_big_stack_up();
 	    reg_t = reg_z;
@@ -208,7 +208,7 @@ void binary_result(vartype *x) {
     free_vartype(reg_y);
     reg_y = reg_z;
 #ifdef BIGSTACK
-    if (mode_bigstack)
+    if (flags.f.f32)
     {
 	reg_z = reg_t;
 	shift_big_stack_down();

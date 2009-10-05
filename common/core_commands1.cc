@@ -44,7 +44,7 @@ int docmd_enter(arg_struct *arg) {
     if (v == NULL)
 	return ERR_INSUFFICIENT_MEMORY;
 #ifdef BIGSTACK
-    if (mode_bigstack)
+    if (flags.f.f32)
     {
 	shift_big_stack_up();
     }
@@ -76,7 +76,7 @@ int docmd_drop(arg_struct *arg)
     reg_x = reg_y;
     reg_y = reg_z;
     reg_z = reg_t;
-    if (mode_bigstack)
+    if (flags.f.f32)
 	shift_big_stack_down();
     else
 	reg_t = dup_vartype(reg_t);
@@ -91,7 +91,7 @@ int docmd_rdn(arg_struct *arg) {
     reg_z = reg_t;
 #ifdef BIGSTACK
 	assert(big_stack_verify() == 0);
-    if (mode_bigstack)
+    if (flags.f.f32)
     {
 	if (bigstack_head == NULL) {
 	    reg_t = temp;
@@ -232,7 +232,7 @@ int docmd_complex(arg_struct *arg) {
 	    free_vartype(reg_y);
 	    reg_y = reg_z;
 #ifdef BIGSTACK
-	    if (mode_bigstack)
+	    if (flags.f.f32)
 	    {
 		reg_z = reg_t;
 		shift_big_stack_down();
@@ -255,7 +255,7 @@ int docmd_complex(arg_struct *arg) {
 	    free_vartype(reg_lastx);
 	    reg_lastx = reg_x;
 #ifdef BIGSTACK
-	    if (mode_bigstack)
+	    if (flags.f.f32)
 		shift_big_stack_up();
 	    else
 		free_vartype(reg_t);
@@ -325,7 +325,7 @@ int docmd_complex(arg_struct *arg) {
 		free_vartype(reg_y);
 		reg_y = reg_z;
 #ifdef BIGSTACK
-		if (mode_bigstack)
+		if (flags.f.f32)
 		{
 		    reg_z = reg_t;
 		    shift_big_stack_down();
@@ -375,7 +375,7 @@ int docmd_complex(arg_struct *arg) {
 	    free_vartype(reg_lastx);
 	    reg_lastx = reg_x;
 #ifdef BIGSTACK
-	    if (mode_bigstack)
+	    if (flags.f.f32)
 		shift_big_stack_up();
 	    else
 		free_vartype(reg_t);
@@ -767,7 +767,7 @@ int docmd_clst(arg_struct *arg) {
     free_vartype(reg_z);
     free_vartype(reg_t);
 #ifdef BIGSTACK
-	if (mode_bigstack)
+	if (flags.f.f32)
 	{
 	    while(bigstack_head != NULL)
 	    {		

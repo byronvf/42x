@@ -1919,7 +1919,7 @@ void keydown_normal_mode(int shift, int key) {
 	} else {
 	    if (!flags.f.stack_lift_disable) {
 #ifdef BIGSTACK
-                if (mode_bigstack)
+                if (flags.f.f32)
                     shift_big_stack_up();
                 else
                     free_vartype(reg_t);

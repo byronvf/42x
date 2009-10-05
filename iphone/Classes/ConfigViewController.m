@@ -32,6 +32,7 @@
 @synthesize menuKeysSwitch;
 @synthesize statusBarSwitch;
 @synthesize autoPrintSwitch;
+@synthesize RPLEnterSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -54,6 +55,7 @@
 	menuKeysSwitch = [self makeSwitch];
 	statusBarSwitch = [self makeSwitch];
 	autoPrintSwitch = [self makeSwitch];
+	RPLEnterSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -73,6 +75,7 @@
 	[autoPrintSwitch release];
 	[gotoServerButton release];
 	[aboutButton release];	
+	[RPLEnterSwitch release];
 }
 
 
@@ -82,10 +85,11 @@
 	[beepSoundSwitch setOn:[[Settings instance] beepSoundOn]];	
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
-	[bigStackSwitch setOn:mode_bigstack];
+	[bigStackSwitch setOn:flags.f.f32];
 	[menuKeysSwitch setOn:menuKeys];
 	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
+	[RPLEnterSwitch setOn:TRUE];
 }
 
 - (void)switchChange:(UISwitch*)sender
@@ -104,7 +108,7 @@
 	}	
 	else if (sender == bigStackSwitch)
 	{
-		mode_bigstack = [sender isOn];
+		flags.f.f32 = [sender isOn];
 	}
 	else if (sender == menuKeysSwitch)
 	{
@@ -124,6 +128,10 @@
 	else if (sender == autoPrintSwitch)
 	{
 		[[Settings instance] setAutoPrint:[sender isOn]];
+	}
+	else if (sender == RPLEnterSwitch)
+	{
+		//[[Settings instance] setAutoPrint:[sender isOn]];
 	}
 }
 
@@ -188,7 +196,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	switch (section)
 	{
-		case 0: return 1;
+		case 0: return 2;
 		case 1: return 2;
 		case 2: return 4;
 		case 3: return 1;
@@ -221,6 +229,11 @@
 	{
 		cell.textLabel.text = @"Dynamic Stack";
 		cell.accessoryView = bigStackSwitch;
+	}
+	if (indexPath.section == 0 && indexPath.row == 1) 
+	{
+		cell.textLabel.text = @"RPL Enter Mode";
+		cell.accessoryView = RPLEnterSwitch;
 	}
 	else if (indexPath.section == 1 && indexPath.row == 0) // Sound Section
 	{

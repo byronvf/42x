@@ -1289,7 +1289,7 @@ int docmd_prstk(arg_struct *arg) {
     shell_annunciators(-1, -1, 1, -1, -1, -1);
     print_text(NULL, 0, 1);
 #if BIGSTACK
-    if (mode_bigstack && bigstack_head != NULL)
+    if (flags.f.f32 && bigstack_head != NULL)
     {
 	vartype* lastvar = NULL;
 	stack_item *si = NULL;
@@ -1610,7 +1610,7 @@ int docmd_number(arg_struct *arg) {
 	free_vartype(reg_x);
     else {
 #ifdef BIGSTACK
-	if (mode_bigstack)
+	if (flags.f.f32)
 	    shift_big_stack_up();
 	else
 	    free_vartype(reg_t);
@@ -1717,7 +1717,7 @@ int docmd_newmat(arg_struct *arg) {
 int docmd_rup(arg_struct *arg) {
     vartype *temp = reg_x;    
 #ifdef BIGSTACK
-    if (mode_bigstack)
+    if (flags.f.f32)
     {
 	if (bigstack_head == NULL) {
 	    reg_x = reg_t;
@@ -1790,7 +1790,7 @@ int docmd_dim_t(arg_struct *arg) {
     free_vartype(reg_lastx);
     reg_lastx = reg_x;
 #if BIGSTACK
-    if (mode_bigstack)
+    if (flags.f.f32)
 	shift_big_stack_up();
     else
 	free_vartype(reg_t);
