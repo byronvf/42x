@@ -23,6 +23,7 @@
 #include "core_main.h"
 #include "core_tables.h"
 #include "core_variables.h"
+#include "core_keydown.h"
 #include "shell.h"
 
 /********************/
@@ -2078,20 +2079,19 @@ void redisplay() {
 		} else
 		    display_prgm_line(1, 0);
 	    } else /* More than two lines of display */ {
+			int totLines = num_prgm_lines();
+			int atLine = pc2line(pc);
+			if (totLines <= avail_rows) prgm_highlight_row = atLine;
+			else if (totLines - atLine < avail_rows - prgm_highlight_row)
+			{
+				prgm_highlight_row = avail_rows - (totLines - atLine);
+			}
+			
                 if (prgms[current_prgm].text[pc] == CMD_END) {
-                    int tmppc = 0;
-                    int tmpline = 1;
-                    // Calc what line then end of the program is at
-                    while (tmpline < avail_rows && prgms[current_prgm].text[tmppc] != CMD_END) {
-                        tmppc += get_command_length(current_prgm, tmppc);
-                        tmpline++;
-                    }
-                    prgm_highlight_row = tmpline;
+                    prgm_highlight_row = totLines;
                 }
-                if (prgm_highlight_row >= avail_rows)
-                    prgm_highlight_row = avail_rows-1;
-                if (prgm_highlight_row < 0)
-                    prgm_highlight_row = 0;
+                if (prgm_highlight_row >= avail_rows) prgm_highlight_row = avail_rows-1;
+                else if (prgm_highlight_row < 0) prgm_highlight_row = 0;
 		if (pc == -1)
 		    prgm_highlight_row = 0;
 		int r = 0;

@@ -119,18 +119,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	[blitterView annuncNeedsDisplay];
 }
 
-static int num_prgm_lines() {
-    int4 pc = 0;
-    int4 lines = 1;
-    prgm_struct *prgm = prgms + current_prgm;	
-    while (prgm->text[pc] != CMD_END) {
-		pc += get_command_length(current_prgm, pc);
-		lines++;
-    }
-	return lines;
-}
-
-
 void core_copy_reg(char *buf, int buflen, vartype *reg) {
     int len = vartype2string(reg, buf, buflen - 1);
     buf[len] = 0;
@@ -487,6 +475,9 @@ char lastxbuf[LASTXBUF_SIZE];
 	int hs = (h*8)*vscale + 1;
 	if (hs == 23) hs = 22;
 	
+	// dispRows == 4 means we are in program mode with the status bar off, in draw rect
+	// we addjust the top by +5 in this mode to help center the program display in the 
+	// LCD, we make the same adjustment here so we draw the entire area.
 	if (dispRows == 4) hs += 5;
 
 	int top = [self statusBarOffset] + (l*8)*vscale;	
