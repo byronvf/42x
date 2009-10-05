@@ -2079,6 +2079,8 @@ void redisplay() {
 		} else
 		    display_prgm_line(1, 0);
 	    } else /* More than two lines of display */ {
+			
+			// Make sure program is always centered in the large display
 			int totLines = num_prgm_lines();
 			int atLine = pc2line(pc);
 			if (totLines <= avail_rows) prgm_highlight_row = atLine;

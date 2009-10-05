@@ -379,17 +379,20 @@ char lastxbuf[LASTXBUF_SIZE];
 	
 	int offset = insetTop;
 	int fullheight = self.bounds.size.height - (insetTop + insetBot);
-	int barheight = fullheight;
 	
 	if ([[Settings instance] showStatusBar])
 	{	
 		offset += 20;
 		fullheight -= 20;
 	}
-
+	
+	int barheight = fullheight;
 	int lines = num_prgm_lines() + 1;
 	if (dispRows < lines)
 		barheight = dispRows*fullheight/lines;
+	
+	// barheight is never less then 3 pixels
+	if (barheight < 3) barheight = 3;
 
 	int startline = pc2line(pc) - prgm_highlight_row;
 	if (startline < 0) startline = 0;  // This shoudn't happen, but just in case
@@ -479,6 +482,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	// we addjust the top by +5 in this mode to help center the program display in the 
 	// LCD, we make the same adjustment here so we draw the entire area.
 	if (dispRows == 4) hs += 5;
+	if (dispRows == 6 || dispRows == 7) hs += 2;
 
 	int top = [self statusBarOffset] + (l*8)*vscale;	
 	if ([self shouldDisplayAnnunc])
