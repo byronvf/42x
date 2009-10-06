@@ -377,7 +377,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
 	int insetTop = 2;
-	int insetBot = 5;
+	if (self.dispAnnunc) insetTop += ASTAT_HEIGHT;
+	int insetBot = 4;
 	
 	int offset = insetTop;
 	int fullheight = self.bounds.size.height - (insetTop + insetBot);
