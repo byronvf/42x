@@ -141,6 +141,7 @@ char lastxbuf[LASTXBUF_SIZE];
 @synthesize cutPaste;
 @synthesize selectAll;
 @synthesize statusBarOffset;
+@synthesize dispAnnunc;
 
 - (void)setSelectHighlight
 {
@@ -164,6 +165,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	// Initialization code
 	blitterView = self; // We need a reference to this view outside the class
 	highlight = FALSE;
+	dispAnnunc = TRUE;
 	
 	// Initialize offsetDisp if we need to compensate for the top statusbar
 	statusBarOffset = [[Settings instance] showStatusBar] ? 20 : 0;
@@ -318,7 +320,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
 	// DispRows of 4 or 7 means that we are displaying in program mode with a largeLCD
-	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && [self shouldDisplayAnnunc])
+	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && self.dispAnnunc)
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
@@ -341,7 +343,7 @@ char lastxbuf[LASTXBUF_SIZE];
 		if (hMax > dispRows*8 || flags.f.prgm_mode) hMax = dispRows*8;
 		int vertoffset = statusBarOffset;
 		
-		if ([self shouldDisplayAnnunc])
+		if (self.dispAnnunc)
 		{
 			vertoffset += ASTAT_HEIGHT;
 		}
@@ -405,29 +407,9 @@ char lastxbuf[LASTXBUF_SIZE];
 	CGContextFillRect(ctx, bar);	
 }
 
-/**
- * Return true if we should display the annunciator status line, false otherwise. 
- * In program mode we don't display the annuciator line, and use this space for 
- * one additional line of program display.
- */
-- (BOOL)shouldDisplayAnnunc
-{
-	NSAssert(free42init, @"Free42 has not been initialized");
-	if (flags.f.prgm_mode)
-	{
-		if (![[Settings instance] showStatusBar]) return FALSE;
-		if (self.bounds.size.height > 100) return FALSE;
-		
-		// If we are useing smallLCD and the LCD is not expanded, then we WILL
-		// display the annuciator line for backward compatibility with HP-42S
-	}
-	return TRUE;
-}
-
-
 - (void)annuciatorNeedsUpdate
 {
-	if ([self shouldDisplayAnnunc])
+	if (self.dispAnnunc)
 	{
 		int v = ASTAT_HEIGHT;
 		// If we are not int largeLCD mode, then include the iphone statusbar region
@@ -443,12 +425,17 @@ char lastxbuf[LASTXBUF_SIZE];
  */
 - (void)setNumDisplayRows
 {
+	self.dispAnnunc = TRUE;
 	if (![[Settings instance] showStatusBar])
 	{
 		dispRows = 3;
 		if (self.bounds.size.height > 100)
 			dispRows = 6;
-		if (flags.f.prgm_mode) dispRows += 1;		
+		if (flags.f.prgm_mode)
+		{
+			self.dispAnnunc = FALSE;
+			dispRows += 1;
+		}
 	}
 	else
 	{
@@ -457,7 +444,10 @@ char lastxbuf[LASTXBUF_SIZE];
 		{
 			dispRows = 5;
 			if (flags.f.prgm_mode) 
+			{
+				self.dispAnnunc = FALSE;
 				dispRows = 6;
+			}
 		}
 	}
 	
@@ -485,7 +475,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (dispRows == 6 || dispRows == 7) hs += 2;
 
 	int top = [self statusBarOffset] + (l*8)*vscale;	
-	if ([self shouldDisplayAnnunc])
+	if (self.dispAnnunc)
 		top += ASTAT_HEIGHT;
 			
 	[self setNeedsDisplayInRect:CGRectMake(0, top, 320, hs)];	

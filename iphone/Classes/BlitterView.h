@@ -38,10 +38,12 @@ extern char lastxbuf[LASTXBUF_SIZE];
 	BOOL cutPaste;
 	BOOL selectAll;
 	int statusBarOffset;
+	BOOL dispAnnunc;
 	
 	IBOutlet CalcViewController* calcViewController;
 }
 
+@property BOOL dispAnnunc;
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property BOOL selectAll;
@@ -59,7 +61,6 @@ extern char lastxbuf[LASTXBUF_SIZE];
 - (void) setDisplayUpdateRow:(int) l h:(int) h;
 - (float) getDispVertScale;
 - (void) setNumDisplayRows;
-- (BOOL) shouldDisplayAnnunc;
 - (void) drawScrollBar;
 - (void) annuciatorNeedsUpdate;
 
