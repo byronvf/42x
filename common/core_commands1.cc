@@ -88,30 +88,34 @@ int docmd_rdn(arg_struct *arg) {
     vartype *temp = reg_x;
     reg_x = reg_y;
     reg_y = reg_z;
-    reg_z = reg_t;
 #ifdef BIGSTACK
-	assert(big_stack_verify() == 0);
-    if (flags.f.f32)
-    {
-	if (bigstack_head == NULL) {
+    assert(big_stack_verify() == 0);
+    if (flags.f.f32 && stacksize > 4) {
+	reg_z = reg_t;
+	stack_item *si = bigstack_head;
+	reg_t = si->var;
+	while(si->next != NULL)
+	    si = si->next;
+	si->next = new_stack_item(temp);
+	si->next->next = NULL;
+	si = bigstack_head;
+	bigstack_head = bigstack_head->next;
+	free_stack_item(si);
+    }
+    else {	
+	assert(flags.f.f32 && bigstack_head == NULL || !flags.f.f32);
+	if (!flags.f.f32 || stacksize == 4) {
+	    reg_z = reg_t;
 	    reg_t = temp;
-	} else {
-	    stack_item *si = bigstack_head;
-	    reg_t = si->var;
-	    while(si->next != NULL)
-		si = si->next;
-	    si->next = new_stack_item(temp);
-	    si->next->next = NULL;
-	    si = bigstack_head;
-	    bigstack_head = bigstack_head->next;
-	    free_stack_item(si);
+	}
+	else {
+	    assert(stacksize == 3);
+	    reg_z = temp;
 	}
     }
-    else
-	reg_t = temp;
-	
-	assert(big_stack_verify() == 0);
+    assert(big_stack_verify() == 0);
 #else
+    reg_z = reg_t;
     reg_t = temp;
 #endif
     if (flags.f.trace_print && flags.f.printer_exists)
@@ -774,8 +778,9 @@ int docmd_clst(arg_struct *arg) {
 		shift_big_stack_down();
 		free_vartype(reg_t);
 	    }	    
+	    stacksize = 3;
 	}
-    assert(big_stack_verify() == 0);
+	assert(big_stack_verify() == 0);
 #endif
     reg_x = new_real(0);
     reg_y = new_real(0);
@@ -857,6 +862,7 @@ int docmd_clall(arg_struct *arg) {
 	shift_big_stack_down();
 	free_vartype(reg_t);
     }
+    stacksize = 3;
 #endif
     free_vartype(reg_lastx);
     reg_x = new_real(0);

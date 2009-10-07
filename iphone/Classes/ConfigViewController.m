@@ -21,6 +21,7 @@
 #import "CalcViewController.h"
 #import "core_main.h"
 #import "core_display.h"
+#import "core_commands2.h"
 
 @implementation ConfigViewController
 
@@ -108,7 +109,14 @@
 	}	
 	else if (sender == bigStackSwitch)
 	{
-		flags.f.f32 = [sender isOn];
+		arg_struct arg;
+		arg.type =  ARGTYPE_NUM;
+		arg.val.num = 32;
+		int val = [sender isOn];
+		if (val) 
+			docmd_sf(&arg);
+		else
+			docmd_cf(&arg);
 	}
 	else if (sender == menuKeysSwitch)
 	{

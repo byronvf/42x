@@ -1082,7 +1082,6 @@ static bool persist_globals() {
     bool ret = false;
 #if BIGSTACK
     stack_item *si = bigstack_head;
-	int stackcnt = 4;
 #endif	
     if (!persist_vartype(reg_x))
 	goto done;
@@ -1103,11 +1102,7 @@ static bool persist_globals() {
 	if (!persist_vartype(si->var))
 	    goto done;
 	si = si->next;
-	stackcnt++;
     }
-    /* make sure the stack size we save is in fact the size of the
-       stack we saved. */
-    assert(stackcnt == stacksize);
     if (!write_bool(mode_rpl_enter))
 	goto done;	
 #else
@@ -1218,8 +1213,7 @@ static bool unpersist_globals(int4 ver) {
 	}
 	int i = stacksize - 4;
 	stack_item *lastsi = NULL;
-	assert (i >= 0);
-	while (i--) {
+	while (i-- > 0) {
 	    vartype *v = NULL;
 	    if (!unpersist_vartype(&v))
 		goto done;	    
@@ -2952,27 +2946,28 @@ int big_stack_verify() {
 	    size++;
 	    /* If size is crazy big then we are probably in an infinite loop. */
 	    if (size > MAX_STACK_SIZE*10) {
-			return 1;
-		}
+		return 1;
+	    }
 	}
-	size += 4;
-	if (size != stacksize) {
-		return 2;
+	if (size > 0 && size + 4 != stacksize) {
+	    return 2;
 	}
-	if (size > MAX_STACK_SIZE)  {
-		return 3;
+	if (stacksize > MAX_STACK_SIZE)  {
+	    return 3;
+	}
+	if (stacksize < 3) {
+	    return 5;
 	}
 	
 	return 0;
 }
 
 void shift_big_stack_up() {
-    if (bigstack_head != NULL || reg_t->type != TYPE_REAL
-	|| ((vartype_real*)reg_t)->x != 0) {
+    stacksize++;
+    if (stacksize > 4) {
 	stack_item* si = new_stack_item(reg_t);
 	si->next = bigstack_head;
 	bigstack_head = si;
-	stacksize++;
 	
 	if (stacksize > MAX_STACK_SIZE) {
 	    /* Stack has grown too big, so remove last element, not
@@ -2989,26 +2984,30 @@ void shift_big_stack_up() {
 	}	
     }
     else {
+	if (stacksize == 4 && reg_z->type == TYPE_REAL && ((vartype_real*)reg_z)->x == 0)
+	    stacksize --;
+	assert(stacksize == 3 || stacksize == 4);
 	/* We can't move reg_t into the extended stack so we free it
 	   here, calling code depends on this behavior */
 	free_vartype(reg_t);
     }
-	assert(big_stack_verify() == 0);    
+    assert(big_stack_verify() == 0);    
 }
 
 void shift_big_stack_down() {
+    stacksize--;
     if (bigstack_head == NULL) {
 	reg_t = new_real(0);
-	assert(stacksize == 4);
+	if (stacksize < 3) stacksize = 3;
     }
     else {
+	assert(stacksize >= 4);
 	reg_t = bigstack_head->var;
 	stack_item* si = bigstack_head;
 	bigstack_head = si->next;
 	free_stack_item(si);
-	stacksize--;
     }
-    assert(big_stack_verify() == 0);    
+    assert(big_stack_verify() == 0);
 }
 
 void clean_stack_item_pool() {

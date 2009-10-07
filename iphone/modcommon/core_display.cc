@@ -1142,10 +1142,16 @@ void display_z(int row) {
 
 void display_t(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_t, buf, 20);
-    draw_string(0, row, "t\200", 2);
+	len = vartype2string(reg_t, buf, 20);
+	if (flags.f.f32) {
+		if (stacksize < 4) len = 0;	
+		draw_string(0, row, "~\200", 2);
+	}
+	else {
+		draw_string(0, row, "t\200", 2);
+	}		
     if (len > 20) {
 	draw_string(2, row, buf, 19);
 	draw_char(21, row, 26);
@@ -1157,7 +1163,7 @@ void display_0(int row) {
     char buf[20];
     int len = 0;
     clear_row(row);
-    if (bigstack_head != NULL)	
+    if (stacksize > 4)	
 	len = vartype2string(bigstack_head->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {
@@ -1171,7 +1177,7 @@ void display_1(int row) {
     char buf[20];
     int len = 0;
     clear_row(row);
-    if (bigstack_head != NULL && bigstack_head->next != NULL)
+    if (stacksize > 5)
 	len = vartype2string(bigstack_head->next->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {

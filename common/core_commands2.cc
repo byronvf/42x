@@ -50,6 +50,15 @@ int docmd_sf(arg_struct *arg) {
     if (virtual_flags[num] == '1')
 	return virtual_flag_handler(FLAGOP_SF, num);
     else {
+#ifdef BIGSTACK
+	// If we are switching to the dynamic stack, and the size of the
+	// stack is 3, but we have since placed a non-zero value in reg_t
+	// then include this new value in the dynamic stack by increasing
+	// the size.
+	if (num == 32 && !flags.f.f32 && stacksize == 3
+	          && (reg_t->type != TYPE_REAL || ((vartype_real*)reg_t)->x != 0))
+	    stacksize = 4;
+#endif
 	flags.farray[num] = 1;
 	if (num == 30)
 	    /* This is the stack_lift_disable flag.
@@ -1289,8 +1298,7 @@ int docmd_prstk(arg_struct *arg) {
     shell_annunciators(-1, -1, 1, -1, -1, -1);
     print_text(NULL, 0, 1);
 #if BIGSTACK
-    if (flags.f.f32 && bigstack_head != NULL)
-    {
+    if (flags.f.f32 && bigstack_head != NULL) {
 	vartype* lastvar = NULL;
 	stack_item *si = NULL;
 	while(si != bigstack_head) {
@@ -1301,10 +1309,15 @@ int docmd_prstk(arg_struct *arg) {
 	  len = vartype2string(lastvar, buf, 100);
 	  print_wide("~=", 2, buf, len);
   	}
-    }	 
-#endif
+    }
+    if (stacksize > 3) {
+	len = vartype2string(reg_t, buf, 100);
+	print_wide("~=", 2, buf, len);
+    }
+#else    
     len = vartype2string(reg_t, buf, 100);
     print_wide("T=", 2, buf, len);
+#endif
     len = vartype2string(reg_z, buf, 100);
     print_wide("Z=", 2, buf, len);
     len = vartype2string(reg_y, buf, 100);
@@ -1717,33 +1730,39 @@ int docmd_newmat(arg_struct *arg) {
 int docmd_rup(arg_struct *arg) {
     vartype *temp = reg_x;    
 #ifdef BIGSTACK
-    if (flags.f.f32)
+    if (flags.f.f32 && stacksize > 4)
     {
-	if (bigstack_head == NULL) {
-	    reg_x = reg_t;
-	} else {
-	    stack_item *si = new_stack_item(reg_t);
-	    si->next = bigstack_head;
-	    bigstack_head = si;
-	    stack_item *prevsi = si;
-	    while (si->next != NULL) {
-		prevsi = si;
+	stack_item *si = new_stack_item(reg_t);
+	si->next = bigstack_head;
+	bigstack_head = si;
+	stack_item *prevsi = si;
+	while (si->next != NULL) {
+	    prevsi = si;
 	    si = si->next;
-	    }
-	    assert(si != prevsi);
-	    prevsi->next = NULL;
-	    reg_x = si->var;
-	    free_stack_item(si);
 	}
+	assert(si != prevsi);
+	prevsi->next = NULL;
+	reg_x = si->var;
+	free_stack_item(si);
+	reg_t = reg_z;
     }
-    else
-	reg_x = reg_t;
+    else {
+	assert(flags.f.f32 && bigstack_head == NULL || !flags.f.f32);
+	if (!flags.f.f32 || stacksize == 4) {
+	    reg_x = reg_t;
+	    reg_t = reg_z;
+	}
+	else {
+	    assert(stacksize == 3);
+	    reg_x = reg_z;
+	}
 	
+    }
     assert(big_stack_verify() == 0);	
 #else
     reg_x = reg_t;
-#endif
     reg_t = reg_z;
+#endif
     reg_z = reg_y;
     reg_y = temp;
     if (flags.f.trace_print && flags.f.printer_exists)
