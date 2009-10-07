@@ -50,13 +50,14 @@ int docmd_enter(arg_struct *arg) {
     }
     else
 	free_vartype(reg_t);
+    mode_disable_stack_lift = !mode_rpl_enter;
 #else
     free_vartype(reg_t);
+    mode_disable_stack_lift = true;
 #endif
     reg_t = reg_z;
     reg_z = reg_y;
     reg_y = v;
-    mode_disable_stack_lift = true;
     return ERR_NONE;
 }
 
