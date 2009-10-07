@@ -359,12 +359,6 @@ char lastxbuf[LASTXBUF_SIZE];
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
-	if (rect.origin.y + rect.size.height > 142)
-	{
-		CGRect borderLine = CGRectMake(0, 143, 320, 3);
-		CGContextFillRect(ctx, borderLine);
-	}
-	
 	if (flags.f.prgm_mode) [self drawScrollBar];
 }
 
@@ -401,10 +395,10 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (startline < 0) startline = 0;  // This shoudn't happen, but just in case
 	offset += startline*fullheight/lines;
 			
-	CGRect bar = CGRectMake(313, offset, 5, barheight);
+	CGRect bar = CGRectMake(310, offset, 5, barheight);
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.40);	
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.50);	
 	CGContextFillRect(ctx, bar);	
 }
 
@@ -570,7 +564,7 @@ const int SCROLL_SPEED = 15;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 88;
+	bounds.size.height = 90;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;
