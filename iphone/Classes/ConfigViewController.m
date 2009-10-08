@@ -265,7 +265,7 @@
 	}
 	else if (indexPath.section == 2 && indexPath.row == 2)
 	{
-		cell.textLabel.text = @"iPhone Status Bar";
+		cell.textLabel.text = @"Device Status Bar";
 		cell.accessoryView = statusBarSwitch;
 	}
 	else if (indexPath.section == 2 && indexPath.row == 3)
