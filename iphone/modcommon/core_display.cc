@@ -1111,6 +1111,8 @@ void display_x(int row) {
 	string2buf(buf, 22, &bufptr, "x\200", 2);
     }
     bufptr += vartype2string(reg_x, buf + bufptr, 22 - bufptr);
+	if (mode_number_entry)
+		char2buf(buf, 22, &bufptr, '_');
     draw_string(0, row, buf, bufptr);
 }
 
