@@ -42,6 +42,9 @@ BOOL oldStyleStateExists;
 static const int PERSIST_VERSION = 4;
 
 // Persist version stored
+// 2 - 2.2
+// 3 - 2.2.1
+// 4 - 2.3
 static int persistVersion = 0;
 
 int cpuCount = 0;
@@ -296,7 +299,7 @@ bool prgmFirstWrite = TRUE;
 		// FREE42_VERSION 11, pre bigstack
 		if (persistVersion < 2)
 			core_init(1, 11);
-	    else if (persistVersion == 3)
+	    else if (persistVersion == 2 || persistVersion == 3)
 			core_init(1, 12);
 		else
 			core_init(1, FREE42_VERSION);
