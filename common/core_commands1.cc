@@ -50,7 +50,8 @@ int docmd_enter(arg_struct *arg) {
     }
     else
 	free_vartype(reg_t);
-    mode_disable_stack_lift = !mode_rpl_enter;
+    // Stack lift is always disabled when running programs, legacy behavior.
+    mode_disable_stack_lift = mode_running || !mode_rpl_enter;
 #else
     free_vartype(reg_t);
     mode_disable_stack_lift = true;

@@ -273,6 +273,9 @@ void keydown(int shift, int key) {
 #ifdef BIGSTACK
 	if (mode_rpl_enter && key == KEY_ENTER)
 	{
+	    if ((flags.f.trace_print || flags.f.normal_print)
+		    && flags.f.printer_exists)
+			print_command(CMD_ENTER, &pending_command_arg);			
 	    // If rpl entry and we are finishing number entry, then we exit here
 	    // instead of continueing on which would insert and ENTER command also
 	    pending_command = CMD_NONE;
