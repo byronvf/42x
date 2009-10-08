@@ -253,7 +253,7 @@ menu_spec menus[] = {
 			{ 0x1000 + CMD_CLA,     0, "" },
 			{ 0x1000 + CMD_CLX,     0, "" } } },
 #ifdef BIGSTACK      
-    { /* MENU_CLEAR2 */ MENU_NONE, MENU_CLEAR3, MENU_CLEAR2,
+    { /* MENU_CLEAR2 */ MENU_NONE, MENU_CLEAR3, MENU_CLEAR1,
 #else
     { /* MENU_CLEAR2 */ MENU_NONE, MENU_CLEAR1, MENU_CLEAR1,
 #endif      
