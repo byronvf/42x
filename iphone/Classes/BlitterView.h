@@ -34,26 +34,34 @@ extern char lastxbuf[LASTXBUF_SIZE];
 	// keep track of swipe on screen for switching to the print view	
 	CGPoint firstTouch;
 	BOOL highlight;
-	CGRect xRowHighlight;
-	CGRect baseRowHighlight;
+	CGRect selectRect;
 	BOOL cutPaste;
 	BOOL selectAll;
+	int statusBarOffset;
+	BOOL dispAnnunc;
 	
 	IBOutlet CalcViewController* calcViewController;
 }
 
+@property BOOL dispAnnunc;
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property BOOL selectAll;
+@property int statusBarOffset; // Offset if the status bar is being used
 
 @property (nonatomic, retain) CalcViewController* calcViewController;
 
 - (void) drawAnnunciators;
 - (void) annuncNeedsDisplay;
-- (void) twoLineDisp;
-- (void) fourLineDisp;
+- (void) singleLCD;
+- (void) doubleLCD;
 - (void) shouldCutPaste;
 - (void) showEditMenu;
 - (void) drawLastX;
+- (void) setDisplayUpdateRow:(int) l h:(int) h;
+- (float) getDispVertScale;
+- (void) setNumDisplayRows;
+- (void) drawScrollBar;
+- (void) annuciatorNeedsUpdate;
 
 @end

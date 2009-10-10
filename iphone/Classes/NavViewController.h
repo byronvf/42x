@@ -38,5 +38,6 @@
 - (void)switchToView:(UIViewController*) viewCtrl;
 - (void)switchToPrintView;
 - (void)switchToServerView;
+- (void)switchToConfigView;
 
 @end

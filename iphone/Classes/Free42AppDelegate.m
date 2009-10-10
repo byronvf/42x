@@ -39,9 +39,12 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 2;
+static const int PERSIST_VERSION = 4;
 
 // Persist version stored
+// 2 - 2.2
+// 3 - 2.2.1
+// 4 - 2.3
 static int persistVersion = 0;
 
 int cpuCount = 0;
@@ -119,14 +122,14 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 
 	if (oldStyleStateExists)
 	{
-		if (bufsize == 816)
+		if (bufsize == 1360)
 		{
 			// We do this to convert the file state format from the old version
 			// to the new version that stores 5 lines of display.
 			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 544);
-			readCnt += 816;
-			return 816;
+			memset((char*)buf+272, 0, 1088);
+			readCnt += 1360;
+			return 1360;
 		}
 
 		int n = read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
@@ -134,7 +137,20 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 		return n;
 	}
 	
-
+    if (persistVersion < 3 && bufsize == 1360)
+	{
+		int4 n = fread(buf, 1, 816, statefile);
+		if (n != 816 && ferror(statefile)) 
+		{
+			fclose(statefile);
+			statefile = NULL;
+			return -1;
+		} 
+        memset((char*)buf+816, 0, 544);
+		readCnt += 1360;
+		return 1360;
+	}
+	
     if (statefile == NULL)
 		return -1;
     else 
@@ -182,17 +198,6 @@ bool prgmFirstWrite = TRUE;
 @synthesize viewController;
 @synthesize navViewController;
 
-NSString* CONFIG_KEY_CLICK_ON = @"keyClickOn";
-NSString* CONFIG_BEEP_ON = @"beepOn";
-NSString* CONFIG_KEYBOARD = @"keyboardOn";
-NSString* CONFIG_AUTO_PRINT_ON = @"autoPrintOn";
-NSString* CONFIG_PRINT_BUF = @"printBuf";
-NSString* CONFIG_MENU_KEYS_BUF = @"menuKeys";
-NSString* CONFIG_DISP_ROWS = @"dispRows";
-NSString* CONFIG_PERSIST_VERSION = @"persistVersion";
-NSString* CONFIG_SHOW_LASTX = @"showLastX";
-NSString* CONFIG_PRLCD = @"prlcd";
-
 - (void)loadSettings
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -234,14 +239,20 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	else
 		[[Settings instance] setShowLastX:TRUE];
 	
+	if ([defaults objectForKey:CONFIG_SHOW_STATUS_BAR])
+		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
+	else
+		[[Settings instance] setShowStatusBar:TRUE];
 	
-	if ([defaults objectForKey:CONFIG_PRINT_BUF])
-    {
-		NSData *data = [defaults dataForKey:CONFIG_PRINT_BUF];
-		NSMutableData *pbuf = [[NSMutableData alloc] init];
-		[pbuf setData:data];
-		[[navViewController printViewController] setPrintBuff:pbuf];
-	}		
+	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
+		[[Settings instance] setAutoPrint:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
+	else
+	{
+		// If AUTO_PRINT is not defined then if user is updating then keep current behavior
+		// Otherwise if this is a new install then turn autoprint on.
+		[[Settings instance] setAutoPrint:(persistVersion >= 4 || persistVersion == 0)];
+	}
+	
 }
 
 - (void)saveSettings
@@ -253,11 +264,12 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	[defaults setBool:[[Settings instance] showLastX] forKey:CONFIG_SHOW_LASTX];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
+	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
+	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
-	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];
-
-	NSMutableData *pbuf = [[navViewController printViewController] printBuff];
-	[defaults setObject:pbuf forKey:@"printBuf"];
+	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
+	
+	[[navViewController printViewController] releasePrintBuffer];
 }
 
 
@@ -274,8 +286,6 @@ NSString* CONFIG_PRLCD = @"prlcd";
 	
 	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
 	
-	[self loadSettings];
-	
 	if (!oldStyleStateExists && statefile == NULL)
 	{
 		// We get here if this application has never been run, and there is 
@@ -289,16 +299,27 @@ NSString* CONFIG_PRLCD = @"prlcd";
 		// FREE42_VERSION 11, pre bigstack
 		if (persistVersion < 2)
 			core_init(1, 11);
-	    else
+	    else if (persistVersion == 2 || persistVersion == 3)
+			core_init(1, 12);
+		else
 			core_init(1, FREE42_VERSION);
 	}
 	free42init = TRUE;
 	
+	if (persistVersion < 4)
+	{
+		// If this is an early version, then move the setting for big stack to flag 32
+		// rpl_enter_mode is set with what mode_bigstack used to be from the persist file
+		flags.f.f32 = mode_rpl_enter;
+		mode_rpl_enter = FALSE;
+	}
+	
 	if (statefile) fclose(statefile);
 
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-
+	
+	[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+		
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
 	[navViewController setDelegate:navViewController];

@@ -23,11 +23,8 @@
 #include "core_main.h"
 #include "core_tables.h"
 #include "core_variables.h"
+#include "core_keydown.h"
 #include "shell.h"
-
-// Place this here for now so we don't have to modify many files
-extern int menuKeys;
-extern int dispRows;
 
 /********************/
 /* HP-42S font data */
@@ -43,6 +40,9 @@ extern int dispRows;
 #pragma warning(disable: 4309)
 #endif
 
+int dispRows = 2; 
+bool ignore_menu = FALSE;
+bool menuKeys = FALSE;
 
 static char bigchars[130][5] =
     {
@@ -519,8 +519,6 @@ static char smallchars_map[128] =
 #pragma warning(pop)
 #endif
 
-
-#define MAX_DISPLAY_ROWS 6
 #define DISPLAY_SIZE 136 * MAX_DISPLAY_ROWS
 static char display[DISPLAY_SIZE];
 
@@ -685,14 +683,14 @@ void draw_pixel(int x, int y) {
 
 void draw_pattern(phloat dx, phloat dy, const char *pattern, int pattern_width){
     int x, y, h, v, hmin, hmax, vmin, vmax;
-    if (dx + pattern_width < 1 || dx > 131 || dy + 8 < 1 || dy > 16)
+    if (dx + pattern_width < 1 || dx > 131 || dy + 8 < 1 || dy > MAX_DISPLAY_ROWS*8)
 	return;
     x = dx < 0 ? to_int(-floor(-dx + 0.5)) : to_int(floor(dx + 0.5));
     y = dy < 0 ? to_int(-floor(-dy + 0.5)) : to_int(floor(dy + 0.5));
     hmin = x < 1 ? 1 - x : 0;
     hmax = x + pattern_width > 132 ? 132 - x : pattern_width;
     vmin = y < 1 ? 1 - y : 0;
-    vmax = y + 8 > 17 ? 17 - y : 8;
+    vmax = y + 8 > MAX_DISPLAY_ROWS*8+1 ? MAX_DISPLAY_ROWS*8+1 - y : 8;
     x--;
     y--;
     if (flags.f.agraph_control1) {
@@ -964,10 +962,11 @@ static int prgmline2buf(char *buf, int len, int4 line, int highlight,
     }
 
     if (line == 0) {
-	int4 size = core_program_size(current_prgm);
+	//int4 size = core_program_size(current_prgm);
+	int4 size = num_prgm_lines() - 1;
 	string2buf(buf, len, &bufptr, "{ ", 2);
 	bufptr += int2string(size, buf + bufptr, len - bufptr);
-	string2buf(buf, len, &bufptr, "-Byte Prgm }", 12);
+	string2buf(buf, len, &bufptr, "-Line Prgm }", 12);
     } else if (flags.f.alpha_mode && mode_alpha_entry && highlight) {
 	int append = entered_string_length > 0 && entered_string[0] == 127;
 	if (append) {
@@ -1112,6 +1111,8 @@ void display_x(int row) {
 	string2buf(buf, 22, &bufptr, "x\200", 2);
     }
     bufptr += vartype2string(reg_x, buf + bufptr, 22 - bufptr);
+	if (mode_number_entry)
+		char2buf(buf, 22, &bufptr, '_');
     draw_string(0, row, buf, bufptr);
 }
 
@@ -1143,10 +1144,16 @@ void display_z(int row) {
 
 void display_t(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_t, buf, 20);
-    draw_string(0, row, "t\200", 2);
+	len = vartype2string(reg_t, buf, 20);
+	if (flags.f.f32) {
+		if (stacksize < 4) len = 0;	
+		draw_string(0, row, "~\200", 2);
+	}
+	else {
+		draw_string(0, row, "t\200", 2);
+	}		
     if (len > 20) {
 	draw_string(2, row, buf, 19);
 	draw_char(21, row, 26);
@@ -1156,9 +1163,10 @@ void display_t(int row) {
 
 void display_0(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_0, buf, 20);
+    if (stacksize > 4)	
+	len = vartype2string(bigstack_head->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {
 		draw_string(2, row, buf, 19);
@@ -1169,9 +1177,10 @@ void display_0(int row) {
 
 void display_1(int row) {
     char buf[20];
-    int len;
+    int len = 0;
     clear_row(row);
-    len = vartype2string(reg_1, buf, 20);
+    if (stacksize > 5)
+	len = vartype2string(bigstack_head->next->var, buf, 20);
     draw_string(0, row, "~\200", 2);
     if (len > 20) {
 		draw_string(2, row, buf, 19);
@@ -1443,7 +1452,11 @@ static int fcn_cat[] = {
     CMD_CLST,     CMD_CLV,       CMD_CLX,      CMD_CLSIGMA,    CMD_COMB,    CMD_COMPLEX,
     CMD_CORR,     CMD_COS,       CMD_COSH,     CMD_CPXRES,     CMD_CPX_T,   CMD_CROSS,
     CMD_CUSTOM,   CMD_DECM,      CMD_DEG,      CMD_DEL,        CMD_DELAY,   CMD_DELR,
-    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,        CMD_DSE,     CMD_EDIT,
+    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,   
+#ifdef BIGSTACK
+    CMD_DROP,
+#endif
+    CMD_DSE,     CMD_EDIT,
     CMD_EDITN,    CMD_END,       CMD_ENG,      CMD_ENTER,      CMD_EXITALL, CMD_EXPF,
     CMD_E_POW_X,  CMD_E_POW_X_1, CMD_FC_T,     CMD_FCC_T,      CMD_FCSTX,   CMD_FCSTY,
     CMD_FIX,      CMD_FNRM,      CMD_FP,       CMD_FS_T,       CMD_FSC_T,   CMD_GAMMA,
@@ -1764,6 +1777,12 @@ void redisplay() {
     int avail_rows = dispRows;
     int i;
 
+    if (cllcd_cmd) {
+	// If we are processing an cllcd command, then don't draw anything.
+	cllcd_cmd = false;
+	return;
+    }
+	
     if (mode_clall) {
 	clear_display();
 	draw_string(0, 0, "Clear All Memory?", 17);
@@ -2069,20 +2088,21 @@ void redisplay() {
 		} else
 		    display_prgm_line(1, 0);
 	    } else /* More than two lines of display */ {
+			
+			// Make sure program is always centered in the large display
+			int totLines = num_prgm_lines();
+			int atLine = pc2line(pc);
+			if (totLines <= avail_rows) prgm_highlight_row = atLine;
+			else if (totLines - atLine < avail_rows - prgm_highlight_row)
+			{
+				prgm_highlight_row = avail_rows - (totLines - atLine);
+			}
+			
                 if (prgms[current_prgm].text[pc] == CMD_END) {
-                    int tmppc = 0;
-                    int tmpline = 1;
-                    // Calc what line then end of the program is at
-                    while (tmpline < avail_rows && prgms[current_prgm].text[tmppc] != CMD_END) {
-                        tmppc += get_command_length(current_prgm, tmppc);
-                        tmpline++;
-                    }
-                    prgm_highlight_row = tmpline;
+                    prgm_highlight_row = totLines;
                 }
-                if (prgm_highlight_row >= avail_rows)
-                    prgm_highlight_row = avail_rows-1;
-                if (prgm_highlight_row < 0)
-                    prgm_highlight_row = 0;
+                if (prgm_highlight_row >= avail_rows) prgm_highlight_row = avail_rows-1;
+                else if (prgm_highlight_row < 0) prgm_highlight_row = 0;
 		if (pc == -1)
 		    prgm_highlight_row = 0;
 		int r = 0;
@@ -2093,10 +2113,18 @@ void redisplay() {
 			temp_highlight_row = 1;
 		}
 		while (r < avail_rows) {
+			if (mode_alpha_entry) {
+				if (r <= prgm_highlight_row)
+					large_display_prgm_line(r, r-temp_highlight_row, 0, true);
+				else
+					large_display_prgm_line(r, r-temp_highlight_row-1, 1, true);
+			}					
+			else {
 		    large_display_prgm_line(r, r-temp_highlight_row, 0, true);
-		    r++;
+			}
+			r++;
 		}
-	    }		 
+	    }
 	}
     } else if (flags.f.alpha_mode && avail_rows != 0 && !flags.f.message) {
 	int avail = mode_alpha_entry ? 21 : 22;

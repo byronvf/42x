@@ -20,27 +20,49 @@
 
 @class NavViewController;
 
-extern int menuKeys;
-extern int dispRows;
+#define CONFIG_PRINT_BUF @"printBuf"
+#define CONFIG_KEY_CLICK_ON @"keyClickOn"
+#define CONFIG_BEEP_ON @"beepOn"
+#define CONFIG_KEYBOARD @"keyboardOn"
+#define CONFIG_AUTO_PRINT_ON @"autoPrintOn"
+#define CONFIG_MENU_KEYS_BUF @"menuKeys"
+#define CONFIG_DISP_ROWS @"dispRows"
+#define CONFIG_PERSIST_VERSION @"persistVersion"
+#define CONFIG_SHOW_LASTX @"showLastX"
+#define CONFIG_PRLCD @"prlcd"
+#define CONFIG_SHOW_STATUS_BAR @"showStatusBar"
 
-@interface ConfigViewController : UIViewController {
-	IBOutlet UISwitch* clickSoundSwitch;
-	IBOutlet UISwitch* beepSoundSwitch;
-	IBOutlet UISwitch* keyboardSwitch;
-	IBOutlet UISwitch* bigStackSwitch;
-	NavViewController* navViewController;
-	IBOutlet UIButton* gotoServerButton;
-	IBOutlet UISwitch* menuKeysSwitch;
-	IBOutlet UISwitch* lastXSwitch;
+@interface ConfigViewController : UITableViewController {
+	UISwitch* clickSoundSwitch;
+	UISwitch* beepSoundSwitch;
+	UISwitch* keyboardSwitch;
+	UISwitch* bigStackSwitch;
+	UISwitch* menuKeysSwitch;
+	UISwitch* lastXSwitch;
+	UISwitch* statusBarSwitch;
+	UISwitch* autoPrintSwitch;
+	UISwitch* RPLEnterSwitch;
+	
+	UIButton* gotoServerButton;
+	UIButton* aboutButton;
+	
+	IBOutlet NavViewController* navViewController;
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
+@property (nonatomic, retain) UISwitch* statusBarSwitch;
+@property (nonatomic, retain) UISwitch* autoPrintSwitch;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* bigStackSwitch;
+@property (nonatomic, retain) UISwitch* RPLEnterSwitch;
 @property (nonatomic, retain) UIButton* gotoServerButton;
+@property (nonatomic, retain) UIButton* aboutButton;
 @property (nonatomic, retain) NavViewController* navViewController;
+
+- (UISwitch*)makeSwitch;
+- (void)switchChange:(UISwitch*)sender;
 
 @end

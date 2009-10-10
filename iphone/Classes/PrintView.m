@@ -25,13 +25,6 @@
 @synthesize printViewController;
 @synthesize offset;
 
-- (id)initWithFrame:(CGRect)frame {
-	if (self = [super initWithFrame:frame]) {
-		// Initialization code
-	}
-	return self;
-}
-
 /**
  * Cut/Paste, copy the entire print output directly from file to the clipboard.
  */
@@ -77,7 +70,7 @@
 
 - (void)drawRect:(CGRect)rect 
 {	
-	NSMutableData* buf = [printViewController printBuff];
+	NSMutableData* buf = [printViewController getBuff];
 	NSAssert(buf, @"print buffer not initialized");
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	// 5 - 5 pixels of top margin

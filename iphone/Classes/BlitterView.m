@@ -20,6 +20,8 @@
 #import "core_main.h"
 #import "core_display.h"
 #import "core_globals.h"
+#import "core_commands1.h"
+#import "core_commands2.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -37,6 +39,9 @@ static BOOL flagGrad = false;
 static BOOL flagRad = false;
 static BOOL flagRun = false;
 
+// Height of the annuciator line
+#define ASTAT_HEIGHT 18
+
 /**
  * Returns the new value of 'flag' based on the value of 'code' based
  * on values passed in from shell_annuciators
@@ -50,6 +55,52 @@ BOOL setFlag(BOOL flag, int code)
 	else // flag == -1
 		return flag;
 }
+
+/* 
+ * Handle swiping vertically on the right side of the display. We could call methods
+ * at a finer grain, for example docmd_rup, or sst(), but there is additional logic
+ * we need in keydown and keyup, for example exiting number_entry_mode.
+ */
+void swipevert(BOOL up)
+{
+	if (flags.f.prgm_mode)
+	{
+		// We are in program mode, we want to set ingore_menu to true so that
+		// the keydown method ignores the case the menu is up, which would normally
+		// be interpredted as a change in menu for key up or down. However, 
+		// we want scrolling to work even when the menu is up.
+		if (up)
+		{
+			ignore_menu = TRUE;
+			keydown(0, 23); // KEY_DWN
+			core_keyup();
+			ignore_menu = FALSE;
+		}
+		else
+		{
+			ignore_menu = TRUE;
+			keydown(0, 18);  // KEY_UP
+			core_keyup();
+			ignore_menu = FALSE;
+		}
+	}		
+	else
+	{
+		if (up)
+		{
+			keydown(0, 9);			
+			core_keyup();
+		}
+		else
+		{
+			keydown(0, 9);
+			// Change the pending command to roll up, so the docmd_rup method is called
+			// internally.
+			pending_command = CMD_RUP;
+			core_keyup();
+		}
+	}
+}	
 
 void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 {
@@ -67,7 +118,6 @@ void shell_annunciators(int updn, int shf, int prt, int run, int g, int rad)
 	// Only update the flags region of the display
 	[blitterView annuncNeedsDisplay];
 }
-
 
 void core_copy_reg(char *buf, int buflen, vartype *reg) {
     int len = vartype2string(reg, buf, buflen - 1);
@@ -90,15 +140,22 @@ char lastxbuf[LASTXBUF_SIZE];
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
+@synthesize statusBarOffset;
+@synthesize dispAnnunc;
 
-
-- (void)setXHighlight
+- (void)setSelectHighlight
 {
 	// BaseRowHighlight is the starting first row of the display
-	// 3 for the display scale factor of 3
-	// 8 each row contains 8 pixel columns
-	xRowHighlight = baseRowHighlight;
-	xRowHighlight.origin.y += (dispRows - (core_menu() && ! menuKeys ? 2 : 1))*3*8;
+	selectRect.origin.y = ASTAT_HEIGHT + statusBarOffset;
+	if (selectAll)
+	{
+		selectRect.size.height = dispRows*[self getDispVertScale]*8;
+	}
+	else
+	{
+		selectRect.origin.y += (dispRows - 1) * [self getDispVertScale]*8;
+		selectRect.size.height = [self getDispVertScale]*8;
+	}
 }
 
 - (void)awakeFromNib
@@ -108,18 +165,21 @@ char lastxbuf[LASTXBUF_SIZE];
 	// Initialization code
 	blitterView = self; // We need a reference to this view outside the class
 	highlight = FALSE;
+	dispAnnunc = TRUE;
 	
-	baseRowHighlight = CGRectMake(28, 18, 284, 24); // Hightlight for x region
-	[self setXHighlight];
+	// Initialize offsetDisp if we need to compensate for the top statusbar
+	statusBarOffset = [[Settings instance] showStatusBar] ? 20 : 0;
+	
+	// Hightlight for x region
+	selectRect = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24);
+	
+	[self setSelectHighlight];
 	firstTouch.x = -1;
 	[self shouldCutPaste];
 }
 
 - (void) annuncNeedsDisplay
 {
-	// Only update the flags region of the display
-	[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, 18)];
-	
 	if (flagShift)
 		[[calcViewController b28] setImage:[UIImage imageNamed:@"glow.png"] forState:NULL];
 	else
@@ -128,7 +188,10 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (flagUpDown)
 		[[calcViewController updnGlowView] setHidden:FALSE];
 	else
-		[[calcViewController updnGlowView] setHidden:TRUE];	
+		[[calcViewController updnGlowView] setHidden:TRUE];
+	
+	// Only update the flags region of the display
+	[self annuciatorNeedsUpdate];
 }
 
 /**
@@ -145,27 +208,27 @@ char lastxbuf[LASTXBUF_SIZE];
 	// to the image stored in a variable would no longer be valid.
 	
 	if (flagUpDown)
-		CGContextDrawImage(ctx, CGRectMake(6, 2, 40, 12), 
+		CGContextDrawImage(ctx, CGRectMake(6, 2 + statusBarOffset, 40, 12), 
 						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(35, -3, 30, 18),
+		CGContextDrawImage(ctx, CGRectMake(35, -3 + statusBarOffset, 30, 18),
 						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
 	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(65, -1, 32, 18),
+		CGContextDrawImage(ctx, CGRectMake(65, -1 + statusBarOffset, 32, 18),
 						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(100, -1, 18, 18),
+		CGContextDrawImage(ctx, CGRectMake(100, -1 + statusBarOffset, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(120, -2, 30, 20), 
+		CGContextDrawImage(ctx, CGRectMake(120, -2 + statusBarOffset, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
 	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(120, -1, 24, 20),
+		CGContextDrawImage(ctx, CGRectMake(120, -1 + statusBarOffset, 24, 20),
 						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
 
@@ -231,7 +294,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	// the annunciator row.
 	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
 	UIFont *font = [UIFont systemFontOfSize:15];
-	[wprefix drawInRect:CGRectMake(140, -2, 178, 14) withFont:font lineBreakMode:UILineBreakModeClip
+	[wprefix drawInRect:CGRectMake(140, -2 + statusBarOffset, 178, 14) 
+			   withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentRight];
 	[lval release];
 }
@@ -250,30 +314,21 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (highlight)
 	{
 		CGContextSetRGBFillColor(ctx, 0.60, 0.8, 1.0, 1.0);
-		if (selectAll)
-		{
-			// Make selection area larger for select all
-			CGRect rect = xRowHighlight;
-			int newy = 16;
-			rect.size.height = rect.size.height + (rect.origin.y - newy);
-			rect.origin.y = newy;
-			CGContextFillRect(ctx,rect);
-		}
-        CGContextFillRect(ctx, xRowHighlight);
+        CGContextFillRect(ctx, selectRect);
 	}
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 
-	if (rect.origin.y < 18)
+	// DispRows of 4 or 7 means that we are displaying in program mode with a largeLCD
+	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && self.dispAnnunc)
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
 	}
 	
-	if (rect.origin.y + rect.size.height > 18)
+	if (rect.origin.y + rect.size.height > ASTAT_HEIGHT + statusBarOffset)
 	{
-		float vertScale = 3.0;
-		if (dispRows > 2 && flags.f.prgm_mode) vertScale = 2.5;
+		float vertScale = [self getDispVertScale];
 		
 		// 8 - horz pixel offset
 		// 18 - vert pixel offset to begin drawing.
@@ -282,16 +337,152 @@ char lastxbuf[LASTXBUF_SIZE];
 		// 2.3 - horz scale factor
 		// 3.0 - vert scale factor
 		
-		int hMax = ((rect.origin.y - 18) + rect.size.height)/vertScale;
-		if (hMax > dispRows*8) hMax = dispRows*8;
-		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, 18, hMax, 17, 2.3, vertScale, -1, 17*8, 0);
+		int hMax = ((rect.origin.y - (ASTAT_HEIGHT + statusBarOffset)) + rect.size.height)/vertScale + 1;
+		// If in program mode just display the who thing, we don't try and be smart about
+		// the update region.
+		if (hMax > dispRows*8 || flags.f.prgm_mode) hMax = dispRows*8;
+		int vertoffset = statusBarOffset;
+		
+		if (self.dispAnnunc)
+		{
+			vertoffset += ASTAT_HEIGHT;
+		}
+		else
+		{		
+			// If in program mode then create a little buffer at the top
+			if (dispRows == 7) vertoffset += 2;	
+			if (dispRows == 4) vertoffset += 5;
+			if (dispRows == 6) vertoffset += 2;
+		}
+		
+		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
+								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
-	if (rect.origin.y + rect.size.height > 121)
+	if (flags.f.prgm_mode) [self drawScrollBar];
+}
+
+/**
+ * Display the right hand scroll bar used to indicate the current window position
+ * in program mode.
+ */
+- (void)drawScrollBar
+{
+	NSAssert(free42init, @"Free42 has not been initialized");
+	
+	int insetTop = 2;
+	if (self.dispAnnunc) insetTop += ASTAT_HEIGHT;
+	int insetBot = 4;
+	
+	int offset = insetTop;
+	int fullheight = self.bounds.size.height - (insetTop + insetBot);
+	
+	if ([[Settings instance] showStatusBar])
+	{	
+		offset += 20;
+		fullheight -= 20;
+	}
+	
+	int barheight = fullheight;
+	int lines = num_prgm_lines() + 1;
+	if (dispRows < lines)
+		barheight = dispRows*fullheight/lines;
+	
+	// barheight is never less then 3 pixels
+	if (barheight < 3) barheight = 3;
+
+	int startline = pc2line(pc) - prgm_highlight_row;
+	if (startline < 0) startline = 0;  // This shoudn't happen, but just in case
+	offset += startline*fullheight/lines;
+			
+	CGRect bar = CGRectMake(310, offset, 5, barheight);
+	
+	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.50);	
+	CGContextFillRect(ctx, bar);	
+}
+
+- (void)annuciatorNeedsUpdate
+{
+	if (self.dispAnnunc)
 	{
-		CGRect borderLine = CGRectMake(0, 122, 320, 4);
-		CGContextFillRect(ctx, borderLine);
-	}	
+		int v = ASTAT_HEIGHT;
+		// If we are not int largeLCD mode, then include the iphone statusbar region
+		if ([[Settings instance] showStatusBar]) v += 20;
+			
+		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, v)];
+	}
+}
+
+/*
+ * Set the number of display rows given the various display settings.  Free42
+ * will use dispRows to determine how many rows to render.
+ */
+- (void)setNumDisplayRows
+{
+	self.dispAnnunc = TRUE;
+	if (![[Settings instance] showStatusBar])
+	{
+		dispRows = 3;
+		if (self.bounds.size.height > 100)
+			dispRows = 6;
+		if (flags.f.prgm_mode)
+		{
+			self.dispAnnunc = FALSE;
+			dispRows += 1;
+		}
+	}
+	else
+	{
+		dispRows = 2;
+		if (self.bounds.size.height > 100)
+		{
+			dispRows = 5;
+			if (flags.f.prgm_mode) 
+			{
+				self.dispAnnunc = FALSE;
+				dispRows = 6;
+			}
+		}
+	}
+	
+	redisplay();
+}
+
+/*
+ * translate a row that needsd to be updated into a rectangle region
+ */
+- (void)setDisplayUpdateRow:(int) l h:(int) h
+{
+	float vscale= [self getDispVertScale];
+	
+	// Small kludge, if we are just updating the top row, then in the case we are flying the 
+	// goose we trim one pixel off the blitter update rect, this prevents the second row
+	// of the display from getting the top pixel row from being deleted. this only happens
+	// hwne vscale is 2.8
+	int hs = (h*8)*vscale + 1;
+	if (hs == 23) hs = 22;
+	
+	// dispRows == 4 means we are in program mode with the status bar off, in draw rect
+	// we addjust the top by +5 in this mode to help center the program display in the 
+	// LCD, we make the same adjustment here so we draw the entire area.
+	if (dispRows == 4) hs += 5;
+	if (dispRows == 6 || dispRows == 7) hs += 2;
+
+	int top = [self statusBarOffset] + (l*8)*vscale;	
+	if (self.dispAnnunc)
+		top += ASTAT_HEIGHT;
+			
+	[self setNeedsDisplayInRect:CGRectMake(0, top, 320, hs)];	
+}
+
+- (float)getDispVertScale
+{
+	float vertScale = 2.5;
+	if (dispRows == 2) vertScale = 3.0;
+	else if (dispRows == 3) vertScale = 2.8;
+	
+	return vertScale;
 }
 
 const int SCROLL_SPEED = 15;
@@ -315,25 +506,22 @@ const int SCROLL_SPEED = 15;
 		int len = newPoint.y - firstTouch.y;
 		if (len > SCROLL_SPEED)
 		{
-			keydown(0, flags.f.prgm_mode ? 23 : 9);
-			core_keyup();
+			swipevert(TRUE);
 			len -= SCROLL_SPEED;
 		}
 		else if (len < -SCROLL_SPEED)
 		{
-			if (flags.f.prgm_mode)
-			{
-				keydown(0, 18);
-				core_keyup();
-			}
+			swipevert(FALSE);
+			/*
 			else
 			{
-				for (int i=0; i< (mode_bigstack? 19: 3); i++)
+				for (int i=0; i< stacksize-1; i++)
 				{
 					keydown(0, 9);
 					core_keyup();
 				}
 			}				
+			 */
 			len += SCROLL_SPEED;	
 		}
 				
@@ -347,13 +535,13 @@ const int SCROLL_SPEED = 15;
 		// occurred while switching to four line mode, and pressing the "EXIT" key
 		// at the same time.
 		
-		if (firstTouch.y - [touch locationInView:self].y < -30 && dispRows == 2)
+		if (firstTouch.y - [touch locationInView:self].y < -30 && self.bounds.size.height < 100)
 		{
-			[calcViewController fourLineDisp];
+			[calcViewController doubleLCD];
 		}
-		else if (firstTouch.y - [touch locationInView:self].y > 30 && dispRows >= 4)
+		else if (firstTouch.y - [touch locationInView:self].y > 30 && self.bounds.size.height > 100)
 		{
-			[calcViewController twoLineDisp];
+			[calcViewController singleLCD];
 		}	
 	}
 	
@@ -371,37 +559,30 @@ const int SCROLL_SPEED = 15;
 /**
  * Set the blitter in two line display mode
  */
-- (void) twoLineDisp
+- (void) singleLCD
 {
-	dispRows = 2;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 68;
+	bounds.size.height = 90;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;
-	redisplay();
 	[self setNeedsDisplay];	
 }
 
 /**
  * Set the blitter in four line display mode
  */
-- (void) fourLineDisp
+- (void) doubleLCD
 {
-	if (flags.f.prgm_mode)
-		dispRows = 5;
-	else
-		dispRows = 4;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 126;
+	bounds.size.height = 146;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
-	self.center = cent;
-	redisplay();
+	self.center = cent;	
 	[self setNeedsDisplay];
 }
 
@@ -412,6 +593,7 @@ const int SCROLL_SPEED = 15;
 		// and highlight the entire stack.
 		selectAll = TRUE;
 		[self showEditMenu];
+		[self setSelectHighlight];
 		[self setNeedsDisplay];		
 	}
 	
@@ -426,17 +608,17 @@ char cbuf[30];
 			NSMutableString *nums = [NSMutableString stringWithCapacity:100];
 			NSString *str = NULL;
 
-			if (dispRows > 5)
+			if (dispRows > 5 && bigstack_head != NULL && bigstack_head->next != NULL)
 			{
-				core_copy_reg(cbuf, 30, reg_1);
+				core_copy_reg(cbuf, 30, bigstack_head->next->var);
 				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 				[nums appendString:str];
 				[nums appendString:@"\n"];
 			}
 
-			if (dispRows > 4)
+			if (dispRows > 4 && bigstack_head != NULL)
 			{
-				core_copy_reg(cbuf, 30, reg_0);
+				core_copy_reg(cbuf, 30, bigstack_head->var);
 				str = [NSString stringWithCString:cbuf encoding:NSASCIIStringEncoding];
 				[nums appendString:str];
 				[nums appendString:@"\n"];
@@ -551,7 +733,7 @@ char cbuf[30];
 	selectAll = FALSE;
 	if (highlight)
 	{
-		[self setNeedsDisplayInRect:xRowHighlight];
+		[self setNeedsDisplayInRect:selectRect];
 		highlight = FALSE;
 	}
 }
@@ -566,8 +748,8 @@ char cbuf[30];
 	UIMenuController *mc = [UIMenuController sharedMenuController];
 	if (!mc.menuVisible) {
         //CGRect targetRect = (CGRect){ [[touches anyObject] locationInView:self], CGSizeZero };
-		[self setXHighlight];
-        [mc setTargetRect:xRowHighlight inView:self];
+		[self setSelectHighlight];
+        [mc setTargetRect:selectRect inView:self];
         [mc setMenuVisible:YES animated:YES];
 	} else {
 		[self performSelector:@selector(showEditMenu) withObject:nil afterDelay:0.0];
@@ -583,8 +765,8 @@ char cbuf[30];
     UITouch *touch = [touches anyObject];
     if ([[touches anyObject] locationInView:self].x < 260 
 		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
-		[self setXHighlight];
-		[self setNeedsDisplayInRect:xRowHighlight];
+		[self setSelectHighlight];
+		[self setNeedsDisplayInRect:selectRect];
 		[self showEditMenu];
 		highlight = TRUE;
     }

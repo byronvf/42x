@@ -20,6 +20,8 @@
 #import "NavViewController.h"
 #import "CalcViewController.h"
 #import "core_main.h"
+#import "core_display.h"
+#import "core_commands2.h"
 
 @implementation ConfigViewController
 
@@ -29,31 +31,54 @@
 @synthesize keyboardSwitch;
 @synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
+@synthesize statusBarSwitch;
+@synthesize autoPrintSwitch;
+@synthesize RPLEnterSwitch;
+
 @synthesize gotoServerButton;
+@synthesize aboutButton;
 
 @synthesize navViewController;
 
-int menuKeys;
-int dispRows;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-		// Initialization code
-	}
-	return self;
+- (UISwitch*)makeSwitch
+{
+	UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,0,0)];
+	[s addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+	return s;
 }
 
-/*
- Implement loadView if you want to create a view hierarchy programmatically
-- (void)loadView {
-}
- */
-
-/*
- If you need to do additional setup after loading the view, override viewDidLoad.
 - (void)viewDidLoad {
+	clickSoundSwitch = [self makeSwitch];
+	beepSoundSwitch = [self makeSwitch];
+	keyboardSwitch = [self makeSwitch];
+	lastXSwitch = [self makeSwitch];
+	bigStackSwitch = [self makeSwitch];
+	menuKeysSwitch = [self makeSwitch];
+	statusBarSwitch = [self makeSwitch];
+	autoPrintSwitch = [self makeSwitch];
+	RPLEnterSwitch = [self makeSwitch];
+	
+	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
+	
+	aboutButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	[aboutButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
 }
- */
+
+- (void)viewDidUnload {
+	[clickSoundSwitch release];
+	[beepSoundSwitch release];
+	[keyboardSwitch release];
+	[lastXSwitch release];
+	[bigStackSwitch release];
+	[menuKeysSwitch release];
+	[statusBarSwitch release];
+	[autoPrintSwitch release];
+	[gotoServerButton release];
+	[aboutButton release];	
+	[RPLEnterSwitch release];
+}
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -61,11 +86,14 @@ int dispRows;
 	[beepSoundSwitch setOn:[[Settings instance] beepSoundOn]];	
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
-	[bigStackSwitch setOn:mode_bigstack];
+	[bigStackSwitch setOn:flags.f.f32];
 	[menuKeysSwitch setOn:menuKeys];
+	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
+	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
+	[RPLEnterSwitch setOn:mode_rpl_enter];
 }
 
-- (void)buttonUp:(UISwitch*)sender
+- (void)switchChange:(UISwitch*)sender
 {
 	if (sender == clickSoundSwitch)
 	{
@@ -81,7 +109,14 @@ int dispRows;
 	}	
 	else if (sender == bigStackSwitch)
 	{
-		mode_bigstack = [sender isOn];
+		arg_struct arg;
+		arg.type =  ARGTYPE_NUM;
+		arg.val.num = 32;
+		int val = [sender isOn];
+		if (val) 
+			docmd_sf(&arg);
+		else
+			docmd_cf(&arg);
 	}
 	else if (sender == menuKeysSwitch)
 	{
@@ -92,7 +127,20 @@ int dispRows;
 	{
 		[[Settings instance] setShowLastX:[sender isOn]];
 		[[navViewController calcViewController] testUpdateLastX:TRUE];
-	}		
+	}
+	else if (sender == statusBarSwitch)
+	{
+		[[Settings instance] setShowStatusBar:[sender isOn]];
+		[[navViewController calcViewController] resetLCD];
+	}
+	else if (sender == autoPrintSwitch)
+	{
+		[[Settings instance] setAutoPrint:[sender isOn]];
+	}
+	else if (sender == RPLEnterSwitch)
+	{
+		mode_rpl_enter = [sender isOn];
+	}
 }
 
 #if DEV_REL
@@ -149,9 +197,94 @@ int dispRows;
 }
 
 
-- (void)dealloc {
-	[super dealloc];
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 5;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	switch (section)
+	{
+		case 0: return 2;
+		case 1: return 2;
+		case 2: return 4;
+		case 3: return 1;
+		case 4: return 1;
+		default: return 0;
+	}
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+	switch (section)
+	{
+		case 0: return @"Behavior";
+		case 1: return @"Sound";
+		case 2: return @"Display";
+		case 3: return NULL;
+		case 4: return NULL;
+		default: return @"What???";
+	}
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *MyIdentifier = @"switch";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] 
+				 initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+	if (indexPath.section == 0 && indexPath.row == 0)  // Behavior Section
+	{
+		cell.textLabel.text = @"Dynamic Stack";
+		cell.accessoryView = bigStackSwitch;
+	}
+	if (indexPath.section == 0 && indexPath.row == 1) 
+	{
+		cell.textLabel.text = @"RPL Enter Mode";
+		cell.accessoryView = RPLEnterSwitch;
+	}
+	else if (indexPath.section == 1 && indexPath.row == 0) // Sound Section
+	{
+		cell.textLabel.text = @"Key Clicks";
+		cell.accessoryView = clickSoundSwitch;
+	}
+	else if (indexPath.section == 1 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Beeps and Tones";
+		cell.accessoryView = beepSoundSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 0) // Display Section
+	{
+		cell.textLabel.text = @"Show Last X";
+		cell.accessoryView = lastXSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Overlay Menu on Keys";
+		cell.accessoryView = menuKeysSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 2)
+	{
+		cell.textLabel.text = @"Device Status Bar";
+		cell.accessoryView = statusBarSwitch;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 3)
+	{
+		cell.textLabel.text = @"Auto Show Print View";
+		cell.accessoryView = autoPrintSwitch;
+	}
+	else if  (indexPath.section == 3 && indexPath.row == 0) // Import Export
+	{
+		cell.textLabel.text = @"Import and Export Programs";
+		cell.accessoryView = gotoServerButton;
+	}
+	else if  (indexPath.section == 4 && indexPath.row == 0) // About
+	{
+		cell.textLabel.text = @"About";
+		cell.accessoryView = aboutButton;
+	}
+	
+    return cell;
+}
 
 @end

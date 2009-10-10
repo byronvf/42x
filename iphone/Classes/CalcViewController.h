@@ -130,9 +130,10 @@ extern int callKeydownAgain;
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
 - (void)handlePopupKeyboard:(BOOL)toggle;
-- (void) twoLineDisp;
-- (void) fourLineDisp;
+- (void) singleLCD;
+- (void) doubleLCD;
+- (void) resetLCD;
 - (void)testUpdateLastX: (BOOL) force;
-	
+
 @end
 

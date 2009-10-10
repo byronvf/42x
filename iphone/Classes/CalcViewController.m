@@ -67,12 +67,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// The *3 is due to the fact that the blitter is 3 times the size of the buffer pixel.
 	// The 18 is the base offset into the display, pass the flags row 
 	assert(viewCtrl.blitterView);
-	if (flags.f.prgm_mode)
-		[viewCtrl.blitterView setNeedsDisplay];
-	else
-		// +3 for fudge so that when switching between 5 to 4 row mode, we clean
-		// up dirtly bits just below the 4th row
-		[viewCtrl.blitterView setNeedsDisplayInRect:CGRectMake(0, 18 + y*3, 320, height*3 + (height > 24 ? 3 : 0))];
+	int low = y/8;
+	int high = (y+height)/8;
+	[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
 	
 	// If a program is running, force Free42 to pop out of core_keydown and
 	// service display, see shell_wants_cpu()
@@ -82,9 +79,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		assert(viewCtrl.menuView);
 		assert(viewCtrl.blankButtonsView);
-		// The menu keys are in the third row of the display (> 16), so 
+		// The menu keys are in the rows just beyond dispRows, so 
 		// don't bother updateing unless this area of the display has changed.
-		if (height + y > 16 || [viewCtrl menuView].hidden)
+		if (height + y > dispRows*8 || [viewCtrl menuView].hidden)
 		{
 			[[viewCtrl menuView] setHidden:FALSE];
 			[[viewCtrl blankButtonsView] setHidden:FALSE];
@@ -174,7 +171,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	keyPressed = false;
 	alphaMenuActive = FALSE;
 	keyboardToggleActive = FALSE;
-	lastxbuf[0] = 0;
+	lastxbuf[0] = 0;	
 }
 
 - (void)viewDidLoad {
@@ -296,8 +293,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 			// We use the printingStarted flag to turn on the and off the print 
 			// aunnunciator since it is off now, we want to redisplay.
-			[blitterView annuncNeedsDisplay];		
+			[blitterView annuncNeedsDisplay];
+			if ([[Settings instance] autoPrint])
+				[navViewController switchToPrintView];
 		}
+		
+		// Update the lastx display if necessary
+		[self testUpdateLastX:FALSE];	
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
@@ -325,7 +327,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound(1105);
 	
 	int keynum = (int)[sender tag];
-	if (core_menu() && dispRows > 2 && keynum < 13) keynum -= 6;
+	if (core_menu() && dispRows > 4 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];
@@ -352,14 +354,15 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		[self performSelector:@selector(keyTimerEvent1) withObject:NULL afterDelay:0.25];
 	}
 	
-	if (flags.f.prgm_mode && !old_prgm_mode && dispRows > 2)
+	if (flags.f.prgm_mode && !old_prgm_mode)
 	{
-		dispRows = 5;
-		redisplay();
+		[blitterView setNeedsDisplay];
+		[blitterView setNumDisplayRows];
 	}
-	else if (!flags.f.prgm_mode && old_prgm_mode && dispRows > 2)
+	else if (!flags.f.prgm_mode && old_prgm_mode)
 	{
-		dispRows = 4;
+		[blitterView setNeedsDisplay];
+		[blitterView setNumDisplayRows];
 	}	
 	
 	[self handlePopupKeyboard:FALSE];	
@@ -389,8 +392,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			cpuCount = 1000;		
 	}
 
-	[self testUpdateLastX:FALSE];
-	
 	timer3active = FALSE;
 	[self keepRunning];	
 }
@@ -553,14 +554,31 @@ void shell_request_timeout3(int delay)
 	return YES;
 }
 
-- (void) twoLineDisp
+
+- (void) resetLCD
+{
+	// Initialize offsetDisp if we need to compensate for the top statusbar
+	[blitterView setStatusBarOffset:[[Settings instance] showStatusBar] ? 20 : 0];
+	
+	if (dispRows < 4)
+		[self singleLCD];
+	else
+		[self doubleLCD];
+}
+
+- (void) singleLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
+	
+	
+	[blitterView singleLCD];
+	[blitterView setNumDisplayRows];
+		
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
-	cmdline_row = 1;
+	cmdline_row = dispRows-1;
 	if (!menuKeys) cmdline_row--;
 	
 	b01.enabled = TRUE;
@@ -571,26 +589,28 @@ void shell_request_timeout3(int delay)
 	b06.enabled = TRUE;
 
 	CGPoint cent = blankButtonsView.center;
-	cent.y = 108;
+	cent.y = 121;
 	blankButtonsView.center = cent;
 
 	cent = menuView.center;
-	cent.y = 102;
+	cent.y = 121;
 	menuView.center = cent;
-	
-	[blitterView twoLineDisp];
 }
 
-- (void) fourLineDisp
+- (void) doubleLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
+	
+	[blitterView doubleLCD];	
+	[blitterView setNumDisplayRows];
+	
 	// If we are entering something then change the line
-	// with the display.  Free42 uses this  to track the current row
+	// with the display.  Free42 uses this to track the current row
 	// for entry.
 	if (!flags.f.prgm_mode)
 	{
-		cmdline_row = 3;
+		cmdline_row = dispRows-1;
 		// If we have on LCD menu then the cmdline row is above the menu
 		if (!menuKeys) cmdline_row--;
 	}
@@ -605,11 +625,11 @@ void shell_request_timeout3(int delay)
 	CGPoint cent;
 	
 	cent = menuView.center;
-	cent.y = 155;
+	cent.y = 174;
 	menuView.center = cent;
 
 	cent = blankButtonsView.center;
-	cent.y = 161;
+	cent.y = 174;
 	blankButtonsView.center = cent;
 	
 	[b07.superview bringSubviewToFront:b07];
@@ -617,9 +637,7 @@ void shell_request_timeout3(int delay)
 	[b09.superview bringSubviewToFront:b09];
 	[b10.superview bringSubviewToFront:b10];
 	[b11.superview bringSubviewToFront:b11];
-	[b12.superview bringSubviewToFront:b12];
-	
-	[blitterView fourLineDisp];	
+	[b12.superview bringSubviewToFront:b12];	
 }
 
 /**
@@ -654,7 +672,7 @@ void shell_beeper(int frequency, int duration)
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	[[self view] setFrame:rect];
 	[[self view] setBounds:rect];
-	if (dispRows > 2) [self fourLineDisp];	
+	[self resetLCD];
 }
 
 - (void)dealloc {
