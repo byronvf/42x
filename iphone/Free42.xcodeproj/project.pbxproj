@@ -550,7 +550,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -574,7 +573,6 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = 42s;
-				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

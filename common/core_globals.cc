@@ -668,6 +668,7 @@ int keybuf[16];
 
 int remove_program_catalog = 0;
 bool bin_dec_mode_switch;
+bool state_file_has_old_bcd;
 
 
 /*******************/
@@ -873,7 +874,7 @@ static bool unpersist_vartype(vartype **v) {
 			free_vartype((vartype *) r);
 			return false;
 		    }
-		    r->x = bcd2double(dr.x.d_);
+		    r->x = bcd2double(dr.x.d_, state_file_has_old_bcd);
 		#endif
 	    } else {
 		int n = sizeof(vartype_real) - sizeof(int);
@@ -881,6 +882,10 @@ static bool unpersist_vartype(vartype **v) {
 		    free_vartype((vartype *) r);
 		    return false;
 		}
+		#ifdef BCD_MATH
+		    if (state_file_has_old_bcd)
+			bcdfloat_old2new(r->x.bcd.d_);
+		#endif
 	    }
 	    *v = (vartype *) r;
 	    return true;
@@ -906,8 +911,8 @@ static bool unpersist_vartype(vartype **v) {
 			free_vartype((vartype *) c);
 			return false;
 		    }
-		    c->re = bcd2double(dc.re.d_);
-		    c->im = bcd2double(dc.im.d_);
+		    c->re = bcd2double(dc.re.d_, state_file_has_old_bcd);
+		    c->im = bcd2double(dc.im.d_, state_file_has_old_bcd);
 		#endif
 	    } else {
 		int n = sizeof(vartype_complex) - sizeof(int);
@@ -915,6 +920,12 @@ static bool unpersist_vartype(vartype **v) {
 		    free_vartype((vartype *) c);
 		    return false;
 		}
+		#ifdef BCD_MATH
+		    if (state_file_has_old_bcd) {
+			bcdfloat_old2new(c->re.bcd.d_);
+			bcdfloat_old2new(c->im.bcd.d_);
+		    }
+		#endif
 	    }
 	    *v = (vartype *) c;
 	    return true;
@@ -995,7 +1006,7 @@ static bool unpersist_vartype(vartype **v) {
 			    for (int j = 0; j < 7; j++)
 				*dst++ = *src++;
 			} else {
-			    rm->array->data[i] = bcd2double((short *) (temp + phsz * i));
+			    rm->array->data[i] = bcd2double((short *) (temp + phsz * i), state_file_has_old_bcd);
 			}
 		    }
 		#endif
@@ -1011,6 +1022,12 @@ static bool unpersist_vartype(vartype **v) {
 		    free_vartype((vartype *) rm);
 		    return false;
 		}
+		#ifdef BCD_MATH
+		    if (state_file_has_old_bcd)
+			for (int4 i = 0; i < size; i++)
+			    if (!rm->array->is_string[i])
+				bcdfloat_old2new(rm->array->data[i].bcd.d_);
+		#endif
 	    }
 	    if (shared) {
 		if (!array_list_grow()) {
@@ -1057,6 +1074,11 @@ static bool unpersist_vartype(vartype **v) {
 		    free_vartype((vartype *) cm);
 		    return false;
 		}
+		#ifdef BCD_MATH
+		    if (state_file_has_old_bcd)
+			for (int4 i = 0; i < size; i++)
+			    bcdfloat_old2new(cm->array->data[i].bcd.d_);
+		#endif
 	    }
 	    if (shared) {
 		if (!array_list_grow()) {
@@ -2181,11 +2203,18 @@ bool read_phloat(phloat *d) {
 	    if (shell_read_saved_state(bcd, (P + 1) * sizeof(short))
 		    != (P + 1) * sizeof(short))
 		return false;
-	    *d = bcd2double(bcd);
+	    *d = bcd2double(bcd, state_file_has_old_bcd);
 	    return true;
 	#endif
-    } else
-	return shell_read_saved_state(d, sizeof(phloat)) == sizeof(phloat);
+    } else {
+	if (shell_read_saved_state(d, sizeof(phloat)) != sizeof(phloat))
+	    return false;
+	#ifdef BCD_MATH
+	    if (state_file_has_old_bcd)
+		bcdfloat_old2new(d->bcd.d_);
+	#endif
+	return true;
+    }
 }
 
 bool write_phloat(phloat d) {
@@ -2203,20 +2232,24 @@ bool load_state(int4 ver) {
     state_bool_is_int = ver < 9;
 
     #ifdef BCD_MATH
-	if (ver < 9)
+	if (ver < 9) {
 	    bin_dec_mode_switch = true;
-	else {
+	    state_file_has_old_bcd = false;
+	} else {
 	    bool state_is_decimal;
 	    if (!read_bool(&state_is_decimal)) return false;
 	    bin_dec_mode_switch = !state_is_decimal;
+	    state_file_has_old_bcd = state_is_decimal && ver < 12;
 	}
     #else
-	if (ver < 9)
+	if (ver < 9) {
 	    bin_dec_mode_switch = false;
-	else {
+	    state_file_has_old_bcd = false;
+	} else {
 	    bool state_is_decimal;
 	    if (!read_bool(&state_is_decimal)) return false;
 	    bin_dec_mode_switch = state_is_decimal;
+	    state_file_has_old_bcd = state_is_decimal && ver < 12;
 	}
     #endif
 
@@ -2701,7 +2734,7 @@ bool read_arg(arg_struct *arg, bool old) {
 	    char *s = (char *) &da.val;
 	    for (unsigned int i = 0; i < sizeof(da.val); i++)
 		*d++ = *s++;
-	    arg->val_d = bcd2double(da.val_d.d_);
+	    arg->val_d = bcd2double(da.val_d.d_, state_file_has_old_bcd);
 	#endif
 	return true;
     } else {
@@ -2876,7 +2909,7 @@ static bool convert_programs() {
 			unsigned char *b = (unsigned char *) &bcd;
 			for (j = 0; j < (int) sizeof(fake_bcd); j++)
 			    *b++ = prgm->text[pc++];
-			double dbl = bcd2double(bcd.d_);
+			double dbl = bcd2double(bcd.d_, state_file_has_old_bcd);
 			int inf = isinf(dbl);
 			if (inf > 0)
 			    dbl = POS_HUGE_PHLOAT;
