@@ -1561,11 +1561,13 @@ static void draw_catalog() {
 	shell_annunciators(mode_updown, -1, -1, -1, -1, -1);
     } else if (catsect == CATSECT_FCN) {
 	int i;
-	catalogmenu_rows[catindex] = 42;
+	catalogmenu_rows[catindex] = (sizeof(fcn_cat)/sizeof(*fcn_cat) + 5)/6;  // Totals rows
 	if (catalogmenu_row[catindex] >= catalogmenu_rows[catindex])
 	    catalogmenu_row[catindex] = catalogmenu_rows[catindex] - 1;
 	for (i = 0; i < 6; i++) {
-	    int cmd = fcn_cat[catalogmenu_row[catindex] * 6 + i];
+	    int cmd = -1;
+	    if (catalogmenu_row[catindex] * 6 + i < sizeof(fcn_cat)/sizeof(*fcn_cat))
+		cmd = fcn_cat[catalogmenu_row[catindex] * 6 + i];
 	    catalogmenu_item[catindex][i] = cmd;
 	    if (cmd == -1)
 		draw_key(i, 0, 0, "", 0);
