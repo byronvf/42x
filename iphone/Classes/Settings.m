@@ -27,6 +27,7 @@
 @synthesize printedPRLCD;
 @synthesize showStatusBar;
 @synthesize autoPrint;
+@synthesize dropFirstClick;
 
 static Settings* settings;
 

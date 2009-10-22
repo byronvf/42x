@@ -314,6 +314,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	// last_pending_command is only used to track if the last command was CMD_CLX
+	// so that Free42 can call CMD_DROP on the second press.  This is a little 
+	// messy doing it this way, and should at some point be integrated into Free42
+	// as an option. But it works for now.
+	if ([[Settings instance] dropFirstClick])
+		last_pending_command = CMD_CLX;
+		
 	keyPressed = TRUE;
 	bool old_prgm_mode = flags.f.prgm_mode;
 	

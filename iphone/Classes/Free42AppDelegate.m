@@ -39,12 +39,13 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 4;
+static const int PERSIST_VERSION = 5;
 
 // Persist version stored
 // 2 - 2.2
 // 3 - 2.2.1
 // 4 - 2.3
+// 5 - 2.3.1
 static int persistVersion = 0;
 
 int cpuCount = 0;
@@ -237,7 +238,7 @@ bool prgmFirstWrite = TRUE;
 	if ([defaults objectForKey:CONFIG_SHOW_LASTX])
 		[[Settings instance] setShowLastX:[defaults boolForKey:CONFIG_SHOW_LASTX]];
 	else
-		[[Settings instance] setShowLastX:TRUE];
+		[[Settings instance] setShowLastX:FALSE];
 	
 	if ([defaults objectForKey:CONFIG_SHOW_STATUS_BAR])
 		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
@@ -253,6 +254,10 @@ bool prgmFirstWrite = TRUE;
 		[[Settings instance] setAutoPrint:(persistVersion >= 4 || persistVersion == 0)];
 	}
 	
+	if ([defaults objectForKey:CONFIG_DROP_FIRST_CLICK])
+		[[Settings instance] setDropFirstClick:[defaults boolForKey:CONFIG_DROP_FIRST_CLICK]];
+	else
+		[[Settings instance] setDropFirstClick:FALSE];
 }
 
 - (void)saveSettings
@@ -265,6 +270,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
 	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
+	[defaults setBool:[[Settings instance] dropFirstClick] forKey:CONFIG_DROP_FIRST_CLICK];
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	

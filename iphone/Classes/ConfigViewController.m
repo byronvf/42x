@@ -34,6 +34,7 @@
 @synthesize statusBarSwitch;
 @synthesize autoPrintSwitch;
 @synthesize RPLEnterSwitch;
+@synthesize dropSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -57,6 +58,7 @@
 	statusBarSwitch = [self makeSwitch];
 	autoPrintSwitch = [self makeSwitch];
 	RPLEnterSwitch = [self makeSwitch];
+	dropSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -77,6 +79,7 @@
 	[gotoServerButton release];
 	[aboutButton release];	
 	[RPLEnterSwitch release];
+	[dropSwitch release];
 }
 
 
@@ -91,6 +94,7 @@
 	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
 	[RPLEnterSwitch setOn:mode_rpl_enter];
+	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
 }
 
 - (void)switchChange:(UISwitch*)sender
@@ -140,6 +144,10 @@
 	else if (sender == RPLEnterSwitch)
 	{
 		mode_rpl_enter = [sender isOn];
+	}
+	else if (sender == dropSwitch)
+	{
+		[[Settings instance] setDropFirstClick:[sender isOn]];
 	}
 }
 
@@ -201,10 +209,11 @@
     return 5;
 }
 
+  // Return the numer of items in the section, given the section number.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	switch (section)
 	{
-		case 0: return 2;
+		case 0: return 3;
 		case 1: return 2;
 		case 2: return 4;
 		case 3: return 1;
@@ -213,6 +222,7 @@
 	}
 }
 
+  // Return the group label for the given section number
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 	switch (section)
 	{
@@ -238,10 +248,15 @@
 		cell.textLabel.text = @"Dynamic Stack";
 		cell.accessoryView = bigStackSwitch;
 	}
-	if (indexPath.section == 0 && indexPath.row == 1) 
+	else if (indexPath.section == 0 && indexPath.row == 1) 
 	{
 		cell.textLabel.text = @"RPL Enter Mode";
 		cell.accessoryView = RPLEnterSwitch;
+	}
+	else if (indexPath.section == 0 && indexPath.row == 2) 
+	{
+		cell.textLabel.text = @"DROP on first click";
+		cell.accessoryView = dropSwitch;
 	}
 	else if (indexPath.section == 1 && indexPath.row == 0) // Sound Section
 	{
