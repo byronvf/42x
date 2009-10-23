@@ -250,7 +250,7 @@
 	}
 	else if (indexPath.section == 0 && indexPath.row == 1) 
 	{
-		cell.textLabel.text = @"RPL Enter Mode";
+		cell.textLabel.text = @"No stack lift on ENTER";
 		cell.accessoryView = RPLEnterSwitch;
 	}
 	else if (indexPath.section == 0 && indexPath.row == 2) 
