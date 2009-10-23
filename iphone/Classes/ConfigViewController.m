@@ -215,9 +215,10 @@
 	{
 		case 0: return 3;
 		case 1: return 2;
-		case 2: return 4;
-		case 3: return 1;
+		case 2: return 3;
+		case 3: return 2;
 		case 4: return 1;
+		case 5: return 1;
 		default: return 0;
 	}
 }
@@ -229,8 +230,9 @@
 		case 0: return @"Behavior";
 		case 1: return @"Sound";
 		case 2: return @"Display";
-		case 3: return NULL;
+		case 3: return @"Interaction";
 		case 4: return NULL;
+		case 5: return NULL;
 		default: return @"What???";
 	}
 }
@@ -283,17 +285,22 @@
 		cell.textLabel.text = @"Device Status Bar";
 		cell.accessoryView = statusBarSwitch;
 	}
-	else if (indexPath.section == 2 && indexPath.row == 3)
+	else if (indexPath.section == 3 && indexPath.row == 0)  // Interactions
+	{
+		cell.textLabel.text = @"Auto Show Keyboard";
+		cell.accessoryView = keyboardSwitch;
+	}
+	else if (indexPath.section == 3 && indexPath.row == 1)
 	{
 		cell.textLabel.text = @"Auto Show Print View";
 		cell.accessoryView = autoPrintSwitch;
-	}
-	else if  (indexPath.section == 3 && indexPath.row == 0) // Import Export
+	}	
+	else if  (indexPath.section == 4 && indexPath.row == 0) // Import Export
 	{
 		cell.textLabel.text = @"Import and Export Programs";
 		cell.accessoryView = gotoServerButton;
 	}
-	else if  (indexPath.section == 4 && indexPath.row == 0) // About
+	else if  (indexPath.section == 5 && indexPath.row == 0) // About
 	{
 		cell.textLabel.text = @"About";
 		cell.accessoryView = aboutButton;
