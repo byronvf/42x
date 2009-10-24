@@ -301,7 +301,7 @@ int docmd_seed(arg_struct *arg) {
 }
 
 int docmd_lbl(arg_struct *arg) {
-    if (!flags.f.message)
+    if (!flags.f.message && !cllcd_cmd)
 	fly_goose();
     return ERR_NONE;
 }
