@@ -1298,21 +1298,28 @@ int docmd_prstk(arg_struct *arg) {
     shell_annunciators(-1, -1, 1, -1, -1, -1);
     print_text(NULL, 0, 1);
 #if BIGSTACK
-    if (flags.f.f32 && bigstack_head != NULL) {
-	vartype* lastvar = NULL;
-	stack_item *si = NULL;
-	while(si != bigstack_head) {
-	  si = bigstack_head;
-	  while(si->next != NULL && si->next->var != lastvar)
-	      si = si->next;
-	  lastvar = si->var;
-	  len = vartype2string(lastvar, buf, 100);
-	  print_wide("~=", 2, buf, len);
-  	}
+    if (flags.f.f32) {
+	if (bigstack_head != NULL) {
+	    vartype* lastvar = NULL;
+	    stack_item *si = NULL;
+	    while(si != bigstack_head) {
+		si = bigstack_head;
+		while(si->next != NULL && si->next->var != lastvar)
+		    si = si->next;
+		lastvar = si->var;
+		len = vartype2string(lastvar, buf, 100);
+		print_wide("~=", 2, buf, len);
+	    }
+	}
+	if (stacksize > 3) {
+	    len = vartype2string(reg_t, buf, 100);
+	    print_wide("~=", 2, buf, len);
+	}
     }
-    if (stacksize > 3) {
+    else
+    {
 	len = vartype2string(reg_t, buf, 100);
-	print_wide("~=", 2, buf, len);
+	print_wide("T=", 2, buf, len);
     }
 #else    
     len = vartype2string(reg_t, buf, 100);
