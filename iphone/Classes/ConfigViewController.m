@@ -174,7 +174,7 @@
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 		
-		NSString *title = [NSString stringWithFormat:@"42s Version %@%@\nFree42 Version %@", ver, MOD, free42ver];
+		NSString *title = [NSString stringWithFormat:@"42s Version %@%@\nFree42 %@i", ver, MOD, free42ver];
 		
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
 		message:@"Licensed under GPL" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];	
