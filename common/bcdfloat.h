@@ -27,7 +27,7 @@
 
 
 // Section attribute -- something like
-// #define BCD1_SECT __attribute__ ((section ("BcdSect")))
+// #define BCD1_SECT __attribute__ ((section ("BcdFlt1")))
 // Only needed when building a multi-segment PalmOS executable.
 #ifndef BCD1_SECT
 #define BCD1_SECT
@@ -131,37 +131,36 @@ struct BCDFloatData
 // negative assuming non-special
 #define GET_NEG_NORM(_d, _p) (GET_NEG_BIT(_d, _p) && !GET_ZERO_NORM(_d,_p))
 
-int bcd_round(unsigned short* d, int pn);
-int bcd_round25(unsigned short* d, int pn);
+int bcd_round(unsigned short* d, int pn) BCD1_SECT;
+int bcd_round25(unsigned short* d, int pn) BCD1_SECT;
 void bcd_uadd(const unsigned short* a,
               const unsigned short* b,
               unsigned short* c,
-              int pn);
+              int pn) BCD1_SECT;
 void bcd_usub(const unsigned short* a,
               const unsigned short* b,
               unsigned short* c,
-              int pn);
+              int pn) BCD1_SECT;
 void bcd_add(const unsigned short* a,
              const unsigned short* b,
              unsigned short* c,
-             int pn);
+             int pn) BCD1_SECT;
 void bcd_sub(const unsigned short* a,
              const unsigned short* b,
              unsigned short* c,
-             int pn);
+             int pn) BCD1_SECT;
 void bcd_mul(const unsigned short* a,
              const unsigned short* b,
              unsigned short* c,
-             int pn);
+             int pn) BCD1_SECT;
 void bcd_div(const unsigned short* a,
              const unsigned short* b,
              unsigned short* c,
-             int pn);
+             int pn) BCD1_SECT;
 int bcd_cmp(const unsigned short* a, 
             const unsigned short* b,
-            int pn);
-void bcd_fromUInt(unsigned short* d, int pn, uint4 v);
-unsigned int isqrt(unsigned int v);
+            int pn) BCD1_SECT;
+void bcd_fromUInt(unsigned short* d, int pn, uint4 v) BCD1_SECT;
 extern int BCDDecade[4];
 
 struct BCDFloat: public BCDFloatData
@@ -179,7 +178,7 @@ struct BCDFloat: public BCDFloatData
 	d_[4] = d4; d_[5] = d5; d_[6] = d6; d_[7] = d7;
     }
     BCDFloat() {} // Warning: not initialised.
-    BCDFloat(const char* s) ;
+    BCDFloat(const char* s) BCD1_SECT;
     BCDFloat(int4 v)
     {
         _init();
