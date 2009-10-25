@@ -206,7 +206,7 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 5;
+    return 6;
 }
 
   // Return the numer of items in the section, given the section number.
