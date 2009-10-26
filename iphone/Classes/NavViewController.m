@@ -27,6 +27,12 @@ static NavViewController *navCtrl = NULL;
 void shell_powerdown()
 {	
 	assert(navCtrl);
+	assert(navCtrl.calcViewController);
+	if (!navCtrl) return;
+	if (!navCtrl.calcViewController) return;
+	
+	// Dismiss the keyboard if it user typed XEQ "OFF"
+    [navCtrl.calcViewController handlePopupKeyboard:FALSE];	
 	[navCtrl switchToConfigView];
 }	
 
