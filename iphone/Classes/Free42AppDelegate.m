@@ -363,6 +363,15 @@ bool prgmFirstWrite = TRUE;
 	if (printFile) fclose(printFile);	
 }
 
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+#ifndef NDEBUG	
+ 	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Alert"
+	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
+	[alert show];	
+#endif
+}
+
 - (void)dealloc {
     [viewController release];
 	[window release];
