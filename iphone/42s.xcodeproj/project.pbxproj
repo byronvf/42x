@@ -125,7 +125,6 @@
 		ED36E9751093D43800DAA444 /* core_display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_display.h; path = "Classes/common-42s/core_display.h"; sourceTree = "<group>"; };
 		ED36E9761093D43800DAA444 /* core_commands2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands2.cc; path = "Classes/common-42s/core_commands2.cc"; sourceTree = "<group>"; };
 		ED36E9771093D43800DAA444 /* core_display.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_display.cc; path = "Classes/common-42s/core_display.cc"; sourceTree = "<group>"; };
-		ED36E9781093D43800DAA444 /* core_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_globals.h; path = "Classes/common-42s/core_globals.h"; sourceTree = "<group>"; };
 		ED36E9791093D43800DAA444 /* core_globals.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_globals.cc; path = "Classes/common-42s/core_globals.cc"; sourceTree = "<group>"; };
 		ED36E97A1093D43800DAA444 /* core_tables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_tables.cc; path = "Classes/common-42s/core_tables.cc"; sourceTree = "<group>"; };
 		ED36E97B1093D43800DAA444 /* core_keydown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_keydown.h; path = "Classes/common-42s/core_keydown.h"; sourceTree = "<group>"; };
@@ -173,6 +172,7 @@
 		ED3DFA430E52F80D000044AF /* BlitterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlitterView.h; sourceTree = "<group>"; };
 		ED3DFA440E52F80D000044AF /* BlitterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlitterView.m; sourceTree = "<group>"; };
 		ED3DFAB70E5308B0000044AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		ED50C0191095567500C7D722 /* core_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_globals.h; path = "Classes/common-42s/core_globals.h"; sourceTree = "<group>"; };
 		ED559B690EB6089B0060A929 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		ED56CBE10EB5C5E6006B9130 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		ED5F1AC70FBCB72A00ABACC2 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
@@ -327,12 +327,12 @@
 		ED36E9731093D31000DAA444 /* Common42s */ = {
 			isa = PBXGroup;
 			children = (
+				ED50C0191095567500C7D722 /* core_globals.h */,
 				ED26D23F0F6AB1D100F285A2 /* simpleserver.c */,
 				ED36E9741093D43800DAA444 /* core_commands1.h */,
 				ED36E9751093D43800DAA444 /* core_display.h */,
 				ED36E9761093D43800DAA444 /* core_commands2.cc */,
 				ED36E9771093D43800DAA444 /* core_display.cc */,
-				ED36E9781093D43800DAA444 /* core_globals.h */,
 				ED36E9791093D43800DAA444 /* core_globals.cc */,
 				ED36E97A1093D43800DAA444 /* core_tables.cc */,
 				ED36E97B1093D43800DAA444 /* core_keydown.h */,

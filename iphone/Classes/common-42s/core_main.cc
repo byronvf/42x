@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 
+#include "core_globals.h"
 #include "core_main.h"
 #include "core_commands2.h"
 #include "core_commands4.h"
