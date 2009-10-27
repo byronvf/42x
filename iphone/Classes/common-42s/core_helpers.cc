@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 
+#include "core_globals.h"
 #include "core_helpers.h"
 #include "core_commands2.h"
 #include "core_display.h"
@@ -24,7 +25,6 @@
 #include "core_main.h"
 #include "core_variables.h"
 #include "shell.h"
-
 
 int resolve_ind_arg(arg_struct *arg) {
     vartype *v;
