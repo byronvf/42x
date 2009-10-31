@@ -725,12 +725,13 @@ void shell_beeper(int frequency, int duration)
 	[super dealloc];
 }
 
+/*
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];	
-//	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Allert"
-//	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
-//	[alert show];
+ 	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Allert"
+ 	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
+	[alert show];
 }
-
+*/
 
 @end
