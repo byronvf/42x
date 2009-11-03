@@ -512,16 +512,6 @@ const int SCROLL_SPEED = 15;
 		else if (len < -SCROLL_SPEED)
 		{
 			swipevert(FALSE);
-			/*
-			else
-			{
-				for (int i=0; i< stacksize-1; i++)
-				{
-					keydown(0, 9);
-					core_keyup();
-				}
-			}				
-			 */
 			len += SCROLL_SPEED;	
 		}
 				
@@ -777,6 +767,28 @@ char cbuf[30];
 	
 	// Reset the swipe mode.
 	firstTouch.x = -1;
+}
+
+
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode)
+	{
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Clear Stack?"
+			message:NULL delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:nil] autorelease];	
+		[alert addButtonWithTitle:@"No"];
+		[alert show];
+	}
+}
+
+- (void)alertView: (UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	if (buttonIndex == 0)
+	{
+		docmd_clst(NULL);
+		mode_number_entry = FALSE;
+		redisplay();
+	}
 }
 
 @end

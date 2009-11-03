@@ -97,6 +97,7 @@
 	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
 }
 
+
 - (void)switchChange:(UISwitch*)sender
 {
 	if (sender == clickSoundSwitch)

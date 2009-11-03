@@ -209,6 +209,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			{
 				alphaMenuActive = FALSE;
 				[textEntryField resignFirstResponder];
+				[blitterView becomeFirstResponder]; // for shake event handling
 			}
 			else
 			{
@@ -252,7 +253,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	else
 	{
 		// If we are not in alpha menu mode, then dismiss the keyboard no matter what
-		if (alphaMenuActive) [textEntryField resignFirstResponder];
+		if (alphaMenuActive)
+		{
+			[textEntryField resignFirstResponder];
+			[blitterView becomeFirstResponder]; // for shake event handling
+		}
 		alphaMenuActive = FALSE;
 		keyboardToggleActive = FALSE;
 	}
@@ -676,10 +681,24 @@ void shell_beeper(int frequency, int duration)
  */
 - (void)viewDidAppear:(BOOL)animated
 {
+	[super viewDidAppear:animated];
+	
+	// We need this so that the blitter view get the shake events
+	[blitterView becomeFirstResponder];
+		
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	[[self view] setFrame:rect];
 	[[self view] setBounds:rect];
 	[self resetLCD];
+}
+
+/**
+ * Used for shake handler in the blitter view
+ */
+- (void) viewWillDisappear:(BOOL) animated
+{
+	[super viewWillDisappear:animated];
+	[blitterView resignFirstResponder];
 }
 
 - (void)dealloc {
