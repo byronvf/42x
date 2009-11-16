@@ -146,6 +146,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize displayBuff;
 @synthesize menuView;
 @synthesize keyPressed;
+@synthesize shutdown;
 
 
 /*
@@ -281,6 +282,20 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 -(void)keepRunning
 {
+	// Special case to handle OFF command
+	if (shutdown)
+	{
+		// If the user does not use the key off to get here then we do
+		// in fact exit instead of going to the options screen.
+		UIApplication *app = [UIApplication sharedApplication];
+		if (app)
+		{
+			Free42AppDelegate *del = (Free42AppDelegate*)app.delegate;
+			[del applicationWillTerminate:NULL];
+			exit(ESHUTDOWN);
+		}
+	}
+
 	int repeat;
 	// We are not processing a key event, so pass 0,
 	callKeydownAgain = core_keydown(0, &enqueued, &repeat);

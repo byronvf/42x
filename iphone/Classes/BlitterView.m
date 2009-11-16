@@ -772,6 +772,8 @@ char cbuf[30];
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
+	// We can can get motion events while coming out of sleep.. to avoid this
+	// we test if we are sleeping or not.
 	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode && !isSleeping)
 	{
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Clear Stack?"
