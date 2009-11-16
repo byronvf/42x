@@ -277,6 +277,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
+	[defaults synchronize];
 	
 	[[navViewController printViewController] releasePrintBuffer];
 }
