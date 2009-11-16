@@ -29,6 +29,9 @@ FILE* printFile = NULL;  // shared in PrintViewController.m
 // in assert calls to verify Free42 has been initialized.
 BOOL free42init = FALSE;
 
+// Set this to true when we are in sleep mode
+BOOL isSleeping = FALSE;
+
 // Base name of 42s state file name, this will be prepended by the home directory
 static NSString* stateBaseName = @"/Documents/42s.state";
 
@@ -361,6 +364,16 @@ bool prgmFirstWrite = TRUE;
 	[self saveSettings];
 	
 	if (printFile) fclose(printFile);	
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	isSleeping = TRUE;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	isSleeping = FALSE;
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application

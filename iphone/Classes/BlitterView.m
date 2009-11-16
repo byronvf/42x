@@ -772,7 +772,7 @@ char cbuf[30];
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
-	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode)
+	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode && !isSleeping)
 	{
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Clear Stack?"
 			message:NULL delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:nil] autorelease];	
