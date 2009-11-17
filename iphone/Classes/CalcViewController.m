@@ -295,11 +295,19 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			exit(ESHUTDOWN);
 		}
 	}
-
+	
 	int repeat;
 	// We are not processing a key event, so pass 0,
 	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
 	
+	[self runUpdate];
+}
+
+/**
+ * Called after core_keyup or keydown to update display / handle UI, etc...
+ */
+- (void) runUpdate
+{
 	if (!callKeydownAgain)
 	{
 		if (printingStarted)
@@ -310,7 +318,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// to this point it means that there are no more lines to print, so
 			// our print buffer is full and now display the print view.
 			printingStarted = FALSE;
-		
+			
 			// We use the printingStarted flag to turn on the and off the print 
 			// aunnunciator since it is off now, we want to redisplay.
 			[blitterView annuncNeedsDisplay];
@@ -327,7 +335,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// the normal key handling would not detect.
 	[self handlePopupKeyboard:FALSE];
 }
-
 
 /*
  * Handle the user pressing a keypad button
@@ -420,7 +427,10 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	}
 
 	timer3active = FALSE;
-	[self keepRunning];	
+	if (callKeydownAgain)
+		[self keepRunning];
+	
+	[self runUpdate];
 }
 
 /* Test if we should update the lastx display.  We create a new string
