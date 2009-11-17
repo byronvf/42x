@@ -341,6 +341,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	// Added this to fix a PSE bug in combo with keyup and key repeat.
+	timer3active = FALSE;
+	
 	// last_pending_command is only used to track if the last command was CMD_CLX
 	// so that Free42 can call CMD_DROP on the second press.  This is a little 
 	// messy doing it this way, and should at some point be integrated into Free42
