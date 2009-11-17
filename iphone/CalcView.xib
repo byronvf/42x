@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="246"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -70,6 +70,10 @@
 							<int key="NSfFlags">16</int>
 						</object>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
+						<double key="IBUIContentEdgeInsets.top">5.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">1.000000e+01</double>
+						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<object class="NSColor" key="IBUIHighlightedTitleColor" id="983320498">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEAA</bytes>
@@ -297,6 +301,10 @@
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
 						<bool key="IBUIAdjustsImageWhenHighlighted">NO</bool>
 						<bool key="IBUIAdjustsImageWhenDisabled">NO</bool>
+						<double key="IBUIContentEdgeInsets.top">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">8.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -321,6 +329,10 @@
 							<int key="NSfFlags">16</int>
 						</object>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
+						<double key="IBUIContentEdgeInsets.top">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">8.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -344,6 +356,10 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<reference key="IBUIFont" ref="81651485"/>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
+						<double key="IBUIContentEdgeInsets.top">5.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -364,6 +380,10 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<reference key="IBUIFont" ref="81651485"/>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
+						<double key="IBUIContentEdgeInsets.top">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">5.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">1.000000e+01</double>
+						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -910,6 +930,10 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<reference key="IBUIFont" ref="81651485"/>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
+						<double key="IBUIContentEdgeInsets.top">5.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.left">0.000000e+00</double>
+						<double key="IBUIContentEdgeInsets.right">5.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -2679,7 +2703,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{388, 154}, {320, 480}}</string>
+					<string>{{389, 163}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3006,7 +3030,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">Free42.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">42s.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<string key="IBCocoaTouchPluginVersion">3.0</string>
 	</data>
