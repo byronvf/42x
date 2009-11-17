@@ -606,7 +606,7 @@ void shell_request_timeout3(int delay)
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
 	cmdline_row = dispRows-1;
-	if (!menuKeys) cmdline_row--;
+	if (!menuKeys && core_menu()) cmdline_row--;
 	
 	b01.enabled = TRUE;
 	b02.enabled = TRUE;
@@ -639,7 +639,7 @@ void shell_request_timeout3(int delay)
 	{
 		cmdline_row = dispRows-1;
 		// If we have on LCD menu then the cmdline row is above the menu
-		if (!menuKeys) cmdline_row--;
+		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
 	b01.enabled = FALSE;
