@@ -282,6 +282,20 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 -(void)keepRunning
 {
+	[self testShutdown];
+	
+	int repeat;
+	// We are not processing a key event, so pass 0,
+	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
+	
+	[self runUpdate];
+}
+
+/**
+ * Used to handle the OFF command, and exit the program
+ */
+- (void) testShutdown
+{
 	// Special case to handle OFF command
 	if (shutdown)
 	{
@@ -291,16 +305,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		if (app)
 		{
 			Free42AppDelegate *del = (Free42AppDelegate*)app.delegate;
+			mode_running = FALSE;
 			[del applicationWillTerminate:NULL];
 			exit(ESHUTDOWN);
 		}
-	}
-	
-	int repeat;
-	// We are not processing a key event, so pass 0,
-	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
-	
-	[self runUpdate];
+	}	
 }
 
 /**
@@ -433,6 +442,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	if (callKeydownAgain)
 		[self keepRunning];
 	
+	[self testShutdown];
 	[self runUpdate];
 }
 
