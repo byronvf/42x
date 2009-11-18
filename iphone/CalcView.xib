@@ -356,10 +356,6 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<reference key="IBUIFont" ref="81651485"/>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
-						<double key="IBUIContentEdgeInsets.top">5.000000e+00</double>
-						<double key="IBUIContentEdgeInsets.bottom">0.000000e+00</double>
-						<double key="IBUIContentEdgeInsets.left">0.000000e+00</double>
-						<double key="IBUIContentEdgeInsets.right">0.000000e+00</double>
 						<reference key="IBUIHighlightedTitleColor" ref="983320498"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -2703,7 +2699,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{389, 163}, {320, 480}}</string>
+					<string>{{642, 208}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
