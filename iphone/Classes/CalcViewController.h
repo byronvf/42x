@@ -66,6 +66,8 @@ extern int callKeydownAgain;
 	BOOL alphaMenuActive;
 	BOOL keyboardToggleActive;
 	
+	BOOL shutdown;
+	
 	IBOutlet UITextField* textEntryField;
 	
 	IBOutlet BlitterView *blitterView;
@@ -81,6 +83,7 @@ extern int callKeydownAgain;
 }
 
 @property BOOL keyPressed;
+@property BOOL shutdown;
 @property (nonatomic, retain) BlitterView* blitterView;
 @property (nonatomic, retain) UIImageView* bgImageView;
 @property (nonatomic, retain) UIImageView* updnGlowView;
@@ -133,7 +136,9 @@ extern int callKeydownAgain;
 - (void) singleLCD;
 - (void) doubleLCD;
 - (void) resetLCD;
-- (void)testUpdateLastX: (BOOL) force;
+- (void) testUpdateLastX: (BOOL) force;
+- (void) runUpdate;
+- (void) testShutdown;
 
 @end
 

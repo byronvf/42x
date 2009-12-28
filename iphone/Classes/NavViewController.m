@@ -33,7 +33,16 @@ void shell_powerdown()
 	
 	// Dismiss the keyboard if it user typed XEQ "OFF"
     [navCtrl.calcViewController handlePopupKeyboard:FALSE];	
-	[navCtrl switchToConfigView];
+	
+	if (pending_command == CMD_SILENT_OFF)
+	{
+		[navCtrl switchToConfigView];
+	}
+	else
+	{
+		navCtrl.calcViewController.shutdown = TRUE;
+		cpuCount = 0; // If in program, imediattelly pop out of the loop
+	}
 }	
 
 @implementation NavViewController

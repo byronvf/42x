@@ -350,7 +350,7 @@ char lastxbuf[LASTXBUF_SIZE];
 		else
 		{		
 			// If in program mode then create a little buffer at the top
-			if (dispRows == 7) vertoffset += 2;	
+			if (dispRows == 7) vertoffset += 3;	
 			if (dispRows == 4) vertoffset += 5;
 			if (dispRows == 6) vertoffset += 2;
 		}
@@ -370,7 +370,7 @@ char lastxbuf[LASTXBUF_SIZE];
 {
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
-	int insetTop = 2;
+	int insetTop = 4;
 	if (self.dispAnnunc) insetTop += ASTAT_HEIGHT;
 	int insetBot = 4;
 	
@@ -388,8 +388,8 @@ char lastxbuf[LASTXBUF_SIZE];
 	if (dispRows < lines)
 		barheight = dispRows*fullheight/lines;
 	
-	// barheight is never less then 3 pixels
-	if (barheight < 3) barheight = 3;
+	// barheight is never less then 5 pixels
+	if (barheight < 5) barheight = 5;
 
 	int startline = pc2line(pc) - prgm_highlight_row;
 	if (startline < 0) startline = 0;  // This shoudn't happen, but just in case
@@ -554,7 +554,7 @@ const int SCROLL_SPEED = 15;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 90;
+	bounds.size.height = 89;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;
@@ -569,7 +569,7 @@ const int SCROLL_SPEED = 15;
 	firstTouch.x == -1;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 146;
+	bounds.size.height = 145;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;	
@@ -772,7 +772,9 @@ char cbuf[30];
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
-	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode)
+	// We can can get motion events while coming out of sleep.. to avoid this
+	// we test if we are sleeping or not.
+	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode && !isSleeping)
 	{
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Clear Stack?"
 			message:NULL delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:nil] autorelease];	

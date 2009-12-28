@@ -1110,9 +1110,17 @@ void display_x(int row) {
     } else {
 	string2buf(buf, 22, &bufptr, "x\200", 2);
     }
+	int prefixLen  = bufptr;
     bufptr += vartype2string(reg_x, buf + bufptr, 22 - bufptr);
 	if (mode_number_entry)
+	{
+		// This is necessary in the case we are in fixed mode and
+		// we redisplay, since vartype2string will add padding zeros
+		bufptr = prefixLen + cmdline_length;
+
+		// Maintane the number entry cursor indicator through redisplays
 		char2buf(buf, 22, &bufptr, '_');
+	}
     draw_string(0, row, buf, bufptr);
 }
 

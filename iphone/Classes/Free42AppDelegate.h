@@ -21,6 +21,9 @@
 
 #define PRINT_FILE_NAME @"/Documents/print.txt"
 
+// Set this to true when we are in sleep mode
+extern BOOL isSleeping;
+
 @interface Free42AppDelegate : NSObject <UIApplicationDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet CalcViewController *viewController;

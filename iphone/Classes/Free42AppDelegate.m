@@ -29,6 +29,9 @@ FILE* printFile = NULL;  // shared in PrintViewController.m
 // in assert calls to verify Free42 has been initialized.
 BOOL free42init = FALSE;
 
+// Set this to true when we are in sleep mode
+BOOL isSleeping = FALSE;
+
 // Base name of 42s state file name, this will be prepended by the home directory
 static NSString* stateBaseName = @"/Documents/42s.state";
 
@@ -274,6 +277,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
+	[defaults synchronize];  // When using the OFF command we must do this.
 	
 	[[navViewController printViewController] releasePrintBuffer];
 }
@@ -361,6 +365,16 @@ bool prgmFirstWrite = TRUE;
 	[self saveSettings];
 	
 	if (printFile) fclose(printFile);	
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	isSleeping = TRUE;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	isSleeping = FALSE;
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application

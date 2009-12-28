@@ -146,6 +146,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize displayBuff;
 @synthesize menuView;
 @synthesize keyPressed;
+@synthesize shutdown;
 
 
 /*
@@ -281,10 +282,41 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
  */
 -(void)keepRunning
 {
+	[self testShutdown];
+	
 	int repeat;
 	// We are not processing a key event, so pass 0,
 	callKeydownAgain = core_keydown(0, &enqueued, &repeat);
 	
+	[self runUpdate];
+}
+
+/**
+ * Used to handle the OFF command, and exit the program
+ */
+- (void) testShutdown
+{
+	// Special case to handle OFF command
+	if (shutdown)
+	{
+		// If the user does not use the key off to get here then we do
+		// in fact exit instead of going to the options screen.
+		UIApplication *app = [UIApplication sharedApplication];
+		if (app)
+		{
+			Free42AppDelegate *del = (Free42AppDelegate*)app.delegate;
+			mode_running = FALSE;
+			[del applicationWillTerminate:NULL];
+			exit(ESHUTDOWN);
+		}
+	}	
+}
+
+/**
+ * Called after core_keyup or keydown to update display / handle UI, etc...
+ */
+- (void) runUpdate
+{
 	if (!callKeydownAgain)
 	{
 		if (printingStarted)
@@ -295,7 +327,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// to this point it means that there are no more lines to print, so
 			// our print buffer is full and now display the print view.
 			printingStarted = FALSE;
-		
+			
 			// We use the printingStarted flag to turn on the and off the print 
 			// aunnunciator since it is off now, we want to redisplay.
 			[blitterView annuncNeedsDisplay];
@@ -313,12 +345,14 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	[self handlePopupKeyboard:FALSE];
 }
 
-
 /*
  * Handle the user pressing a keypad button
  */
 - (void)buttonDown:(UIButton*)sender
 {
+	// Added this to fix a PSE bug in combo with keyup and key repeat.
+	timer3active = FALSE;
+	
 	// last_pending_command is only used to track if the last command was CMD_CLX
 	// so that Free42 can call CMD_DROP on the second press.  This is a little 
 	// messy doing it this way, and should at some point be integrated into Free42
@@ -405,7 +439,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	}
 
 	timer3active = FALSE;
-	[self keepRunning];	
+	if (callKeydownAgain)
+		[self keepRunning];
+	
+	[self testShutdown];
+	[self runUpdate];
 }
 
 /* Test if we should update the lastx display.  We create a new string
@@ -591,7 +629,7 @@ void shell_request_timeout3(int delay)
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
 	cmdline_row = dispRows-1;
-	if (!menuKeys) cmdline_row--;
+	if (!menuKeys && core_menu()) cmdline_row--;
 	
 	b01.enabled = TRUE;
 	b02.enabled = TRUE;
@@ -624,7 +662,7 @@ void shell_request_timeout3(int delay)
 	{
 		cmdline_row = dispRows-1;
 		// If we have on LCD menu then the cmdline row is above the menu
-		if (!menuKeys) cmdline_row--;
+		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
 	b01.enabled = FALSE;
