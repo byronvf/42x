@@ -13,6 +13,8 @@
 		2899E5220DE3E06400AC0155 /* CalcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* CalcView.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* CalcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* CalcViewController.m */; };
+		E92BCDF9114C1BE600832FAD /* core_tables.cc in Sources */ = {isa = PBXBuildFile; fileRef = E92BCDF7114C1BE600832FAD /* core_tables.cc */; };
+		E92BCEAE114C308200832FAD /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E92BCEAD114C308200832FAD /* CoreLocation.framework */; };
 		E96280FC101CD52400AF16AC /* bcdfloat2.cc in Sources */ = {isa = PBXBuildFile; fileRef = E96280FA101CD52400AF16AC /* bcdfloat2.cc */; };
 		E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D40FDE8CE800698456 /* squeak.wav */; };
 		E9B918E00FDE8CE800698456 /* tone0.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D50FDE8CE800698456 /* tone0.wav */; };
@@ -38,7 +40,6 @@
 		ED36E9811093D43800DAA444 /* core_commands2.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E9761093D43800DAA444 /* core_commands2.cc */; };
 		ED36E9821093D43800DAA444 /* core_display.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E9771093D43800DAA444 /* core_display.cc */; };
 		ED36E9831093D43800DAA444 /* core_globals.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E9791093D43800DAA444 /* core_globals.cc */; };
-		ED36E9841093D43800DAA444 /* core_tables.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E97A1093D43800DAA444 /* core_tables.cc */; };
 		ED36E9851093D43800DAA444 /* core_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E97C1093D43800DAA444 /* core_helpers.cc */; };
 		ED36E9861093D43800DAA444 /* core_keydown.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E97E1093D43800DAA444 /* core_keydown.cc */; };
 		ED36E9871093D43800DAA444 /* core_commands1.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED36E97F1093D43800DAA444 /* core_commands1.cc */; };
@@ -94,6 +95,10 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Free42_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Free42_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E92BCDF7114C1BE600832FAD /* core_tables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_tables.cc; path = ../common/core_tables.cc; sourceTree = SOURCE_ROOT; };
+		E92BCDF8114C1BE600832FAD /* core_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_tables.h; path = ../common/core_tables.h; sourceTree = SOURCE_ROOT; };
+		E92BCE13114C1EEB00832FAD /* core_commands1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands1.h; path = ../common/core_commands1.h; sourceTree = SOURCE_ROOT; };
+		E92BCEAD114C308200832FAD /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = /System/Library/Frameworks/CoreLocation.framework; sourceTree = "<absolute>"; };
 		E96280F9101CD52400AF16AC /* bcd2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcd2.h; path = ../common/bcd2.h; sourceTree = SOURCE_ROOT; };
 		E96280FA101CD52400AF16AC /* bcdfloat2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcdfloat2.cc; path = ../common/bcdfloat2.cc; sourceTree = SOURCE_ROOT; };
 		E96280FB101CD52400AF16AC /* bcdfloat2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcdfloat2.h; path = ../common/bcdfloat2.h; sourceTree = SOURCE_ROOT; };
@@ -121,15 +126,12 @@
 		ED361AB40FB973A700C432A1 /* MenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuView.h; sourceTree = "<group>"; };
 		ED361AB50FB973A700C432A1 /* MenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuView.m; sourceTree = "<group>"; };
 		ED366417100B339D00293D2C /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = VERSION; path = ../VERSION; sourceTree = SOURCE_ROOT; };
-		ED36E9741093D43800DAA444 /* core_commands1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands1.h; path = "Classes/common-42s/core_commands1.h"; sourceTree = "<group>"; };
 		ED36E9751093D43800DAA444 /* core_display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_display.h; path = "Classes/common-42s/core_display.h"; sourceTree = "<group>"; };
 		ED36E9761093D43800DAA444 /* core_commands2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands2.cc; path = "Classes/common-42s/core_commands2.cc"; sourceTree = "<group>"; };
 		ED36E9771093D43800DAA444 /* core_display.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_display.cc; path = "Classes/common-42s/core_display.cc"; sourceTree = "<group>"; };
 		ED36E9791093D43800DAA444 /* core_globals.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_globals.cc; path = "Classes/common-42s/core_globals.cc"; sourceTree = "<group>"; };
-		ED36E97A1093D43800DAA444 /* core_tables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_tables.cc; path = "Classes/common-42s/core_tables.cc"; sourceTree = "<group>"; };
 		ED36E97B1093D43800DAA444 /* core_keydown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_keydown.h; path = "Classes/common-42s/core_keydown.h"; sourceTree = "<group>"; };
 		ED36E97C1093D43800DAA444 /* core_helpers.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_helpers.cc; path = "Classes/common-42s/core_helpers.cc"; sourceTree = "<group>"; };
-		ED36E97D1093D43800DAA444 /* core_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_tables.h; path = "Classes/common-42s/core_tables.h"; sourceTree = "<group>"; };
 		ED36E97E1093D43800DAA444 /* core_keydown.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_keydown.cc; path = "Classes/common-42s/core_keydown.cc"; sourceTree = "<group>"; };
 		ED36E97F1093D43800DAA444 /* core_commands1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands1.cc; path = "Classes/common-42s/core_commands1.cc"; sourceTree = "<group>"; };
 		ED36E9801093D43800DAA444 /* core_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_main.cc; path = "Classes/common-42s/core_main.cc"; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				ED3DFAB80E5308B0000044AF /* CoreGraphics.framework in Frameworks */,
 				EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */,
 				ED82C6951013DC9800803FB3 /* UIKit.framework in Frameworks */,
+				E92BCEAE114C308200832FAD /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,6 +323,7 @@
 				EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */,
 				ED3DFAB70E5308B0000044AF /* CoreGraphics.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				E92BCEAD114C308200832FAD /* CoreLocation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -329,15 +333,12 @@
 			children = (
 				ED50C0191095567500C7D722 /* core_globals.h */,
 				ED26D23F0F6AB1D100F285A2 /* simpleserver.c */,
-				ED36E9741093D43800DAA444 /* core_commands1.h */,
 				ED36E9751093D43800DAA444 /* core_display.h */,
 				ED36E9761093D43800DAA444 /* core_commands2.cc */,
 				ED36E9771093D43800DAA444 /* core_display.cc */,
 				ED36E9791093D43800DAA444 /* core_globals.cc */,
-				ED36E97A1093D43800DAA444 /* core_tables.cc */,
 				ED36E97B1093D43800DAA444 /* core_keydown.h */,
 				ED36E97C1093D43800DAA444 /* core_helpers.cc */,
-				ED36E97D1093D43800DAA444 /* core_tables.h */,
 				ED36E97E1093D43800DAA444 /* core_keydown.cc */,
 				ED36E97F1093D43800DAA444 /* core_commands1.cc */,
 				ED36E9801093D43800DAA444 /* core_main.cc */,
@@ -358,6 +359,7 @@
 				E96280FB101CD52400AF16AC /* bcdfloat2.h */,
 				ED3DF9CF0E52E6C4000044AF /* bcdmath.cc */,
 				ED3DF9D00E52E6C4000044AF /* bcdmath.h */,
+				E92BCE13114C1EEB00832FAD /* core_commands1.h */,
 				ED3DF9D40E52E6C4000044AF /* core_commands2.h */,
 				ED3DF9D50E52E6C4000044AF /* core_commands3.cc */,
 				ED3DF9D60E52E6C4000044AF /* core_commands3.h */,
@@ -381,6 +383,8 @@
 				ED3DF9F00E52E6C4000044AF /* core_phloat.h */,
 				ED3DF9F10E52E6C4000044AF /* core_sto_rcl.cc */,
 				ED3DF9F20E52E6C4000044AF /* core_sto_rcl.h */,
+				E92BCDF7114C1BE600832FAD /* core_tables.cc */,
+				E92BCDF8114C1BE600832FAD /* core_tables.h */,
 				ED3DF9F50E52E6C4000044AF /* core_variables.cc */,
 				ED3DF9F60E52E6C4000044AF /* core_variables.h */,
 				ED3DF9F70E52E6C4000044AF /* free42.h */,
@@ -524,11 +528,11 @@
 				ED36E9811093D43800DAA444 /* core_commands2.cc in Sources */,
 				ED36E9821093D43800DAA444 /* core_display.cc in Sources */,
 				ED36E9831093D43800DAA444 /* core_globals.cc in Sources */,
-				ED36E9841093D43800DAA444 /* core_tables.cc in Sources */,
 				ED36E9851093D43800DAA444 /* core_helpers.cc in Sources */,
 				ED36E9861093D43800DAA444 /* core_keydown.cc in Sources */,
 				ED36E9871093D43800DAA444 /* core_commands1.cc in Sources */,
 				ED36E9881093D43800DAA444 /* core_main.cc in Sources */,
+				E92BCDF9114C1BE600832FAD /* core_tables.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
