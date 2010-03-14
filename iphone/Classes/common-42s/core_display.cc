@@ -1460,11 +1460,7 @@ static int fcn_cat[] = {
     CMD_CLST,     CMD_CLV,       CMD_CLX,      CMD_CLSIGMA,    CMD_COMB,    CMD_COMPLEX,
     CMD_CORR,     CMD_COS,       CMD_COSH,     CMD_CPXRES,     CMD_CPX_T,   CMD_CROSS,
     CMD_CUSTOM,   CMD_DECM,      CMD_DEG,      CMD_DEL,        CMD_DELAY,   CMD_DELR,
-    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,   
-#ifdef BIGSTACK
-    CMD_DROP,
-#endif
-    CMD_DSE,     CMD_EDIT,
+    CMD_DET,      CMD_DIM,       CMD_DIM_T,    CMD_DOT,        CMD_DSE,     CMD_EDIT,
     CMD_EDITN,    CMD_END,       CMD_ENG,      CMD_ENTER,      CMD_EXITALL, CMD_EXPF,
     CMD_E_POW_X,  CMD_E_POW_X_1, CMD_FC_T,     CMD_FCC_T,      CMD_FCSTX,   CMD_FCSTY,
     CMD_FIX,      CMD_FNRM,      CMD_FP,       CMD_FS_T,       CMD_FSC_T,   CMD_GAMMA,
@@ -1568,14 +1564,78 @@ static void draw_catalog() {
 	mode_updown = catalogmenu_rows[catindex] > 1;
 	shell_annunciators(mode_updown, -1, -1, -1, -1, -1);
     } else if (catsect == CATSECT_FCN) {
+	int fcn_cat_rows = 252;
+	if (core_settings.enable_ext_copan)
+	    fcn_cat_rows += 14;
+	if (core_settings.enable_ext_bigstack)
+	    fcn_cat_rows++;
+	if (core_settings.enable_ext_accel)
+	    fcn_cat_rows++;
+	if (core_settings.enable_ext_locat)
+	    fcn_cat_rows++;
+	if (core_settings.enable_ext_heading)
+	    fcn_cat_rows++;
+	if (core_settings.enable_ext_time)
+	    fcn_cat_rows += 34;
+	fcn_cat_rows = (fcn_cat_rows + 5) / 6;
+
 	int i;
-	catalogmenu_rows[catindex] = (sizeof(fcn_cat)/sizeof(*fcn_cat) + 5)/6;  // Totals rows
+	catalogmenu_rows[catindex] = fcn_cat_rows;
 	if (catalogmenu_row[catindex] >= catalogmenu_rows[catindex])
 	    catalogmenu_row[catindex] = catalogmenu_rows[catindex] - 1;
 	for (i = 0; i < 6; i++) {
-	    int cmd = -1;
-	    if (catalogmenu_row[catindex] * 6 + i < sizeof(fcn_cat)/sizeof(*fcn_cat))
-		cmd = fcn_cat[catalogmenu_row[catindex] * 6 + i];
+	    int fcn_index = catalogmenu_row[catindex] * 6 + i;
+	    int cmd;
+	    if (catalogmenu_row[catindex] < 42)
+		/* Original HP-42S catalog; always available */
+		cmd = fcn_cat[fcn_index];
+	    else {
+		fcn_index -= 252;
+		if (core_settings.enable_ext_copan) {
+		    if (fcn_index < 14) {
+			cmd = CMD_OPENF + fcn_index;
+			goto found;
+		    }
+		    fcn_index -= 14;
+		}
+		if (core_settings.enable_ext_bigstack) {
+		    if (fcn_index == 0) {
+			cmd = CMD_DROP;
+			goto found;
+		    }
+		    fcn_index--;
+		}
+		if (core_settings.enable_ext_accel) {
+		    if (fcn_index == 0) {
+			cmd = CMD_ACCEL;
+			goto found;
+		    }
+		    fcn_index--;
+		}
+		if (core_settings.enable_ext_locat) {
+		    if (fcn_index == 0) {
+			cmd = CMD_LOCAT;
+			goto found;
+		    }
+		    fcn_index--;
+		}
+		if (core_settings.enable_ext_heading) {
+		    if (fcn_index == 0) {
+			cmd = CMD_HEADING;
+			goto found;
+		    }
+		    fcn_index--;
+		}
+		if (core_settings.enable_ext_time) {
+		    if (fcn_index < 34) {
+			cmd = CMD_ADATE + fcn_index;
+			goto found;
+		    }
+		    fcn_index -= 34;
+		}
+		cmd = -1;
+		found:;
+	    }
 	    catalogmenu_item[catindex][i] = cmd;
 	    if (cmd == -1)
 		draw_key(i, 0, 0, "", 0);
@@ -2322,13 +2382,25 @@ void print_program_line(int prgm_index, int4 pc) {
 int command2buf(char *buf, int len, int cmd, const arg_struct *arg) {
     int bufptr = 0;
 
+    int4 xrom_arg;
+    if (!core_settings.enable_ext_copan && cmd >= CMD_OPENF && cmd <= CMD_DELP
+	    || !core_settings.enable_ext_bigstack && cmd == CMD_DROP
+	    || !core_settings.enable_ext_accel && cmd == CMD_ACCEL
+	    || !core_settings.enable_ext_locat && cmd == CMD_LOCAT
+	    || !core_settings.enable_ext_heading && cmd == CMD_HEADING
+	    || !core_settings.enable_ext_time && cmd >= CMD_ADATE && cmd <= CMD_SWPT) {
+	xrom_arg = cmdlist(cmd)->hp42s_code;
+	cmd = CMD_XROM;
+    } else if (cmd == CMD_XROM)
+	xrom_arg = arg->val.num;
+
     const command_spec *cmdspec = cmdlist(cmd);
     if (cmd >= CMD_ASGN01 && cmd <= CMD_ASGN18)
 	string2buf(buf, len, &bufptr, "ASSIGN ", 7);
     else
 	string2buf(buf, len, &bufptr, cmdspec->name, cmdspec->name_length);
     if (cmd == CMD_XROM) {
-	int n = arg->val.num & 0x7FF;
+	int n = xrom_arg & 0x7FF;
 	int rom = n >> 6;
 	int instr = n & 63;
 	char2buf(buf, len, &bufptr, ' ');

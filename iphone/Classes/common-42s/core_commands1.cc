@@ -75,6 +75,8 @@ int docmd_swap(arg_struct *arg) {
 #ifdef BIGSTACK
 int docmd_drop(arg_struct *arg)
 {
+    if (!core_settings.enable_ext_bigstack)
+	return ERR_NONEXISTENT;
     free_vartype(reg_x);
     reg_x = reg_y;
     reg_y = reg_z;
