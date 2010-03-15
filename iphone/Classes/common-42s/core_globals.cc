@@ -599,6 +599,9 @@ bool mode_varmenu;
 bool mode_updown;
 int4 mode_sigma_reg;
 int mode_goose;
+bool mode_time_clktd;
+bool mode_time_clk24;
+bool mode_time_dmy;
 
 #if BIGSTACK
 stack_item *bigstack_head = NULL;
@@ -1142,6 +1145,12 @@ static bool persist_globals() {
 	goto done;
     if (!write_int(mode_goose))
 	goto done;
+    if (!write_bool(mode_time_clktd))
+	goto done;
+    if (!write_bool(mode_time_clk24))
+	goto done;
+    if (!write_bool(mode_time_dmy))
+	goto done;
     if (!shell_write_saved_state(&flags, sizeof(flags_struct)))
 	goto done;
     if (!write_int(vars_count))
@@ -1269,6 +1278,20 @@ static bool unpersist_globals(int4 ver) {
     if (!read_int(&mode_goose)) {
 	mode_goose = -1;
 	goto done;
+    }
+    if (ver >= 16) {
+	if (!read_bool(&mode_time_clktd)) {
+	    mode_time_clktd = false;
+	    goto done;
+	}
+	if (!read_bool(&mode_time_clk24)) {
+	    mode_time_clk24 = false;
+	    goto done;
+	}
+	if (!read_bool(&mode_time_dmy)) {
+	    mode_time_dmy = false;
+	    goto done;
+	}
     }
     if (shell_read_saved_state(&flags, sizeof(flags_struct))
 	    != sizeof(flags_struct))
@@ -2672,6 +2695,9 @@ void hard_reset(int bad_state_file) {
     mode_updown = false;
     mode_sigma_reg = 11;
     mode_goose = -1;
+    mode_time_clktd = false;
+    mode_time_clk24 = false;
+    mode_time_dmy = false;
 
     core_settings.auto_repeat = true;
     #if defined(COPAN)
