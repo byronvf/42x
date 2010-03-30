@@ -16,6 +16,7 @@
 		E92BCDF9114C1BE600832FAD /* core_tables.cc in Sources */ = {isa = PBXBuildFile; fileRef = E92BCDF7114C1BE600832FAD /* core_tables.cc */; };
 		E92BCEAE114C308200832FAD /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E92BCEAD114C308200832FAD /* CoreLocation.framework */; };
 		E96280FC101CD52400AF16AC /* bcdfloat2.cc in Sources */ = {isa = PBXBuildFile; fileRef = E96280FA101CD52400AF16AC /* bcdfloat2.cc */; };
+		E99FDEA111625204004DB479 /* core_commands7.cc in Sources */ = {isa = PBXBuildFile; fileRef = E99FDE9F11625204004DB479 /* core_commands7.cc */; };
 		E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D40FDE8CE800698456 /* squeak.wav */; };
 		E9B918E00FDE8CE800698456 /* tone0.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D50FDE8CE800698456 /* tone0.wav */; };
 		E9B918E10FDE8CE800698456 /* tone1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D60FDE8CE800698456 /* tone1.wav */; };
@@ -102,6 +103,8 @@
 		E96280F9101CD52400AF16AC /* bcd2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcd2.h; path = ../common/bcd2.h; sourceTree = SOURCE_ROOT; };
 		E96280FA101CD52400AF16AC /* bcdfloat2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bcdfloat2.cc; path = ../common/bcdfloat2.cc; sourceTree = SOURCE_ROOT; };
 		E96280FB101CD52400AF16AC /* bcdfloat2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bcdfloat2.h; path = ../common/bcdfloat2.h; sourceTree = SOURCE_ROOT; };
+		E99FDE9F11625204004DB479 /* core_commands7.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands7.cc; path = ../common/core_commands7.cc; sourceTree = SOURCE_ROOT; };
+		E99FDEA011625204004DB479 /* core_commands7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands7.h; path = ../common/core_commands7.h; sourceTree = SOURCE_ROOT; };
 		E9B918D40FDE8CE800698456 /* squeak.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = squeak.wav; sourceTree = "<group>"; };
 		E9B918D50FDE8CE800698456 /* tone0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone0.wav; sourceTree = "<group>"; };
 		E9B918D60FDE8CE800698456 /* tone1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone1.wav; sourceTree = "<group>"; };
@@ -369,6 +372,8 @@
 				ED3DF9DA0E52E6C4000044AF /* core_commands5.h */,
 				ED3DF9DB0E52E6C4000044AF /* core_commands6.cc */,
 				ED3DF9DC0E52E6C4000044AF /* core_commands6.h */,
+				E99FDE9F11625204004DB479 /* core_commands7.cc */,
+				E99FDEA011625204004DB479 /* core_commands7.h */,
 				ED3DF9E20E52E6C4000044AF /* core_helpers.h */,
 				ED3DF9E50E52E6C4000044AF /* core_linalg1.cc */,
 				ED3DF9E60E52E6C4000044AF /* core_linalg1.h */,
@@ -533,6 +538,7 @@
 				ED36E9871093D43800DAA444 /* core_commands1.cc in Sources */,
 				ED36E9881093D43800DAA444 /* core_main.cc in Sources */,
 				E92BCDF9114C1BE600832FAD /* core_tables.cc in Sources */,
+				E99FDEA111625204004DB479 /* core_commands7.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
