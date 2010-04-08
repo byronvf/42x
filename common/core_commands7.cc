@@ -277,18 +277,6 @@ int docmd_adate(arg_struct *arg) {
     return ERR_NONE;
 }
 
-int docmd_almcat(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_almnow(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
 int docmd_atime(arg_struct *arg) {
     if (!core_settings.enable_ext_time)
 	return ERR_NONEXISTENT;
@@ -398,34 +386,6 @@ int docmd_clk24(arg_struct *arg) {
     return ERR_NONE;
 }
 
-int docmd_clkt(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    mode_time_clktd = false;
-    return ERR_NONE;
-}
-
-int docmd_clktd(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    mode_time_clktd = true;
-    return ERR_NONE;
-}
-
-int docmd_clock(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_correct(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    return ERR_NONE;
-}
-
 static char weekdaynames[] = "SUNMONTUEWEDTHUFRISAT";
 
 int docmd_date(arg_struct *arg) {
@@ -461,12 +421,12 @@ int docmd_date(arg_struct *arg) {
 	if (n < 10)
 	    char2buf(buf, 22, &bufptr, '0');
 	bufptr += int2string(n, buf + bufptr, 22 - bufptr);
-	char2buf(buf, 22, &bufptr, mode_time_dmy ? ':' : '/');
+	char2buf(buf, 22, &bufptr, mode_time_dmy ? '.' : '/');
 	n = mode_time_dmy ? m : d;
 	if (n < 10)
 	    char2buf(buf, 22, &bufptr, '0');
 	bufptr += int2string(n, buf + bufptr, 22 - bufptr);
-	char2buf(buf, 22, &bufptr, mode_time_dmy ? ':' : '/');
+	char2buf(buf, 22, &bufptr, mode_time_dmy ? '.' : '/');
 	bufptr += int2string(y, buf + bufptr, 22 - bufptr);
 	char2buf(buf, 22, &bufptr, ' ');
 	string2buf(buf, 22, &bufptr, weekdaynames + weekday * 3, 3);
@@ -614,80 +574,6 @@ int docmd_mdy(arg_struct *arg) {
     return ERR_NONE;
 }
 
-int docmd_rclaf(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    vartype *v = new_real(0);
-    if (v == NULL)
-	return ERR_INSUFFICIENT_MEMORY;
-    recall_result(v);
-    return ERR_NONE;
-}
-
-int docmd_rclsw(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_runsw(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_setaf(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    return ERR_NONE;
-}
-
-int docmd_setdate(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    return ERR_NONE;
-}
-
-int docmd_setime(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    return ERR_NONE;
-}
-
-int docmd_setsw(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_stopsw(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_sw(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_t_plus_x(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    // No-op; we use the underlying platform's clock, and we don't
-    // try to mess with it.
-    return ERR_NONE;
-}
-
 int docmd_time(arg_struct *arg) {
     if (!core_settings.enable_ext_time)
 	return ERR_NONEXISTENT;
@@ -737,40 +623,4 @@ int docmd_time(arg_struct *arg) {
      * or, when not in a running program, the nicely formatted time?
      */
     return ERR_NONE;
-}
-
-int docmd_xyzalm(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_clalma(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_clalmx(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_clralms(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_rclalm(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
-}
-
-int docmd_swpt(arg_struct *arg) {
-    if (!core_settings.enable_ext_time)
-	return ERR_NONEXISTENT;
-    return ERR_NOT_YET_IMPLEMENTED;
 }
