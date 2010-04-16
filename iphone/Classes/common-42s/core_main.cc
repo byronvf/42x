@@ -30,6 +30,9 @@
 #include "core_variables.h"
 #include "shell.h"
 #include "shell_spool.h"
+#ifdef BIGSTACK
+#include "undo.h"
+#endif
 
 
 static void set_shift(bool state) MAIN_SECT;
@@ -383,7 +386,7 @@ int core_keyup() {
 	pending_command = CMD_NONE;
 	return 0;
     }
-
+	
     if (pending_command == CMD_NONE)
 	return mode_running || keybuf_head != keybuf_tail;
 
@@ -436,6 +439,10 @@ int core_keyup() {
 	    input_length = 0;
     }
 
+#ifdef BIGSTACK	
+	record_undo_pending_cmd();
+#endif
+	
     if (pending_command == CMD_VMEXEC) {
 	string_copy(reg_alpha, &reg_alpha_length,
 		    pending_command_arg.val.text, pending_command_arg.length);

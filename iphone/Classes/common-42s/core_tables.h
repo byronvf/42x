@@ -352,7 +352,9 @@
 #define CMD_XROM        314
 #ifdef BIGSTACK
 #define CMD_DROP        315
-#define CMD_SENTINEL    316
+#define CMD_UNDO        316
+#define CMD_REDO        317
+#define CMD_SENTINEL    318
 #else
 #define CMD_SENTINEL    315
 #endif

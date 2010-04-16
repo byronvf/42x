@@ -63,6 +63,7 @@
 		ED3DFAB80E5308B0000044AF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED3DFAB70E5308B0000044AF /* CoreGraphics.framework */; };
 		ED559B6A0EB6089B0060A929 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = ED559B690EB6089B0060A929 /* Default.png */; };
 		ED56CBE20EB5C5E6006B9130 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = ED56CBE10EB5C5E6006B9130 /* icon.png */; };
+		ED5E2E4B10BF87D2006F9D9F /* undo.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED5E2E4910BF87D2006F9D9F /* undo.cc */; };
 		ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED5F1AC70FBCB72A00ABACC2 /* glow.png */; };
 		ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = ED69AAD60F13F6A8001B6C1A /* COPYING */; };
 		ED82C6951013DC9800803FB3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED82C6941013DC9800803FB3 /* UIKit.framework */; };
@@ -175,6 +176,8 @@
 		ED50C0191095567500C7D722 /* core_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_globals.h; path = "Classes/common-42s/core_globals.h"; sourceTree = "<group>"; };
 		ED559B690EB6089B0060A929 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		ED56CBE10EB5C5E6006B9130 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		ED5E2E4910BF87D2006F9D9F /* undo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = undo.cc; path = "Classes/common-42s/undo.cc"; sourceTree = "<group>"; };
+		ED5E2E4A10BF87D2006F9D9F /* undo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = undo.h; path = "Classes/common-42s/undo.h"; sourceTree = "<group>"; };
 		ED5F1AC70FBCB72A00ABACC2 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
 		ED69AAD60F13F6A8001B6C1A /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		ED82C6941013DC9800803FB3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -327,6 +330,8 @@
 		ED36E9731093D31000DAA444 /* Common42s */ = {
 			isa = PBXGroup;
 			children = (
+				ED5E2E4910BF87D2006F9D9F /* undo.cc */,
+				ED5E2E4A10BF87D2006F9D9F /* undo.h */,
 				ED50C0191095567500C7D722 /* core_globals.h */,
 				ED26D23F0F6AB1D100F285A2 /* simpleserver.c */,
 				ED36E9741093D43800DAA444 /* core_commands1.h */,
@@ -529,6 +534,7 @@
 				ED36E9861093D43800DAA444 /* core_keydown.cc in Sources */,
 				ED36E9871093D43800DAA444 /* core_commands1.cc in Sources */,
 				ED36E9881093D43800DAA444 /* core_main.cc in Sources */,
+				ED5E2E4B10BF87D2006F9D9F /* undo.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,6 +587,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = 42s;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

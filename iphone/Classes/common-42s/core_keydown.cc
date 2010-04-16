@@ -29,6 +29,7 @@
 #include "core_variables.h"
 #include "shell.h"
 #include "core_globals.h"
+#include "undo.h"
 
 #if BIGLCD
 /* Return the total number of lines the current program the pc points to has. */
@@ -1891,7 +1892,13 @@ void keydown_normal_mode(int shift, int key) {
 	if (deferred_print)
 	    print_command(CMD_NULL, NULL);
 	cmdline_length = 0;
-#ifdef BIGLCD	
+		
+#ifdef BIGSTACK		
+	if (!flags.f.stack_lift_disable)
+		record_undo("NEW NUMBER");		
+#endif		
+				
+#ifdef BIGLCD
 	if (get_front_menu() != NULL && ! menuKeys)
 	    cmdline_row = dispRows - 2;
 	else

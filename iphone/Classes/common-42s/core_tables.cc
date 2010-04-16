@@ -24,6 +24,9 @@
 #include "core_commands4.h"
 #include "core_commands5.h"
 #include "core_commands6.h"
+#ifdef BIGSTACK
+#include "undo.h"
+#endif
 
 
 /* PalmOS: even though this array is declared "const", it ends up in the
@@ -349,6 +352,8 @@ static const command_spec cmd_array[] =
     { /* XROM */        "XROM",                 4, docmd_xrom,        0x01000000, ARG_OTHER, FLAG_HIDDEN }
 #ifdef BIGSTACK
    ,{ /* DROP */        "DROP",                 4, docmd_drop,        0x0000a271, ARG_NONE,  FLAG_NONE }
+   ,{ /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE }
+   ,{ /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE }
 #endif    
 };
 

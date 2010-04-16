@@ -525,8 +525,8 @@ menu_spec menus[] = {
 #ifdef BIGSTACK
     { /* MENU_CLEAR3 */ MENU_NONE, MENU_CLEAR1, MENU_CLEAR2,
 		      { { 0x1000 + CMD_DROP, 0, "" },
-			{ 0x1000 + CMD_NULL, 0, "" },
-			{ 0x1000 + CMD_NULL, 0, "" },
+			{ 0x1000 + CMD_UNDO, 0, "" },
+			{ 0x1000 + CMD_REDO, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" } } },
