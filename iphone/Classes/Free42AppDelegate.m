@@ -42,13 +42,19 @@ static FILE *statefile;
 BOOL oldStyleStateExists;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 5;
+static const int PERSIST_VERSION = 6;
 
-// Persist version stored
-// 2 - 2.2
-// 3 - 2.2.1
-// 4 - 2.3
-// 5 - 2.3.1
+// Versions ---- PERSIST_VERION - 42s release version - FREE42_VERSION
+
+// 2 - 2.2    - 12
+// 3 - 2.2.1  - 12
+// 4 - 2.3    - 13
+// 5 - 2.3.1  - 13
+// 5 - 2.3.2  - 13
+// 6 - 2.3.3  - 16
+
+// Versions before PERSIST_VERSION was added uses FREE42_VERSION 11
+
 static int persistVersion = 0;
 
 int cpuCount = 0;
@@ -311,6 +317,8 @@ bool prgmFirstWrite = TRUE;
 			core_init(1, 11);
 	    else if (persistVersion == 2 || persistVersion == 3)
 			core_init(1, 12);
+		else if (persistVersion == 4 || persistVersion == 5)
+			core_init(1, 13);
 		else
 			core_init(1, FREE42_VERSION);
 	}
