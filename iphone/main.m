@@ -9,6 +9,7 @@
 
 #import <UIKit/UIKit.h>
 #import "core_main.h"
+#import <unistd.h>
 
 int main(int argc, char *argv[]) {
 	

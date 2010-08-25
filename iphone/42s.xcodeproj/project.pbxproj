@@ -564,6 +564,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = 42s;
+				SDKROOT = iphonesimulator4.0;
 			};
 			name = Debug;
 		};
@@ -588,6 +589,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos4.0;
 			};
 			name = Release;
 		};
@@ -604,7 +606,7 @@
 				OTHER_CFLAGS = "-DFREE42=1";
 				PREBINDING = NO;
 				PRODUCT_NAME = 42S;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Debug;
 		};
@@ -632,7 +634,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Distribution;
 		};
