@@ -130,7 +130,7 @@ int shell_get_heading(double *mag_heading, double *true_heading, double *acc, do
 		locMgr = [[CLLocationManager alloc] init];
 		locMgr.delegate = hwDel;
 	}
-	if (!locMgr.headingAvailable)
+	if (!CLLocationManager.headingAvailable)
 		return 0;
 	if (!heading_active) {
 		locMgr.headingFilter = kCLHeadingFilterNone;
