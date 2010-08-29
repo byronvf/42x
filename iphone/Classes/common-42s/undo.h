@@ -23,7 +23,7 @@
 
 struct snapshot_struct
 {
-    stack_item* stack_item_head;
+    struct stack_item_struct* stack_item_head;
     struct snapshot_struct* next;
     char describe[DESC_SIZE];
 };

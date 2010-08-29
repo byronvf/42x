@@ -170,7 +170,7 @@
 	{
 		// Read Free42 version from VERSION file.
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"VERSION" ofType:nil];
-		NSString *free42ver = [NSString stringWithContentsOfFile:path];
+		NSString *free42ver = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:nil];
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet controlCharacterSet]];
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
