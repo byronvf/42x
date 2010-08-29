@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 
+#include "core_globals.h"
 #include "core_commands1.h"
 #include "core_commands2.h"
 #include "core_display.h"
@@ -74,6 +75,8 @@ int docmd_swap(arg_struct *arg) {
 #ifdef BIGSTACK
 int docmd_drop(arg_struct *arg)
 {
+    if (!core_settings.enable_ext_bigstack)
+	return ERR_NONEXISTENT;
     free_vartype(reg_x);
     reg_x = reg_y;
     reg_y = reg_z;
@@ -258,6 +261,25 @@ int docmd_complex(arg_struct *arg) {
 		free_vartype(new_y);
 		return ERR_INSUFFICIENT_MEMORY;
 	    }
+	    if (flags.f.polar) {
+		phloat r, phi;
+		generic_r2p(((vartype_complex *) reg_x)->re,
+			    ((vartype_complex *) reg_x)->im, &r, &phi);
+		if (p_isinf(r) != 0) {
+		    if (flags.f.range_error_ignore)
+			r = POS_HUGE_PHLOAT;
+		    else {
+			free_vartype(new_x);
+			free_vartype(new_y);
+			return ERR_OUT_OF_RANGE;
+		    }
+		}
+		((vartype_real *) new_y)->x = r;
+		((vartype_real *) new_x)->x = phi;
+	    } else {
+		((vartype_real *) new_y)->x = ((vartype_complex *) reg_x)->re;
+		((vartype_real *) new_x)->x = ((vartype_complex *) reg_x)->im;
+	    }
 	    free_vartype(reg_lastx);
 	    reg_lastx = reg_x;
 #ifdef BIGSTACK
@@ -270,19 +292,6 @@ int docmd_complex(arg_struct *arg) {
 #endif
 	    reg_t = reg_z;
 	    reg_z = reg_y;
-	    if (flags.f.polar) {
-		phloat r, phi;
-		int inf;
-		generic_r2p(((vartype_complex *) reg_x)->re,
-			    ((vartype_complex *) reg_x)->im, &r, &phi);
-		if ((inf = p_isinf(r)) != 0)
-		    r = inf == 1 ? POS_HUGE_PHLOAT : NEG_HUGE_PHLOAT;
-		((vartype_real *) new_y)->x = r;
-		((vartype_real *) new_x)->x = phi;
-	    } else {
-		((vartype_real *) new_y)->x = ((vartype_complex *) reg_x)->re;
-		((vartype_real *) new_x)->x = ((vartype_complex *) reg_x)->im;
-	    }
 	    reg_y = new_y;
 	    reg_x = new_x;
 	    break;
@@ -364,11 +373,16 @@ int docmd_complex(arg_struct *arg) {
 	    if (flags.f.polar) {
 		for (i = 0; i < sz; i++) {
 		    phloat r, phi;
-		    int inf;
 		    generic_r2p(cm->array->data[2 * i],
 				cm->array->data[2 * i + 1], &r, &phi);
-		    if ((inf = p_isinf(r)) != 0)
-			r = inf == 1 ? POS_HUGE_PHLOAT : NEG_HUGE_PHLOAT;
+		    if (p_isinf(r) != 0)
+			if (flags.f.range_error_ignore)
+			    r = POS_HUGE_PHLOAT;
+			else {
+			    free_vartype((vartype *) re_m);
+			    free_vartype((vartype *) im_m);
+			    return ERR_OUT_OF_RANGE;
+			}
 		    re_m->array->data[i] = r;
 		    im_m->array->data[i] = phi;
 		}
@@ -760,6 +774,18 @@ int docmd_clv(arg_struct *arg) {
 	    return err;
     }
     if (arg->type == ARGTYPE_STR) {
+	/* When EDITN is active, don't allow the matrix being
+	 * edited to be deleted. */
+	if (matedit_mode == 3 && arg->length == matedit_length) {
+	    bool equal = true;
+	    for (int i = 0; i < arg->length; i++)
+		if (arg->val.text[i] != matedit_name[i]) {
+		    equal = false;
+		    break;
+		}
+	    if (equal)
+		return ERR_RESTRICTED_OPERATION;
+	}
 	purge_var(arg->val.text, arg->length);
 	remove_shadow(arg->val.text, arg->length);
 	return ERR_NONE;

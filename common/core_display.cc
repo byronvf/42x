@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -1374,6 +1374,22 @@ static int fcn_cat[] = {
     CMD_LEFT,     CMD_UP,        CMD_DOWN,     CMD_RIGHT,      CMD_PERCENT, CMD_PERCENT_CH
 };
 
+typedef struct {
+    int first_cmd;
+    int last_cmd;
+    bool *enable_flag;
+} extension_struct;
+
+static extension_struct extensions[] = {
+    { CMD_OPENF,   CMD_DELP,    &core_settings.enable_ext_copan    },
+    { CMD_DROP,    CMD_DROP,    &core_settings.enable_ext_bigstack },
+    { CMD_ACCEL,   CMD_ACCEL,   &core_settings.enable_ext_accel    },
+    { CMD_LOCAT,   CMD_LOCAT,   &core_settings.enable_ext_locat    },
+    { CMD_HEADING, CMD_HEADING, &core_settings.enable_ext_heading  },
+    { CMD_ADATE,   CMD_SWPT,    &core_settings.enable_ext_time     },
+    { CMD_NULL,    CMD_NULL,    NULL                               }
+};
+
 static void draw_catalog() DISPLAY_SECT;
 static void draw_catalog() {
     int catsect = get_cat_section();
@@ -1444,18 +1460,58 @@ static void draw_catalog() {
 	mode_updown = catalogmenu_rows[catindex] > 1;
 	shell_annunciators(mode_updown, -1, -1, -1, -1, -1);
     } else if (catsect == CATSECT_FCN) {
-	int i;
-	catalogmenu_rows[catindex] = 42;
-	if (catalogmenu_row[catindex] >= catalogmenu_rows[catindex])
-	    catalogmenu_row[catindex] = catalogmenu_rows[catindex] - 1;
-	for (i = 0; i < 6; i++) {
-	    int cmd = fcn_cat[catalogmenu_row[catindex] * 6 + i];
-	    catalogmenu_item[catindex][i] = cmd;
-	    if (cmd == -1)
-		draw_key(i, 0, 0, "", 0);
-	    else
+	int desired_row = catalogmenu_row[catindex];
+	if (desired_row < 42) {
+	    for (int i = 0; i < 6; i++) {
+		int cmd = fcn_cat[desired_row * 6 + i];
+		catalogmenu_item[catindex][i] = cmd;
 		draw_key(i, 0, 1, cmdlist(cmd)->name,
 				  cmdlist(cmd)->name_length);
+	    }
+	    // Setting number of rows to a ridiculously large value;
+	    // this value only comes into play when the user presses "up"
+	    // while on the first row of the FCN catalog, and the extension-handling
+	    // code in the desired_row >= 42 case takes care of handling the
+	    // ever-changing number of rows in this menu, and will clip the row
+	    // number to the actual number of rows.
+	    catalogmenu_rows[catindex] = 1000;
+	} else {
+	    int curr_row = 41;
+	    int curr_pos = 5;
+	    bool menu_full = false;
+	    int menu_length = 0;
+	    for (int extno = 0; extensions[extno].first_cmd != CMD_NULL; extno++) {
+		if (extensions[extno].enable_flag == NULL || *extensions[extno].enable_flag) {
+		    for (int cmd = extensions[extno].first_cmd; cmd <= extensions[extno].last_cmd; cmd++) {
+			if ((cmdlist(cmd)->flags & FLAG_HIDDEN) == 0) {
+			    if (curr_pos == 5) {
+				curr_pos = 0;
+				curr_row++;
+			    } else
+				curr_pos++;
+			    if (menu_full)
+				goto done;
+			    catalogmenu_item[catindex][curr_pos] = cmd;
+			    catalogmenu_row[catindex] = curr_row;
+			    menu_length = curr_pos + 1;
+			    if (curr_pos == 5 && curr_row == desired_row)
+				menu_full = true;
+			}
+		    }
+		}
+	    }
+	    done:
+	    catalogmenu_rows[catindex] = curr_row + 1;
+	    for (int i = 0; i < 6; i++) {
+		if (i >= menu_length)
+		    catalogmenu_item[catindex][i] = -1;
+		int cmd = catalogmenu_item[catindex][i];
+		if (cmd == -1)
+		    draw_key(i, 0, 0, "", 0);
+		else
+		    draw_key(i, 0, 1, cmdlist(cmd)->name,
+				      cmdlist(cmd)->name_length);
+	    }
 	}
 	mode_updown = true;
 	shell_annunciators(1, -1, -1, -1, -1, -1);
@@ -2095,13 +2151,27 @@ void print_program_line(int prgm_index, int4 pc) {
 int command2buf(char *buf, int len, int cmd, const arg_struct *arg) {
     int bufptr = 0;
 
+    int4 xrom_arg;
+    if (!core_settings.enable_ext_copan && cmd >= CMD_OPENF && cmd <= CMD_DELP
+	    || !core_settings.enable_ext_bigstack && cmd == CMD_DROP
+	    || !core_settings.enable_ext_accel && cmd == CMD_ACCEL
+	    || !core_settings.enable_ext_locat && cmd == CMD_LOCAT
+	    || !core_settings.enable_ext_heading && cmd == CMD_HEADING
+	    || !core_settings.enable_ext_time && cmd >= CMD_ADATE && cmd <= CMD_SWPT
+	    || (cmdlist(cmd)->hp42s_code & 0xfffff800) == 0x0000a000 && (cmdlist(cmd)->flags & FLAG_HIDDEN) != 0) {
+	xrom_arg = cmdlist(cmd)->hp42s_code;
+	cmd = CMD_XROM;
+    } else if (cmd == CMD_XROM)
+	xrom_arg = arg->val.num;
+
     const command_spec *cmdspec = cmdlist(cmd);
     if (cmd >= CMD_ASGN01 && cmd <= CMD_ASGN18)
 	string2buf(buf, len, &bufptr, "ASSIGN ", 7);
     else
 	string2buf(buf, len, &bufptr, cmdspec->name, cmdspec->name_length);
+
     if (cmd == CMD_XROM) {
-	int n = arg->val.num & 0x7FF;
+	int n = xrom_arg & 0x7FF;
 	int rom = n >> 6;
 	int instr = n & 63;
 	char2buf(buf, len, &bufptr, ' ');

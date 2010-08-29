@@ -2,7 +2,7 @@
  * Use this (or as a template) for simple Model View Control implementations
  * 
  * Copyright (c) 2005 D.Jeff Dionne
- * Copyright (c) 2004-2009  Thomas Okken
+ * Copyright (c) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -258,6 +258,19 @@ uint4 shell_milliseconds() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (uint4) (tv.tv_sec * 1000L + tv.tv_usec / 1000);
+}
+
+void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    struct tm tms;
+    localtime_r(&tv.tv_sec, &tms);
+    if (time != NULL)
+	*time = ((tms.tm_hour * 100 + tms.tm_min) * 100 + tms.tm_sec) * 100 + tv.tv_usec / 10000;
+    if (date != NULL)
+	*date = ((tms.tm_year + 1900) * 100 + tms.tm_mon + 1) * 100 + tms.tm_mday;
+    if (weekday != NULL)
+	*weekday = tms.tm_wday;
 }
 
 int shell_write(const char *buf, int4 buflen) {
@@ -572,34 +585,41 @@ main(int argc, char *argv[])
 	    alt = (keyno & 0x20000) != 0;
 	    shift = (keyno & 0x40000) != 0;
 	    keyno &= 0xffff;
-	    if (!ctrl && !alt) {
-		if (core_alpha_menu() && keyno >= 32 && keyno <= 126) {
-		    if (keyno >= 'a' && keyno <= 'z')
-			keyno = keyno + 'A' - 'a';
-		    else if (keyno >= 'A' && keyno <= 'Z')
-			keyno = keyno + 'a' - 'A';
-		    keep_running = core_keydown(keyno + 1024, &queue, &repeat);
-		    if (!queue)
-			keep_running = core_keyup();
-		    break;
-		} else if (core_hex_menu() && ((keyno >= 'a' && keyno <= 'f') || (keyno >= 'A' && keyno <= 'F'))) {
-		    if (keyno >= 'a' && keyno <= 'f')
-			keyno -= 'a' - 1;
-		    else
-			keyno -= 'A' - 1;
-		    keep_running = core_keydown(keyno, &queue, &repeat);
-		    if (!queue)
-			keep_running = core_keyup();
-		    break;
+	    macro = skin_keymap_lookup(keyno, ctrl, alt, shift);
+	    if (macro == NULL || (macro[0] != 36 || macro[1] != 0)
+		    && (macro[0] != 28 || macro[1] != 36 || macro[2] != 0)) {
+		// The test above is to make sure that whatever mapping is in
+		// effect for R/S will never be overridden by the special cases
+		// for the ALPHA and A..F menus.
+		if (!ctrl && !alt) {
+		    if (core_alpha_menu() && keyno >= 32 && keyno <= 126) {
+			if (keyno >= 'a' && keyno <= 'z')
+			    keyno = keyno + 'A' - 'a';
+			else if (keyno >= 'A' && keyno <= 'Z')
+			    keyno = keyno + 'a' - 'A';
+			keep_running = core_keydown(keyno + 1024, &queue, &repeat);
+			if (!queue)
+			    keep_running = core_keyup();
+			goto done;
+		    } else if (core_hex_menu() && ((keyno >= 'a' && keyno <= 'f') || (keyno >= 'A' && keyno <= 'F'))) {
+			if (keyno >= 'a' && keyno <= 'f')
+			    keyno -= 'a' - 1;
+			else
+			    keyno -= 'A' - 1;
+			keep_running = core_keydown(keyno, &queue, &repeat);
+			if (!queue)
+			    keep_running = core_keyup();
+			goto done;
+		    }
 		}
 	    }
-	    macro = skin_keymap_lookup(keyno, ctrl, alt, shift);
 	    for (; macro && *macro; macro++) {
 		keyno = *macro;
 		keep_running = core_keydown(keyno, &queue, &repeat);
 		if (!queue)
 		    keep_running = core_keyup();
 	    }
+	    done:
 	    break;
 	case 'P':
 	    core_paste(cmd + 1);

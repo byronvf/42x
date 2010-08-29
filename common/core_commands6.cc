@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -17,14 +17,11 @@
 
 #include <stdlib.h>
 
-#include "core_commands2.h"
 #include "core_commands6.h"
 #include "core_helpers.h"
-#include "core_main.h"
 #include "core_math2.h"
 #include "core_sto_rcl.h"
 #include "core_variables.h"
-
 
 /********************************************************/
 /* Implementations of HP-42S built-in functions, part 6 */

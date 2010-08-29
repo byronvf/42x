@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -1671,6 +1671,8 @@ void core_import_programs(int (*progress_report)(const char *)) {
 		code = (((unsigned int) byte1) << 8) | byte2;
 		for (i = 0; i < CMD_SENTINEL; i++)
 		    if (cmdlist(i)->hp42s_code == code) {
+			if ((cmdlist(i)->flags & FLAG_HIDDEN) != 0)
+			    break;
 			cmd = i;
 			arg.type = ARGTYPE_NONE;
 			goto store;
@@ -2395,7 +2397,15 @@ int find_builtin(const char *name, int namelen) {
 	nomatch1:;
     }
 
-    for (i = 0; i < CMD_SENTINEL; i++) {
+    for (i = 0; true; i++) {
+	if (i == CMD_OPENF && !core_settings.enable_ext_copan) i += 14;
+	if (i == CMD_DROP && !core_settings.enable_ext_bigstack) i++;
+	if (i == CMD_ACCEL && !core_settings.enable_ext_accel) i++;
+	if (i == CMD_LOCAT && !core_settings.enable_ext_locat) i++;
+	if (i == CMD_HEADING && !core_settings.enable_ext_heading) i++;
+	if (i == CMD_ADATE && !core_settings.enable_ext_time) i += 34;
+	if (i == CMD_SENTINEL)
+	    break;
 	if ((cmdlist(i)->flags & FLAG_HIDDEN) != 0)
 	    continue;
 	if (cmdlist(i)->name_length != namelen)

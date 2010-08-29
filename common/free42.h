@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -40,6 +40,7 @@ extern "C" {
 #define COMMANDS4_SECT __attribute__ ((section ("Commnds4")))
 #define COMMANDS5_SECT __attribute__ ((section ("Commnds5")))
 #define COMMANDS6_SECT __attribute__ ((section ("Commnds6")))
+#define COMMANDS7_SECT __attribute__ ((section ("Commnds7")))
 #ifdef PALMOS_ARM_SHELL
 #define DISPLAY_SECT
 #else
@@ -83,6 +84,7 @@ extern "C" {
 #define COMMANDS4_SECT
 #define COMMANDS5_SECT
 #define COMMANDS6_SECT
+#define COMMANDS7_SECT
 #define DISPLAY_SECT
 #define GLOBALS_SECT
 #define HELPERS_SECT
@@ -212,9 +214,17 @@ double log10(double x) PHLOAT_SECT;
  *  programs and data in that case.
  *
  * Version 13: 1.4.55 Dynamically sized BIGSTACK (iphone only)
+ * Version 14: 1.4.63 Moved BIGSTACK DROP command from index 315 to 329, to fix
+ *                    the clash with Underhill's COPAN extensions. The iPhone
+ *                    version, when reading a state file with version 12 or 13,
+ *                    scans all programs and renumbers DROP where necessary.
+ *                    All other versions can ignore this version number change.
+ * Version 15: 1.4.63 "Enable Extension" options for COPAN, BIGSTACK, ACCEL,
+ *                    LOCAT, HEADING, and HP-41 Time
+ * Version 16: 1.4.63 time and date format flags
  */
 #define FREE42_MAGIC 0x466b3432
-#define FREE42_VERSION 13
+#define FREE42_VERSION 16
 
 
 #endif

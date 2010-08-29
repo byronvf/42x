@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -334,7 +334,7 @@ static bool is_file(const char *name);
 - (IBAction) showAbout:(id)sender {
 	const char *version = [Free42AppDelegate getVersion];
 	[aboutVersion setStringValue:[NSString stringWithFormat:@"Free42 %s", version]];
-	[aboutCopyright setStringValue:@"© 2004-2009 Thomas Okken"];
+	[aboutCopyright setStringValue:@"© 2004-2010 Thomas Okken"];
 	[NSApp runModalForWindow:aboutWindow];
 }
 
@@ -808,34 +808,6 @@ void calc_keydown(NSString *characters, NSUInteger flags, unsigned short keycode
 		active_keycode = -1;
 	}
 	
-	if (!ctrl && !alt) {
-		if (printable && core_alpha_menu()) {
-			if (c >= 'a' && c <= 'z')
-				c = c + 'A' - 'a';
-			else if (c >= 'A' && c <= 'Z')
-				c = c + 'a' - 'A';
-			ckey = 1024 + c;
-			skey = -1;
-			macro = NULL;
-			shell_keydown();
-			mouse_key = 0;
-			active_keycode = keycode;
-			return;
-		} else if (core_hex_menu() && ((c >= 'a' && c <= 'f')
-									   || (c >= 'A' && c <= 'F'))) {
-			if (c >= 'a' && c <= 'f')
-				ckey = c - 'a' + 1;
-			else
-				ckey = c - 'A' + 1;
-			skey = -1;
-			macro = NULL;
-			shell_keydown();
-			mouse_key = 0;
-			active_keycode = keycode;
-			return;
-		}
-	}
-	
 	bool exact;
 	unsigned char *key_macro = skin_keymap_lookup(c, printable,
 												  ctrl, alt, shift, cshift, &exact);
@@ -856,6 +828,41 @@ void calc_keydown(NSString *characters, NSUInteger flags, unsigned short keycode
 			}
 		}
 	}
+
+	if (key_macro == NULL || (key_macro[0] != 36 || key_macro[1] != 0)
+			&& (key_macro[0] != 28 || key_macro[1] != 36 || key_macro[2] != 0)) {
+		// The test above is to make sure that whatever mapping is in
+		// effect for R/S will never be overridden by the special cases
+		// for the ALPHA and A..F menus.
+		if (!ctrl && !alt) {
+			if (printable && core_alpha_menu()) {
+				if (c >= 'a' && c <= 'z')
+					c = c + 'A' - 'a';
+				else if (c >= 'A' && c <= 'Z')
+					c = c + 'a' - 'A';
+				ckey = 1024 + c;
+				skey = -1;
+				macro = NULL;
+				shell_keydown();
+				mouse_key = 0;
+				active_keycode = keycode;
+				return;
+			} else if (core_hex_menu() && ((c >= 'a' && c <= 'f')
+										|| (c >= 'A' && c <= 'F'))) {
+				if (c >= 'a' && c <= 'f')
+					ckey = c - 'a' + 1;
+				else
+					ckey = c - 'A' + 1;
+				skey = -1;
+				macro = NULL;
+				shell_keydown();
+				mouse_key = 0;
+				active_keycode = keycode;
+				return;
+			}
+		}
+	}
+	
 	if (key_macro != NULL) {
 		// A keymap entry is a sequence of zero or more calculator
 		// keystrokes (1..37) and/or macros (38..255). We expand
@@ -964,6 +971,19 @@ uint4 shell_milliseconds() {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return (uint4) (tv.tv_sec * 1000L + tv.tv_usec / 1000);
+}
+
+void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	struct tm tms;
+	localtime_r(&tv.tv_sec, &tms);
+	if (time != NULL)
+		*time = ((tms.tm_hour * 100 + tms.tm_min) * 100 + tms.tm_sec) * 100 + tv.tv_usec / 10000;
+	if (date != NULL)
+		*date = ((tms.tm_year + 1900) * 100 + tms.tm_mon + 1) * 100 + tms.tm_mday;
+	if (weekday != NULL)
+		*weekday = tms.tm_wday;
 }
 
 void shell_delay(int duration) {

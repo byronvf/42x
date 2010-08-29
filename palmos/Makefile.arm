@@ -1,6 +1,6 @@
 ###############################################################################
 # Free42 -- an HP-42S calculator simulator
-# Copyright (C) 2004-2009  Thomas Okken
+# Copyright (C) 2004-2010  Thomas Okken
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License, version 2,
@@ -55,6 +55,8 @@ symlinks:
 	ln -s ../common/core_commands5.h
 	ln -s ../common/core_commands6.cc
 	ln -s ../common/core_commands6.h
+	ln -s ../common/core_commands7.cc
+	ln -s ../common/core_commands7.h
 	ln -s ../common/core_display.cc
 	ln -s ../common/core_display.h
 	ln -s ../common/core_globals.cc

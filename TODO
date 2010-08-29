@@ -1,9 +1,37 @@
-In the iPhone version, add functions to query Location Services (GPS),
-accelerometer, and compass. This functionality should be optional, for perfect
-42S compatibility.
+Mac version: implement print-out window.
+Modify the file selection dialogs so they have a file type menu, and add
+extensions to file names automagically when appropriate.
+Pressing Command-N, or any Command-key combination that isn't defined in the
+menu, causes Free42 to act as if the key were pressed without Command, and
+never released... after which, the keyboard is unresponsive to mouse clicks,
+and you need to press some other keyboard key to unfreeze it.
 
-All versions: implement the Time Module functions, as far as possible.
-This functionality should be optional, for perfect 42S compatibility.
+iPhone version: implement print-out window.
+Implement program import/export to local files.
+Implement pop-up keyboard for ALPHA mode text entry.
+Implement copy & paste.
+Implement URL decoding for HTTP requests (filenames with spaces, etc.)
+
+Motif version: activating the Skin menu by clicking on it, as opposed to the
+old-Mac-style press-hold-drag-release cycle, often causes a crash.
+Could be a Lesstif bug: the Mac build appears immune, and it uses OpenMotif,
+while the Linux (FC6) and Cygwin builds crash, and they use Lesstif.
+Sounds like some evil interaction with the callback I use to populate the menu;
+maybe Lesstif just doesn't like me repopulating the menu in the map callback.
+
+iPhone version: it is possible to disable the sleep timer using
+[UIApplication sharedApplication].idleTimerDisabled = YES;
+This would be a good thing to use to prevent auto-poweroff while a program
+is running.
+
+iPhone version: leaving the HTTP Server doesn't always manage to close the
+server socket. The result can be (1) reopening the HTTP Server fails to bind
+the socket to the desired port, or (2) the app hangs, presumably while trying
+to connect to the socket to tell the server to shut down. In both cases, the
+server loop appears to be hanging, which in turn must have something to do
+with the fact that it handles all connections on a single thread: when handling
+one connection never terminates for whatever reason, all subsequent operations
+either fail (case #1, above) or hang (case #2, above).
 
 PalmOS: Flag 11 doesn't work on power cycle: After exit and restart, it does
 work; after power cycle, the "running" annunciator comes on, but the program
@@ -20,31 +48,3 @@ inescapable cycle.
 Add keyboard click option for the Pocket PC version.
 
 Add a feature for importing and exporting variables from and to CSV files.
-
-The "print" annunciator should be more noticeable -- make it linger a bit.
-
-On the Z22, the print-out window is not scrolled all the way to the bottom
-initially. On the m100, it is. First guess: I'm calculating the scroll bar
-position wrong, by assuming that the Z22 has a 320x320 screen -- yes, the Z22
-does have the high-density feature set, but it does not have a high-density
-screen. Been there before with the high-density skins showing up in the Skin
-menu; probably need the same kind of fix here.
-Update: on the T|E2, output is not scrolled all the way to the bottom either!
-
-PalmOS version: the application icon does not seem to have a proper mask.
-When the Z22's launcher highlights it, the whole icon disappears.
-Noticed this with Free42, Life, Filez...
-
-PalmOS version: turning off spooling to GIF appears not to flush the file, so
-you end up with a truncated GIF file.
-
-Make '\' act as R/S even in ALPHA mode. R/S is important, and the backslash is
-not, in the HP-42S part of the universe, anyway.
-
-PalmOS version: add explanation to README.txt about skins -- why they won't
-work off an SD card, how to install them properly, yada yada yada.
-
-SOLVE: detect more sign reversals (not just the ones where the sign reversal
-brackets a domain error). This isn't strictly a bug, since it is mathematically
-impossible to reliably tell poles from zeroes (the real HP-42S doesn't always
-get it right either), but there is clearly some room for improvement.

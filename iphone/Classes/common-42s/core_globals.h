@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -451,6 +451,9 @@ extern bool mode_varmenu;
 extern bool mode_updown;
 extern int4 mode_sigma_reg;
 extern int mode_goose;
+extern bool mode_time_clktd;
+extern bool mode_time_clk24;
+extern bool mode_time_dmy;
 #if BIGSTACK
 extern bool mode_rpl_enter; // This is not being used at this point,
 			    // uses flags.f.f32 now.

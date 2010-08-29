@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -25,6 +25,10 @@
 #include "core_math1.h"
 #include "core_sto_rcl.h"
 #include "core_variables.h"
+
+/********************************************************/
+/* Implementations of HP-42S built-in functions, part 5 */
+/********************************************************/
 
 int appmenu_exitcallback_2(int menuid) {
     if (menuid == MENU_BASE

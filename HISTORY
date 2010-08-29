@@ -1,3 +1,74 @@
+??-??-????: release 1.4.67
+
+* iPhone version: added support for 640x920 skins.
+
+08-04-2010: release 1.4.66
+
+* Removed the "Not Yet Implemented" Time functions; I decided not to implement
+  them. They're also gone from the FCN catalog.
+  The ADATE, ATIME, ATIME24, CLK12, CLK24, DATE, DATE+, DDAYS, DMY, DOW, MDY,
+  and TIME functions remain; those are the time/date-related functions from the
+  HP-41 Time Module that are actually useful in Free42.
+  The functions that I decided not to implement after all are the following:
+  Live clock display: CLKT CLKTD CLOCK
+  Stopwatch: RCLSW RUNSW SETSW STOPSW SW
+  Alarms: ALMCAT ALMNOW XYZALM
+  Clock control: CORRECT RCLAF SETAF SETDATE SETIME T+X
+* In DMY mode, DATE would display dates as DD:MM:YYYY, but that should be
+  DD.MM.YYYY. Fixed.
+
+03-04-2010: release 1.4.65
+
+* Implemented some more Time Module functions: ADATE, ATIME, ATIME24, CORRECT,
+  RCLAF, SETAF, SETDATE, SETIME, T+X.
+
+30-03-2010: release 1.4.64
+
+* Implemented some more Time Module functions: DATE+, DDAYS, and DOW.
+
+28-03-2010: release 1.4.63
+
+* iPhone version: implemented ACCEL, LOCAT, and HEADING functions, for querying
+  the device's accelerometer, location services (GPS on the 3G and 3GS; WiFi-
+  based on all other models), and compass (3GS only).
+* All versions except Mac Dashboard: for skins, increased the maximum macro
+  length from 31 to 63. The old limit was too small to allow macros that step
+  forward all the way to the end of the FCN catalog, and supporting such macros
+  is necessary now that the length of the FCN catalog is no longer fixed at 42
+  rows.
+* Also, changed several macros in the HP-41 and HP42CY skins where the FCN
+  catalog was being traversed backwards, replacing N repetitions of "up" with
+  42-N repetitions of "down", so they will work correctly in the presence of an
+  extended FCN catalog. (None of the other skins currently in the Free42
+  repository traverse the FCN catalog backwards, so they don't need updating.)
+* PalmOS version: turning off printing did not flush the GIF file, so you'd end
+  up with a truncated image. Fixed.
+* When COMPLEX is executed with a complex number or complex matrix in X, and
+  POLAR mode is active, it is possible for range errors to occur. Free42 would
+  simply substitute POS_HUGE_VAL in such cases, but that was incorrect; it
+  should report Out of Range or substitute POS_HUGE_VAL depending on the
+  setting of flag 24. Fixed.
+* R/S can now be pressed using the PC keyboard even when ALPHA mode is active.
+
+07-03-2010: release 1.4.62
+
+* Windows version: now has an option in the Preferences screen to map the
+  Calculator key, found on many newer keyboards, to launch Free42.
+* iPhone version: the hostname lookup for the HTTP Server window is now done in
+  a background thread, so that a slow or malfunctioning DNS server no longer
+  causes the app to freeze on startup.
+* When EDITN was active, you could overwrite the edited matrix with a scalar
+  using STO, or delete it using CLV -- and then you would be stuck in the
+  Matrix Editor, and even CLALL couldn't get you out. Fixed; you will now get
+  the Restricted Operation message when you try to change or delete the active
+  matrix behind EDITN's back.
+
+29-12-2009: (no new code release)
+
+* Added HP-41 skin to the Free42Skins.zip package. This skin mimics the HP-41
+  layout, and includes many macros to map additional functions to the keyboard.
+  Contributed by Guenny.
+
 25-11-2009: release 1.4.61
 
 * Decimal version: ->OCT (decimal-to-octal conversion) was broken; it actually
@@ -150,7 +221,7 @@
 13-06-2009: (no new code release)
 
 * Added "Realistic42s240x400" skin for 240x400 Pocket PC devices
-  (Free42PocketPCSkins.zip package). Conributed by Denis Cesar.
+  (Free42PocketPCSkins.zip package). Contributed by Denis Cesar.
 
 07-06-2009: release 1.4.49
 

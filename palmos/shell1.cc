@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -349,6 +349,18 @@ double shell_random_seed() {
 
 uint4 shell_milliseconds() {
     return (uint4) (((uint8) TimGetTicks()) * 1000 / SysTicksPerSecond());
+}
+
+void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
+    UInt32 secs = TimGetSeconds();
+    DateTimeType dt;
+    TimSecondsToDateTime(secs, &dt);
+    if (time != NULL)
+	*time = dt.hour * 1000000 + dt.minute * 10000L + dt.second * 100;
+    if (date != NULL)
+	*date = dt.year * 10000L + dt.month * 100 + dt.day;
+    if (weekday != NULL)
+	*weekday = dt.weekDay;
 }
 
 void shell_print(const char *text, int length,

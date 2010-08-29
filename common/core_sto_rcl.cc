@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -581,6 +581,21 @@ int generic_sto(arg_struct *arg, char operation) {
 			&& reg_x->type != TYPE_REALMATRIX
 			&& reg_x->type != TYPE_COMPLEXMATRIX)
 		    return ERR_RESTRICTED_OPERATION;
+		/* When EDITN is active, don't allow the matrix being
+		 * edited to be overwritten by a string or scalar. */
+		if (matedit_mode == 3 && arg->length == matedit_length
+			&& (reg_x->type == TYPE_REAL
+			    || reg_x->type == TYPE_COMPLEX
+			    || reg_x->type == TYPE_STRING)) {
+		    bool equal = true;
+		    for (int i = 0; i < arg->length; i++)
+			if (arg->val.text[i] != matedit_name[i]) {
+			    equal = false;
+			    break;
+			}
+		    if (equal)
+			return ERR_RESTRICTED_OPERATION;
+		}
 		newval = dup_vartype(reg_x);
 		if (newval == NULL)
 		    return ERR_INSUFFICIENT_MEMORY;

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Free42 -- an HP-42S calculator simulator
-// Copyright (C) 2004-2009  Thomas Okken
+// Copyright (C) 2004-2010  Thomas Okken
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License, version 2,
@@ -1448,7 +1448,7 @@ static void aboutCB() {
 	gtk_container_add(GTK_CONTAINER(container), box);
 	GtkWidget *image = gtk_image_new_from_pixbuf(icon);
 	gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 10);
-	GtkWidget *label = gtk_label_new("Free42 " VERSION "\n(C) 2004-2009 Thomas Okken\nthomas_okken@yahoo.com\nhttp://thomasokken.com/free42/");
+	GtkWidget *label = gtk_label_new("Free42 " VERSION "\n(C) 2004-2010 Thomas Okken\nthomas_okken@yahoo.com\nhttp://thomasokken.com/free42/");
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 10);
 	gtk_widget_show_all(GTK_WIDGET(about));
     }
@@ -1611,35 +1611,6 @@ static gboolean key_cb(GtkWidget *w, GdkEventKey *event, gpointer cd) {
 		active_keycode = 0;
 	    }
 
-	    if (!ctrl && !alt) {
-		char c = event->string[0];
-		if (printable && core_alpha_menu()) {
-		    if (c >= 'a' && c <= 'z')
-			c = c + 'A' - 'a';
-		    else if (c >= 'A' && c <= 'Z')
-			c = c + 'a' - 'A';
-		    ckey = 1024 + c;
-		    skey = -1;
-		    macro = NULL;
-		    shell_keydown();
-		    mouse_key = false;
-		    active_keycode = event->hardware_keycode;
-		    return TRUE;
-		} else if (core_hex_menu() && ((c >= 'a' && c <= 'f')
-					    || (c >= 'A' && c <= 'F'))) {
-		    if (c >= 'a' && c <= 'f')
-			ckey = c - 'a' + 1;
-		    else
-			ckey = c - 'A' + 1;
-		    skey = -1;
-		    macro = NULL;
-		    shell_keydown();
-		    mouse_key = false;
-		    active_keycode = event->hardware_keycode;
-		    return TRUE;
-		}
-	    }
-
 	    bool exact;
 	    unsigned char *key_macro = skin_keymap_lookup(event->keyval,
 				printable, ctrl, alt, shift, cshift, &exact);
@@ -1660,6 +1631,42 @@ static gboolean key_cb(GtkWidget *w, GdkEventKey *event, gpointer cd) {
 		    }
 		}
 	    }
+
+	    if (key_macro == NULL || (key_macro[0] != 36 || key_macro[1] != 0)
+		    && (key_macro[0] != 28 || key_macro[1] != 36 || key_macro[2] != 0)) {
+		// The test above is to make sure that whatever mapping is in
+		// effect for R/S will never be overridden by the special cases
+		// for the ALPHA and A..F menus.
+		if (!ctrl && !alt) {
+		    char c = event->string[0];
+		    if (printable && core_alpha_menu()) {
+			if (c >= 'a' && c <= 'z')
+			    c = c + 'A' - 'a';
+			else if (c >= 'A' && c <= 'Z')
+			    c = c + 'a' - 'A';
+			ckey = 1024 + c;
+			skey = -1;
+			macro = NULL;
+			shell_keydown();
+			mouse_key = false;
+			active_keycode = event->hardware_keycode;
+			return TRUE;
+		    } else if (core_hex_menu() && ((c >= 'a' && c <= 'f')
+						|| (c >= 'A' && c <= 'F'))) {
+			if (c >= 'a' && c <= 'f')
+			    ckey = c - 'a' + 1;
+			else
+			    ckey = c - 'A' + 1;
+			skey = -1;
+			macro = NULL;
+			shell_keydown();
+			mouse_key = false;
+			active_keycode = event->hardware_keycode;
+			return TRUE;
+		    }
+		}
+	    }
+
 	    if (key_macro != NULL) {
 		// A keymap entry is a sequence of zero or more calculator
 		// keystrokes (1..37) and/or macros (38..255). We expand
@@ -2238,4 +2245,17 @@ shell_bcd_table_struct *shell_put_bcd_table(shell_bcd_table_struct *bcdtab,
 
 void shell_release_bcd_table(shell_bcd_table_struct *bcdtab) {
     free(bcdtab);
+}
+
+void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    struct tm tms;
+    localtime_r(&tv.tv_sec, &tms);
+    if (time != NULL)
+	*time = ((tms.tm_hour * 100 + tms.tm_min) * 100 + tms.tm_sec) * 100 + tv.tv_usec / 10000;
+    if (date != NULL)
+	*date = ((tms.tm_year + 1900) * 100 + tms.tm_mon + 1) * 100 + tms.tm_mday;
+    if (weekday != NULL)
+	*weekday = tms.tm_wday;
 }

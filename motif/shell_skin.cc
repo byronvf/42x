@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -51,7 +51,7 @@ typedef struct {
     SkinPoint src;
 } SkinKey;
 
-#define SKIN_MAX_MACRO_LENGTH 31
+#define SKIN_MAX_MACRO_LENGTH 63
 
 typedef struct _SkinMacro {
     int code;

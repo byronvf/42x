@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -24,7 +24,35 @@
 #include "core_commands4.h"
 #include "core_commands5.h"
 #include "core_commands6.h"
+#include "core_commands7.h"
 
+
+#ifndef COPAN
+#define docmd_openf docmd_xrom
+#define docmd_closef docmd_xrom
+#define docmd_readp docmd_xrom
+#define docmd_writp docmd_xrom
+#define docmd_getxy docmd_xrom
+#define docmd_putxy docmd_xrom
+#define docmd_clrp docmd_xrom
+#define docmd_clrd docmd_xrom
+#define docmd_appd docmd_xrom
+#define docmd_getn docmd_xrom
+#define docmd_putn docmd_xrom
+#define docmd_getz docmd_xrom
+#define docmd_putz docmd_xrom
+#define docmd_delp docmd_xrom
+#endif
+
+#ifndef BIGSTACK
+#define docmd_drop docmd_xrom
+#endif
+
+#ifndef IPHONE
+#define docmd_accel docmd_xrom
+#define docmd_locat docmd_xrom
+#define docmd_heading docmd_xrom
+#endif
 
 /* PalmOS: even though this array is declared "const", it ends up in the
  * globals area. Is this because of the function pointers?
@@ -346,7 +374,94 @@ static const command_spec cmd_array[] =
     { /* MAX */         "[MAX]",                5, docmd_max,         0x0000a6eb, ARG_NONE,  FLAG_NONE },
     { /* MIN */         "[MIN]",                5, docmd_min,         0x0000a6ea, ARG_NONE,  FLAG_NONE },
     { /* FIND */        "[FIND]",               6, docmd_find,        0x0000a6ec, ARG_NONE,  FLAG_NONE },
-    { /* XROM */        "XROM",                 4, docmd_xrom,        0x01000000, ARG_OTHER, FLAG_HIDDEN }
+    { /* XROM */        "XROM",                 4, docmd_xrom,        0x01000000, ARG_OTHER, FLAG_HIDDEN },
+
+    /* Here endeth the original Free42 function table.
+     * There are two extensions to this table out there in the wild today:
+     * Underhill's COPAN extensions for surveyors
+     * (http://www.underhill.ca/Software/Free42/Free42Copan.php),
+     * and Byron Foster's Big Stack in 42s for iPhone
+     * (http://free42iphone.googlecode.com/).
+     * I'm merging both of these extensions into the main source repository --
+     * not the actual implementations, but the function table entries, so that
+     * programs created by these extended versions can be shared more easily.
+     * Note that I had to move Byron's DROP extension from position 315 to
+     * 329 to resolve the clash with the older Underhill extensions.
+     * The function handlers (i.e. the docmd_ functions) are #defined as
+     * docmd_xrom if the appropriate extensions are not present, so executing
+     * them will raise a Nonexistent error, but you will see the function
+     * *names* from this table in the actual program listings, regardless of
+     * whether the extensions are present or not.
+     * UPDATE: To support "pure" HP-42S behavior, all extensions can be
+     * disabled at runtime, using the core_settings.enable_ext_* flags.
+     * When an extension is disabled, its commands disappear from the FCN
+     * catalog, are not recognized by XEQ, are displayed as their XROM
+     * equivalents in programs, and raise a Nonexistent error when trying to
+     * execute them from programs.
+     * When a shell disables or enables an extension in response to the user
+     * changing a setting in the Preferences dialog, it should call redisplay()
+     * to make sure the display reflects the new setting.
+     */
+
+    /* Underhill's COPAN */
+    { /* OPENF */       "OPENF",                5, docmd_openf,       0x0000a7c1, ARG_NONE,  FLAG_NONE },
+    { /* CLOSF */       "CLOSF",                5, docmd_closef,      0x0000a7c2, ARG_NONE,  FLAG_NONE },
+    { /* READP */       "READP",                5, docmd_readp,       0x0000a7c3, ARG_NONE,  FLAG_NONE },
+    { /* WRITP */       "WRITP",                5, docmd_writp,       0x0000a7c4, ARG_NONE,  FLAG_NONE },
+    { /* GETXY */       "GETXY",                5, docmd_getxy,       0x0000a7c5, ARG_NONE,  FLAG_NONE },
+    { /* PUTXY */       "PUTXY",                5, docmd_putxy,       0x0000a7c6, ARG_NONE,  FLAG_NONE },
+    { /* CLRP */        "CLRP",                 4, docmd_clrp,        0x0000a7c7, ARG_NONE,  FLAG_NONE },
+    { /* CLRD */        "CLRD",                 4, docmd_clrd,        0x0000a7c8, ARG_NONE,  FLAG_NONE },
+    { /* APPD */        "APPD",                 4, docmd_appd,        0x0000a7c9, ARG_NONE,  FLAG_NONE },
+    { /* GETN */        "GETN",                 4, docmd_getn,        0x0000a7ca, ARG_NONE,  FLAG_NONE },
+    { /* PUTN */        "PUTN",                 4, docmd_putn,        0x0000a7cb, ARG_NONE,  FLAG_NONE },
+    { /* GETZ */        "GETZ",                 4, docmd_getz,        0x0000a7cc, ARG_NONE,  FLAG_NONE },
+    { /* PUTZ */        "PUTZ",                 4, docmd_putz,        0x0000a7cd, ARG_NONE,  FLAG_NONE },
+    { /* DELP */        "DELP",                 4, docmd_delp,        0x0000a7ce, ARG_NONE,  FLAG_NONE },
+
+    /* Byron Foster's DROP for Bigstack */
+    { /* DROP */        "DROP",                 4, docmd_drop,        0x0000a271, ARG_NONE,  FLAG_NONE },
+
+    /* Accelerometer, GPS, and compass support */
+    { /* ACCEL */       "ACCEL",                5, docmd_accel,       0x0000a7cf, ARG_NONE,  FLAG_NONE },
+    { /* LOCAT */       "LOCAT",                5, docmd_locat,       0x0000a7d0, ARG_NONE,  FLAG_NONE },
+    { /* HEADING */     "H\305\301D\311NG",     7, docmd_heading,     0x0000a7d1, ARG_NONE,  FLAG_NONE },
+
+    /* Time Module & CX Time support*/
+    { /* ADATE */       "ADATE",                5, docmd_adate,       0x0000a681, ARG_NONE,  FLAG_NONE },
+    { /* ALMCAT */      "AL\315CAT",            6, docmd_xrom,        0x0000a682, ARG_NONE,  FLAG_HIDDEN },
+    { /* ALMNOW */      "AL\315N\317W",         6, docmd_xrom,        0x0000a683, ARG_NONE,  FLAG_HIDDEN },
+    { /* ATIME */       "ATIME",                5, docmd_atime,       0x0000a684, ARG_NONE,  FLAG_NONE },
+    { /* ATIME24 */     "AT\311\315\30524",     7, docmd_atime24,     0x0000a685, ARG_NONE,  FLAG_NONE },
+    { /* CLK12 */       "CL\31312",             5, docmd_clk12,       0x0000a686, ARG_NONE,  FLAG_NONE },
+    { /* CLK24 */       "CL\31324",             5, docmd_clk24,       0x0000a687, ARG_NONE,  FLAG_NONE },
+    { /* CLKT */        "CLKT",                 4, docmd_xrom,        0x0000a688, ARG_NONE,  FLAG_HIDDEN },
+    { /* CLKTD */       "CL\313TD",             5, docmd_xrom,        0x0000a689, ARG_NONE,  FLAG_HIDDEN },
+    { /* CLOCK */       "CL\317\303K",          5, docmd_xrom,        0x0000a68a, ARG_NONE,  FLAG_HIDDEN },
+    { /* CORRECT */     "CORR\305\303\324",     7, docmd_xrom,        0x0000a68b, ARG_NONE,  FLAG_HIDDEN },
+    { /* DATE */        "DATE",                 4, docmd_date,        0x0000a68c, ARG_NONE,  FLAG_NONE },
+    { /* DATE_PLUS */   "DATE+",                5, docmd_date_plus,   0x0000a68d, ARG_NONE,  FLAG_NONE },
+    { /* DDAYS */       "DDAYS",                5, docmd_ddays,       0x0000a68e, ARG_NONE,  FLAG_NONE },
+    { /* DMY */         "DMY",                  3, docmd_dmy,         0x0000a68f, ARG_NONE,  FLAG_NONE },
+    { /* DOW */         "DOW",                  3, docmd_dow,         0x0000a690, ARG_NONE,  FLAG_NONE },
+    { /* MDY */         "MDY",                  3, docmd_mdy,         0x0000a691, ARG_NONE,  FLAG_NONE },
+    { /* RCLAF */       "RCLAF",                5, docmd_xrom,        0x0000a692, ARG_NONE,  FLAG_HIDDEN },
+    { /* RCLSW */       "RC\314SW",             5, docmd_xrom,        0x0000a693, ARG_NONE,  FLAG_HIDDEN },
+    { /* RUNSW */       "R\325NSW",             5, docmd_xrom,        0x0000a694, ARG_NONE,  FLAG_HIDDEN },
+    { /* SETAF */       "SETAF",                5, docmd_xrom,        0x0000a695, ARG_NONE,  FLAG_HIDDEN },
+    { /* SETDATE */     "S\305\324DATE",        7, docmd_xrom,        0x0000a696, ARG_NONE,  FLAG_HIDDEN },
+    { /* SETIME */      "S\305TIME",            6, docmd_xrom,        0x0000a697, ARG_NONE,  FLAG_HIDDEN },
+    { /* SETSW */       "SE\324SW",             5, docmd_xrom,        0x0000a698, ARG_NONE,  FLAG_HIDDEN },
+    { /* STOPSW */      "ST\317\320SW",         6, docmd_xrom,        0x0000a699, ARG_NONE,  FLAG_HIDDEN },
+    { /* SW */          "SW",                   2, docmd_xrom,        0x0000a69a, ARG_NONE,  FLAG_HIDDEN },
+    { /* T_PLUS_X */    "T+X",                  3, docmd_xrom,        0x0000a69b, ARG_NONE,  FLAG_HIDDEN },
+    { /* TIME */        "TIME",                 4, docmd_time,        0x0000a69c, ARG_NONE,  FLAG_NONE },
+    { /* XYZALM */      "XYZALM",               6, docmd_xrom,        0x0000a69d, ARG_NONE,  FLAG_HIDDEN },
+    { /* CLALMA */      "CLAL\315A",            6, docmd_xrom,        0x0000a69f, ARG_NONE,  FLAG_HIDDEN },
+    { /* CLALMX */      "CLAL\315X",            6, docmd_xrom,        0x0000a6a0, ARG_NONE,  FLAG_HIDDEN },
+    { /* CLRALMS */     "CLRALMS",              7, docmd_xrom,        0x0000a6a1, ARG_NONE,  FLAG_HIDDEN },
+    { /* RCLALM */      "RCLALM",               6, docmd_xrom,        0x0000a6a2, ARG_NONE,  FLAG_HIDDEN },
+    { /* SWPT */        "SWPT",                 4, docmd_xrom,        0x0000a6a3, ARG_NONE,  FLAG_HIDDEN }
 };
 
 /*

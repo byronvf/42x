@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -99,7 +99,7 @@ static int keymap_length = 0;
 static keymap_entry *keymap = NULL;
 
 
-#define SHELL_VERSION 6
+#define SHELL_VERSION 7
 
 typedef struct state {
 	BOOL extras;
@@ -116,6 +116,7 @@ typedef struct state {
 	char skinName[FILENAMELEN];
 	BOOL alwaysOnTop;
 	BOOL singleInstance;
+	BOOL calculatorKey;
 } state_type;
 
 static state_type state;
@@ -161,6 +162,7 @@ static LRESULT CALLBACK	Preferences(HWND, UINT, WPARAM, LPARAM);
 static void set_home_dir(const char *path);
 static void get_home_dir(char *path, int pathlen, BOOL exedir_ok);
 static void config_home_dir(HWND owner, char *buf, int bufsize);
+static void mapCalculatorKey();
 static void copy();
 static void paste();
 static void Quit();
@@ -656,31 +658,6 @@ static LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					shell_keyup();
 					active_keycode = 0;
 				}
-				if (printable && core_alpha_menu()) {
-					if (keyChar >= 'a' && keyChar <= 'z')
-						keyChar = keyChar + 'A' - 'a';
-					else if (keyChar >= 'A' && keyChar <= 'Z')
-						keyChar = keyChar + 'a' - 'A';
-					ckey = 1024 + keyChar;
-					skey = -1;
-					macro = NULL;
-					shell_keydown();
-					mouse_key = false;
-					active_keycode = virtKey;
-					break;
-				} else if (core_hex_menu() && ((keyChar >= 'a' && keyChar <= 'f')
-							|| (keyChar >= 'A' && keyChar <= 'F'))) {
-					if (keyChar >= 'a' && keyChar <= 'f')
-						ckey = keyChar - 'a' + 1;
-					else
-						ckey = keyChar - 'A' + 1;
-					skey = -1;
-					macro = NULL;
-					shell_keydown();
-					mouse_key = false;
-					active_keycode = virtKey;
-					break;
-				}
 
 				bool exact;
 				bool cshift_down = ann_shift != 0;
@@ -702,6 +679,39 @@ static LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 						}
 					}
 				}
+
+				if (key_macro == NULL || (key_macro[0] != 36 || key_macro[1] != 0)
+						&& (key_macro[0] != 28 || key_macro[1] != 36 || key_macro[2] != 0)) {
+					// The test above is to make sure that whatever mapping is in
+					// effect for R/S will never be overridden by the special cases
+					// for the ALPHA and A..F menus.
+					if (printable && core_alpha_menu()) {
+						if (keyChar >= 'a' && keyChar <= 'z')
+							keyChar = keyChar + 'A' - 'a';
+						else if (keyChar >= 'A' && keyChar <= 'Z')
+							keyChar = keyChar + 'a' - 'A';
+						ckey = 1024 + keyChar;
+						skey = -1;
+						macro = NULL;
+						shell_keydown();
+						mouse_key = false;
+						active_keycode = virtKey;
+						break;
+					} else if (core_hex_menu() && ((keyChar >= 'a' && keyChar <= 'f')
+								|| (keyChar >= 'A' && keyChar <= 'F'))) {
+						if (keyChar >= 'a' && keyChar <= 'f')
+							ckey = keyChar - 'a' + 1;
+						else
+							ckey = keyChar - 'A' + 1;
+						skey = -1;
+						macro = NULL;
+						shell_keydown();
+						mouse_key = false;
+						active_keycode = virtKey;
+						break;
+					}
+				}
+
 				if (key_macro != NULL) {
 					// A keymap entry is a sequence of zero or more calculator
 					// keystrokes (1..37) and/or macros (38..255). We expand
@@ -1060,6 +1070,10 @@ static LRESULT CALLBACK Preferences(HWND hDlg, UINT message, WPARAM wParam, LPAR
 				ctl = GetDlgItem(hDlg, IDC_ALWAYSONTOP);
 				SendMessage(ctl, BM_SETCHECK, 1, 0);
 			}
+			if (state.calculatorKey) {
+				ctl = GetDlgItem(hDlg, IDC_CALCULATOR_KEY);
+				SendMessage(ctl, BM_SETCHECK, 1, 0);
+			}
 			if (state.singleInstance) {
 				ctl = GetDlgItem(hDlg, IDC_SINGLEINSTANCE);
 				SendMessage(ctl, BM_SETCHECK, 1, 0);
@@ -1104,6 +1118,11 @@ static LRESULT CALLBACK Preferences(HWND hDlg, UINT message, WPARAM wParam, LPAR
 						if (hPrintOutWnd != NULL)
 							SetWindowPos(hPrintOutWnd, alwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 					}
+					ctl = GetDlgItem(hDlg, IDC_CALCULATOR_KEY);
+					BOOL prevCalculatorKey = state.calculatorKey;
+					state.calculatorKey = SendMessage(ctl, BM_GETCHECK, 0, 0) != 0;
+					if (state.calculatorKey != prevCalculatorKey)
+						mapCalculatorKey();
 					ctl = GetDlgItem(hDlg, IDC_SINGLEINSTANCE);
 					state.singleInstance = SendMessage(ctl, BM_GETCHECK, 0, 0) != 0;
 
@@ -1304,6 +1323,41 @@ static void config_home_dir(HWND owner, char *buf, int bufsize) {
 		LPMALLOC imalloc;
 		if (SHGetMalloc(&imalloc) == NOERROR)
 			imalloc->Free(idlist);
+	}
+}
+
+static void mapCalculatorKey() {
+	char path[MAX_PATH];
+	if (state.calculatorKey) {
+		// Get current executable's path
+		GetModuleFileName(0, path, MAX_PATH - 1);
+	} else {
+		// Windows default
+		strcpy(path, "calc.exe");
+	}
+	HKEY k1, k2, k3, k4, k5, k6, k7;
+	DWORD disp;
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE", 0, KEY_QUERY_VALUE, &k1) == ERROR_SUCCESS) {
+		if (RegCreateKeyEx(k1, "Microsoft", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k2, &disp) == ERROR_SUCCESS) {
+			if (RegCreateKeyEx(k2, "Windows", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k3, &disp) == ERROR_SUCCESS) {
+				if (RegCreateKeyEx(k3, "CurrentVersion", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k4, &disp) == ERROR_SUCCESS) {
+					if (RegCreateKeyEx(k4, "Explorer", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k5, &disp) == ERROR_SUCCESS) {
+						if (RegCreateKeyEx(k5, "AppKey", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k6, &disp) == ERROR_SUCCESS) {
+							if (RegCreateKeyEx(k6, "18", 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k7, &disp) == ERROR_SUCCESS) {
+								RegSetValueEx(k7, "ShellExecute", 0, REG_SZ, (const unsigned char *) path, strlen(path) + 1);
+								RegCloseKey(k7);
+							}
+							RegCloseKey(k6);
+						}
+						RegCloseKey(k5);
+					}
+					RegCloseKey(k4);
+				}
+				RegCloseKey(k3);
+			}
+			RegCloseKey(k2);
+		}
+		RegCloseKey(k1);
 	}
 }
 
@@ -1839,6 +1893,17 @@ uint4 shell_milliseconds() {
 	return GetTickCount();
 }
 
+void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	if (time != NULL)
+		*time = st.wHour * 1000000 + st.wMinute * 10000 + st.wSecond * 100 + st.wMilliseconds / 10;
+	if (date != NULL)
+		*date = st.wYear * 10000 + st.wMonth * 100 + st.wDay;
+	if (weekday != NULL)
+		*weekday = st.wDayOfWeek;
+}
+
 void shell_print(const char *text, int length,
 		 const char *bits, int bytesperline,
 		 int x, int y, int width, int height) {
@@ -2101,7 +2166,10 @@ static void init_shell_state(int4 version) {
 			state.singleInstance = TRUE;
 			// fall through
 		case 6:
-			// current version (SHELL_VERSION = 6),
+			state.calculatorKey = FALSE;
+			// fall through
+		case 7:
+			// current version (SHELL_VERSION = 7),
 			// so nothing to do here since everything
 			// was initialized from the state file.
 			;

@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2009  Thomas Okken
+ * Copyright (C) 2004-2010  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -79,6 +79,12 @@ struct arg_shell_read_saved_state {
 struct arg_shell_write_saved_state {
     const void *buf;
     int4 nbytes;
+};
+
+struct arg_shell_get_time_date {
+    uint4 time;
+    uint4 date;
+    int2 weekday;
 };
 
 struct arg_shell_print {
