@@ -38,9 +38,6 @@ static NSString* stateBaseName = @"/Documents/42s.state";
 // File discriptor for the statefile
 static FILE *statefile = NULL;
 
-// If we are loading from the old style state method NSUserDefaults
-BOOL oldStyleStateExists;
-
 // Persist format version, bumped when there are changes so we can convert
 static const int PERSIST_VERSION = 6;
 
@@ -132,25 +129,7 @@ bool shell_write_saved_state(const void *buf, int4 nbytes)
 int stateReadUpTo = 0;
 int readCnt = 0;
 int4 shell_read_saved_state(void *buf, int4 bufsize)
-{
-
-	if (oldStyleStateExists)
-	{
-		if (bufsize == 1360)
-		{
-			// We do this to convert the file state format from the old version
-			// to the new version that stores 5 lines of display.
-			read_state(STATE_KEY, &stateReadUpTo, buf, 272);
-			memset((char*)buf+272, 0, 1088);
-			readCnt += 1360;
-			return 1360;
-		}
-
-		int n = read_state(STATE_KEY, &stateReadUpTo, buf, bufsize);
-		readCnt += n;
-		return n;
-	}
-	
+{	
     if (persistVersion < 3 && bufsize == 1360)
 	{
 		int4 n = fread(buf, 1, 816, statefile);
@@ -274,14 +253,7 @@ bool prgmFirstWrite = TRUE;
 }
 
 - (void)saveSettings
-{
-	if (oldStyleStateExists)
-	{
-     	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];		
-		// Remove the state key so we don't use this method anymore.
-		[defaults removeObjectForKey:STATE_KEY];		
-	}
-	
+{	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults setInteger:PERSIST_VERSION forKey:CONFIG_PERSIST_VERSION];
 	[defaults setBool:[[Settings instance] beepSoundOn] forKey:CONFIG_BEEP_ON];
@@ -310,10 +282,8 @@ bool prgmFirstWrite = TRUE;
 	
 	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 	statefile = fopen([statepath UTF8String], "r");
-	
-	oldStyleStateExists = getStateData(STATE_KEY) != NULL;
-	
-	if (!oldStyleStateExists && statefile == NULL)
+		
+	if (statefile == NULL)
 	{
 		// We get here if this application has never been run, and there is 
 		// no saved state.  In this case we call core_init with readstate 
