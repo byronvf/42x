@@ -31,7 +31,7 @@
 - (void)copy:(id)sender {
 
 	// flush file contents to file
-	if (printFile) fflush(printFile);
+	[printViewController flushFile];
 
 	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
 	NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding

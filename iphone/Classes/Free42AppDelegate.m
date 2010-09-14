@@ -23,7 +23,7 @@
 #import "Settings.h"
 #import "PrintViewController.h"
 
-FILE* printFile = NULL;  // shared in PrintViewController.m
+
 
 // Set to true after we call init_core basically so we can use it
 // in assert calls to verify Free42 has been initialized.
@@ -36,7 +36,7 @@ BOOL isSleeping = FALSE;
 static NSString* stateBaseName = @"/Documents/42s.state";
 
 // File discriptor for the statefile
-static FILE *statefile;
+static FILE *statefile = NULL;
 
 // If we are loading from the old style state method NSUserDefaults
 BOOL oldStyleStateExists;
@@ -110,19 +110,23 @@ NSString* STATE_KEY = @"free42state";
 bool stateFirstWrite = TRUE;
 bool shell_write_saved_state(const void *buf, int4 nbytes)
 {
-	if (statefile == NULL)
-	return false;
-    else {
-		int4 n = fwrite(buf, 1, nbytes, statefile);
-		if (n != nbytes) {
-			fclose(statefile);
-			NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
-			remove([statepath UTF8String]);
-			statefile = NULL;
-			return false;
-		} else
-			return true;
-    }
+	if (!statefile)
+	{
+		NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
+		statefile = fopen([statepath UTF8String], "w");	
+		if (statefile == NULL) return false;
+	}		
+		
+	int4 n = fwrite(buf, 1, nbytes, statefile);
+	if (n != nbytes) {
+		fclose(statefile);
+		NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
+		remove([statepath UTF8String]);
+		statefile = NULL;
+		return false;
+	}
+		
+	return true;
 }
 
 int stateReadUpTo = 0;
@@ -271,6 +275,13 @@ bool prgmFirstWrite = TRUE;
 
 - (void)saveSettings
 {
+	if (oldStyleStateExists)
+	{
+     	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];		
+		// Remove the state key so we don't use this method anymore.
+		[defaults removeObjectForKey:STATE_KEY];		
+	}
+	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults setInteger:PERSIST_VERSION forKey:CONFIG_PERSIST_VERSION];
 	[defaults setBool:[[Settings instance] beepSoundOn] forKey:CONFIG_BEEP_ON];
@@ -333,6 +344,7 @@ bool prgmFirstWrite = TRUE;
 	}
 	
 	if (statefile) fclose(statefile);
+	statefile = NULL;
 
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 	
@@ -352,27 +364,12 @@ bool prgmFirstWrite = TRUE;
 		if (status)
 			NSLog(@"error loading sound:  %d", name);
 	}
-		
-	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];	
-	printFile = fopen([fileStr UTF8String], "a");	
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	if (oldStyleStateExists)
-	{
-     	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];		
-		// Remove the state key so we don't use this method anymore.
-		[defaults removeObjectForKey:STATE_KEY];		
-	}
-	
-	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
-    statefile = fopen([statepath UTF8String], "w");	
-    core_quit();
-	if (statefile) fclose(statefile);	
 	[self saveSettings];
-	
-	if (printFile) fclose(printFile);	
+	core_quit();
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -392,6 +389,26 @@ bool prgmFirstWrite = TRUE;
 	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
 	[alert show];	
 #endif
+}
+
+
+//----- Multi tasking stuff ---------
+
+// Tells the delegate that the application is now in the background.
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+	[self saveSettings];
+	save_state();
+	if (statefile) fclose(statefile);
+	statefile = NULL;	
+}
+
+
+// Tells the delegate that the application is about to enter the foreground.
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
 }
 
 - (void)dealloc {

@@ -25,7 +25,8 @@
 static PrintViewController* printViewController;
 BOOL printingStarted = FALSE;
 
-extern NSString* printFileStr;
+static char printFileStr[1024]; // name of print file
+static FILE* printFile = NULL; 
 
 // Keep track of the last position we printed so we can conveniently
 // place the printer screen at the beginning of this new output.
@@ -33,12 +34,13 @@ static int lastPrintPosition = 0;
 
 static void writer(const char *text, int length)
 {
-	if (printFile) fwrite(text, 1, length, printFile);
+	if (!printFile)	printFile = fopen(printFileStr, "a");
+	fwrite(text, 1, length, printFile);
 }	
 
 static void newliner()
 {
-	if (printFile) fputc('\n', printFile);
+	writer("\n", 1);
 }
 
 
@@ -76,12 +78,16 @@ void shell_print(const char *text, int length,
 
 @synthesize printBuffer;
 
+- (void)flushFile
+{
+	if (printFile) fflush(printFile);	
+}
+
 - (void)clearPrinter
 {
 	// Clear print file
 	if (printFile) fclose(printFile);
-	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];	
-	printFile = fopen([fileStr UTF8String], "w");	
+	printFile = fopen(printFileStr, "w");	
 		
 	[view1 setFrame:CGRectMake(0,0,320,480)];
 	[view2 setFrame:CGRectMake(0,480,320,480)];
@@ -238,6 +244,9 @@ void shell_print(const char *text, int length,
 	UINavigationItem* item = [self navigationItem];	
 	[item setRightBarButtonItem:clearButton animated:FALSE];
 	
+
+	strcpy(printFileStr, [[NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME] UTF8String]);	
+	
 	// Initialize the two views we will use to tile the scroll view.
 	printViewController = self;
 }
@@ -272,6 +281,9 @@ void shell_print(const char *text, int length,
 		[printBuffer release];		
 		printBuffer = NULL;
 	}
+	
+	if (printFile) fclose(printFile);
+	printFile = NULL;	
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

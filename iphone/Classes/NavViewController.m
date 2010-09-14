@@ -122,7 +122,7 @@ BOOL showingServerView;
 	else if (vc == (UIViewController*)serverViewController)
 	{
 		// Close the printer spool file effectively flushing it
-		if (printFile) fflush(printFile);
+		[printViewController flushFile];
 		
 		// We are switching to the server view, so start up the web server. We do it 
 		// now so that the results of starting the server can be displayed on 

@@ -41,6 +41,7 @@ extern BOOL printingStarted;
 - (void)setViewsHighlight:(BOOL)selected;
 - (NSMutableData*) getBuff;
 - (void)releasePrintBuffer;
+- (void)flushFile;
 
 @end
 
