@@ -52,7 +52,6 @@ void shell_powerdown()
 @synthesize serverViewController;
 @synthesize calcViewController;
 
-
 /**
  *  We are not using a NIB for this class, so this is never called
  */
@@ -143,12 +142,13 @@ BOOL showingServerView;
  */
 - (void)navigationController:(UINavigationController *)navigationController 
 	  didShowViewController:(UIViewController *)vc animated:(BOOL)animated
-{
+{	
 	if (vc == (UIViewController*)calcViewController)
 	{			
 		[[UIApplication sharedApplication] setStatusBarHidden:![[Settings instance] showStatusBar]];
 	}
-}	
+}
+
 /*
  Implement loadView if you want to create a view hierarchy programmatically
 - (void)loadView {

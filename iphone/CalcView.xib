@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="226"/>
+			<integer value="175"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -49,6 +49,7 @@
 						<reference key="NSSuperview" ref="191373211"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+						<int key="IBUIContentMode">6</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<object class="NSCustomResource" key="IBUIImage">
@@ -2751,7 +2752,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>CalcViewController</string>
 					<string>UIResponder</string>
-					<string>{{969, 647}, {320, 480}}</string>
+					<string>{{748, 111}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<reference ref="0"/>
 					<boolean value="NO"/>

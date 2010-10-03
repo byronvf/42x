@@ -721,7 +721,7 @@ void shell_beeper(int frequency, int duration)
 {
 	[super viewDidAppear:animated];
 	
-	// We need this so that the blitter view get the shake events
+	// We need this so that the blitter view gets the shake events
 	[blitterView becomeFirstResponder];
 		
 	CGRect rect = [[UIScreen mainScreen] bounds];

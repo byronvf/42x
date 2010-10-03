@@ -31,7 +31,6 @@ extern BOOL isSleeping;
 }
 
 @property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) CalcViewController *viewController;
 @property (nonatomic, retain) NavViewController *navViewController;
 
 @end

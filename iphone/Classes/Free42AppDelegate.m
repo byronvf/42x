@@ -188,7 +188,6 @@ bool prgmFirstWrite = TRUE;
 @implementation Free42AppDelegate
 
 @synthesize window;
-@synthesize viewController;
 @synthesize navViewController;
 
 - (void)loadSettings
@@ -349,7 +348,7 @@ bool prgmFirstWrite = TRUE;
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	isSleeping = FALSE;
+	isSleeping = FALSE;	
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
@@ -379,6 +378,21 @@ bool prgmFirstWrite = TRUE;
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+	UIViewController* vc = [navViewController visibleViewController];
+	if (vc == [navViewController calcViewController])	
+	{
+		[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+		if ([[Settings instance] showStatusBar])
+		{
+			[self performSelector:@selector(restoreStatusBar) withObject:NULL afterDelay:0.0];		
+		}
+	}
+	
+}
+
+- (void)restoreStatusBar
+{
+	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];	
 }
 
 - (void)dealloc {
