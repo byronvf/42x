@@ -375,7 +375,11 @@ bool prgmFirstWrite = TRUE;
 
 
 // Tells the delegate that the application is about to enter the foreground.
-
+// If we are going to show the status bar, then we first set the status bar to hidden
+// so that the view correctly draws.  The view assumes a full screen.  We then
+// do a little kludge that forces the status bar to be displayed after the view
+// is done drawing.  If we don't do this, then the status bar pushes the view 
+// down.
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
 	UIViewController* vc = [navViewController visibleViewController];
