@@ -89,10 +89,10 @@ void shell_print(const char *text, int length,
 	if (printFile) fclose(printFile);
 	printFile = fopen(printFileStr, "w");	
 		
-	[view1 setFrame:CGRectMake(0,0,320,480)];
-	[view2 setFrame:CGRectMake(0,480,320,480)];
+	[view1 setFrame:CGRectMake(0,0,hsize,vsize)];
+	[view2 setFrame:CGRectMake(0,vsize,hsize,vsize)];
 	[view1 setOffset:0];
-	[view2 setOffset:480];
+	[view2 setOffset:vsize];
 	[[self getBuff] setLength:0];	
 	[[Settings instance] setPrintedPRLCD:FALSE];
 	[self display];
@@ -101,31 +101,31 @@ void shell_print(const char *text, int length,
 - (void)rePosition:(UIScrollView*)scrollView force:(BOOL)force
 {
 	CGPoint offset = [scrollView contentOffset];
-	int tilenum = offset.y/480;
+	int tilenum = offset.y/vsize;
 	int view1offset, view2offset;
 	
 	if (tilenum & 1) // If tilenum is odd
 	{
-		view2offset = tilenum*480;
-		view1offset = (tilenum+1)*480;
+		view2offset = tilenum*vsize;
+		view1offset = (tilenum+1)*vsize;
 	}
 	else // tilenum is even
 	{
-		view1offset = tilenum*480;
-		view2offset = (tilenum+1)*480;
+		view1offset = tilenum*vsize;
+		view2offset = (tilenum+1)*vsize;
 	}
 	
 	if (force || [view1 offset] != view1offset)
 	{
 		[view1 setOffset:view1offset];
-		[view1 setFrame:CGRectMake(0, view1offset, 320, 480)];
+		[view1 setFrame:CGRectMake(0, view1offset, hsize, vsize)];
 		[view1 setNeedsDisplay];
 	}
 	
 	if (force || [view2 offset] != view2offset)
 	{
 		[view2 setOffset:view2offset];
-		[view2 setFrame:CGRectMake(0, view2offset, 320, 480)];
+		[view2 setFrame:CGRectMake(0, view2offset, hsize, vsize)];
 		[view2 setNeedsDisplay];
 	}		
 }
@@ -136,8 +136,8 @@ void shell_print(const char *text, int length,
 	int numVertPixel = [[self getBuff] length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
 	numVertPixel += PRINT_YOFFSET;
- 	numVertPixel < 480 ? 480 : numVertPixel;
- 	[scrollView setContentSize:CGSizeMake(320, numVertPixel)];
+ 	numVertPixel < vsize ? vsize : numVertPixel;
+ 	[scrollView setContentSize:CGSizeMake(hsize, numVertPixel)];
 			
 	// if this is new printing output, then we want to position the print view
 	// on the newely printed lines
@@ -253,8 +253,8 @@ void shell_print(const char *text, int length,
 
 - (void)viewDidLoad {
 	
-	view1 = [[PrintView alloc] initWithFrame:CGRectMake(0,0,320,480)];	
-	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,480,320,480)];
+	view1 = [[PrintView alloc] initWithFrame:CGRectMake(0,0,hsize,vsize)];	
+	view2 = [[PrintView alloc] initWithFrame:CGRectMake(0,vsize,hsize,vsize)];
 	[view1 setPrintViewController:self];
 	[view2 setPrintViewController:self];
     [self setViewsHighlight:FALSE];

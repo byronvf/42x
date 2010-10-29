@@ -75,7 +75,7 @@
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	// 5 - 5 pixels of top margin
 	// 18 - number of bytes per pixel line
-	int adjViewSize = 480/PRINT_VERT_SCALE;  // convert view size to buf cords
+	int adjViewSize = vsize/PRINT_VERT_SCALE;  // convert view size to buf cords
 	int adjOffset = offset/PRINT_VERT_SCALE;
 	const char* beginBuf = (const char*)[buf bytes] + 18*adjOffset;
 	int buflength = [buf length]/18;
@@ -102,39 +102,29 @@
 	assert(data);
 	// We draw free42's display to the context, then we scale it
 	// to fit
-	UInt32* ui = (UInt32*)CGBitmapContextGetData(ctx);
 	int ty = 0;
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 	for(int h=0; h < height; h++)
 	{
         int tx = xoffset;
-		//Commented out the pale blue stripes
-		//They get out of sync with the printed text when PRLCD
-		//is used -- text lines are 9 pixels high, PRLCD output
-		//is 16 pixels high...
-		int altclr = (adjOffset++ + 1) % 18;
+		if (!prlcd && !(adjOffset++ % 18))
+		{
+			CGContextSetRGBFillColor(ctx, 0.85, 0.85, 0.85, 1.0);
+			CGContextFillRect(ctx, CGRectMake(0, ty-2, 320, 18));
+			CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
+		}
+		
 		for(int w=0; w < byte_width; w++)
 		{
 			char byte = data[h*byte_width + w];
 			for (int bcnt = 0; bcnt < 8; bcnt++)
 			{				
 				int isset = byte&1;
-				int tm = ty*320;
 				if (isset)
 				{
 					// Strange that CG provides no way to set a single
 					// pixel, so we draw a rect one pixel in size.
-					//					CGContextFillRect(ctx, CGRectMake(xpos,ypos, 1, 1));
-					*(ui + tm + tx) = 0;
-					*(ui + tm + tx + 1) = 0;
-					*(ui + tm + 320 + tx) = 0;
-					*(ui + tm + 320 + tx + 1) = 0;
-				}
-				else if (altclr > 8 && !prlcd)
-				{
-					*(ui + tm + tx) = 0xD8D8D8;
-					*(ui + tm + tx + 1) = 0xD8D8D8;
-					*(ui + tm + 320 + tx) = 0xD8D8D8;
-					*(ui + tm + 320 + tx + 1) = 0xD8D8D8;			
+					CGContextFillRect(ctx, CGRectMake(tx,ty, 2, 2));
 				}
 				
 				byte >>= 1;

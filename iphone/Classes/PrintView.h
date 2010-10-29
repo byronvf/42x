@@ -20,6 +20,9 @@
 const float PRINT_VERT_SCALE = 2.0;
 const int PRINT_YOFFSET = 5;
 
+const int vsize = 480;
+const int hsize = 320;
+
 @class PrintViewController;
 
 @interface PrintView : UIView {
