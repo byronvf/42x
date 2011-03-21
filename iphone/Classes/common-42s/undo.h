@@ -19,7 +19,7 @@
 #define UNDO_H 1
 
 #define DESC_SIZE 24
-#define MAX_UNDOS 6
+#define MAX_UNDOS 31
 
 struct snapshot_struct
 {

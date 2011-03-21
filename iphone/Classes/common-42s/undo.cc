@@ -344,12 +344,13 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 	char str[DESC_SIZE];
 	switch (cmd)
 	{
-		case CMD_CLX:
-		case CMD_SWAP:
-		case CMD_CHS:
 		case CMD_DIV:
 			record_undo("\022");
 			break;
+			
+		case CMD_CLX:
+		case CMD_SWAP:
+		case CMD_CHS:
 		case CMD_MUL:
 		case CMD_SUB:
 		case CMD_ADD:
@@ -400,6 +401,7 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		case CMD_AND:
 		case CMD_ASINH:
 		case CMD_ATANH:
+		case CMD_ATOX:	
 		case CMD_BASEADD:
 		case CMD_BASESUB:
 		case CMD_BASEMUL:
@@ -467,7 +469,6 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		case CMD_TO_DEC:
 		case CMD_TO_OCT:
 		case CMD_PERCENT_CH:
-		case CMD_SIMQ:
 		case CMD_MAX:
 		case CMD_MIN:
 			
