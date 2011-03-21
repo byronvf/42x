@@ -29,6 +29,7 @@
 #import "Settings.h"
 #import "core_helpers.h"
 #import "shell_spool.h"
+#import "undo.h"
 
 // Reference to this blitter so we can access from C methods
 static BlitterView *blitterView = NULL; 
@@ -271,7 +272,7 @@ char lastxbuf[LASTXBUF_SIZE];
 		}
 		else
 		{
-			// All other characters we can't convert are displayed as as a box
+			// All other characters we can't convert are displayed as a box
 			// glyph, however, this shouldn't happen
 			lxstr[idx++] = 0xE2;
 			lxstr[idx++] = 0x97;
@@ -485,6 +486,9 @@ char lastxbuf[LASTXBUF_SIZE];
 	return vertScale;
 }
 
+const int TOUCH_RESET = -1;
+const int TOUCH_SWIPE_COMPLETE = -2;
+
 const int SCROLL_SPEED = 15;
 /*
  * The following two event handlers implement the swiping of the display 
@@ -494,7 +498,7 @@ const int SCROLL_SPEED = 15;
 {
 	NSArray* touchArray = [touches allObjects];
 	UITouch* touch = [touchArray objectAtIndex:0];
-	if (firstTouch.x == -1)
+	if (firstTouch.x == TOUCH_RESET)
 	{
 		firstTouch = [touch locationInView:self];
 		return;
@@ -535,14 +539,26 @@ const int SCROLL_SPEED = 15;
 		}	
 	}
 	
-	if (firstTouch.x - [touch locationInView:self].x > 60)
+	if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+		firstTouch.x - [touch locationInView:self].x > 60)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
 		// to the print screen since the iPhone can't keep up with this, and it just 
 		// hoses up!  maybe this can be improved at some point.
-		firstTouch.x = -1;
-		[[[self calcViewController] navViewController] switchToPrintView];		
-	}	
+		firstTouch.x = TOUCH_SWIPE_COMPLETE;
+		//[[[self calcViewController] navViewController] switchToPrintView];
+		docmd_undo(NULL);		
+		mode_number_entry = FALSE;
+		redisplay();
+	}
+	else if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+			 firstTouch.x - [touch locationInView:self].x < -60)
+	{
+		firstTouch.x = TOUCH_SWIPE_COMPLETE;
+		docmd_redo(NULL);
+		mode_number_entry = FALSE;
+		redisplay();		
+	}
 	
 }
 
@@ -766,7 +782,7 @@ char cbuf[30];
 	}
 	
 	// Reset the swipe mode.
-	firstTouch.x = -1;
+	firstTouch.x = TOUCH_RESET;
 }
 
 
@@ -787,9 +803,12 @@ char cbuf[30];
 {
 	if (buttonIndex == 0)
 	{
-		docmd_clst(NULL);
-		mode_number_entry = FALSE;
-		redisplay();
+		//docmd_clst(NULL);
+		//mode_number_entry = FALSE;
+		//redisplay();
+		pending_command = CMD_CLST;
+		core_keyup();
+		
 	}
 }
 

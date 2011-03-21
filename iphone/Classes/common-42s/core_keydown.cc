@@ -656,6 +656,7 @@ void keydown_number_entry(int shift, int key) {
 	draw_string(1, cmdline_row, buf + bufptr - 21, 21);
     }
     flush_display();
+	
     return;
 }
 
@@ -1917,8 +1918,8 @@ void keydown_normal_mode(int shift, int key) {
 	cmdline_length = 0;
 		
 #ifdef BIGSTACK		
-	if (!flags.f.stack_lift_disable)
-		record_undo("NEW NUMBER");		
+	if (!flags.f.prgm_mode)
+		record_undo("NUMBER");		
 #endif		
 				
 #ifdef BIGLCD

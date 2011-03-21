@@ -49,6 +49,7 @@ static const int PERSIST_VERSION = 6;
 // 5 - 2.3.1  - 13
 // 5 - 2.3.2  - 13
 // 6 - 2.3.3  - 16
+// 7 - 2.4    - 17   Undo stuff
 
 // Versions before PERSIST_VERSION was added uses FREE42_VERSION 11
 

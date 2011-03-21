@@ -23,12 +23,36 @@
 #include "core_display.h"
 #include "undo.h"
 
+// Pointer to the list of snapshots that we use to keep version of the stack
 snapshot* snapshot_head = NULL;
+
+// Number of snapshots, or undos that are currently in the list pointed to by
+// snapshot_head
 int snapshot_count = 0;
+
+// keeps track of the current snapshot number currently displayed.  1 being
+// the most recent undo
 int undo_pos = 0;
 
+// We track the number of roll operations so we can collect them into a single
+// undo.  roll_count is decremented for rolling down, and increment for up.
+int roll_count = 0;
+
+// Indicates that the stack has been disturbed by rolling operations, we use 
+// this to determine if we should create undo snapshots in given cases.
+bool roll_pending = FALSE;
+
+// Tracks if we have created a new snapshot, used by method undo_record_cleanup
+// so that we can unwind, or remove a snapshot if a command creates an error
+bool new_snapshot = FALSE;
+
+/* Restore the stack to the given snapshot number, we begin counting
+   with zero so that the first snapshot in the list is 0. */
 snapshot* setstack(int snappos)
 {
+	// We can't restore from a position larger then the number of snapshots
+	assert(snappos < snapshot_count);
+	
 	// Free the current dynamic stack
 	stack_item *si = bigstack_head;
 	while(si)
@@ -101,13 +125,31 @@ snapshot* setstack(int snappos)
 	return snap;
 }
 
+void message(const char* msg)
+{
+	clear_row(0);
+	int len = strlen(msg);
+		
+	draw_string(0, 0, msg, len);
+
+	// hack to handle the devide symbol, there should be 
+	// no other reason a '/' charater should be in the undo string
+	for (int i=0; i<len; i++)
+		if (msg[i] == '\022') 
+			draw_string(i, 0, "\000", 1);
+
+	
+	if (len >= 23) 
+		draw_string(21, 0, "\032", 1); // the "..." character
+	flags.f.message = 1;
+}
+
 void undo_message(snapshot* snap, const char* name, int undcnt)
 {
-	char numstr[22];
-	snprintf(numstr, 22, "%s %d: %s", name, undcnt, snap->describe);
-	clear_row(0);
-	draw_string(0, 0, numstr, strlen(numstr));
-	flags.f.message = 1;
+	char str[DESC_SIZE];
+	memset(str, ' ', DESC_SIZE);
+	snprintf(str, DESC_SIZE, "%s %d\200%s", name, undcnt, snap->describe);
+	message(str);
 }
 
 void free_snapshot(snapshot *snap)
@@ -133,8 +175,47 @@ void remove_first_snapshot()
 
 void record_undo(const char* desc)
 {
+	new_snapshot = TRUE;
+	
+	if (roll_pending)
+	{
+		char dir_char = '\016';
+		if (roll_count > 0) dir_char = '^';
+		
+		roll_pending = FALSE;
+		if (undo_pos == 0)
+		{			
+			if (roll_count % stacksize == 0)
+			{
+				assert(snapshot_head);
+				remove_first_snapshot();		
+			}
+			else 
+			{
+				char str[DESC_SIZE];
+				snprintf(str, DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
+				strncpy(snapshot_head->describe, str, DESC_SIZE);
+			}
+		}
+		else if (roll_count % stacksize != 0)
+		{
+			char str[DESC_SIZE];
+			snprintf(str, DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
+			strncpy(snapshot_head->describe, str, DESC_SIZE);
+			record_undo(str);
+		}
+
+
+		roll_count = 0;
+	}	
+	
+	// If the undo_pos is more than zero, then we have one extra 
+	// snapshot on the list which was the current stack before
+	// the undos, so we force the removal of that snapshot here.
+	if (undo_pos > 0) undo_pos++;
+	
 	// Drop all the redo's that we will not use now since
-	// we are recording an undo
+	// we are recording an undo. 
 	while(undo_pos > 0)
 	{
 		remove_first_snapshot();
@@ -205,11 +286,15 @@ void record_undo(const char* desc)
 	strncpy(snap->describe, desc, DESC_SIZE);
 }
 
+
 int docmd_undo(arg_struct *arg)
 {
-	assert(undo_pos <= snapshot_count);
-	if (undo_pos+1 >= snapshot_count)
+	if (!(undo_pos == 0 and snapshot_count == 1) && 
+		undo_pos >= snapshot_count-1)
+	{	
+		message("No More UNDOs");
 		return ERR_NONE;
+	}
 	
 	if (undo_pos == 0)
 	{
@@ -227,8 +312,12 @@ int docmd_undo(arg_struct *arg)
 int docmd_redo(arg_struct *arg)
 {
 	assert(undo_pos >= 0);
+	
 	if (undo_pos == 0)
+	{
+		message("No More REDOs");
 		return ERR_NONE;
+	}
 	
 	undo_pos--;
 	
@@ -248,14 +337,19 @@ void record_undo_cmd(int cmd)
 	record_undo(cmdlist(cmd)->name);	
 }
 
-void record_undo_pending_cmd()
-{	
-	switch (pending_command)
+void record_undo_cmd(int cmd, arg_struct *arg)
+{
+	new_snapshot = FALSE;
+	
+	char str[DESC_SIZE];
+	switch (cmd)
 	{
 		case CMD_CLX:
 		case CMD_SWAP:
 		case CMD_CHS:
 		case CMD_DIV:
+			record_undo("\022");
+			break;
 		case CMD_MUL:
 		case CMD_SUB:
 		case CMD_ADD:
@@ -277,16 +371,6 @@ void record_undo_pending_cmd()
 		case CMD_PERCENT:
 		case CMD_PI:
 		case CMD_COMPLEX:
-		case CMD_STO:
-		case CMD_STO_DIV:
-		case CMD_STO_MUL:
-		case CMD_STO_SUB:
-		case CMD_STO_ADD:
-		case CMD_RCL:
-		case CMD_RCL_DIV:
-		case CMD_RCL_MUL:
-		case CMD_RCL_SUB:
-		case CMD_RCL_ADD:
 		case CMD_ARCL:
 		case CMD_CLST:
 		case CMD_DEL:
@@ -325,38 +409,206 @@ void record_undo_pending_cmd()
 		case CMD_COSH:
 		case CMD_CROSS:
 		case CMD_DELR:
+
 		case CMD_DROP:
+
+		case CMD_ACCEL:
+		case CMD_LOCAT:
+		case CMD_HEADING:
+		
+
+		case CMD_DATE:
+		case CMD_DATE_PLUS:
+		case CMD_DDAYS:
+		case CMD_DOW:
+		case CMD_TIME:			
+
+
+		case CMD_DET:
+		case CMD_DIM:
+		case CMD_DOT:
+		case CMD_EDIT:
+		case CMD_EDITN:
+		case CMD_E_POW_X_1:
+		case CMD_FCSTX:
+		case CMD_FCSTY:
+		case CMD_FNRM:
+		case CMD_GETM:
+		case CMD_HMSADD:
+		case CMD_HMSSUB:
+		case CMD_INSR:
+		case CMD_INVRT:
+		case CMD_LN_1_X:
+		case CMD_MEAN:
+		case CMD_NOT:
+		case CMD_OLD:
+		case CMD_OR:
+		case CMD_POSA:
+		case CMD_PUTM:
+		case CMD_RCLEL:
+		case CMD_RCLIJ:
+		case CMD_RNRM:
+		case CMD_ROTXY:
+		case CMD_RSUM:
+		case CMD_SWAP_R:
+		case CMD_SDEV:
+		case CMD_SINH:
+		case CMD_SLOPE:
+		case CMD_STOEL:
+		case CMD_STOIJ:
+		case CMD_SUM:
+		case CMD_TANH:
+		case CMD_TRANS:
+		case CMD_UVEC:
+		case CMD_WMEAN:
+		case CMD_X_SWAP:
+		case CMD_XOR:
+		case CMD_YINT:
+		case CMD_TO_DEC:
+		case CMD_TO_OCT:
+		case CMD_PERCENT_CH:
+		case CMD_SIMQ:
+		case CMD_MAX:
+		case CMD_MIN:
 			
-		record_undo_cmd(pending_command);
+		case CMD_VMSOLVE:
+		case CMD_INTEG:
+						
+		record_undo_cmd(cmd);
 		break;
 			
 		case CMD_ENTER:
 		
-		record_undo("NEW NUMBER");
+		record_undo("ENTER");
 		break;
 			
 		case CMD_XEQ:
 		
-		char tmpstr[20];
-		if (pending_command_arg.type == ARGTYPE_STR)
+		if (arg->type == ARGTYPE_STR)
 		{
-			int length = MIN(pending_command_arg.length, 19);
-			strncpy(tmpstr, pending_command_arg.val.text, length);
-			tmpstr[length] = 0;
-			record_undo(tmpstr);
+			char lbl[DESC_SIZE];
+			strncpy(lbl, arg->val.text, arg->length);
+			snprintf(str, DESC_SIZE, "XEQ \"%s\"", lbl);
+			record_undo(str);
 		}
-		else if (pending_command_arg.type == ARGTYPE_LBLINDEX)
+		else if (arg->type == ARGTYPE_LBLINDEX)
 		{
-			int index = pending_command_arg.val.num;
-			int length = MIN(labels[index].length, 19);
-			strncpy(tmpstr, labels[index].name, length);
-			tmpstr[length] = 0;
-			record_undo(tmpstr);
+			char lbl[DESC_SIZE];
+			strncpy(lbl, labels[arg->val.num].name, labels[arg->val.num].length);
+			snprintf(str, DESC_SIZE, "XEQ '%s'", lbl);
+			record_undo(str);
 		}
+		else
+			record_undo("XEQ");
+
+		// Even if XEQ may create an error, we don't want to 
+		// pop a snapshot off the undo list in record_undo_cleanup
+		// since running a program may still disturb the stack
+		new_snapshot = FALSE;
 		break;
+			
+		case CMD_RDN:		
+			roll_count -= 2;
+			// fall through, roll_count will only decrement by 1
+		case CMD_RUP:
+			roll_count++;
+
+			if (!roll_pending)
+			{
+				if (undo_pos == 0)
+				{
+					record_undo_cmd(cmd);
+				}
+				roll_pending = TRUE;
+			}
+		break;
+			
+		case CMD_NUMBER:
+			// We only get here if we are stepping through a program
+			record_undo("NUMBER");			
+		break;
+		
+		case CMD_STO:
+		case CMD_STO_DIV:
+		case CMD_STO_MUL:
+		case CMD_STO_SUB:
+		case CMD_STO_ADD:
+			
+		if (arg->type == ARGTYPE_STK)
+		{
+			char str[DESC_SIZE];
+			snprintf(str, DESC_SIZE, "%s ST %c",cmdlist(cmd)->name, 
+					 arg->val.stk);	
+			record_undo(str);
+		}
+			
+		break;		
+			
+		case CMD_RCL:
+		case CMD_RCL_DIV:
+		case CMD_RCL_MUL:
+		case CMD_RCL_SUB:
+		case CMD_RCL_ADD:
+
+			switch (arg->type)
+			{
+				case ARGTYPE_STR:
+					char lbl[DESC_SIZE];
+					strncpy(lbl, arg->val.text, arg->length);
+					lbl[arg->length] = NULL;
+					if (cmd == CMD_RCL_DIV)
+						snprintf(str, DESC_SIZE, "RCL\022 \"%s\"", lbl);
+					else
+						snprintf(str, DESC_SIZE, "%s \"%s\"", cmdlist(cmd)->name, lbl);
+					break;
+					
+				case ARGTYPE_NUM:
+					snprintf(str, DESC_SIZE, "%s '%d'",cmdlist(cmd)->name,	
+							 arg->val.num);
+					break;
+				case ARGTYPE_STK:
+					snprintf(str, DESC_SIZE, "%s ST %c",cmdlist(cmd)->name, 
+							 arg->val.stk);
+					break;
+					
+				default:
+					snprintf(str, DESC_SIZE, "%s",cmdlist(cmd)->name);
+					break;	
+			}
+
+			if (cmd == CMD_RCL_DIV) memcpy(str, "RCL\022", 4);
+			record_undo(str);	
+			
+		break;	
+			
+				
+		case CMD_RUN:
+			record_undo("R/S");
+		break;		
+			
+		case CMD_SST:
+			
+		break;
+			
 	}
 		
 }
+/* we this method to bump an undo off the stack in the case a 
+   command creates an error, such as divide by zero.
 
+   Hmm, on further study, some functions return errors, but
+   still modify the stack, and display no error.. in these cases
+   we still would want to perserve the stack before the operation.
+   It's beyond these changes at this point to do a case by case,
+   so we only do it for divide for now... */
+void record_undo_cleanup(int error)
+{
+	if (new_snapshot && error)
+	{
+		if (pending_command == CMD_DIV)
+			remove_first_snapshot();
+	}
+	new_snapshot = FALSE;	
+}
 
 

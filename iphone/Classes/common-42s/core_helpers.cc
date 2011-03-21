@@ -25,6 +25,7 @@
 #include "core_main.h"
 #include "core_variables.h"
 #include "shell.h"
+#include "undo.h"
 
 int resolve_ind_arg(arg_struct *arg) {
     vartype *v;

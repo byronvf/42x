@@ -438,10 +438,6 @@ int core_keyup() {
 	     */
 	    input_length = 0;
     }
-
-#ifdef BIGSTACK	
-	record_undo_pending_cmd();
-#endif
 	
     if (pending_command == CMD_VMEXEC) {
 	string_copy(reg_alpha, &reg_alpha_length,
@@ -467,12 +463,19 @@ int core_keyup() {
 	if (pc == -1)
 	    pc = 0;
 	get_next_command(&pc, &cmd, &arg, 1);
+				
 	if ((flags.f.trace_print || flags.f.normal_print)
 		&& flags.f.printer_exists)
 	    print_program_line(current_prgm, oldpc);
 	mode_disable_stack_lift = false;
 	set_running(true);
+#ifdef BIGSTACK	
+	record_undo_cmd(cmd, &arg);
+#endif
 	error = cmdlist(cmd)->handler(&arg);
+#ifdef BIGSTACK			
+	record_undo_cleanup(error);
+#endif		
 	set_running(false);
 	mode_pause = false;
     } else {
@@ -480,7 +483,13 @@ int core_keyup() {
 		&& flags.f.printer_exists)
 	    print_command(pending_command, &pending_command_arg);
 	mode_disable_stack_lift = false;
+#ifdef BIGSTACK	
+	record_undo_cmd(pending_command, &pending_command_arg);
+#endif
 	error = cmdlist(pending_command)->handler(&pending_command_arg);
+#ifdef BIGSTACK			
+	record_undo_cleanup(error);
+#endif		
 	mode_pause = false;
     }
 
@@ -2199,6 +2208,9 @@ void core_paste(const char *buf) {
     } else {
 	if (!flags.f.prgm_mode)
 	    mode_number_entry = false;
+#ifdef BIGSTACK
+		record_undo("PASTE");
+#endif		
 	recall_result(v);
 	flags.f.stack_lift_disable = 0;
     }

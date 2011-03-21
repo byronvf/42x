@@ -26,6 +26,7 @@
 #include "core_math1.h"
 #include "core_tables.h"
 #include "core_variables.h"
+#include "undo.h"
 #include "shell.h"
 
 
@@ -714,6 +715,8 @@ static int pc_line_convert(int4 loc, int loc_is_pc) GLOBALS_SECT;
 static bool convert_programs() GLOBALS_SECT;
 #ifdef IPHONE
 static void convert_bigstack_drop() GLOBALS_SECT;
+static bool persist_undo() GLOBALS_SECT;		
+static bool unpersist_undo() GLOBALS_SECT;		
 #endif
 
 
@@ -1124,6 +1127,9 @@ static bool persist_globals() {
 #if BIGSTACK
     if (!write_bool(true)) /* Yes, big stack block exists */
 	goto done;
+	
+	persist_undo();
+	
     if (!write_int(stacksize))
 	goto done;
     while (si != NULL) {
@@ -1230,10 +1236,16 @@ static bool unpersist_globals(int4 ver) {
 	/* we are on atleast version 12, so this block exists */
 	if (!read_bool(&bigstack))
 	    goto done;
-    }    
+    } 
+	
 #ifdef BIGSTACK
     if (bigstack)
     {	
+		
+ 	if (ver >= 17) {
+		unpersist_undo();
+	}			
+		
 	stacksize = 20; /* backward compatible pre version 13 big stack */
     
 	if (ver >= 13) {
@@ -2196,7 +2208,7 @@ static bool read_int(int *n) {
 static bool write_int(int n) {
     return shell_write_saved_state(&n, sizeof(int));
 }
-
+		
 static bool read_int4(int4 *n) {
     return shell_read_saved_state(n, sizeof(int4)) == sizeof(int4);
 }
@@ -2204,6 +2216,29 @@ static bool read_int4(int4 *n) {
 static bool write_int4(int4 n) {
     return shell_write_saved_state(&n, sizeof(int4));
 }
+
+static bool read_chars(char *c, int maxsize)
+{
+	int readsize = 0;
+	do {
+		readsize++;
+		if (readsize > maxsize)
+			return false;
+		shell_read_saved_state(c, sizeof(char));
+	}
+	while(*c++ != 0);
+	return true;
+}			
+		
+static bool write_chars(char *c) {
+	do {
+		if (!shell_write_saved_state(c, sizeof(char)))
+			return false;
+	}
+	while (*c++ != 0);
+	return true;		
+}
+		
 
 static bool read_bool(bool *b) {
     if (state_bool_is_int) {
@@ -3199,4 +3234,104 @@ static void convert_bigstack_drop() {
 	}
     }
 }
+		
+		
+static bool persist_undo() {
+			
+	if (!write_int(snapshot_count))	
+		return false;
+			
+	if (!write_int(undo_pos))	
+		return false;
+			
+	snapshot *snap = snapshot_head;
+	while (snap != NULL)
+	{
+		if (!write_chars(snap->describe))
+			return false;		
+		
+		stack_item *si = snap->stack_item_head;
+		
+		int size = 0;
+		// get stack size
+		while (si != NULL) {
+			size++;
+			si = si->next;
+		}
+		
+		if (!write_int(size))
+			return false;
+		
+		si = snap->stack_item_head;		
+		while (si != NULL) {
+			if (!persist_vartype(si->var))
+				return false;
+			si = si->next;
+		}
+		
+		snap = snap->next;
+	}
+			
+	return true;
+}
+		
+static bool unpersist_undo() {
+			
+	snapshot_head = NULL;	
+			
+	if (!read_int(&snapshot_count))
+		return false;
+			
+	if (!read_int(&undo_pos))
+		return false;
+			
+	int count = 0;
+	snapshot *snap = NULL;
+	while (count < snapshot_count) {
+				
+		if (count == 0) {
+			snapshot_head = (snapshot*)malloc(sizeof(snapshot));
+			snap = snapshot_head;
+		}
+		else {
+			snap->next = (snapshot*)malloc(sizeof(snapshot));
+			snap = snap->next;
+		}
+				
+		snap->next = NULL;
+		snap->stack_item_head = NULL;
+
+		if (!read_chars(snap->describe, DESC_SIZE))
+			return false;			
+				
+		int size = 0;
+		// stack size of this snapshot
+		if (!read_int(&size))
+			return false;
+
+		stack_item *last_si = NULL;
+		while (size-- > 0)
+		{
+			vartype *v = NULL;
+			if (!unpersist_vartype(&v))
+				return false;	    
+			stack_item *si = new_stack_item(v);
+			si->next = NULL;
+			if (last_si == NULL) {
+				snap->stack_item_head = si;
+			}
+			else {
+				last_si->next = si;
+			}
+			
+			last_si = si;
+		}		
+		count++;		
+	}
+	
+	return true;
+}
+		
+		
+		
 #endif

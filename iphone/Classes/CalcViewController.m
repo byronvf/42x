@@ -564,7 +564,7 @@ void shell_request_timeout3(int delay)
 			core_keydown(newChar + 1024, &enqueued, &repeat);
 			if( !enqueued) core_keyup();			
 		}
-		else if ( '\n' == newChar)
+		else if (newChar == '\n')
 		{
 			// End the edit
 			core_keydown(KEY_ENTER, &enqueued, &repeat);

@@ -18,8 +18,8 @@
 #ifndef UNDO_H
 #define UNDO_H 1
 
-#define DESC_SIZE 22
-#define MAX_UNDOS 20
+#define DESC_SIZE 24
+#define MAX_UNDOS 6
 
 struct snapshot_struct
 {
@@ -32,10 +32,11 @@ typedef struct snapshot_struct snapshot;
 
 extern snapshot* snapshot_head;
 extern int snapshot_count;
+extern int undo_pos;
 
 int docmd_undo(arg_struct *arg);
 int docmd_redo(arg_struct *arg);
-void record_undo_pending_cmd();
+void record_undo_cmd(int cmd, arg_struct *arg);
 void record_undo(const char*);
-
+void record_undo_cleanup(int error);
 #endif
