@@ -476,41 +476,41 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		case CMD_VMSOLVE:
 		case CMD_INTEG:
 						
-		record_undo_cmd(cmd);
+			record_undo_cmd(cmd);
 		break;
 			
 		case CMD_ENTER:
 		
-		record_undo("ENTER");
+			record_undo("ENTER");
 		break;
 			
 		case CMD_XEQ:
 		
-		if (arg->type == ARGTYPE_STR)
-		{
-			snprintf(str, DESC_SIZE, "XEQ \"%.*s\"", arg->length, arg->val.text);
-			record_undo(str);
-		}
-		else if (arg->type == ARGTYPE_LBLINDEX)
-		{
-			snprintf(str, DESC_SIZE, "XEQ '%.*s'", labels[arg->val.num].length, 
-					 labels[arg->val.num].name);
-			record_undo(str);
-		}
-		else
-			record_undo("XEQ");
+			if (arg->type == ARGTYPE_STR)
+			{
+				snprintf(str, DESC_SIZE, "XEQ \"%.*s\"", arg->length, arg->val.text);
+				record_undo(str);
+			}
+			else if (arg->type == ARGTYPE_LBLINDEX)
+			{
+				snprintf(str, DESC_SIZE, "XEQ \"%.*s\"", labels[arg->val.num].length, 
+						 labels[arg->val.num].name);
+				record_undo(str);
+			}
+			else
+				record_undo("XEQ");
 
-		// Even if XEQ may create an error, we don't want to 
-		// pop a snapshot off the undo list in record_undo_cleanup
-		// since running a program may still disturb the stack
-		new_snapshot = FALSE;
-		break;
+			// Even if XEQ may create an error, we don't want to 
+			// pop a snapshot off the undo list in record_undo_cleanup
+			// since running a program may still disturb the stack
+			new_snapshot = FALSE;
+			break;
 			
-		case CMD_RDN:		
-			roll_count -= 2;
-			// fall through, roll_count will only decrement by 1
-		case CMD_RUP:
-			roll_count++;
+			case CMD_RDN:		
+				roll_count -= 2;
+				// fall through, roll_count will only decrement by 1
+			case CMD_RUP:
+				roll_count++;
 
 			if (!roll_pending)
 			{
@@ -533,15 +533,15 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		case CMD_STO_SUB:
 		case CMD_STO_ADD:
 			
-		if (arg->type == ARGTYPE_STK)
-		{
-			char str[DESC_SIZE];
-			snprintf(str, DESC_SIZE, "%s ST %c",cmdlist(cmd)->name, 
+			if (arg->type == ARGTYPE_STK)
+			{
+				char str[DESC_SIZE];
+				snprintf(str, DESC_SIZE, "%s ST %c",cmdlist(cmd)->name, 
 					 arg->val.stk);	
-			record_undo(str);
-		}
+				record_undo(str);
+			}
 			
-		break;		
+			break;		
 			
 		case CMD_RCL:
 		case CMD_RCL_DIV:

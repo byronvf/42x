@@ -355,10 +355,31 @@ char lastxbuf[LASTXBUF_SIZE];
 			if (dispRows == 4) vertoffset += 5;
 			if (dispRows == 6) vertoffset += 2;
 		}
+
+		//CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);
 		
+		//drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8+1, vertoffset+1,
+		//						 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
+		
+		//CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
+		
+		CGSize size = {2,2};
+		CGContextSetShadow(ctx, size, 0);
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
+	
+	int poff = dispRows < 4 ? 69 : 123;
+	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
+	UIFont *font = [UIFont systemFontOfSize:13];
+	[@"P" drawInRect:CGRectMake(300, poff, 20, 20) 
+			   withFont:font lineBreakMode:UILineBreakModeClip];		
+
+	CGContextBeginPath(ctx);
+	CGContextAddArc(ctx, 304, poff+8, 8, 0, 2*M_PI, 0);
+	CGContextSetLineWidth(ctx, 1);
+	CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 0.3);	
+	CGContextStrokePath(ctx);
 	
 	if (flags.f.prgm_mode) [self drawScrollBar];
 }
@@ -490,77 +511,6 @@ const int TOUCH_RESET = -1;
 const int TOUCH_SWIPE_COMPLETE = -2;
 
 const int SCROLL_SPEED = 15;
-/*
- * The following two event handlers implement the swiping of the display 
- * to switch to the print view.  If the touches are far enough apart, then we switch 
- */
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	NSArray* touchArray = [touches allObjects];
-	UITouch* touch = [touchArray objectAtIndex:0];
-	if (firstTouch.x == TOUCH_RESET)
-	{
-		firstTouch = [touch locationInView:self];
-		return;
-	}
-	else if (firstTouch.x > 260 && !mode_running)
-	{
-		cutPaste = FALSE;
-		CGPoint newPoint = [touch locationInView:self];
-		int len = newPoint.y - firstTouch.y;
-		if (len > SCROLL_SPEED)
-		{
-			swipevert(TRUE);
-			len -= SCROLL_SPEED;
-		}
-		else if (len < -SCROLL_SPEED)
-		{
-			swipevert(FALSE);
-			len += SCROLL_SPEED;	
-		}
-				
-		firstTouch.y = newPoint.y - len;
-	}
-	else if (!calcViewController.keyPressed)
-	{
-		// changing the display mode causes a call to Free42's redisplay method.
-		// However redisplay is not intended to be called bettween a keydown and
-		// a keyup method calls.  So we don't allow it here.  This fixes a crash that
-		// occurred while switching to four line mode, and pressing the "EXIT" key
-		// at the same time.
-		
-		if (firstTouch.y - [touch locationInView:self].y < -30 && self.bounds.size.height < 100)
-		{
-			[calcViewController doubleLCD];
-		}
-		else if (firstTouch.y - [touch locationInView:self].y > 30 && self.bounds.size.height > 100)
-		{
-			[calcViewController singleLCD];
-		}	
-	}
-	
-	if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
-		firstTouch.x - [touch locationInView:self].x > 60)
-	{
-		// If we are currently in the process of printing, then we don't allow flipping 
-		// to the print screen since the iPhone can't keep up with this, and it just 
-		// hoses up!  maybe this can be improved at some point.
-		firstTouch.x = TOUCH_SWIPE_COMPLETE;
-		//[[[self calcViewController] navViewController] switchToPrintView];
-		docmd_undo(NULL);		
-		mode_number_entry = FALSE;
-		redisplay();
-	}
-	else if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
-			 firstTouch.x - [touch locationInView:self].x < -60)
-	{
-		firstTouch.x = TOUCH_SWIPE_COMPLETE;
-		docmd_redo(NULL);
-		mode_number_entry = FALSE;
-		redisplay();		
-	}
-	
-}
 
 /**
  * Set the blitter in two line display mode
@@ -762,6 +712,78 @@ char cbuf[30];
 	}
 }
 
+/*
+ * The following two event handlers implement the swiping of the display 
+ * to switch to the print view.  If the touches are far enough apart, then we switch 
+ */
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	NSArray* touchArray = [touches allObjects];
+	UITouch* touch = [touchArray objectAtIndex:0];
+	if (firstTouch.x == TOUCH_RESET)
+	{
+		firstTouch = [touch locationInView:self];
+		return;
+	}
+	else if (firstTouch.x > 260 && !mode_running)
+	{
+		cutPaste = FALSE;
+		CGPoint newPoint = [touch locationInView:self];
+		int len = newPoint.y - firstTouch.y;
+		if (len > SCROLL_SPEED)
+		{
+			swipevert(TRUE);
+			len -= SCROLL_SPEED;
+		}
+		else if (len < -SCROLL_SPEED)
+		{
+			swipevert(FALSE);
+			len += SCROLL_SPEED;	
+		}
+		
+		firstTouch.y = newPoint.y - len;
+	}
+	else if (!calcViewController.keyPressed)
+	{
+			// changing the display mode causes a call to Free42's redisplay method.
+			// However redisplay is not intended to be called bettween a keydown and
+			// a keyup method calls.  So we don't allow it here.  This fixes a crash that
+			// occurred while switching to four line mode, and pressing the "EXIT" key
+			// at the same time.
+		
+		if (firstTouch.y - [touch locationInView:self].y < -30 && self.bounds.size.height < 100)
+		{
+			[calcViewController doubleLCD];
+		}
+		else if (firstTouch.y - [touch locationInView:self].y > 30 && self.bounds.size.height > 100)
+		{
+			[calcViewController singleLCD];
+		}	
+	}
+	
+	if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+		firstTouch.x - [touch locationInView:self].x > 60)
+	{
+			// If we are currently in the process of printing, then we don't allow flipping 
+			// to the print screen since the iPhone can't keep up with this, and it just 
+			// hoses up!  maybe this can be improved at some point.
+		firstTouch.x = TOUCH_SWIPE_COMPLETE;
+			//[[[self calcViewController] navViewController] switchToPrintView];
+		docmd_undo(NULL);		
+		mode_number_entry = FALSE;
+		redisplay();
+	}
+	else if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+			 firstTouch.x - [touch locationInView:self].x < -60)
+	{
+		firstTouch.x = TOUCH_SWIPE_COMPLETE;
+		docmd_redo(NULL);
+		mode_number_entry = FALSE;
+		redisplay();		
+	}
+	
+}
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	[self shouldCutPaste];
@@ -769,16 +791,24 @@ char cbuf[30];
 	// If double tap, then bring up cut paste menu.  
 	
     UITouch *touch = [touches anyObject];
-    if ([[touches anyObject] locationInView:self].x < 260 
-		     && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
+	CGPoint p = [[touches anyObject] locationInView:self];
+    if (p.x < 260 && cutPaste && touch.tapCount == 2 && [self becomeFirstResponder]) {
 		[self setSelectHighlight];
 		[self setNeedsDisplayInRect:selectRect];
 		[self showEditMenu];
 		highlight = TRUE;
     }
-	else if ([[touches anyObject] locationInView:self].x < 260 && touch.tapCount == 1)
+	else if (p.x < 260 && touch.tapCount == 1)
 	{
 		[calcViewController handlePopupKeyboard:true];
+	}
+	else if (p.x > 280 && (dispRows < 4 && p.y > 70 || p.y > 110) 
+			 && touch.tapCount == 1)
+	{
+		// If we are currently in the process of printing, then we don't allow flipping 
+		// to the print screen since the iPhone can't keep up with this, and it just 
+		// hoses up!  maybe this can be improved at some point.
+		[[[self calcViewController] navViewController] switchToPrintView];		
 	}
 	
 	// Reset the swipe mode.

@@ -22,6 +22,7 @@
 #import "free42.h"
 #import "Settings.h"
 #import "PrintViewController.h"
+#import "core_variables.h"
 
 
 
@@ -359,6 +360,7 @@ bool prgmFirstWrite = TRUE;
 	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
 	[alert show];	
 #endif
+	clean_vartype_pools();
 }
 
 
