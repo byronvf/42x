@@ -192,17 +192,17 @@ void record_undo(const char* desc)
 			}
 			else 
 			{
-				char str[DESC_SIZE];
-				snprintf(str, DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
-				strncpy(snapshot_head->describe, str, DESC_SIZE);
+				snprintf(snapshot_head->describe, 
+						 DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
+				snapshot_head->describe[DESC_SIZE-1] = NULL;
 			}
 		}
 		else if (roll_count % stacksize != 0)
 		{
-			char str[DESC_SIZE];
-			snprintf(str, DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
-			strncpy(snapshot_head->describe, str, DESC_SIZE);
-			record_undo(str);
+			snprintf(snapshot_head->describe, 
+					 DESC_SIZE, "ROLL %c * %d",dir_char, abs(roll_count));
+			snapshot_head->describe[DESC_SIZE-1] = NULL;
+			record_undo(snapshot_head->describe);
 		}
 
 
@@ -284,6 +284,7 @@ void record_undo(const char* desc)
 	snap->stack_item_head = currsi;
 		
 	strncpy(snap->describe, desc, DESC_SIZE);
+	snap->describe[DESC_SIZE-1] = NULL;
 }
 
 
@@ -487,16 +488,13 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		
 		if (arg->type == ARGTYPE_STR)
 		{
-			char lbl[DESC_SIZE];
-			strncpy(lbl, arg->val.text, arg->length);
-			snprintf(str, DESC_SIZE, "XEQ \"%s\"", lbl);
+			snprintf(str, DESC_SIZE, "XEQ \"%.*s\"", arg->length, arg->val.text);
 			record_undo(str);
 		}
 		else if (arg->type == ARGTYPE_LBLINDEX)
 		{
-			char lbl[DESC_SIZE];
-			strncpy(lbl, labels[arg->val.num].name, labels[arg->val.num].length);
-			snprintf(str, DESC_SIZE, "XEQ '%s'", lbl);
+			snprintf(str, DESC_SIZE, "XEQ '%.*s'", labels[arg->val.num].length, 
+					 labels[arg->val.num].name);
 			record_undo(str);
 		}
 		else
@@ -554,13 +552,11 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 			switch (arg->type)
 			{
 				case ARGTYPE_STR:
-					char lbl[DESC_SIZE];
-					strncpy(lbl, arg->val.text, arg->length);
-					lbl[arg->length] = NULL;
 					if (cmd == CMD_RCL_DIV)
-						snprintf(str, DESC_SIZE, "RCL\022 \"%s\"", lbl);
+						snprintf(str, DESC_SIZE, "RCL\022 \"%.*s\"", arg->length, arg->val.text);
 					else
-						snprintf(str, DESC_SIZE, "%s \"%s\"", cmdlist(cmd)->name, lbl);
+						snprintf(str, DESC_SIZE, "%s \"%.*s\"", cmdlist(cmd)->name,
+								 arg->length, arg->val.text);
 					break;
 					
 				case ARGTYPE_NUM:
