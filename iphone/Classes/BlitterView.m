@@ -779,7 +779,7 @@ char cbuf[30];
 		}	
 	}
 	
-	if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+	if (!flags.f.prgm_mode && firstTouch.x != TOUCH_SWIPE_COMPLETE &&
 		firstTouch.x - [touch locationInView:self].x > 60)
 	{
 			// If we are currently in the process of printing, then we don't allow flipping 
@@ -791,7 +791,7 @@ char cbuf[30];
 		mode_number_entry = FALSE;
 		redisplay();
 	}
-	else if (firstTouch.x != TOUCH_SWIPE_COMPLETE &&
+	else if (!flags.f.prgm_mode && firstTouch.x != TOUCH_SWIPE_COMPLETE &&
 			 firstTouch.x - [touch locationInView:self].x < -60)
 	{
 		firstTouch.x = TOUCH_SWIPE_COMPLETE;
