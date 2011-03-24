@@ -32,6 +32,7 @@
 #define CONFIG_PRLCD @"prlcd"
 #define CONFIG_SHOW_STATUS_BAR @"showStatusBar"
 #define CONFIG_DROP_FIRST_CLICK @"dropFirstClick"
+#define CONFIG_SHOW_FLAGS @"showFlags"
 
 @interface ConfigViewController : UITableViewController {
 	UISwitch* clickSoundSwitch;
@@ -44,6 +45,7 @@
 	UISwitch* autoPrintSwitch;
 	UISwitch* RPLEnterSwitch;
 	UISwitch* dropSwitch;
+	UISwitch* flagsSwitch;
 	
 	UIButton* gotoServerButton;
 	UIButton* aboutButton;
@@ -61,6 +63,7 @@
 @property (nonatomic, retain) UISwitch* bigStackSwitch;
 @property (nonatomic, retain) UISwitch* RPLEnterSwitch;
 @property (nonatomic, retain) UISwitch* dropSwitch;
+@property (nonatomic, retain) UISwitch* flagsSwitch;
 @property (nonatomic, retain) UIButton* gotoServerButton;
 @property (nonatomic, retain) UIButton* aboutButton;
 @property (nonatomic, retain) NavViewController* navViewController;

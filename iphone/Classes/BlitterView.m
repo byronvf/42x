@@ -132,6 +132,7 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 }
 
 char lastxbuf[LASTXBUF_SIZE];
+short dispflags = 0;
 
 /**
  * The blitterView manages the calculators digital display
@@ -177,6 +178,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	[self setSelectHighlight];
 	firstTouch.x = -1;
 	[self shouldCutPaste];
+	
 }
 
 - (void) annuncNeedsDisplay
@@ -224,7 +226,7 @@ char lastxbuf[LASTXBUF_SIZE];
 		CGContextDrawImage(ctx, CGRectMake(100, -1 + statusBarOffset, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
-	if (flagGrad)
+		//if (flagGrad)
 		CGContextDrawImage(ctx, CGRectMake(120, -2 + statusBarOffset, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
@@ -232,6 +234,28 @@ char lastxbuf[LASTXBUF_SIZE];
 		CGContextDrawImage(ctx, CGRectMake(120, -1 + statusBarOffset, 24, 20),
 						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
 }	
+
+- (void)drawFlags
+{
+	if (![[Settings instance] showFlags]) return;
+		
+	UIFont *font = [UIFont boldSystemFontOfSize:14];
+	if (flags.f.f00) 
+		[@"0" drawAtPoint:CGPointMake(166, statusBarOffset-1) withFont:font];
+	
+	if (flags.f.f01)
+		[@"1" drawAtPoint:CGPointMake(175, statusBarOffset-1) withFont:font];
+
+	if (flags.f.f02)
+		[@"2" drawAtPoint:CGPointMake(184, statusBarOffset-1) withFont:font];
+	
+	if (flags.f.f03)
+		[@"3" drawAtPoint:CGPointMake(193, statusBarOffset-1) withFont:font];
+
+	if (flags.f.f04)
+		[@"4" drawAtPoint:CGPointMake(202, statusBarOffset-1) withFont:font];
+	
+}
 
 - (void)shouldCutPaste
 {
@@ -298,6 +322,7 @@ char lastxbuf[LASTXBUF_SIZE];
 	[wprefix drawInRect:CGRectMake(140, -2 + statusBarOffset, 178, 14) 
 			   withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentRight];
+	
 	[lval release];
 }
 
@@ -319,14 +344,17 @@ char lastxbuf[LASTXBUF_SIZE];
 	}
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
+	CGSize size = {2,2};
+	CGContextSetShadow(ctx, size, 0);
 
 	// DispRows of 4 or 7 means that we are displaying in program mode with a largeLCD
 	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && self.dispAnnunc)
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
+		[self drawFlags];		
 	}
-	
+		
 	if (rect.origin.y + rect.size.height > ASTAT_HEIGHT + statusBarOffset)
 	{
 		float vertScale = [self getDispVertScale];
@@ -356,25 +384,15 @@ char lastxbuf[LASTXBUF_SIZE];
 			if (dispRows == 6) vertoffset += 2;
 		}
 
-		//CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);
-		
-		//drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8+1, vertoffset+1,
-		//						 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
-		
-		//CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
-		
-		CGSize size = {2,2};
-		CGContextSetShadow(ctx, size, 0);
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
+	// Draw printer watermark button 
 	int poff = dispRows < 4 ? 69 : 123;
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
 	UIFont *font = [UIFont systemFontOfSize:13];
-	[@"P" drawInRect:CGRectMake(300, poff, 20, 20) 
-			   withFont:font lineBreakMode:UILineBreakModeClip];		
-
+	[@"P" drawAtPoint:CGPointMake(300, poff) withFont:font];		
 	CGContextBeginPath(ctx);
 	CGContextAddArc(ctx, 304, poff+8, 8, 0, 2*M_PI, 0);
 	CGContextSetLineWidth(ctx, 1);

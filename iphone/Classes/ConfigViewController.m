@@ -35,6 +35,7 @@
 @synthesize autoPrintSwitch;
 @synthesize RPLEnterSwitch;
 @synthesize dropSwitch;
+@synthesize flagsSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -59,6 +60,7 @@
 	autoPrintSwitch = [self makeSwitch];
 	RPLEnterSwitch = [self makeSwitch];
 	dropSwitch = [self makeSwitch];
+	flagsSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -80,6 +82,7 @@
 	[aboutButton release];	
 	[RPLEnterSwitch release];
 	[dropSwitch release];
+	[flagsSwitch release];
 }
 
 
@@ -95,6 +98,7 @@
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
 	[RPLEnterSwitch setOn:mode_rpl_enter];
 	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
+	[flagsSwitch setOn:[[Settings instance] showFlags]];
 }
 
 
@@ -150,6 +154,11 @@
 	{
 		[[Settings instance] setDropFirstClick:[sender isOn]];
 	}
+	else if (sender == flagsSwitch)
+	{
+		[[Settings instance] setShowFlags:[sender isOn]];
+		[[navViewController calcViewController] testUpdateLastX:TRUE];
+	}
 }
 
 #if DEV_REL
@@ -173,8 +182,7 @@
 		NSString *free42ver = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:nil];
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet controlCharacterSet]];
 		free42ver = [free42ver stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
-		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-		
+		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];		
 		NSString *title = [NSString stringWithFormat:@"42s Version %@%@\nFree42 %@i", ver, MOD, free42ver];
 		
 		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
@@ -216,7 +224,7 @@
 	{
 		case 0: return 3;
 		case 1: return 2;
-		case 2: return 3;
+		case 2: return 4;
 		case 3: return 2;
 		case 4: return 1;
 		case 5: return 1;
@@ -253,7 +261,7 @@
 	}
 	else if (indexPath.section == 0 && indexPath.row == 1) 
 	{
-		cell.textLabel.text = @"No stack lift on ENTER";
+		cell.textLabel.text = @"No ENTER stack lift";
 		cell.accessoryView = RPLEnterSwitch;
 	}
 	else if (indexPath.section == 0 && indexPath.row == 2) 
@@ -278,7 +286,7 @@
 	}
 	else if (indexPath.section == 2 && indexPath.row == 1)
 	{
-		cell.textLabel.text = @"Overlay Menu on Keys";
+		cell.textLabel.text = @"Overlay Key Menu";
 		cell.accessoryView = menuKeysSwitch;
 	}
 	else if (indexPath.section == 2 && indexPath.row == 2)
@@ -286,6 +294,11 @@
 		cell.textLabel.text = @"Device Status Bar";
 		cell.accessoryView = statusBarSwitch;
 	}
+	else if (indexPath.section == 2 && indexPath.row == 3)
+	{
+		cell.textLabel.text = @"Show flags";
+		cell.accessoryView = flagsSwitch;
+	}	
 	else if (indexPath.section == 3 && indexPath.row == 0)  // Interactions
 	{
 		cell.textLabel.text = @"Auto Show Keyboard";

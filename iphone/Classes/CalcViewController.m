@@ -336,7 +336,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		}
 		
 		// Update the lastx display if necessary
-		[self testUpdateLastX:FALSE];	
+		[self testUpdateLastX:FALSE];
+		[self testUpdateDispFlags];
 	}
 	
 	// Test if we need to pop up the keyboard here, this can happen if
@@ -467,7 +468,9 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	
 	char lxstr[LASTXBUF_SIZE];
 	// llength - 1 so we know there will be room for at least one null terminator
-	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-1);
+	// Actually -10 now so we make the display of last x smaller so we can make
+	// room for the flags display
+	int len = vartype2string(reg_lastx, lxstr, LASTXBUF_SIZE-10);
 	lxstr[len] = 0;
 	
     // Test if the x register has changed, and if so, redisplay it
@@ -479,6 +482,21 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	}	
 }
 
+- (void)testUpdateDispFlags
+{
+	short f = 0;
+	f |= flags.f.f00;
+	f |= flags.f.f01 << 1;
+	f |= flags.f.f02 << 2;
+	f |= flags.f.f03 << 3;
+	f |= flags.f.f04 << 4;	
+	
+	if (dispflags != f)
+	{
+		dispflags = f;
+		[blitterView annuncNeedsDisplay];
+	}
+}
 
 // *******************************  Timer and key repeat handling *************************
 

@@ -28,6 +28,7 @@
 @synthesize showStatusBar;
 @synthesize autoPrint;
 @synthesize dropFirstClick;
+@synthesize showFlags;
 
 static Settings* settings;
 

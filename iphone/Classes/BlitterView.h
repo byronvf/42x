@@ -28,6 +28,7 @@ extern int cpuCount;
 // in last x as the stack would display it.
 #define LASTXBUF_SIZE 21
 extern char lastxbuf[LASTXBUF_SIZE];
+extern short dispflags;
 
 @interface BlitterView : UIView {
 	

@@ -228,6 +228,11 @@ bool prgmFirstWrite = TRUE;
 	else
 		dispRows = 2;
 	
+	if ([defaults objectForKey:CONFIG_SHOW_FLAGS])
+		[[Settings instance] setShowFlags:[defaults boolForKey:CONFIG_DISP_ROWS]];
+	else
+		 [[Settings instance] setShowFlags:TRUE];	
+	
 	if ([defaults objectForKey:CONFIG_SHOW_LASTX])
 		[[Settings instance] setShowLastX:[defaults boolForKey:CONFIG_SHOW_LASTX]];
 	else
@@ -264,6 +269,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
 	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
 	[defaults setBool:[[Settings instance] dropFirstClick] forKey:CONFIG_DROP_FIRST_CLICK];
+	[defaults setBool:[[Settings instance] showFlags] forKey:CONFIG_SHOW_FLAGS];
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
 	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
