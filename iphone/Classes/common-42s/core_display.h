@@ -71,6 +71,8 @@ extern bool ignore_menu;
 // True if we are overlaying menu labels onto the calc keys, freeing an lcd row
 extern bool menuKeys;
 
+extern bool fuval;
+
 extern void display_t(int);
 extern void display_z(int);
 extern void display_0(int);

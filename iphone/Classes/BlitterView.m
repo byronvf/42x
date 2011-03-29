@@ -389,6 +389,8 @@ short dispflags = 0;
 	}
 	
 	// Draw printer watermark button 
+	if (fuval)
+		CGContextFillRect(ctx, rect);
 	int poff = dispRows < 4 ? 69 : 123;
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
 	UIFont *font = [UIFont systemFontOfSize:13];

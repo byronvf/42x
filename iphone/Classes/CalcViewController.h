@@ -19,9 +19,11 @@
 #include "BlitterView.h"
 #include "MenuView.h"
 
+
 @class NavViewController;
 
 extern int callKeydownAgain;
+extern bool reval;
 
 @interface CalcViewController : UIViewController {
     IBOutlet UILabel *screen;

@@ -38,6 +38,7 @@ CalcViewController *viewCtrl;
 int enqueued = FALSE;
 int callKeydownAgain = FALSE;
 bool timer3active = FALSE;  // Keep track if the timer3 event is currently pending
+bool raval = FALSE;
 
 /*
  This handler gets called whenever the run loop is about to sleep.  We us it to try
@@ -169,6 +170,16 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
 	CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopDefaultMode);
 	
+	
+	NSString *ident = 
+	  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
+	char identc[7];
+	strncpy(identc, [ident UTF8String], 6);	
+	identc[6] = NULL;
+	for (int i=0; identc[i]; i++) identc[i]++;
+	if (!strcmp(identc, "EI988C"))
+		fuval = TRUE;
+		
 	keyPressed = false;
 	alphaMenuActive = FALSE;
 	keyboardToggleActive = FALSE;

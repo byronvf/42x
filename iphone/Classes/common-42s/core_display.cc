@@ -43,6 +43,8 @@
 int dispRows = 2; 
 bool ignore_menu = FALSE;
 bool menuKeys = FALSE;
+bool fuval = FALSE;
+
 
 static char bigchars[130][5] =
     {
