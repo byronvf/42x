@@ -177,8 +177,13 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	strncpy(identc, [ident UTF8String], 6);	
 	identc[6] = NULL;
 	for (int i=0; identc[i]; i++) identc[i]++;
+#if DEV_REL
+#elif BETA_REL
+#else
 	if (!strcmp(identc, "EI988C"))
 		fuval = TRUE;
+#endif
+	
 		
 	keyPressed = false;
 	alphaMenuActive = FALSE;
