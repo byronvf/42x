@@ -40,7 +40,7 @@ static NSString* stateBaseName = @"/Documents/42s.state";
 static FILE *statefile = NULL;
 
 // Persist format version, bumped when there are changes so we can convert
-static const int PERSIST_VERSION = 6;
+static const int PERSIST_VERSION = 7;
 
 // Versions ---- PERSIST_VERION - 42s release version - FREE42_VERSION
 
@@ -50,7 +50,7 @@ static const int PERSIST_VERSION = 6;
 // 5 - 2.3.1  - 13
 // 5 - 2.3.2  - 13
 // 6 - 2.3.3  - 16
-// 7 - 2.4    - 17   Undo stuff
+// 7 - 3.0    - 17   Undo stuff
 
 // Versions before PERSIST_VERSION was added uses FREE42_VERSION 11
 
@@ -307,6 +307,8 @@ bool prgmFirstWrite = TRUE;
 			core_init(1, 12);
 		else if (persistVersion == 4 || persistVersion == 5)
 			core_init(1, 13);
+		else if (persistVersion == 6)
+			core_init(1, 16);
 		else
 			core_init(1, FREE42_VERSION);
 	}
