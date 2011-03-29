@@ -226,7 +226,7 @@ short dispflags = 0;
 		CGContextDrawImage(ctx, CGRectMake(100, -1 + statusBarOffset, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
 	
-		//if (flagGrad)
+	if (flagGrad)
 		CGContextDrawImage(ctx, CGRectMake(120, -2 + statusBarOffset, 30, 20), 
 						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
 	
