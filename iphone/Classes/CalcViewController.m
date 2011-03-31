@@ -180,11 +180,12 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 #if DEV_REL
 #elif BETA_REL
 #else
+#if TARGET_IPHONE_SIMULATOR
+#else
 	if (!strcmp(identc, "EI988C"))
 		fuval = TRUE;
-#endif
-	
-		
+#endif	
+#endif			
 	keyPressed = false;
 	alphaMenuActive = FALSE;
 	keyboardToggleActive = FALSE;
