@@ -2668,7 +2668,7 @@ void hard_reset(int bad_state_file) {
     flags.f.digits_bit1 = 0;
     flags.f.digits_bit0 = 0;
     flags.f.fix_or_all = 1;
-    flags.f.eng_or_all = 0;
+    flags.f.eng_or_all = 1;
     flags.f.grad = 0;
     flags.f.rad = 0;
     flags.f.continuous_on = 0;
