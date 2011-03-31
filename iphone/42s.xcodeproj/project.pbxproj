@@ -585,8 +585,9 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = 42s;
-				SDKROOT = iphonesimulator4.0;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Debug;
 		};
@@ -595,7 +596,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
@@ -612,6 +613,7 @@
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos4.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -624,7 +626,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = BCD_MATH;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DFREE42=1";
 				PREBINDING = NO;
 				PRODUCT_NAME = 42S;
@@ -641,8 +644,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = BCD_MATH;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos4.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -655,8 +660,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = BCD_MATH;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Distribution;
 		};
@@ -682,6 +689,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos4.0;
 			};
 			name = Distribution;
 		};
