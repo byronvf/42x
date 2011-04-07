@@ -53,3 +53,6 @@ TAGS$
 ^palmos/shell.rcp
 ^palmos/shell.ro
 ^palmos/symlinks
+
+^iphone/42s.xcodeproj/project.xcworkspace/*
+^iphone/42s.xcodeproj/xcuserdata/*
