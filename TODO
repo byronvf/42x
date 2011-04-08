@@ -1,3 +1,35 @@
+iPhone version: the App Store build is built using the 3.0 SDK, in order to be
+compatible with the widest possible variety of devices. This works, and even
+the high-res icon and skins work on the retina display, but the app doesn't
+multi-task. Is it possible to support multitasking while building with an old
+SDK?
+
+Android version: the auto-repeat code appears to be broken; it causes lots of
+spurious keystrokes. This is easily reproducible even in the simulator.
+
+Windows version: the "Calculator Key" option should probably set
+\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AppKey\18\ShellExecute,
+not \HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AppKey\18\ShellExecute.
+Easy enough to fix, but make sure that the new code restores the
+HKEY_LOCAL_MACHINE key so that people won't have to use regedit to get rid of
+the Free42 mapping!
+
+Another Windows "Calculator Key" issue: it doesn't seem to work in multi-
+language installs. Some other registry key overriding the obvious one, it
+seems.
+
+Pocket PC version: add options to hide the title and menu bars.
+
+Windows version: after switching windows using Alt-Tab, sometimes Free42
+stops responding to the keyboard. Maybe it sees alt-down and then never the
+alt-up?
+UPDATE: My diagnosis appears to be correct. Also note that the problem
+appears to be 100% reproducible in Windows 7, and that V41 and XP Paint are
+similarly affected (and presumably anything else that uses the classic
+menu bar as well).
+Sounds like a Windows bug, but I guess the onus will be on me to come up
+with a workaround.
+
 Mac version: implement print-out window.
 Modify the file selection dialogs so they have a file type menu, and add
 extensions to file names automagically when appropriate.

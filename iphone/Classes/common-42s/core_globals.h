@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2010  Thomas Okken
+ * Copyright (C) 2004-2011  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -536,6 +536,9 @@ extern int remove_program_catalog;
 extern bool bin_dec_mode_switch;
 extern bool state_file_has_old_bcd;
 
+#ifdef ANDROID
+void reinitialize_globals();
+#endif
 
 /*********************/
 /* Utility functions */

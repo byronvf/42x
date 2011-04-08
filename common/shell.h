@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2010  Thomas Okken
+ * Copyright (C) 2004-2011  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -206,7 +206,7 @@ shell_bcd_table_struct *shell_put_bcd_table(shell_bcd_table_struct *bcdtab,
 					    uint4 size) SHELL1_SECT;
 void shell_release_bcd_table(shell_bcd_table_struct *bcdtab) SHELL1_SECT;
 
-#ifdef IPHONE
+#if defined(ANDROID) || defined(IPHONE)
 /* shell_get_acceleration()
  * shell_get_location()
  * shell_get_heading()
