@@ -136,7 +136,7 @@ void shell_print(const char *text, int length,
 	int numVertPixel = [[self getBuff] length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
 	numVertPixel += PRINT_YOFFSET;
- 	numVertPixel < vsize ? vsize : numVertPixel;
+ 	numVertPixel = MAX(vsize, numVertPixel);
  	[scrollView setContentSize:CGSizeMake(hsize, numVertPixel)];
 			
 	// if this is new printing output, then we want to position the print view
