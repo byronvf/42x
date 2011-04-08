@@ -341,7 +341,7 @@ bool prgmFirstWrite = TRUE;
 		NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"wav"];
 		OSStatus status = AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &[Settings instance]->soundIDs[i]);
 		if (status)
-			NSLog(@"error loading sound:  %s", name);
+			NSLog(@"error loading sound:  %@", name);
 	}
 }
 
