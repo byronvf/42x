@@ -407,7 +407,7 @@
 #define CMD_RCLALM      365
 #define CMD_SWPT        366
 
-#define CMD_UNDO		367
+#define CMD_UNDO        367
 #define CMD_REDO        368
 
 #define CMD_SENTINEL    369
