@@ -344,9 +344,12 @@ short dispflags = 0;
 	}
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
-	CGSize size = {2,2};
-	CGContextSetShadow(ctx, size, 0);
-
+	
+    //CGSize offset = {1,0};
+	//CGContextSetShadow(ctx, offset, 0);
+    //CGColorRef blackColor = [[UIColor blackColor] CGColor];    
+    //CGContextSetShadowWithColor(ctx, offset, 0, blackColor);
+                                
 	// DispRows of 4 or 7 means that we are displaying in program mode with a largeLCD
 	if ((rect.origin.y < ASTAT_HEIGHT + statusBarOffset) && self.dispAnnunc)
 	{
