@@ -68,8 +68,8 @@
 		ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED5F1AC70FBCB72A00ABACC2 /* glow.png */; };
 		ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = ED69AAD60F13F6A8001B6C1A /* COPYING */; };
 		ED82C6951013DC9800803FB3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED82C6941013DC9800803FB3 /* UIKit.framework */; };
+		ED8B3EF2134F5757009DF1AC /* core_commands7.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED8B3EF1134F5757009DF1AC /* core_commands7.cc */; };
 		ED8F9FFD1225EC7400B2DAAC /* core_tables.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED8F9FFC1225EC7400B2DAAC /* core_tables.cc */; };
-		ED8FA009122A5D6800B2DAAC /* core_commands7.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED8FA007122A5D6800B2DAAC /* core_commands7.cc */; };
 		ED8FA017122A5E7700B2DAAC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED8FA016122A5E7700B2DAAC /* CoreLocation.framework */; };
 		EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */; };
 		EDA9BBCE0EB49EEF00D30EA2 /* PrintViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA9BBCD0EB49EEF00D30EA2 /* PrintViewController.m */; };
@@ -185,10 +185,10 @@
 		ED5F1AC70FBCB72A00ABACC2 /* glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glow.png; sourceTree = "<group>"; };
 		ED69AAD60F13F6A8001B6C1A /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		ED82C6941013DC9800803FB3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		ED8B3EF1134F5757009DF1AC /* core_commands7.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands7.cc; path = "Classes/common-42s/core_commands7.cc"; sourceTree = "<group>"; };
 		ED8F9FFB1225EC5100B2DAAC /* core_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_tables.h; path = ../common/core_tables.h; sourceTree = SOURCE_ROOT; };
 		ED8F9FFC1225EC7400B2DAAC /* core_tables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_tables.cc; path = ../common/core_tables.cc; sourceTree = SOURCE_ROOT; };
 		ED8FA0021225ED8600B2DAAC /* core_commands1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands1.h; path = ../common/core_commands1.h; sourceTree = SOURCE_ROOT; };
-		ED8FA007122A5D6800B2DAAC /* core_commands7.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands7.cc; path = ../common/core_commands7.cc; sourceTree = SOURCE_ROOT; };
 		ED8FA008122A5D6800B2DAAC /* core_commands7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_commands7.h; path = ../common/core_commands7.h; sourceTree = SOURCE_ROOT; };
 		ED8FA016122A5E7700B2DAAC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -346,6 +346,7 @@
 		ED36E9731093D31000DAA444 /* Common42s */ = {
 			isa = PBXGroup;
 			children = (
+				ED8B3EF1134F5757009DF1AC /* core_commands7.cc */,
 				ED5E2E4910BF87D2006F9D9F /* undo.cc */,
 				ED5E2E4A10BF87D2006F9D9F /* undo.h */,
 				ED50C0191095567500C7D722 /* core_globals.h */,
@@ -366,7 +367,6 @@
 		ED3DF9C10E52E691000044AF /* CommonBase */ = {
 			isa = PBXGroup;
 			children = (
-				ED8FA007122A5D6800B2DAAC /* core_commands7.cc */,
 				ED8FA008122A5D6800B2DAAC /* core_commands7.h */,
 				ED8FA0021225ED8600B2DAAC /* core_commands1.h */,
 				ED8F9FFC1225EC7400B2DAAC /* core_tables.cc */,
@@ -560,7 +560,7 @@
 				ED36E9881093D43800DAA444 /* core_main.cc in Sources */,
 				ED5E2E4B10BF87D2006F9D9F /* undo.cc in Sources */,
 				ED8F9FFD1225EC7400B2DAAC /* core_tables.cc in Sources */,
-				ED8FA009122A5D6800B2DAAC /* core_commands7.cc in Sources */,
+				ED8B3EF2134F5757009DF1AC /* core_commands7.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

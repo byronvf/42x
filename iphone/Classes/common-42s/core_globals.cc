@@ -3121,6 +3121,19 @@ int big_stack_verify() {
 	return 0;
 }
 
+void push_var_on_stack(vartype *var)
+{
+    if (flags.f.f32)
+	shift_big_stack_up();
+    else
+	free_vartype(reg_t);
+    
+    reg_t = reg_z;
+    reg_z = reg_y;
+    reg_y = reg_x;
+    reg_x = var;
+}
+      
 void shift_big_stack_up() {
     stacksize++;
     if (stacksize > 4) {

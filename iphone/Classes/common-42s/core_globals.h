@@ -283,6 +283,7 @@ void shift_big_stack_up() GLOBALS_SECT;
 void shift_big_stack_down() GLOBALS_SECT;
 void clean_stack_item_pool() GLOBALS_SECT;
 int big_stack_verify() GLOBALS_SECT;
+void push_var_on_stack(vartype *var) GLOBALS_SECT;
 #endif
 
 /******************/
