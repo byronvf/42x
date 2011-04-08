@@ -1,8 +1,0 @@
-*.d
-*.prc
-shell
-shell-sections.ld
-shell-sections.s
-shell.rcp
-shell.ro
-symlinks
