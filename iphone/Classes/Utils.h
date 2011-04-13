@@ -28,3 +28,5 @@ void drawFastBlitDataToContext(CGContextRef ctx,   // Context to blit to
 							   int height,         // pixel height of data in the data buffer.
 							   int byte_width,     // number of bytes per row
                                int offset);
+void hp2utf8(char* src, int slen, char* dst, int dlen);
+

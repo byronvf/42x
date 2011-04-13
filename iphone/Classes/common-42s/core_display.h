@@ -73,6 +73,15 @@ extern bool menuKeys;
 
 extern bool fuval;
 
+#define MENU_ITEM_CHAR_LENGTH 5  // max chars for menu items
+struct menu_item {
+    char chars[MENU_ITEM_CHAR_LENGTH];
+    int length;
+    bool highlight;
+};
+extern struct menu_item menu_items[6];
+
+    
 extern void display_t(int);
 extern void display_z(int);
 extern void display_0(int);

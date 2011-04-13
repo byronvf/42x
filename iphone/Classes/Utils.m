@@ -18,6 +18,189 @@
 #include <math.h>
 #import "Utils.h"
 
+// TODO make safe against overwriting!!!
+
+void hp2utf8(char* src, int slen, char* dst, int dlen)
+{
+    int idx = 0;
+    int scnt = 0;
+    for (unsigned char *c = (unsigned char*)src; scnt < slen && idx < dlen-1; c++, scnt++)
+    {
+        // According to HP manual, characters greater then 129 are treated like 
+        // characters beginning at 2.
+        if (*c > 129) *c -= 128;
+        
+        switch (*c)
+        {
+            case 0: // divide
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0xB7;
+                break;
+            case 1: // multiply (cross x)
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x97;
+                break;                
+            case 2: // square root
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0x9A;
+                break;                
+            case 3: // Integral symbol
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0xAB;
+                break;                
+            case 4: // Delete symbol (greyed box)
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x90;
+                dst[idx++] = 0xA5;
+                break;                
+            case 5: // Summation
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0x91;
+                break;                
+            case 6: // right pointer (program running symbol)
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x96;
+                dst[idx++] = 0xBA;
+                break;                
+            case 7: // product
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0x8F;
+                break;                
+            case 9: // less than equal to
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x89;
+                dst[idx++] = 0xA4;
+                break;                
+            case 10: // line feed
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x90;
+                dst[idx++] = 0x8A;
+                break;                
+            case 11: // greater than equal to
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x89;
+                dst[idx++] = 0xA5;
+                break;                
+            case 12: // not equal
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x89;
+                dst[idx++] = 0xA0;
+                break;                
+            case 13: // return
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0xB5;
+                break;                
+            case 14: // down arrow
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0x93;
+                break;                
+            case 15: // right arrow
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0x92;
+                break;                
+            case 16: // left arrow
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0x90;
+                break;                
+            case 17: // micro
+                dst[idx++] = 0xC2;
+                dst[idx++] = 0xB5;
+                break;
+            case 18: // Pound Currency
+                dst[idx++] = 0xC2;
+                dst[idx++] = 0xA3;
+                break;                
+            case 19: // left arrow
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0x90;
+                break;                
+            case 20: // A with hat
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x85;
+                break;                
+            case 21: // N with squiggle
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x91;
+                break;                
+            case 22: // A omlaut
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x84;
+                break;                
+            case 23: // Angle
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0xA1;
+                break;                
+            case 24: // The exponent character
+                dst[idx++] = 'e'; 
+                break;
+            case 25: // funky symbol... (not sure what this is)
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x86;
+                break;                
+            case 26: // The continuation char, indicates number too long for buffer
+                dst[idx++] = '+'; 
+                break;
+            case 27: // E/C symbol, but this is actually E/M
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x90;
+                dst[idx++] = 0x99;
+                break;
+            case 28: // O omlaut
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x96;
+                break;
+            case 29: // U omlaut
+                dst[idx++] = 0xC3;
+                dst[idx++] = 0x9C;
+                break;
+            case 30: // Delete symbol (candidate for replacement)
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x90;
+                dst[idx++] = 0xA5;
+                break;                
+            case 31: // Bullet
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x88;
+                dst[idx++] = 0x99;
+//                dst[idx++] = 0x80;
+//                dst[idx++] = 0xA2;
+                break;                
+            case 94: // up arrow
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x86;
+                dst[idx++] = 0x91;
+                break;
+            case 127: // Append character
+                dst[idx++] = 0xE2;
+                dst[idx++] = 0x94;
+                dst[idx++] = 0xA3;
+                break;
+            case 128: // Actually a left shifted colon.. 
+                dst[idx++] = ':';
+                break;
+            case 129: // Actuall a three progned shape, cant find it though (candidate replace)
+                dst[idx++] = 'Y';
+                break;
+            default:
+                dst[idx++] = *c;
+                break;
+        }
+    }
+    dst[idx] = 0; // null terminate
+}
+
+
+
 /**
  * Draw a bitmap image in data to a CGContext. data points to a one bit per pixel data buffer
  * which is blitted to the context.  We us this to blit Free42's display bit image to 

@@ -45,6 +45,7 @@ bool ignore_menu = FALSE;
 bool menuKeys = FALSE;
 bool fuval = FALSE;
 
+struct menu_item menu_items[6];
 
 static char bigchars[130][5] =
     {
@@ -914,6 +915,14 @@ static void draw_key(int n, int highlight, int hide_meta,
 	}
 	swidth += cw;
     }
+    
+    // Copy characters into the menu buffer so we can acces them when
+    // displaying the overlay menu
+    assert (n < 6);
+    for (int i=0; i < MIN(length, MENU_ITEM_CHAR_LENGTH); i++)
+        menu_items[n].chars[i] = s[i];
+    menu_items[n].length = MIN(length, MENU_ITEM_CHAR_LENGTH);
+    menu_items[n].highlight = highlight;
 
     fill_rect(n * 22, menuRow + 1, 21, 7, 1);
 	

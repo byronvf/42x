@@ -278,33 +278,7 @@ short dispflags = 0;
 
 	// Quick and dirty character conversion... lxbufsize - so we alway have room for
 	// a 4 byte char and a null terminator.
-	int idx = 0;
-	for (char *c = lastxbuf; *c && idx < lxbufsize - 4; c++)
-	{
-		// Look for all chars not in the standard ascii printable set.
-		if (*c >= ' ' &&  *c <= '~')
-			lxstr[idx++] = *c;
-		else if (*c == 24) // The exponent character
-			lxstr[idx++] = 'e'; 
-		else if (*c == 26) // The continuation char, indicates number too long for buffer
-			lxstr[idx++] = '+'; 
-		else if (*c == 23) // The angle sign glyph
-		{
-			lxstr[idx++] = 0xE2;
-			lxstr[idx++] = 0x88;
-			lxstr[idx++] = 0xA0;
-		}
-		else
-		{
-			// All other characters we can't convert are displayed as a box
-			// glyph, however, this shouldn't happen
-			lxstr[idx++] = 0xE2;
-			lxstr[idx++] = 0x97;
-			lxstr[idx++] = 0xBB;
-		}
-	}
-	lxstr[idx] = 0; // null terminate
-	
+    hp2utf8(lastxbuf, strlen(lastxbuf), lxstr, lxbufsize - 4);
 	NSString *lval = [[NSString alloc] initWithUTF8String:lxstr];
 	NSString *wprefix = @"L ";
 

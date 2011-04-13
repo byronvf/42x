@@ -483,6 +483,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		
 	if (![[Settings instance] showLastX]) return;
 	
+    //TODO Clean up LASTXBUF_SIZE to make cleaner and more dynamic.
+    
 	char lxstr[LASTXBUF_SIZE];
 	// llength - 1 so we know there will be room for at least one null terminator
 	// Actually -10 now so we make the display of last x smaller so we can make
@@ -775,45 +777,45 @@ void shell_beeper(int frequency, int duration)
 }
 
 - (void)dealloc {
-	[screen dealloc];
-	[b01 dealloc];
-	[b02 dealloc];
-	[b03 dealloc];
-	[b04 dealloc];
-	[b05 dealloc];
-	[b06 dealloc];
-	[b07 dealloc];
-	[b08 dealloc];
-	[b09 dealloc];
-	[b10 dealloc];
-	[b11 dealloc];
-	[b12 dealloc];
-	[b13 dealloc];
-	[b14 dealloc];
-	[b15 dealloc];
-	[b16 dealloc];
-	[b17 dealloc];
-	[b18 dealloc];
-	[b19 dealloc];
-	[b20 dealloc];
-	[b21 dealloc];
-	[b22 dealloc];
-	[b23 dealloc];
-	[b24 dealloc];
-	[b25 dealloc];
-	[b26 dealloc];
-	[b27 dealloc];
-	[b28 dealloc];
-	[b29 dealloc];
-	[b30 dealloc];
-	[b31 dealloc];
-	[b32 dealloc];
-	[b33 dealloc];
-	[b34 dealloc];
-	[b35 dealloc];
-	[b36 dealloc];
-	[b37 dealloc];
-	[blitterView dealloc];
+	[screen release];
+	[b01 release];
+	[b02 release];
+	[b03 release];
+	[b04 release];
+	[b05 release];
+	[b06 release];
+	[b07 release];
+	[b08 release];
+	[b09 release];
+	[b10 release];
+	[b11 release];
+	[b12 release];
+	[b13 release];
+	[b14 release];
+	[b15 release];
+	[b16 release];
+	[b17 release];
+	[b18 release];
+	[b19 release];
+	[b20 release];
+	[b21 release];
+	[b22 release];
+	[b23 release];
+	[b24 release];
+	[b25 release];
+	[b26 release];
+	[b27 release];
+	[b28 release];
+	[b29 release];
+	[b30 release];
+	[b31 release];
+	[b32 release];
+	[b33 release];
+	[b34 release];
+	[b35 release];
+	[b36 release];
+	[b37 release];
+	[blitterView release];
 	[super dealloc];
 }
 
