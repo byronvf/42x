@@ -1478,21 +1478,13 @@ static int fcn_cat[] = {
     CMD_PRSTK,    CMD_PRUSR,     CMD_PRV,      CMD_PRX,        CMD_PRSIGMA, CMD_PSE,
     CMD_PUTM,     CMD_PWRF,      CMD_QUIET,    CMD_RAD,        CMD_RAN,     CMD_RCL,
     CMD_RCL_ADD,  CMD_RCL_SUB,   CMD_RCL_MUL,  CMD_RCL_DIV,    CMD_RCLEL,   CMD_RCLIJ,
-    CMD_RDXCOMMA, CMD_RDXDOT,    CMD_REALRES,  CMD_REAL_T,     CMD_RECT,
-#ifdef BIGSTACK
-    CMD_REDO,
-#endif
-    CMD_RND,
+    CMD_RDXCOMMA, CMD_RDXDOT,    CMD_REALRES,  CMD_REAL_T,     CMD_RECT,    CMD_RND,
     CMD_RNRM,     CMD_ROTXY,     CMD_RSUM,     CMD_RTN,        CMD_SWAP_R,  CMD_RUP,
     CMD_RDN,      CMD_SCI,       CMD_SDEV,     CMD_SEED,       CMD_SF,      CMD_SIGN,
     CMD_SIN,      CMD_SINH,      CMD_SIZE,     CMD_SLOPE,      CMD_SOLVE,   CMD_SQRT,
     CMD_SST,      CMD_STO,       CMD_STO_ADD,  CMD_STO_SUB,    CMD_STO_MUL, CMD_STO_DIV,
     CMD_STOEL,    CMD_STOIJ,     CMD_STOP,     CMD_STR_T,      CMD_SUM,     CMD_TAN,
-    CMD_TANH,     CMD_TONE,      CMD_TRACE,    CMD_TRANS,
-#ifdef BIGSTACK
-    CMD_UNDO,
-#endif
-    CMD_UVEC,    CMD_VARMENU,
+    CMD_TANH,     CMD_TONE,      CMD_TRACE,    CMD_TRANS,      CMD_UVEC,    CMD_VARMENU,
     CMD_VIEW,     CMD_WMEAN,     CMD_WRAP,     CMD_X_SWAP,     CMD_SWAP,    CMD_X_LT_0,
     CMD_X_LT_Y,   CMD_X_LE_0,    CMD_X_LE_Y,   CMD_X_EQ_0,     CMD_X_EQ_Y,  CMD_X_NE_0,
     CMD_X_NE_Y,   CMD_X_GT_0,    CMD_X_GT_Y,   CMD_X_GE_0,     CMD_X_GE_Y,  CMD_XEQ,
@@ -1512,6 +1504,8 @@ typedef struct {
 static extension_struct extensions[] = {
     { CMD_OPENF,   CMD_DELP,    &core_settings.enable_ext_copan    },
     { CMD_DROP,    CMD_DROP,    &core_settings.enable_ext_bigstack },
+    { CMD_UNDO,    CMD_UNDO,    &core_settings.enable_ext_bigstack },
+    { CMD_REDO,    CMD_REDO,    &core_settings.enable_ext_bigstack },
     { CMD_ACCEL,   CMD_ACCEL,   &core_settings.enable_ext_accel    },
     { CMD_LOCAT,   CMD_LOCAT,   &core_settings.enable_ext_locat    },
     { CMD_HEADING, CMD_HEADING, &core_settings.enable_ext_heading  },
