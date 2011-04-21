@@ -589,6 +589,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = 42s;
 				SDKROOT = iphoneos;
@@ -614,6 +615,7 @@
 					BCD_MATH,
 				);
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -691,6 +693,7 @@
 					BCD_MATH,
 				);
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
