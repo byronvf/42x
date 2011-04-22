@@ -54,5 +54,5 @@ TAGS$
 ^palmos/shell.ro
 ^palmos/symlinks
 
-^iphone/42s.xcodeproj/project.xcworkspace/*
-^iphone/42s.xcodeproj/xcuserdata/*
+^42s.xcodeproj/project.xcworkspace/*
+^42s.xcodeproj/xcuserdata/*
