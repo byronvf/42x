@@ -224,7 +224,7 @@ double log10(double x) PHLOAT_SECT;
  * Version 16: 1.4.63 time and date format flags
  */
 #define FREE42_MAGIC 0x466b3432
-#define FREE42_VERSION 16
+#define FREE42_VERSION 17
 
 
 #endif
