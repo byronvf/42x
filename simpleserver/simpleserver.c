@@ -30,7 +30,7 @@
 #include <netinet/in.h>
 
 #ifdef FREE42
-#include "../../common/core_main.h"
+#include "../free42/common/core_main.h"
 #endif
 
 /* TODO:

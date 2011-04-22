@@ -25,9 +25,7 @@
 #include "core_commands5.h"
 #include "core_commands6.h"
 #include "core_commands7.h"
-#ifdef BIGSTACK
-#include "undo.h"
-#endif
+
 
 #ifndef COPAN
 #define docmd_openf docmd_xrom
@@ -423,10 +421,7 @@ static const command_spec cmd_array[] =
 
     /* Byron Foster's DROP for Bigstack */
     { /* DROP */        "DROP",                 4, docmd_drop,        0x0000a271, ARG_NONE,  FLAG_NONE },
-#ifdef BIGSTACK
-    { /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE },
-    { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE },
-#endif
+
     /* Accelerometer, GPS, and compass support */
     { /* ACCEL */       "ACCEL",                5, docmd_accel,       0x0000a7cf, ARG_NONE,  FLAG_NONE },
     { /* LOCAT */       "LOCAT",                5, docmd_locat,       0x0000a7d0, ARG_NONE,  FLAG_NONE },
