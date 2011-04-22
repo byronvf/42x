@@ -140,17 +140,36 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     else if (v->type == TYPE_REAL)
     {        
         phloat f = ((vartype_real *) v)->x;
+        
+        // adjust displaying smaller fractional values without an exponent
+        // I think that 42S's display should have done it the same way.
+        if (f <= -0.01 && f > -1.0)
+        {
+            Phloat adj = pow(10, length-1); 
+            f = floor(f*adj);
+            f = f/adj;
+        }
+        else if (f >= 0.01 && f < 1.0)
+        {
+            Phloat adj = pow(10, length); 
+            f = floor(f*adj);
+            f = f/adj;
+        }
+        
         len = phloat2string(f, vstr, length,
                              1, // Decimal mode
                              length,
                              3, // Display mode all
                              FALSE); // no decimal seperator
-        if (vstr[len-1] == CONT_CHAR && (f > 10000 || f < 0.01)
-                                     && (f < -10000 || f > -.01))
+        
+        // If the converted string 
+        if (vstr[len-1] == CONT_CHAR && (f >= 100000 || f <= -10000 
+                                     || (f < 0.01 && f > -0.01)))
         {            
             int digits = length - 4;
-            if (f < 0) digits--;
-            if (f > 9999999999.0) digits--;
+            if (f < 0) digits--; // make room for the minus sign
+            if (fabs(f) < 1.0) digits--; // make room for a negative exponent
+            if (f >= 10000000000.0) digits--; //make room for a double digit exp
             
             // doesn't fit.. switch to SCI mode
             len = phloat2string(f, vstr, length,
