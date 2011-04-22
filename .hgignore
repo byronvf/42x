@@ -56,3 +56,6 @@ TAGS$
 
 ^42s.xcodeproj/project.xcworkspace/*
 ^42s.xcodeproj/xcuserdata/*
+
+^simpleserver/icon2c.dSYM
+^simpleserver/icon2c
