@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Free42 -- an HP-42S calculator simulator
- * Copyright (C) 2004-2010  Thomas Okken
+ * Copyright (C) 2004-2011  Thomas Okken
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2,
@@ -25,6 +25,7 @@
 #include "core_variables.h"
 #include "core_keydown.h"
 #include "shell.h"
+
 
 /********************/
 /* HP-42S font data */
@@ -1074,9 +1075,8 @@ void display_prgm_line(int row, int line_offset) {
 	    if (tmpline != 0) {
 		tmppc = line2pc(tmpline);
 		get_next_command(&tmppc, &cmd, &arg, 0);
-	    }		 
+	    }
 	}
-	
     } else {
 	if (line_offset == 0) {
 	    /* Nothing to do */
@@ -1283,7 +1283,7 @@ void display_error(int error, int print) {
 	print_text(errors[error].text, errors[error].length, 1);
 }
 
-void display_command(int row) {	
+void display_command(int row) {
     char buf[22];
     int bufptr = 0;
     // Make sure we are called only when we have a valid command
@@ -2139,7 +2139,7 @@ void redisplay() {
 		}
 	    }
 	} else {
-	    if (avail_rows == 1) {		  
+	    if (avail_rows == 1) {
 		if (!flags.f.message)
 		    display_prgm_line(0, 0);
 	    } else if (avail_rows == 2) {
@@ -2402,6 +2402,7 @@ int command2buf(char *buf, int len, int cmd, const arg_struct *arg) {
 	string2buf(buf, len, &bufptr, "ASSIGN ", 7);
     else
 	string2buf(buf, len, &bufptr, cmdspec->name, cmdspec->name_length);
+
     if (cmd == CMD_XROM) {
 	int n = xrom_arg & 0x7FF;
 	int rom = n >> 6;

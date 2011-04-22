@@ -2208,7 +2208,7 @@ static bool read_int(int *n) {
 static bool write_int(int n) {
     return shell_write_saved_state(&n, sizeof(int));
 }
-		
+
 static bool read_int4(int4 *n) {
     return shell_read_saved_state(n, sizeof(int4)) == sizeof(int4);
 }

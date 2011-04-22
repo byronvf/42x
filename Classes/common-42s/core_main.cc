@@ -390,7 +390,7 @@ int core_keyup() {
 	pending_command = CMD_NONE;
 	return 0;
     }
-	
+
     if (pending_command == CMD_NONE)
 	return mode_running || keybuf_head != keybuf_tail;
 
@@ -442,7 +442,7 @@ int core_keyup() {
 	     */
 	    input_length = 0;
     }
-	
+
     if (pending_command == CMD_VMEXEC) {
 	string_copy(reg_alpha, &reg_alpha_length,
 		    pending_command_arg.val.text, pending_command_arg.length);
