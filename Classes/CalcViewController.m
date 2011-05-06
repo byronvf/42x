@@ -255,7 +255,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// the special characters.  This is better for the user for
 			// easy access to special 42s chars while the iphone keyboard is up				
 			
-            set_menu(MENULEVEL_COMMAND, MENU_ALPHA2);
+            set_menu(MENULEVEL_ALPHA, MENU_ALPHA2);
             redisplay();
 
 			[textEntryField becomeFirstResponder];
