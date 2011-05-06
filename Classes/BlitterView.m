@@ -828,12 +828,14 @@ char cbuf[30];
 
 - (void)alertView: (UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	if (buttonIndex == 0)
+	if (buttonIndex == 0)  // Shake event
 	{
 		//docmd_clst(NULL);
 		//mode_number_entry = FALSE;
 		//redisplay();
 		pending_command = CMD_CLST;
+        flags.f.message = 0;
+        flags.f.two_line_message = 0;
 		core_keyup();
 		
 	}
