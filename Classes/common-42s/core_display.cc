@@ -534,8 +534,9 @@ static int catalogmenu_rows[5];
 static int catalogmenu_row[5];
 static int catalogmenu_item[5][6];
 
-static int custommenu_length[3][6];
-static char custommenu_label[3][6][7];
+// removed static, Need access in MainMenu for soft menu variable display
+int custommenu_length[3][6];
+char custommenu_label[3][6][7];
 
 static arg_struct progmenu_arg[9];
 static int progmenu_is_gto[9];

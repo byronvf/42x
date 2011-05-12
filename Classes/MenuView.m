@@ -74,6 +74,8 @@ extern int dispRows;
             case MENU_ALPHA_MISC2:
 			case MENU_STAT_CFIT:
             case MENU_BASE_LOGIC:				
+            case MENU_PGM_XCOMP0:
+            case MENU_PGM_XCOMPY:
 				
             return TRUE;
 		}
@@ -192,32 +194,62 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 
 - (void) superscript: (CGContextRef)ctx  key:(int)i
 {
-    const int dispsize = 7;   
+    const int dispsize = 7; // number of characters to display for menu superscript
+    int length = 0;
+    const char* text = NULL;
     
     int catsect = get_cat_section();
     if (catsect == CATSECT_VARS_ONLY || 
-        (catsect == CATSECT_PGM_SOLVE && mode_appmenu == MENU_VARMENU) ||
-        (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_VARMENU) ||
         catsect == CATSECT_CPX ||
         catsect == CATSECT_REAL ||
         catsect == CATSECT_MAT)
     {
-        int length = 0;
-        char* text = NULL;
-        
-        if (mode_appmenu == MENU_VARMENU)
+        int itemindex = get_cat_item(i);
+        length = vars[itemindex].length;
+        text = vars[itemindex].name;
+    }
+    else if ((catsect == CATSECT_PGM_SOLVE && mode_appmenu == MENU_VARMENU) ||
+        (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_VARMENU))
+    {
+        int itemindex = find_menu_key(i+1);
+        length = varmenu_labellength[itemindex];
+        text = varmenu_labeltext[itemindex];
+    }
+    else if (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_INTEG_PARAMS)
+    {
+        switch (i)
         {
-            int itemindex = find_menu_key(i+1);
-            length = varmenu_labellength[itemindex];
-            text = varmenu_labeltext[itemindex];
-        }
-        else
-        {
-            int itemindex = get_cat_item(i);
-            length = vars[itemindex].length;
-            text = vars[itemindex].name;
-        }
-        
+            case 0:
+                text = "LLIM";
+                length = 4;
+                break;
+            case 1:
+                text = "ULIM";
+                length = 4;
+                break;
+            case 2:
+                text = "ACC";
+                length = 3;
+                break;
+            
+        }    
+    }
+    else if (mode_plainmenu >= MENU_CUSTOM1 && mode_plainmenu <= MENU_CUSTOM3)
+    {
+        int r = mode_plainmenu - MENU_CUSTOM1;
+        length = custommenu_length[r][i];
+        text = custommenu_label[r][i];
+        int prgm;
+        int4 pc;
+        // If we find the label in the global program labels, then 
+        // the custom menu will always execute the program when key is pressed, so we 
+        // don't want to show a variable value.
+        if (find_global_label(text, length, &prgm, &pc))
+            length = 0; 
+    }    
+    
+    if (length != 0)
+    {
         vartype *v = recall_var(text, length); 
         if (v != NULL)
         {
@@ -257,7 +289,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	
 	// 136 - size in bytes of one row.
 	// 17*2 - absorb a couple of pixel rows	
-	const char* menuBuff = calcViewController.displayBuff + dispRows*136 + 17*2;
+	//const char* menuBuff = calcViewController.displayBuff + dispRows*136 + 17*2;
 	
 	// 32 - vert pixel offset to begin drawing.
 	// 5  - pixel height of display
@@ -268,7 +300,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	int horzoff = 14;	
 	for (int i=0; i<6; i++)
 	{
-        if (menu_items[i].length > 0)
+        if (menu_items[i].length > 0 && (mode_appmenu != MENU_INTEG_PARAMS || i < 3 || i == 5))
         {
             if (menu_items[i].highlight)
                 CGContextSetRGBFillColor(ctx, 0.50, 1.0, 0.50, 1.0);

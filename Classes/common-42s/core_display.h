@@ -88,6 +88,11 @@ extern void display_0(int);
 extern void display_1(int);
 extern void large_display_prgm_line(int row, int line_offset, 
 									int line_disp_offset, bool dispGoose);
+
+// Need access in MainMenu for soft menu variable display
+extern int custommenu_length[3][6];
+extern char custommenu_label[3][6][7];
+
 #else
 #define MAX_DISPLAY_ROWS 2
 #endif
