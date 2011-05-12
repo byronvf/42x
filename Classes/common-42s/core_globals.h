@@ -284,6 +284,7 @@ void shift_big_stack_down() GLOBALS_SECT;
 void clean_stack_item_pool() GLOBALS_SECT;
 int big_stack_verify() GLOBALS_SECT;
 void push_var_on_stack(vartype *var) GLOBALS_SECT;
+void pop_var_off_stack() GLOBALS_SECT;
 #endif
 
 /******************/
@@ -576,6 +577,8 @@ void hard_reset(int bad_state_file) GLOBALS_SECT;
 bool read_arg(arg_struct *arg, bool old) GLOBALS_SECT;
 bool read_phloat(phloat *d) GLOBALS_SECT;
 bool write_phloat(phloat d) GLOBALS_SECT;
+
+int find_global_label(const char *name, int namelen, int *prgm, int4 *pc);
 
 #endif
 

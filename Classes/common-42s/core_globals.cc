@@ -2127,10 +2127,10 @@ int4 find_local_label(const arg_struct *arg) {
     return -2;
 }
 
-int find_global_label(const arg_struct *arg, int *prgm, int4 *pc) {
+// Created a wrapper method to this function so it is easier to call from 
+// MenuView to determine if we should display variable values for a cusomt menu
+int find_global_label(const char *name, int namelen, int *prgm, int4 *pc) {
     int i;
-    const char *name = arg->val.text;
-    int namelen = arg->length;
     for (i = labels_count - 1; i >= 0; i--) {
 	int j;
 	char *labelname;
@@ -2146,6 +2146,11 @@ int find_global_label(const arg_struct *arg, int *prgm, int4 *pc) {
 	nomatch:;
     }
     return 0;
+}
+
+// Wrapper method for above find_global_label
+int find_global_label(const arg_struct *arg, int *prgm, int4 *pc) {
+    return find_global_label(arg->val.text, arg->length, prgm, pc);
 }
 
 int push_rtn_addr(int prgm, int4 pc) {
@@ -3132,6 +3137,18 @@ void push_var_on_stack(vartype *var)
     reg_z = reg_y;
     reg_y = reg_x;
     reg_x = var;
+}
+        
+void pop_var_off_stack()
+{
+    free_vartype(reg_x);
+    reg_x = reg_y;
+    reg_y = reg_z;
+    reg_z = reg_t;
+    if (flags.f.f32)
+        shift_big_stack_down();
+    else
+        reg_t = dup_vartype(reg_t);    
 }
       
 void shift_big_stack_up() {
