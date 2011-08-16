@@ -1,11 +1,39 @@
+iPhone version: add option to disable key click. Hmm, what about the PalmOS and
+Pocket PC versions? There have also been requests for 'vibrate' feedback for
+key presses. I hate that myself but it takes all sorts. :-)
+
+Android version:
+* Add android:installLocation property to the manifest, to support installing
+  the app on external memory (SD card) under Android 2.2 or later. See
+  http://developer.android.com/guide/appendix/install-location.html
+* Add an option to display skins scaled to their maximum size while maintaining
+  aspect ratio, or to display skins without any scaling.
+* The display looks blurry on some devices. Buffering it at device resolution,
+  rather than at 42S resolution, would fix that (same as how the iPhone version
+  handles this).
+* The "Print-Out" menu option needs a better icon.
+* ACCEL, LOCAT, and HEADING don't work on a lot of devices. I'll have to
+  rewrite them using the new APIs (ugh).
+* Add support for physical keyboards.
+* Implement pop-up keyboard for ALPHA mode text entry.
+
+All versions: make sure Free42 saves its state when the OS shuts down. The
+Android, iOS, and PalmOS versions should be OK because the OS controls their
+life-cycle anyway,  but the desktop and Pocket PC versions probably need to
+deal with OS shutdown explicitly. Even the Linux version may need some
+attention; while it performs a graceful exit on SIGINT, it may also be killed
+by the X server shutting down, and if that causes an X I/O error, that makes
+Free42 send itself a QUIT signal, which causes a core dump (this is good for
+debugging but probably should be changed to sending an INT signal for release
+builds).
+
 iPhone version: the App Store build is built using the 3.0 SDK, in order to be
 compatible with the widest possible variety of devices. This works, and even
 the high-res icon and skins work on the retina display, but the app doesn't
 multi-task. Is it possible to support multitasking while building with an old
 SDK?
 
-Android version: the auto-repeat code appears to be broken; it causes lots of
-spurious keystrokes. This is easily reproducible even in the simulator.
+iPhone version: the HTTP server interface should provide a way to delete files.
 
 Windows version: the "Calculator Key" option should probably set
 \HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AppKey\18\ShellExecute,
@@ -77,6 +105,11 @@ either refuse to power off, or clear flag 11 before powering off, or do some
 kind of user interaction to give the user a chance to break this potentially
 inescapable cycle.
 
-Add keyboard click option for the Pocket PC version.
-
 Add a feature for importing and exporting variables from and to CSV files.
+
+It would be nice if we would handle the shell_milliseconds()
+wrap-around. This function is only used for flying the goose and
+updating the progress report when the solver is running interactively;
+all it would take is for those two places in the code to detect
+unlikely values of (startTime - shell_milliseconds()) and assume the nearest
+likely alternative, a la Y2K.
