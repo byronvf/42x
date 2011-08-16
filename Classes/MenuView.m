@@ -109,10 +109,10 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     if (v->type == TYPE_COMPLEXMATRIX || v->type == TYPE_REALMATRIX)
     {
         // We need to make another string so we have a little more space to work with
-        char xvstr[length+1];
+        char xvstr[length+2];
         
         // modify the matrix string so it is more compact
-        len = vartype2string(v, xvstr, length+1)-1;
+        len = vartype2string(v, xvstr, length+2)-1;
         // after the space shift everything down a character
         for (int i=1; i<len; i++)
         {
@@ -132,8 +132,8 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             }
         }
         
-        if (xvstr[len] == CONT_CHAR)
-            xvstr[length-2] = CONT_CHAR;
+        if (xvstr[len-1] == CONT_CHAR)
+            xvstr[length-1] = CONT_CHAR;
         
         for (int i=0; i<len; i++)
             vstr[i] = xvstr[i];
@@ -284,9 +284,10 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);
-    UIFont *font = [UIFont boldSystemFontOfSize:14];
-	
-	
+    //UIFont *font = [UIFont boldSystemFontOfSize:13];
+    //UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:13];
+    UIFont *font = [UIFont fontWithName:@"Helvetica-Bold" size:13];
+		
 	// 136 - size in bytes of one row.
 	// 17*2 - absorb a couple of pixel rows	
 	//const char* menuBuff = calcViewController.displayBuff + dispRows*136 + 17*2;
@@ -300,12 +301,17 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	int horzoff = 14;	
 	for (int i=0; i<6; i++)
 	{
-        if (menu_items[i].length > 0 && (mode_appmenu != MENU_INTEG_PARAMS || i < 3 || i == 5))
+        if (menu_items[i].length > 0)
         {
             if (menu_items[i].highlight)
-                CGContextSetRGBFillColor(ctx, 0.50, 1.0, 0.50, 1.0);
-            else
-                CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);
+            {
+                
+                //CGContextSetRGBFillColor(ctx, 1.0, 0.67, 0.23, 1.0);
+                CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.30, 1.0);
+                CGContextFillRect(ctx, CGRectMake(16+i*50, 42, 38, 2));
+            }
+            
+            CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);
                 
             //drawBlitterDataToContext(ctx, menuBuff, horzoff, 28, 5, 17, 2.0, 3.0, i*22, (i+1)*22-1, 1);
             horzoff += 6;
@@ -313,7 +319,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             char utf8[MENU_ITEM_CHAR_LENGTH*3];
             hp2utf8(menu_items[i].chars, menu_items[i].length, utf8, MENU_ITEM_CHAR_LENGTH*3);
             NSString *str = [[NSString alloc] initWithUTF8String:utf8];        
-            [str drawInRect:CGRectMake(13 + i*50, 25, 44, 20) 
+            [str drawInRect:CGRectMake(11 + i*50, 25, 48, 20) 
                    withFont:font lineBreakMode:UILineBreakModeClip
                   alignment:UITextAlignmentCenter];
         

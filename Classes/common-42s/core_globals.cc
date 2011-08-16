@@ -610,6 +610,8 @@ stack_item *bigstack_head = NULL;
 bool mode_rpl_enter = false;
 int stacksize = 4;  /* stack size is always at least 4 */
 int last_pending_command = CMD_NONE;
+/* Keep track of what the stack type was before solve or integration */
+int orig_stack_type_before_solve = 0;
 #endif
 
 bool cllcd_cmd = false;
@@ -2186,6 +2188,31 @@ void clear_all_rtns() {
     rtn_sp = 0;
 }
 
+void setup_bigstack_for_solve_integ()
+{
+    orig_stack_type_before_solve = flags.f.f32;
+    if (!orig_stack_type_before_solve)
+        return;    
+    push_var_on_stack(new_real(0));
+    push_var_on_stack(new_real(0));
+    push_var_on_stack(new_real(0));
+    push_var_on_stack(new_real(0));
+    flags.f.f32 = FALSE;  // Force size 4 stack mode for solving
+}
+ 
+void restore_bigstack_for_solve_integ()
+{
+    if (!orig_stack_type_before_solve)
+        return;    
+    flags.f.f32 = TRUE; 
+    vartype* tmp = reg_t;
+    reg_t = reg_x;
+    reg_x = tmp;
+    pop_var_off_stack();
+    pop_var_off_stack();
+    pop_var_off_stack();  
+}
+        
 bool solve_active() {
     int i;
     for (i = 0; i < rtn_sp; i++)

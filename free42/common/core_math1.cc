@@ -261,6 +261,9 @@ static int call_solve_fn(int which, int state) {
 int start_solve(const char *name, int length, phloat x1, phloat x2) {
     if (solve_active())
 	return ERR_SOLVE_SOLVE;
+    
+    setup_bigstack_for_solve_integ();    
+    
     string_copy(solve.var_name, &solve.var_length, name, length);
     string_copy(solve.active_prgm_name, &solve.active_prgm_length,
 		solve.prgm_name, solve.prgm_length);
@@ -397,6 +400,7 @@ static int finish_solve(int message) {
 	print_lines(solve_message[message].text,
 		    solve_message[message].length, 1);
 
+    restore_bigstack_for_solve_integ();   
     return solve.keep_running ? ERR_NONE : ERR_STOP;
 }
 
@@ -879,6 +883,9 @@ int start_integ(const char *name, int length) {
     else if (v->type != TYPE_REAL)
 	return ERR_INVALID_TYPE;
     else
+        
+    setup_bigstack_for_solve_integ();
+    
 	integ.acc = ((vartype_real *) v)->x;
     if (integ.acc < 0)
 	integ.acc = 0;
@@ -934,6 +941,8 @@ static int finish_integ() {
     current_prgm = integ.prev_prgm;
     pc = integ.prev_pc;
 
+    restore_bigstack_for_solve_integ();
+    
     if (!integ.keep_running) {
 	char buf[22];
 	int bufptr = 0;

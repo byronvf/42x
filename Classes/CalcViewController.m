@@ -40,6 +40,21 @@ int callKeydownAgain = FALSE;
 bool timer3active = FALSE;  // Keep track if the timer3 event is currently pending
 bool raval = FALSE;
 
+static int get_cat_index() {
+    if (mode_commandmenu != MENU_NONE)
+        return 0;
+    else if (mode_alphamenu != MENU_NONE)
+        return 1;
+    else if (mode_transientmenu != MENU_NONE)
+        return 2;
+    else if (mode_plainmenu != MENU_NONE)
+        return 3;
+    else if (mode_appmenu != MENU_NONE)
+        return 4;
+    else
+        return -1;
+}
+
 /*
  This handler gets called whenever the run loop is about to sleep.  We us it to try
  and do a better job at executing free42 programs, and handling key events.
@@ -255,7 +270,8 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			// the special characters.  This is better for the user for
 			// easy access to special 42s chars while the iphone keyboard is up				
 			
-            set_menu(MENULEVEL_ALPHA, MENU_ALPHA2);
+            //set_menu(MENULEVEL_ALPHA, MENU_ALPHA2);
+            set_menu(get_cat_index(), MENU_ALPHA2);
             redisplay();
 
 			[textEntryField becomeFirstResponder];
