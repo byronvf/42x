@@ -400,7 +400,7 @@ static int finish_solve(int message) {
 	print_lines(solve_message[message].text,
 		    solve_message[message].length, 1);
 
-    restore_bigstack_for_solve_integ();   
+    restore_bigstack_for_solve_integ(false);   
     return solve.keep_running ? ERR_NONE : ERR_STOP;
 }
 
@@ -941,7 +941,7 @@ static int finish_integ() {
     current_prgm = integ.prev_prgm;
     pc = integ.prev_pc;
 
-    restore_bigstack_for_solve_integ();
+    restore_bigstack_for_solve_integ(false);
     
     if (!integ.keep_running) {
 	char buf[22];

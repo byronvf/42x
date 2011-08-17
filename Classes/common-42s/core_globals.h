@@ -285,7 +285,7 @@ void clean_stack_item_pool() GLOBALS_SECT;
 int big_stack_verify() GLOBALS_SECT;
 void push_var_on_stack(vartype *var) GLOBALS_SECT;
 void pop_var_off_stack() GLOBALS_SECT;
-void restore_bigstack_for_solve_integ() GLOBALS_SECT;
+void restore_bigstack_for_solve_integ(bool restore_all) GLOBALS_SECT;
 void setup_bigstack_for_solve_integ() GLOBALS_SECT;
 #endif
 

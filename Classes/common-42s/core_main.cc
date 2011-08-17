@@ -197,6 +197,8 @@ int core_keydown(int key, int *enqueued, int *repeat) {
 		set_shift(false);
 		set_running(false);
 		pending_command = CMD_CANCELLED;
+        // If we were performing a solve or integration restore the big stack.
+        restore_bigstack_for_solve_integ(true);            
 		return 0;
 	    }
 	    /* Enqueue... */

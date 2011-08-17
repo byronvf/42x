@@ -2199,8 +2199,11 @@ void setup_bigstack_for_solve_integ()
     push_var_on_stack(new_real(0));
     flags.f.f32 = FALSE;  // Force size 4 stack mode for solving
 }
- 
-void restore_bigstack_for_solve_integ()
+
+// If are in bigstack mode, then change the stack mode back to bigstack
+// and shift the stack back down so that only the result is the X register.
+// Set restore_all to true to restore the entire stack.
+void restore_bigstack_for_solve_integ(bool restore_all)
 {
     if (!orig_stack_type_before_solve)
         return;    
@@ -2210,7 +2213,10 @@ void restore_bigstack_for_solve_integ()
     reg_x = tmp;
     pop_var_off_stack();
     pop_var_off_stack();
-    pop_var_off_stack();  
+    pop_var_off_stack();
+    
+    if (restore_all)
+        pop_var_off_stack();
 }
         
 bool solve_active() {
