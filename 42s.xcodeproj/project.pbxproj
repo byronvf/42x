@@ -627,7 +627,7 @@
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = YES;
+				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;
 		};
