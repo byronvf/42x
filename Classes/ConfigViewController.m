@@ -36,6 +36,7 @@
 @synthesize RPLEnterSwitch;
 @synthesize dropSwitch;
 @synthesize flagsSwitch;
+@synthesize singMatrixSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -61,6 +62,7 @@
 	RPLEnterSwitch = [self makeSwitch];
 	dropSwitch = [self makeSwitch];
 	flagsSwitch = [self makeSwitch];
+	singMatrixSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -83,6 +85,7 @@
 	[RPLEnterSwitch release];
 	[dropSwitch release];
 	[flagsSwitch release];
+    [singMatrixSwitch release];
 }
 
 
@@ -99,6 +102,7 @@
 	[RPLEnterSwitch setOn:mode_rpl_enter];
 	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
 	[flagsSwitch setOn:[[Settings instance] showFlags]];
+    [singMatrixSwitch setOn:core_settings.matrix_singularmatrix];
 }
 
 
@@ -159,6 +163,10 @@
 		[[Settings instance] setShowFlags:[sender isOn]];
 		[[navViewController calcViewController] testUpdateLastX:TRUE];
 	}
+    else if (sender == singMatrixSwitch)
+    {
+        core_settings.matrix_singularmatrix = [sender isOn];
+    }
 }
 
 #if DEV_REL
@@ -215,7 +223,7 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 6;
+    return 7;
 }
 
   // Return the numer of items in the section, given the section number.
@@ -228,6 +236,7 @@
 		case 3: return 2;
 		case 4: return 1;
 		case 5: return 1;
+        case 6: return 1;
 		default: return 0;
 	}
 }
@@ -242,6 +251,7 @@
 		case 3: return @"Interaction";
 		case 4: return NULL;
 		case 5: return NULL;
+        case 6: return @"Advanced";
 		default: return @"What???";
 	}
 }
@@ -318,6 +328,11 @@
 	{
 		cell.textLabel.text = @"About";
 		cell.accessoryView = aboutButton;
+	}
+	else if  (indexPath.section == 6 && indexPath.row == 0) // Advanced
+	{
+		cell.textLabel.text = @"Singular Matrix Error";
+		cell.accessoryView = singMatrixSwitch;
 	}
 	
     return cell;
