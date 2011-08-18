@@ -39,7 +39,7 @@
 	UISwitch* beepSoundSwitch;
 	UISwitch* keyboardSwitch;
 	UISwitch* bigStackSwitch;
-	UISwitch* menuKeysSwitch;
+//	UISwitch* menuKeysSwitch;
 	UISwitch* lastXSwitch;
 	UISwitch* statusBarSwitch;
 	UISwitch* autoPrintSwitch;
@@ -57,7 +57,7 @@
 @property (nonatomic, retain) UISwitch* statusBarSwitch;
 @property (nonatomic, retain) UISwitch* autoPrintSwitch;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
-@property (nonatomic, retain) UISwitch* menuKeysSwitch;
+//@property (nonatomic, retain) UISwitch* menuKeysSwitch;
 @property (nonatomic, retain) UISwitch* beepSoundSwitch;
 @property (nonatomic, retain) UISwitch* keyboardSwitch;
 @property (nonatomic, retain) UISwitch* bigStackSwitch;

@@ -30,7 +30,7 @@
 @synthesize beepSoundSwitch;
 @synthesize keyboardSwitch;
 @synthesize bigStackSwitch;
-@synthesize menuKeysSwitch;
+//@synthesize menuKeysSwitch;
 @synthesize statusBarSwitch;
 @synthesize autoPrintSwitch;
 @synthesize RPLEnterSwitch;
@@ -55,7 +55,7 @@
 	keyboardSwitch = [self makeSwitch];
 	lastXSwitch = [self makeSwitch];
 	bigStackSwitch = [self makeSwitch];
-	menuKeysSwitch = [self makeSwitch];
+	//menuKeysSwitch = [self makeSwitch];
 	statusBarSwitch = [self makeSwitch];
 	autoPrintSwitch = [self makeSwitch];
 	RPLEnterSwitch = [self makeSwitch];
@@ -75,7 +75,7 @@
 	[keyboardSwitch release];
 	[lastXSwitch release];
 	[bigStackSwitch release];
-	[menuKeysSwitch release];
+	//[menuKeysSwitch release];
 	[statusBarSwitch release];
 	[autoPrintSwitch release];
 	[gotoServerButton release];
@@ -93,7 +93,7 @@
 	[keyboardSwitch setOn:[[Settings instance] keyboardOn]];	
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
 	[bigStackSwitch setOn:flags.f.f32];
-	[menuKeysSwitch setOn:menuKeys];
+	//[menuKeysSwitch setOn:menuKeys];
 	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
 	[RPLEnterSwitch setOn:mode_rpl_enter];
@@ -127,11 +127,11 @@
 		else
 			docmd_cf(&arg);
 	}
-	else if (sender == menuKeysSwitch)
-	{
-		menuKeys = [sender isOn];
-		core_repaint_display();
-	}
+//	else if (sender == menuKeysSwitch)
+//	{
+//		menuKeys = [sender isOn];
+//		core_repaint_display();
+//	}
 	else if (sender == lastXSwitch)
 	{
 		[[Settings instance] setShowLastX:[sender isOn]];
@@ -224,7 +224,7 @@
 	{
 		case 0: return 3;
 		case 1: return 2;
-		case 2: return 4;
+		case 2: return 3;
 		case 3: return 2;
 		case 4: return 1;
 		case 5: return 1;
@@ -284,17 +284,17 @@
 		cell.textLabel.text = @"Show Last X";
 		cell.accessoryView = lastXSwitch;
 	}
+//	else if (indexPath.section == 2 && indexPath.row == 1)
+//	{
+//		cell.textLabel.text = @"Overlay Key Menu";
+//		cell.accessoryView = menuKeysSwitch;
+//	}
 	else if (indexPath.section == 2 && indexPath.row == 1)
-	{
-		cell.textLabel.text = @"Overlay Key Menu";
-		cell.accessoryView = menuKeysSwitch;
-	}
-	else if (indexPath.section == 2 && indexPath.row == 2)
 	{
 		cell.textLabel.text = @"Device Status Bar";
 		cell.accessoryView = statusBarSwitch;
 	}
-	else if (indexPath.section == 2 && indexPath.row == 3)
+	else if (indexPath.section == 2 && indexPath.row == 2)
 	{
 		cell.textLabel.text = @"Show flags";
 		cell.accessoryView = flagsSwitch;
