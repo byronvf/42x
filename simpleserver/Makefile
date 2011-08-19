@@ -1,4 +1,4 @@
-VERSION = "\"$(shell cat ../../VERSION)\""
+VERSION = "\"$(shell cat ../free42/VERSION)\""
 CFLAGS = -Wall -g -DVERSION=$(VERSION) -DSTANDALONE=1
 
 .c.o:
