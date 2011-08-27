@@ -47,6 +47,7 @@
 	UISwitch* dropSwitch;
 	UISwitch* flagsSwitch;
 	UISwitch* singMatrixSwitch;
+    UISwitch* matrixOutOfRangeSwitch;
 	
 	UIButton* gotoServerButton;
 	UIButton* aboutButton;
@@ -66,6 +67,7 @@
 @property (nonatomic, retain) UISwitch* dropSwitch;
 @property (nonatomic, retain) UISwitch* flagsSwitch;
 @property (nonatomic, retain) UISwitch* singMatrixSwitch;
+@property (nonatomic, retain) UISwitch* matrixOutOfRangeSwitch;
 @property (nonatomic, retain) UIButton* gotoServerButton;
 @property (nonatomic, retain) UIButton* aboutButton;
 @property (nonatomic, retain) NavViewController* navViewController;

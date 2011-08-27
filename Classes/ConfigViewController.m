@@ -37,6 +37,7 @@
 @synthesize dropSwitch;
 @synthesize flagsSwitch;
 @synthesize singMatrixSwitch;
+@synthesize matrixOutOfRangeSwitch;
 
 @synthesize gotoServerButton;
 @synthesize aboutButton;
@@ -63,6 +64,7 @@
 	dropSwitch = [self makeSwitch];
 	flagsSwitch = [self makeSwitch];
 	singMatrixSwitch = [self makeSwitch];
+    matrixOutOfRangeSwitch = [self makeSwitch];
 	
 	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
@@ -86,6 +88,7 @@
 	[dropSwitch release];
 	[flagsSwitch release];
     [singMatrixSwitch release];
+    [matrixOutOfRangeSwitch release];
 }
 
 
@@ -103,6 +106,7 @@
 	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
 	[flagsSwitch setOn:[[Settings instance] showFlags]];
     [singMatrixSwitch setOn:core_settings.matrix_singularmatrix];
+    [matrixOutOfRangeSwitch setOn:core_settings.matrix_outofrange];
 }
 
 
@@ -166,6 +170,10 @@
     else if (sender == singMatrixSwitch)
     {
         core_settings.matrix_singularmatrix = [sender isOn];
+    }
+    else if (sender == matrixOutOfRangeSwitch)
+    {
+        core_settings.matrix_outofrange = [sender isOn];
     }
 }
 
@@ -236,7 +244,7 @@
 		case 3: return 2;
 		case 4: return 1;
 		case 5: return 1;
-        case 6: return 1;
+        case 6: return 2;
 		default: return 0;
 	}
 }
@@ -333,6 +341,11 @@
 	{
 		cell.textLabel.text = @"Singular Matrix Error";
 		cell.accessoryView = singMatrixSwitch;
+	}
+	else if  (indexPath.section == 6 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Matrix Range Error";
+		cell.accessoryView = matrixOutOfRangeSwitch;
 	}
 	
     return cell;
