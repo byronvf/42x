@@ -219,19 +219,9 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     {
         switch (i)
         {
-            case 0:
-                text = "LLIM";
-                length = 4;
-                break;
-            case 1:
-                text = "ULIM";
-                length = 4;
-                break;
-            case 2:
-                text = "ACC";
-                length = 3;
-                break;
-            
+            case 0: text = "LLIM"; length = 4; break;
+            case 1: text = "ULIM"; length = 4; break;
+            case 2: text = "ACC" ; length = 3; break;            
         }    
     }
     else if (mode_plainmenu >= MENU_CUSTOM1 && mode_plainmenu <= MENU_CUSTOM3)
@@ -246,8 +236,9 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         // don't want to show a variable value.
         if (find_global_label(text, length, &prgm, &pc))
             length = 0; 
-    }    
+    }
     
+    NSString *str = NULL;
     if (length != 0)
     {
         vartype *v = recall_var(text, length); 
@@ -257,14 +248,31 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             int len = vartype2small_string(v, vstr, dispsize);                
             char vutf8[dispsize*2];
             hp2utf8(vstr, len, vutf8, dispsize*2);
-            NSString *str = [[NSString alloc] initWithUTF8String:vutf8];
-            UIFont *font = [UIFont boldSystemFontOfSize:13];
-            CGContextSetRGBFillColor(ctx, 1.0, 0.80, 0.23, 1.0);
-            [str drawInRect:CGRectMake(5 + i*51, -2, 55, 24) 
-                        withFont:font lineBreakMode:UILineBreakModeClip
-                        alignment:UITextAlignmentCenter];
-            [str release];
+            str = [[NSString alloc] initWithUTF8String:vutf8];
+            [str autorelease];
         }
+    }
+    else if (*get_front_menu() == MENU_TOP_FCN)
+    {
+        switch (i)
+        {
+            case 0: str = @"∑+"; break;
+            case 1: str = @"y^x"; break;
+            case 2: str = @"x²"; break;
+            case 3: str = @"10^x"; break;
+            case 4: str = @"e^x"; break;
+            case 5: str = @"GTO"; break;
+        }
+        
+    }
+    
+    if (str != NULL)
+    {
+        UIFont *font = [UIFont boldSystemFontOfSize:13];
+        CGContextSetRGBFillColor(ctx, 1.0, 0.80, 0.23, 1.0);
+        [str drawInRect:CGRectMake(5 + i*51, -2, 55, 24) 
+               withFont:font lineBreakMode:UILineBreakModeClip
+              alignment:UITextAlignmentCenter];
     }
     else
     {    
