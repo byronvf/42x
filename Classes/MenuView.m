@@ -256,7 +256,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     {
         switch (i)
         {
-            case 0: str = @"∑+"; break;
+            case 0: str = @"∑-"; break;
             case 1: str = @"y^x"; break;
             case 2: str = @"x²"; break;
             case 3: str = @"10^x"; break;
@@ -265,7 +265,36 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
-    
+    else if (*get_front_menu() == MENU_BASE_A_THRU_F)
+    {
+        switch (i)
+        {
+            case 0: str = @"AND"; break;
+            case 1: str = @"OR"; break;
+            case 2: str = @"XOR"; break;
+            case 3: str = @"NOT"; break;
+            case 4: str = @"BIT?"; break;
+            case 5: str = @"ROTXY"; break;
+        }
+        
+    }
+    else if (*get_front_menu() == MENU_STAT1)
+    {
+        switch (i)
+        {
+            case 0: str = @"∑-"; break;
+        }
+        
+    }
+    else if (*get_front_menu() == MENU_PGM_FCN1)
+    {
+        switch (i)
+        {
+            case 5: str = @"GTO"; break;
+        }
+        
+    }
+
     if (str != NULL)
     {
         UIFont *font = [UIFont boldSystemFontOfSize:13];

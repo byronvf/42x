@@ -70,7 +70,7 @@ int get_next_highlight_row()
 static int is_number_key(int shift, int key) KEYDOWN_SECT;
 static int is_number_key(int shift, int key) {
     int *menu = get_front_menu();
-    if (menu != NULL && *menu == MENU_BASE_A_THRU_F
+    if (menu != NULL && !shift && *menu == MENU_BASE_A_THRU_F
 	    && (key == KEY_SIGMA || key == KEY_INV || key == KEY_SQRT
 		|| key == KEY_LOG || key == KEY_LN || key == KEY_XEQ))
 	return 1;
@@ -2423,7 +2423,12 @@ void keydown_normal_mode(int shift, int key) {
 		const menu_item_spec *mi = menus[menu].child + menukey;
 		int cmd_id = mi->menuid;
 		const command_spec *cmd;
-		if ((cmd_id & 0x3000) == 0) {
+            
+        // We modified the menuid field so that bit 0x4000 indicates no command.
+        // We added this flag for the logic operators that appear above the alpha
+        // keys in the base menu.
+            
+		if ((cmd_id & 0x7000) == 0) {
 		    set_menu(level, cmd_id);
 		    redisplay();
 		    return;
@@ -2441,6 +2446,16 @@ void keydown_normal_mode(int shift, int key) {
 		    cmd_id = CMD_GTO;
 		else if (menu == MENU_STAT1 && menukey == 0 && shift)
 		    cmd_id = CMD_SIGMASUB;
+        if (menu == MENU_BASE_A_THRU_F && shift) {
+            switch (menukey) {
+                case 0: cmd_id = CMD_AND; break;
+                case 1: cmd_id = CMD_OR; break;
+                case 2: cmd_id = CMD_XOR; break;
+                case 3: cmd_id = CMD_NOT; break;
+                case 4: cmd_id = CMD_BIT_T; break;
+                case 5: cmd_id = CMD_ROTXY; break;
+            }
+        }
 		else
 		    cmd_id &= 0xfff;
 		cmd = cmdlist(cmd_id);
