@@ -213,9 +213,9 @@ bool prgmFirstWrite = TRUE;
 	else
 		[[Settings instance] setKeyboardOn:TRUE];
 	
-//	if ([defaults objectForKey:CONFIG_MENU_KEYS_BUF])
-//		menuKeys = [defaults boolForKey:CONFIG_MENU_KEYS_BUF];
-//	else
+	if ([defaults objectForKey:CONFIG_MENU_KEYS_BUF])
+		menuKeys = [defaults boolForKey:CONFIG_MENU_KEYS_BUF];
+	else
 		menuKeys = TRUE;	
 	
 	if ([defaults objectForKey:CONFIG_PRLCD])
@@ -272,7 +272,7 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] showFlags] forKey:CONFIG_SHOW_FLAGS];
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
 	[defaults setInteger:dispRows forKey:CONFIG_DISP_ROWS];
-//	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
+	[defaults setBool:menuKeys forKey:CONFIG_MENU_KEYS_BUF];	
 	[defaults synchronize];  // When using the OFF command we must do this.
 	
 	[[navViewController printViewController] releasePrintBuffer];
