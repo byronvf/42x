@@ -1141,17 +1141,23 @@ void display_x(int row) {
     draw_string(0, row, buf, bufptr);
 }
 
+void display_row(int row, int start, int len, char *buf)
+{
+    if (len > 22 - start) {
+        draw_string(start, row, buf, 22-start-1);
+        draw_char(21, row, 26);
+    } else
+        draw_string(start, row, buf, len);
+    
+}
+
 void display_y(int row) {
     char buf[20];
     int len;
     clear_row(row);
     len = vartype2string(reg_y, buf, 20);
     draw_string(0, row, "\201\200", 2);
-    if (len > 20) {
-	draw_string(2, row, buf, 19);
-	draw_char(21, row, 26);
-    } else
-	draw_string(2, row, buf, len);
+    display_row(row, 2, len, buf);
 }
 
 void display_z(int row) {
@@ -1160,11 +1166,7 @@ void display_z(int row) {
     clear_row(row);
     len = vartype2string(reg_z, buf, 20);
     draw_string(0, row, "z\200", 2);
-    if (len > 20) {
-	draw_string(2, row, buf, 19);
-	draw_char(21, row, 26);
-    } else
-	draw_string(2, row, buf, len);
+    display_row(row, 2, len, buf);
 }
 
 void display_t(int row) {
@@ -1179,11 +1181,7 @@ void display_t(int row) {
 	else {
 		draw_string(0, row, "t\200", 2);
 	}		
-    if (len > 20) {
-	draw_string(2, row, buf, 19);
-	draw_char(21, row, 26);
-    } else
-	draw_string(2, row, buf, len);
+    display_row(row, 2, len, buf);
 }
 
 void display_0(int row) {
@@ -1192,12 +1190,11 @@ void display_0(int row) {
     clear_row(row);
     if (stacksize > 4)	
 	len = vartype2string(bigstack_head->var, buf, 20);
+    
+    
+    
     draw_string(0, row, "~\200", 2);
-    if (len > 20) {
-		draw_string(2, row, buf, 19);
-		draw_char(21, row, 26);
-    } else
-		draw_string(2, row, buf, len);
+    display_row(row, 2, len, buf);
 }
 
 void display_1(int row) {
@@ -1207,11 +1204,7 @@ void display_1(int row) {
     if (stacksize > 5)
 	len = vartype2string(bigstack_head->next->var, buf, 20);
     draw_string(0, row, "~\200", 2);
-    if (len > 20) {
-		draw_string(2, row, buf, 19);
-		draw_char(21, row, 26);
-    } else
-		draw_string(2, row, buf, len);
+    display_row(row, 2, len, buf);
 }
 
 
