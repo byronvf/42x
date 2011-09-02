@@ -238,6 +238,10 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             length = 0; 
     }
     
+    int menu = MENU_NONE;
+    if (get_front_menu() != NULL)
+        menu = *get_front_menu();
+    
     NSString *str = NULL;
     if (length != 0)
     {
@@ -252,7 +256,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             [str autorelease];
         }
     }
-    else if (*get_front_menu() == MENU_TOP_FCN)
+    else if (menu == MENU_TOP_FCN)
     {
         switch (i)
         {
@@ -265,7 +269,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
-    else if (*get_front_menu() == MENU_BASE_A_THRU_F)
+    else if (menu == MENU_BASE_A_THRU_F)
     {
         switch (i)
         {
@@ -278,7 +282,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
-    else if (*get_front_menu() == MENU_STAT1)
+    else if (menu == MENU_STAT1)
     {
         switch (i)
         {
@@ -286,7 +290,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
-    else if (*get_front_menu() == MENU_PGM_FCN1)
+    else if (menu == MENU_PGM_FCN1)
     {
         switch (i)
         {

@@ -423,10 +423,6 @@ static const command_spec cmd_array[] =
 
     /* Byron Foster's DROP for Bigstack */
     { /* DROP */        "DROP",                 4, docmd_drop,        0x0000a271, ARG_NONE,  FLAG_NONE },
-#ifdef BIGSTACK
-    { /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE },
-    { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE },
-#endif
     /* Accelerometer, GPS, and compass support */
     { /* ACCEL */       "ACCEL",                5, docmd_accel,       0x0000a7cf, ARG_NONE,  FLAG_NONE },
     { /* LOCAT */       "LOCAT",                5, docmd_locat,       0x0000a7d0, ARG_NONE,  FLAG_NONE },
@@ -466,7 +462,11 @@ static const command_spec cmd_array[] =
     { /* CLALMX */      "CLAL\315X",            6, docmd_xrom,        0x0000a6a0, ARG_NONE,  FLAG_HIDDEN },
     { /* CLRALMS */     "CLRALMS",              7, docmd_xrom,        0x0000a6a1, ARG_NONE,  FLAG_HIDDEN },
     { /* RCLALM */      "RCLALM",               6, docmd_xrom,        0x0000a6a2, ARG_NONE,  FLAG_HIDDEN },
-    { /* SWPT */        "SWPT",                 4, docmd_xrom,        0x0000a6a3, ARG_NONE,  FLAG_HIDDEN }
+    { /* SWPT */        "SWPT",                 4, docmd_xrom,        0x0000a6a3, ARG_NONE,  FLAG_HIDDEN },
+#ifdef BIGSTACK
+    { /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE },
+    { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE }
+#endif
 };
 
 /*
