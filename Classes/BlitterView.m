@@ -642,7 +642,7 @@ char cbuf[30];
 						 [NSCharacterSet controlCharacterSet]];
 		NSEnumerator *enumerator = [nums objectEnumerator];
 		id num;
-		while(num = [enumerator nextObject])
+		while((num = [enumerator nextObject]) != NULL)
 		{
 			NSString *trimmed = [num stringByTrimmingCharactersInSet:
 								[NSCharacterSet whitespaceCharacterSet]];
