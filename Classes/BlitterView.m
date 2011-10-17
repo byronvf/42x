@@ -514,7 +514,7 @@ const int SCROLL_SPEED = 15;
  */
 - (void) singleLCD
 {
-	firstTouch.x = TOUCH_RESET;
+	//firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 89;
@@ -529,7 +529,7 @@ const int SCROLL_SPEED = 15;
  */
 - (void) doubleLCD
 {
-	firstTouch.x = TOUCH_RESET;
+	//firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 145;
