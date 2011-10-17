@@ -514,7 +514,7 @@ const int SCROLL_SPEED = 15;
  */
 - (void) singleLCD
 {
-	firstTouch.x == -1;
+	firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 89;
@@ -529,7 +529,7 @@ const int SCROLL_SPEED = 15;
  */
 - (void) doubleLCD
 {
-	firstTouch.x == -1;
+	firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 145;
@@ -799,7 +799,7 @@ char cbuf[30];
 	{
 		[calcViewController handlePopupKeyboard:true];
 	}
-	else if (p.x > 280 && (dispRows < 4 && p.y > 70 || p.y > 110) 
+	else if (p.x > 280 && ((dispRows < 4 && p.y > 70) || p.y > 110) 
 			 && touch.tapCount == 1)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 

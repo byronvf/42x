@@ -84,7 +84,10 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// The 18 is the base offset into the display, pass the flags row 
 	assert(viewCtrl.blitterView);
 	int low = y/8;
-	int high = (y+height)/8;    
+	int high = (y+height)/8;   
+    
+    // if just displaying pixels then we can get a zero height, in this case
+    // redraw the whole row.
     if (high == 0) high = 1;
     
 	[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
