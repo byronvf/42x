@@ -602,6 +602,7 @@
 					BCD_MATH,
 					BIGLCD,
 				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
@@ -621,7 +622,7 @@
 				);
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -633,6 +634,7 @@
 					FREE42,
 					BCD_MATH,
 				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = 42s;
@@ -699,7 +701,7 @@
 				);
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Free42_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -712,6 +714,7 @@
 					FREE42,
 					BCD_MATH,
 				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				PRODUCT_NAME = 42s;
