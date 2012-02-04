@@ -56,6 +56,7 @@ extern short dispflags;
 - (void) annuncNeedsDisplay;
 - (void) singleLCD;
 - (void) doubleLCD;
+- (void) fullLCD;
 - (void) shouldCutPaste;
 - (void) showEditMenu;
 - (void) drawLastX;

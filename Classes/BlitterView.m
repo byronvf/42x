@@ -359,24 +359,29 @@ short dispflags = 0;
 			if (dispRows == 7) vertoffset += 3;	
 			if (dispRows == 4) vertoffset += 5;
 			if (dispRows == 6) vertoffset += 2;
+            if (dispRows == 22) vertoffset+= 5;
+            if (dispRows == 23) vertoffset+= 8;
 		}
 
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
 	}
 	
-	// Draw printer watermark button 
-	if (fuval)
-		CGContextFillRect(ctx, rect);
-	int poff = dispRows < 4 ? 69 : 123;
-	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
-	UIFont *font = [UIFont systemFontOfSize:13];
-	[@"P" drawAtPoint:CGPointMake(300, poff) withFont:font];		
-	CGContextBeginPath(ctx);
-	CGContextAddArc(ctx, 304, poff+8, 8, 0, 2*M_PI, 0);
-	CGContextSetLineWidth(ctx, 1);
-	CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 0.3);	
-	CGContextStrokePath(ctx);
+    if (dispRows < 8)
+    {
+        // Draw printer watermark button 
+        if (fuval)
+            CGContextFillRect(ctx, rect);
+        int poff = dispRows < 4 ? 69 : 123;
+        CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
+        UIFont *font = [UIFont systemFontOfSize:13];
+        [@"P" drawAtPoint:CGPointMake(300, poff) withFont:font];		
+        CGContextBeginPath(ctx);
+        CGContextAddArc(ctx, 304, poff+8, 8, 0, 2*M_PI, 0);
+        CGContextSetLineWidth(ctx, 1);
+        CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 0.3);	
+        CGContextStrokePath(ctx);
+    }
 	
 	if (flags.f.prgm_mode) [self drawScrollBar];
 }
@@ -440,7 +445,16 @@ short dispflags = 0;
 - (void)setNumDisplayRows
 {
 	self.dispAnnunc = TRUE;
-	if (![[Settings instance] showStatusBar])
+    if (self.bounds.size.height > 300)
+    {
+        self.dispAnnunc = FALSE;
+        dispRows = 22;
+        if (![[Settings instance] showStatusBar])
+        {
+            dispRows++;
+        }
+    }    
+	else if (![[Settings instance] showStatusBar])
 	{
 		dispRows = 3;
 		if (self.bounds.size.height > 100)
@@ -480,13 +494,14 @@ short dispflags = 0;
 	// of the display from getting the top pixel row from being deleted. this only happens
 	// hwne vscale is 2.8
 	int hs = (h*8)*vscale + 1;
-	if (hs == 23) hs = 22;
+	//if (hs == 23) hs = 22;
 	
 	// dispRows == 4 means we are in program mode with the status bar off, in draw rect
 	// we addjust the top by +5 in this mode to help center the program display in the 
 	// LCD, we make the same adjustment here so we draw the entire area.
 	if (dispRows == 4) hs += 5;
-	if (dispRows == 6 || dispRows == 7) hs += 2;
+	if (dispRows == 6 || dispRows == 7 || dispRows) hs += 2;
+    if (dispRows == 23) hs += 5;
 
 	int top = [self statusBarOffset] + (l*8)*vscale;	
 	if (self.dispAnnunc)
@@ -514,7 +529,6 @@ const int SCROLL_SPEED = 15;
  */
 - (void) singleLCD
 {
-	//firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 89;
@@ -529,7 +543,6 @@ const int SCROLL_SPEED = 15;
  */
 - (void) doubleLCD
 {
-	//firstTouch.x = TOUCH_RESET;
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
 	bounds.size.height = 145;
@@ -537,6 +550,17 @@ const int SCROLL_SPEED = 15;
 	self.bounds = bounds;
 	self.center = cent;	
 	[self setNeedsDisplay];
+}
+
+- (void) fullLCD
+{
+	CGRect bounds = self.bounds;
+	CGPoint cent = self.center;
+	bounds.size.height = 480;
+	cent.y = bounds.size.height/2;
+	self.bounds = bounds;
+	self.center = cent;	
+	[self setNeedsDisplay];    
 }
 
 - (void)selectAll:(id)sender {
@@ -740,45 +764,58 @@ char cbuf[30];
 		
 		firstTouch.y = newPoint.y - len;
 	}
-	else if (!calcViewController.keyPressed)
+	else if (!calcViewController.keyPressed && firstTouch.x != TOUCH_SWIPE_COMPLETE)
 	{
-			// changing the display mode causes a call to Free42's redisplay method.
-			// However redisplay is not intended to be called bettween a keydown and
-			// a keyup method calls.  So we don't allow it here.  This fixes a crash that
-			// occurred while switching to four line mode, and pressing the "EXIT" key
-			// at the same time.
+        // changing the display mode causes a call to Free42's redisplay method.
+        // However redisplay is not intended to be called bettween a keydown and
+        // a keyup method calls.  So we don't allow it here.  This fixes a crash that
+        // occurred while switching to four line mode, and pressing the "EXIT" key
+        // at the same time.
 		
-		if (firstTouch.y - [touch locationInView:self].y < -30 && self.bounds.size.height < 100)
+        int dragDist = firstTouch.y - [touch locationInView:self].y;
+		if (dragDist < -30)
 		{
-			[calcViewController doubleLCD];
+            if (self.bounds.size.height < 100)                    
+                [calcViewController doubleLCD];
+            else if (self.bounds.size.height < 300 && flags.f.prgm_mode)
+                [calcViewController fullLCD];
+            firstTouch.y = [touch locationInView:self].y;
+            firstTouch.x = TOUCH_SWIPE_COMPLETE;
 		}
-		else if (firstTouch.y - [touch locationInView:self].y > 30 && self.bounds.size.height > 100)
+		else if (dragDist > 30)
 		{
-			[calcViewController singleLCD];
+            if (self.bounds.size.height > 300)
+                [calcViewController doubleLCD];
+            else if (self.bounds.size.height > 100)                
+                [calcViewController singleLCD];
+            firstTouch.y = [touch locationInView:self].y;
+            firstTouch.x = TOUCH_SWIPE_COMPLETE;
 		}	
 	}
-	
-	if (!flags.f.prgm_mode && firstTouch.x != TOUCH_SWIPE_COMPLETE &&
-		firstTouch.x - [touch locationInView:self].x > 60)
-	{
+    
+    if (!flags.f.prgm_mode && firstTouch.x != TOUCH_SWIPE_COMPLETE)
+    {	
+        if (firstTouch.x - [touch locationInView:self].x > 60)
+        {
 			// If we are currently in the process of printing, then we don't allow flipping 
 			// to the print screen since the iPhone can't keep up with this, and it just 
 			// hoses up!  maybe this can be improved at some point.
-		firstTouch.x = TOUCH_SWIPE_COMPLETE;
+            firstTouch.x = TOUCH_SWIPE_COMPLETE;
 			//[[[self calcViewController] navViewController] switchToPrintView];
-		docmd_undo(NULL);		
-		mode_number_entry = FALSE;
-		redisplay();
+            docmd_undo(NULL);		
+            mode_number_entry = FALSE;
+            redisplay();
+        }
+        else if (firstTouch.x - [touch locationInView:self].x < -60)
+        {
+            firstTouch.x = TOUCH_SWIPE_COMPLETE;
+            docmd_redo(NULL);
+            mode_number_entry = FALSE;
+            redisplay();		
+        }
 	}
-	else if (!flags.f.prgm_mode && firstTouch.x != TOUCH_SWIPE_COMPLETE &&
-			 firstTouch.x - [touch locationInView:self].x < -60)
-	{
-		firstTouch.x = TOUCH_SWIPE_COMPLETE;
-		docmd_redo(NULL);
-		mode_number_entry = FALSE;
-		redisplay();		
-	}
-	
+    
+    
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -799,7 +836,7 @@ char cbuf[30];
 	{
 		[calcViewController handlePopupKeyboard:true];
 	}
-	else if (p.x > 280 && ((dispRows < 4 && p.y > 70) || p.y > 110) 
+	else if (dispRows < 8 && (p.x > 280 && ((dispRows < 4 && p.y > 70) || p.y > 110)) 
 			 && touch.tapCount == 1)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 

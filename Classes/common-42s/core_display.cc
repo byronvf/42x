@@ -524,7 +524,11 @@ static char smallchars_map[128] =
 #endif
 
 #define DISPLAY_SIZE 136 * MAX_DISPLAY_ROWS
-static char display[DISPLAY_SIZE];
+#define DISPLAY_EXT_ROWS 22
+#define DISPLAY_EXT_SIZE (DISPLAY_SIZE + DISPLAY_EXT_ROWS * 136)
+
+
+static char display[DISPLAY_EXT_SIZE];
 
 static int is_dirty = 0;
 static int dirty_top, dirty_left, dirty_bottom, dirty_right;
@@ -663,9 +667,7 @@ bool unpersist_display(int version) {
 }
 
 void clear_display() {
-    int i;
-    for (i = 0; i < DISPLAY_SIZE; i++)
-	display[i] = 0;
+    memset(display, 0, DISPLAY_EXT_SIZE);
     mark_dirty(0, 0, 8*dispRows, 131);
 }
 

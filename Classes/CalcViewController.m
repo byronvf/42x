@@ -690,6 +690,12 @@ void shell_request_timeout3(int delay)
 	b04.enabled = TRUE;
 	b05.enabled = TRUE;
 	b06.enabled = TRUE;
+	b07.enabled = TRUE;    
+	b08.enabled = TRUE;    
+	b09.enabled = TRUE;    
+	b10.enabled = TRUE;    
+	b11.enabled = TRUE;    
+	b12.enabled = TRUE;    
 
 	CGPoint cent = blankButtonsView.center;
 	cent.y = 121;
@@ -724,6 +730,12 @@ void shell_request_timeout3(int delay)
 	b04.enabled = FALSE;
 	b05.enabled = FALSE;
 	b06.enabled = FALSE;
+	b07.enabled = TRUE;    
+	b08.enabled = TRUE;    
+	b09.enabled = TRUE;    
+	b10.enabled = TRUE;    
+	b11.enabled = TRUE;    
+	b12.enabled = TRUE;    
 		
 	CGPoint cent;
 	
@@ -742,6 +754,26 @@ void shell_request_timeout3(int delay)
 	[b11.superview bringSubviewToFront:b11];
 	[b12.superview bringSubviewToFront:b12];	
 }
+
+- (void) fullLCD
+{
+    [blitterView fullLCD];
+	[blitterView setNumDisplayRows];
+    
+	b01.enabled = FALSE;
+	b02.enabled = FALSE;
+	b03.enabled = FALSE;
+	b04.enabled = FALSE;
+	b05.enabled = FALSE;
+	b06.enabled = FALSE;    
+	b07.enabled = FALSE;    
+	b08.enabled = FALSE;    
+	b09.enabled = FALSE;    
+	b10.enabled = FALSE;    
+	b11.enabled = FALSE;    
+	b12.enabled = FALSE;    
+}
+
 
 /**
  * This is a crude implementation which just plays a wave beep sound.

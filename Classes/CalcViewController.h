@@ -137,6 +137,7 @@ extern bool reval;
 - (void)handlePopupKeyboard:(BOOL)toggle;
 - (void) singleLCD;
 - (void) doubleLCD;
+- (void) fullLCD;
 - (void) resetLCD;
 - (void) testUpdateLastX: (BOOL) force;
 - (void) testUpdateDispFlags;
