@@ -32,6 +32,8 @@
 		ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */; };
 		ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED0C2CF10EB4BA6F00053F90 /* PrintView.m */; };
 		ED11B0A4107C6C2400A89C47 /* glare.png in Resources */ = {isa = PBXBuildFile; fileRef = ED11B0A3107C6C2400A89C47 /* glare.png */; };
+		ED15EEB814E33DBE0030D91B /* units.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED15EEB714E33DBE0030D91B /* units.cc */; };
+		ED15EEBD14E4EDED0030D91B /* units.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED15EEBC14E4EDED0030D91B /* units.txt */; };
 		ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */ = {isa = PBXBuildFile; fileRef = ED26D23F0F6AB1D100F285A2 /* simpleserver.c */; };
 		ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26D2640F6AB70E00F285A2 /* ServerViewController.m */; };
 		ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED26D2730F6AB7F400F285A2 /* ServerView.xib */; };
@@ -120,6 +122,9 @@
 		ED0C2CF00EB4BA6F00053F90 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		ED0C2CF10EB4BA6F00053F90 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
 		ED11B0A3107C6C2400A89C47 /* glare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glare.png; sourceTree = "<group>"; };
+		ED15EEB714E33DBE0030D91B /* units.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = units.cc; path = "Classes/common-42s/units.cc"; sourceTree = "<group>"; };
+		ED15EEBB14E33E3E0030D91B /* units.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = units.h; path = "Classes/common-42s/units.h"; sourceTree = "<group>"; };
+		ED15EEBC14E4EDED0030D91B /* units.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = units.txt; sourceTree = "<group>"; };
 		ED26D23F0F6AB1D100F285A2 /* simpleserver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = simpleserver.c; path = simpleserver/simpleserver.c; sourceTree = "<group>"; tabWidth = 8; };
 		ED26D2630F6AB70E00F285A2 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
 		ED26D2640F6AB70E00F285A2 /* ServerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerViewController.m; sourceTree = "<group>"; };
@@ -294,6 +299,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				ED15EEBC14E4EDED0030D91B /* units.txt */,
 				ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */,
 				ED0B99C512AA43E80002D7E8 /* Icon.png */,
 				ED0B99C312AA43E20002D7E8 /* Icon-72.png */,
@@ -356,6 +362,8 @@
 		ED36E9731093D31000DAA444 /* Common42s */ = {
 			isa = PBXGroup;
 			children = (
+				ED15EEB714E33DBE0030D91B /* units.cc */,
+				ED15EEBB14E33E3E0030D91B /* units.h */,
 				EDA093D513FB038E006A789E /* core_math1.cc */,
 				EDA093D613FB038E006A789E /* core_tables.h */,
 				EDA093D713FB038E006A789E /* core_tables.cc */,
@@ -505,6 +513,7 @@
 				ED0B99C412AA43E20002D7E8 /* Icon-72.png in Resources */,
 				ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */,
 				ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */,
+				ED15EEBD14E4EDED0030D91B /* units.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +581,7 @@
 				EDEE186313FB09A4002B76CC /* bcdfloat2.cc in Sources */,
 				EDEE186413FB09A4002B76CC /* bcdfloat.cc in Sources */,
 				EDEE186513FB09A4002B76CC /* bcd.cc in Sources */,
+				ED15EEB814E33DBE0030D91B /* units.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

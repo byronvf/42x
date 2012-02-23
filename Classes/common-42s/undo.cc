@@ -21,7 +21,9 @@
 #include "core_variables.h"
 #include "core_tables.h"
 #include "core_display.h"
+#include "core_helpers.h"
 #include "undo.h"
+#include "units.h"
 
 // Pointer to the list of snapshots that we use to keep version of the stack
 snapshot* snapshot_head = NULL;
@@ -125,7 +127,7 @@ snapshot* setstack(int snappos)
 	return snap;
 }
 
-void message(const char* msg)
+void draw_lcd_message(const char* msg)
 {
 	clear_row(0);
 	int len = strlen(msg);
@@ -137,7 +139,6 @@ void message(const char* msg)
 	for (int i=0; i<len; i++)
 		if (msg[i] == '\022') 
 			draw_string(i, 0, "\000", 1);
-
 	
 	if (len >= 23) 
 		draw_string(21, 0, "\032", 1); // the "..." character
@@ -149,7 +150,7 @@ void undo_message(snapshot* snap, const char* name, int undcnt)
 	char str[DESC_SIZE];
 	memset(str, ' ', DESC_SIZE);
 	snprintf(str, DESC_SIZE, "%s %d\200%s", name, undcnt, snap->describe);
-	message(str);
+	draw_lcd_message(str);
 }
 
 void free_snapshot(snapshot *snap)
@@ -167,10 +168,12 @@ void free_snapshot(snapshot *snap)
 
 void remove_first_snapshot()
 {
+	assert(snapshot_head);
 	snapshot *tmp = snapshot_head->next;
 	free_snapshot(snapshot_head);
 	snapshot_head = tmp;
-	snapshot_count--; assert(snapshot_count >= 0);
+	snapshot_count--; 
+    	assert(snapshot_count >= 0);
 }
 
 void record_undo(const char* desc)
@@ -204,7 +207,6 @@ void record_undo(const char* desc)
 			snapshot_head->describe[DESC_SIZE-1] = NULL;
 			record_undo(snapshot_head->describe);
 		}
-
 
 		roll_count = 0;
 	}	
@@ -287,13 +289,12 @@ void record_undo(const char* desc)
 	snap->describe[DESC_SIZE-1] = NULL;
 }
 
-
 int docmd_undo(arg_struct *arg)
 {
 	if (!(undo_pos == 0 and snapshot_count == 1) && 
 		undo_pos >= snapshot_count-1)
 	{	
-		message("No More UNDOs");
+		draw_lcd_message("No More UNDOs");
 		return ERR_NONE;
 	}
 	
@@ -316,7 +317,7 @@ int docmd_redo(arg_struct *arg)
 	
 	if (undo_pos == 0)
 	{
-		message("No More REDOs");
+		draw_lcd_message("No More REDOs");
 		return ERR_NONE;
 	}
 	
@@ -586,11 +587,18 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 		case CMD_SST:
 			
 		break;
-			
+		
+	    	case CMD_CONVERT:
+		
+			char buf[30];
+			int sz = write_unit_string_to_buf(buf, 29, 0, arg->val.num);
+			buf[sz] = NULL;  // null terminate
+			record_undo(buf);
+		break;			
 	}
 		
 }
-/* we this method to bump an undo off the stack in the case a 
+/* We use this method to bump an undo off the stack in the case a 
    command creates an error, such as divide by zero.
 
    Hmm, on further study, some functions return errors, but
@@ -608,4 +616,19 @@ void record_undo_cleanup(int error)
 	new_snapshot = FALSE;	
 }
 
+vartype* get_most_recent_x()
+{
+    if (snapshot_count == 0) return NULL;
+    snapshot *snap = snapshot_head;
+    return snap->stack_item_head->var;
+}
+
+void modify_most_recent_snapshot_message(char *buf, int length)
+{
+    if (snapshot_count == 0) return;
+    snapshot *snap = snapshot_head;
+    int ptr;
+    string2buf(snap->describe, DESC_SIZE-1, &ptr, buf, length);
+    snap->describe[DESC_SIZE-1]  = NULL;
+}
 

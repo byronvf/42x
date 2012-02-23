@@ -264,20 +264,24 @@ menu_spec menus[] = {
 			{ 0x1000 + CMD_CLLCD,  0, "" },
 			{ 0x1000 + CMD_CLMENU, 0, "" },
 			{ 0x1000 + CMD_CLALLa, 0, "" } } },
-    { /* MENU_CONVERT1 */ MENU_NONE, MENU_CONVERT2, MENU_CONVERT2,
-		      { { 0x1000 + CMD_TO_DEG, 0, "" },
-			{ 0x1000 + CMD_TO_RAD, 0, "" },
-			{ 0x1000 + CMD_TO_HR,  0, "" },
-			{ 0x1000 + CMD_TO_HMS, 0, "" },
-			{ 0x1000 + CMD_TO_REC, 0, "" },
-			{ 0x1000 + CMD_TO_POL, 0, "" } } },
-    { /* MENU_CONVERT2 */ MENU_NONE, MENU_CONVERT1, MENU_CONVERT1,
-		      { { 0x1000 + CMD_IP,   0, "" },
-			{ 0x1000 + CMD_FP,   0, "" },
-			{ 0x1000 + CMD_RND,  0, "" },
-			{ 0x1000 + CMD_ABS,  0, "" },
-			{ 0x1000 + CMD_SIGN, 0, "" },
-			{ 0x1000 + CMD_MOD,  0, "" } } },
+  
+        
+        { /* MENU_CONVERT1 */ MENU_NONE, MENU_CONVERT2, MENU_CONVERT4,
+            { { 0x1000 + CMD_TO_DEG, 0, "" },
+                { 0x1000 + CMD_TO_RAD, 0, "" },
+                { 0x1000 + CMD_TO_HR,  0, "" },
+                { 0x1000 + CMD_TO_HMS, 0, "" },
+                { 0x1000 + CMD_TO_REC, 0, "" },
+                { 0x1000 + CMD_TO_POL, 0, "" } } },
+        { /* MENU_CONVERT2 */ MENU_NONE, MENU_CONVERT3, MENU_CONVERT1,
+            { { 0x1000 + CMD_IP,   0, "" },
+                { 0x1000 + CMD_FP,   0, "" },
+                { 0x1000 + CMD_RND,  0, "" },
+                { 0x1000 + CMD_ABS,  0, "" },
+                { 0x1000 + CMD_SIGN, 0, "" },
+                { 0x1000 + CMD_MOD,  0, "" } } },
+        
+        
     { /* MENU_FLAGS */ MENU_NONE, MENU_NONE, MENU_NONE,
 		      { { 0x1000 + CMD_SF,    0, "" },
 			{ 0x1000 + CMD_CF,    0, "" },
@@ -531,6 +535,28 @@ menu_spec menus[] = {
 			{ 0x1000 + CMD_NULL, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" } } },
+        
+        { /* MENU_CONVERT3 */ MENU_NONE, MENU_CONVERT4, MENU_CONVERT2,
+            { { 0, 0, "" },
+                { 0, 0, "" },
+                { 0,  0, "" },
+                { 0, 0, "" },
+                { 0, 0, "" },
+                { 0, 0, "" } } },
+        { /* MENU_CONVERT4 */ MENU_NONE, MENU_CONVERT1, MENU_CONVERT3,
+            { { 0 ,   0, "" },
+                { 0,   0, "" },
+                { 0,  0, "" },
+                { 0,  0, "" },
+                { 0, 0, "" },
+                { 0,  0, "" } } },        
+        { /* MENU_UNITS */ MENU_NONE, MENU_NONE, MENU_NONE,
+            { { 0 ,   0, "" },
+                { 0,   0, "" },
+                { 0,  0, "" },
+                { 0,  0, "" },
+                { 0, 0, "" },
+                { 0,  0, "" } } },
 #endif
 };
 
@@ -1618,6 +1644,8 @@ int get_command_length(int prgm_index, int4 pc) {
     command |= (argtype & 240) << 4;
     argtype &= 15;
 
+    if (command == CMD_CONVERT) pc2 += 2;
+    
     if ((command == CMD_GTO || command == CMD_XEQ)
 	    && (argtype == ARGTYPE_NUM || argtype == ARGTYPE_LCLBL))
 	pc2 += 4;
@@ -1674,7 +1702,7 @@ void get_next_command(int4 *pc, int *command, arg_struct *arg, int find_target){
 	find_target = 0;
 	arg->target = -1;
     }
-
+    
     switch (arg->type) {
 	case ARGTYPE_NUM:
 	case ARGTYPE_NEG_NUM:
@@ -1731,6 +1759,12 @@ void get_next_command(int4 *pc, int *command, arg_struct *arg, int find_target){
 	    target_pc >>= 8;
 	}
 	prgm->lclbl_invalid = 0;
+    }
+    
+    if (*command == CMD_CONVERT)
+    {
+	arg->val.num = prgm->text[(*pc)++];
+	arg->val.num |= prgm->text[(*pc)++] << 8;
     }
 }
 
@@ -2010,6 +2044,12 @@ void store_command(int4 pc, int command, arg_struct *arg) {
 	}
     }
 
+    if (command == CMD_CONVERT)
+    {
+	buf[bufptr++] = arg->val.num&0xFF;
+	buf[bufptr++] = ((arg->val.num) >> 8)&0xFF;	
+    }
+    
     if (bufptr + prgm->size > prgm->capacity) {
 	unsigned char *newtext;
 	prgm->capacity += 512;

@@ -39,4 +39,8 @@ int docmd_redo(arg_struct *arg);
 void record_undo_cmd(int cmd, arg_struct *arg);
 void record_undo(const char*);
 void record_undo_cleanup(int error);
+
+vartype* get_most_recent_x();
+void modify_most_recent_snapshot_message(char *buf, int length);
+void remove_first_snapshot();
 #endif

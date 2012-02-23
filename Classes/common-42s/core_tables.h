@@ -410,7 +410,9 @@
 #define CMD_UNDO        367
 #define CMD_REDO        368
 
-#define CMD_SENTINEL    369
+#define CMD_CONVERT	369
+
+#define CMD_SENTINEL    370
 
 
 /* command_spec.argtype */
@@ -430,6 +432,7 @@
 #define ARG_RVAR     12 /* Variable (real only) (MVAR, INTEG, SOLVE) */
 #define ARG_MAT      13 /* Variable (matrix only) (EDITN, INDEX) */
 #define ARG_OTHER    14 /* Weirdos */
+
 
 
 /* command_spec.flags */
@@ -462,6 +465,7 @@
 #define ARGTYPE_LCLBL     9
 #define ARGTYPE_DOUBLE   10
 #define ARGTYPE_LBLINDEX 11
+#define ARGTYPE_CONVERT  12
 
 
 typedef struct {

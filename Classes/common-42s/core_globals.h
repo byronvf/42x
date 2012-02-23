@@ -185,6 +185,9 @@ extern error_spec errors[];
 
 #ifdef BIGSTACK
 #define MENU_CLEAR3        64
+#define MENU_CONVERT3      65
+#define MENU_CONVERT4      66
+#define MENU_UNITS         67
 #endif
 
 

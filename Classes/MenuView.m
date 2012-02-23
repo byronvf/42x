@@ -51,6 +51,10 @@ extern int dispRows;
 			return TRUE;
 		}
 	}
+    else if (*menu == MENU_CONVERT3 || *menu == MENU_CONVERT4)
+    {
+        return menus[id].child[i].title_length != 0;			
+    }
 	else
 	{
 		switch (id)
@@ -76,8 +80,9 @@ extern int dispRows;
             case MENU_BASE_LOGIC:				
             case MENU_PGM_XCOMP0:
             case MENU_PGM_XCOMPY:
-				
-            return TRUE;
+                
+            return TRUE;    
+                
 		}
 	}
 	
@@ -298,7 +303,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
-
+    
     if (str != NULL)
     {
         UIFont *font = [UIFont boldSystemFontOfSize:13];

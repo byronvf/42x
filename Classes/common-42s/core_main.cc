@@ -32,6 +32,7 @@
 #include "shell_spool.h"
 #ifdef BIGSTACK
 #include "undo.h"
+#include "units.h"
 #endif
 
 
@@ -74,6 +75,8 @@ void core_init(int read_saved_state, int4 version) {
 		       mode_running,
 		       flags.f.grad,
 		       flags.f.rad || flags.f.grad);
+    
+    init_units();
 }
 
 void core_quit() {
@@ -1056,7 +1059,9 @@ int4 core_program_size(int prgm_index) {
 		break;
 	    case 0:
 	    normal:
-		if (arg.type == ARGTYPE_STR || arg.type == ARGTYPE_IND_STR) {
+		if (cmd == CMD_CONVERT)
+		    size += 4;
+		else if (arg.type == ARGTYPE_STR || arg.type == ARGTYPE_IND_STR) {
 		    size += arg.length + 2;
 		} else {
 		    size += code_std_1 == 0 ? 1 : 2;
@@ -1997,8 +2002,8 @@ static bool is_number_char(char c) {
 	|| c == 'e' || c == 'E' || c == 24;
 }
 
-static bool parse_phloat(const char *p, int len, phloat *res) MAIN_SECT;
-static bool parse_phloat(const char *p, int len, phloat *res) {
+bool parse_phloat(const char *p, int len, phloat *res) MAIN_SECT;
+bool parse_phloat(const char *p, int len, phloat *res) {
     // We can't pass the string on to string2phloat() unchanged, because
     // that function is picky: it does not allow '+' signs, and it does
     // not allow the mantissa to be more than 12 digits long (including

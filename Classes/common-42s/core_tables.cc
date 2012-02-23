@@ -27,6 +27,7 @@
 #include "core_commands7.h"
 #ifdef BIGSTACK
 #include "undo.h"
+#include "units.h"
 #endif
 
 #ifndef COPAN
@@ -465,7 +466,8 @@ static const command_spec cmd_array[] =
     { /* SWPT */        "SWPT",                 4, docmd_xrom,        0x0000a6a3, ARG_NONE,  FLAG_HIDDEN },
 #ifdef BIGSTACK
     { /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE },
-    { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE }
+    { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE },
+    { /* CONV */        "CONVERT",              7, docmd_convert,     0x0000a274, ARG_OTHER,  FLAG_NONE }
 #endif
 };
 

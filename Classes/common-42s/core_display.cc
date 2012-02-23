@@ -25,6 +25,7 @@
 #include "core_variables.h"
 #include "core_keydown.h"
 #include "shell.h"
+#include "units.h"
 
 
 /********************/
@@ -1236,6 +1237,12 @@ void display_incomplete_command(int row) {
 	string2buf(buf, 40, &bufptr, "KEY _", 5);
 	goto done;
     }
+    
+    if (incomplete_command == CMD_CONVERT)
+    {
+	bufptr = write_unit_string_to_buf(buf, 40, bufptr, incomplete_num);
+	goto done;
+    }
 
     if (incomplete_command == CMD_SIMQ)
 	string2buf(buf, 40, &bufptr, "Number of Unknowns ", 19);
@@ -1316,6 +1323,11 @@ void display_command(int row) {
     if (cmd->argtype == ARG_NONE)
 	goto done;
 
+    if (pending_command == CMD_CONVERT)
+    {
+	bufptr = write_unit_string_to_buf(buf, 22, bufptr, pending_command_arg.val.num);
+    }
+    
     if (pending_command_arg.type == ARGTYPE_IND_NUM
 	    || pending_command_arg.type == ARGTYPE_IND_STK
 	    || pending_command_arg.type == ARGTYPE_IND_STR)
@@ -1928,11 +1940,35 @@ void redisplay() {
 	    }
 	}
 	avail_rows = menuKeys ? dispRows : dispRows-1;  
-    } else if (menu_id == MENU_PROGRAMMABLE) {
+    }
+    else if (menu_id == MENU_PROGRAMMABLE) {
 	for (i = 0; i < 6; i++)
 	    draw_key(i, 0, 0, progmenu_label[i], progmenu_length[i]);
 	avail_rows = menuKeys ? dispRows: dispRows-1;
-    } else if (menu_id != MENU_NONE) {
+    }
+    else if (menu_id == MENU_UNITS)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+	    // -1 to convert code to order
+	    unit *u = getUnitByOrder((incomplete_num&0x1F)-1, i+unit_menu_page*6);
+	    if (u)
+		draw_key(i, 0, 0, u->label, strlen(u->label));
+	    else
+		draw_key(i, 0, 0, "", 0);
+	    
+        }
+	/*
+	if (unitconv&0x3E0 && !flags.f.prgm_mode)
+	{
+	    char buf[30];
+	    flags.f.message = 1;
+	    int sz = write_unit_string_to_buf(buf, 30, 0, unitconv);
+	    draw_string(0, 0, buf, sz);
+	}
+	 */
+    }
+    else if (menu_id != MENU_NONE) {
 	const menu_spec *m = menus + menu_id;
 	for (i = 0; i < 6; i++) {
 	    const menu_item_spec *mi = m->child + i;
@@ -2169,16 +2205,16 @@ void redisplay() {
 		} else
 		    display_prgm_line(1, 0);
 	    } else /* More than two lines of display */ {
-			
-			// Make sure program is always centered in the large display
-			int totLines = num_prgm_lines();
-			int atLine = pc2line(pc);
-			if (totLines <= avail_rows) prgm_highlight_row = atLine;
-			else if (totLines - atLine < avail_rows - prgm_highlight_row)
-			{
-				prgm_highlight_row = avail_rows - (totLines - atLine);
-			}
-			
+		
+		// Make sure program is always centered in the large display
+		int totLines = num_prgm_lines();
+		int atLine = pc2line(pc);
+		if (totLines <= avail_rows) prgm_highlight_row = atLine;
+		else if (totLines - atLine < avail_rows - prgm_highlight_row)
+		{
+		    prgm_highlight_row = avail_rows - (totLines - atLine);
+		}
+		
                 if (prgms[current_prgm].text[pc] == CMD_END) {
                     prgm_highlight_row = totLines;
                 }
@@ -2194,16 +2230,16 @@ void redisplay() {
 			temp_highlight_row = 1;
 		}
 		while (r < avail_rows) {
-			if (mode_alpha_entry) {
-				if (r <= prgm_highlight_row)
-					large_display_prgm_line(r, r-temp_highlight_row, 0, true);
-				else
-					large_display_prgm_line(r, r-temp_highlight_row-1, 1, true);
-			}					
-			else {
-		    large_display_prgm_line(r, r-temp_highlight_row, 0, true);
-			}
-			r++;
+		    if (mode_alpha_entry) {
+			if (r <= prgm_highlight_row)
+			    large_display_prgm_line(r, r-temp_highlight_row, 0, true);
+			else
+			    large_display_prgm_line(r, r-temp_highlight_row-1, 1, true);
+		    }					
+		    else {
+			large_display_prgm_line(r, r-temp_highlight_row, 0, true);
+		    }
+		    r++;
 		}
 	    }
 	}
@@ -2406,6 +2442,9 @@ int command2buf(char *buf, int len, int cmd, const arg_struct *arg) {
     } else if (cmd == CMD_XROM)
 	xrom_arg = arg->val.num;
 
+    if (cmd == CMD_CONVERT)
+	return write_unit_string_to_buf(buf, len, 0, arg->val.num);	
+    
     const command_spec *cmdspec = cmdlist(cmd);
     if (cmd >= CMD_ASGN01 && cmd <= CMD_ASGN18)
 	string2buf(buf, len, &bufptr, "ASSIGN ", 7);
