@@ -63,11 +63,9 @@ USton   9.071847e2
 grain   6.479891e-5
 slug    1.459390e1
 
-; lbf should be 4.4482216152605
-
 FORCE   2
 N       1.0
-lbf     4.44822161526
+lbf     4.4482216152605
 
 ENRGY   8
 Joule   1.0

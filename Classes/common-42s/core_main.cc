@@ -2023,7 +2023,11 @@ bool parse_phloat(const char *p, int len, phloat *res) {
 	    in_mant = false;
 	    buf[i++] = 24;
 	} else if (c >= '0' && c <= '9') {
+#ifdef BCD_MATH	    
+	    if (!in_mant || mant_digits++ < 25)
+#else		
 	    if (!in_mant || mant_digits++ < 12)
+#endif	    
 		buf[i++] = c;
 	} else
 	    buf[i++] = c;

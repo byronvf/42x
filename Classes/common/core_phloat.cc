@@ -88,8 +88,8 @@ int string2phloat(const char *buf, int buflen, phloat *d) {
 	else if (c == 24) {
 	    c = 'E';
 	    in_mant = false;
-	} else if (in_mant && c >= '0' && c <= '9') {
-	    if (++mantdigits > 12)
+	} else if (in_mant && c >= '0' && c <= '9') {   
+	    if (++mantdigits > 25)
 		return 5;
 	    if (c != '0')
 		zero = false;
