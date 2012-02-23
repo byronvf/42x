@@ -24,6 +24,7 @@
 #import "shell.h"
 #import "Settings.h"
 #import "core_main.h"
+#import "BlitterView.h"
 
 double shell_random_seed()
 {
@@ -182,6 +183,12 @@ void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
 
 void shell_delay(int duration)
 {   
+    // cpuCount is used to determine if we need to return to the system for
+    // IO handling.. cpuCount = 0 forces a release to the system on the next check
+    // we need this because beeping causes a long delay and without clearing
+    // cpu count the system will freeze if running the beep command during a program
+    cpuCount = 0;
+    
     struct timespec ts;
     ts.tv_sec = duration / 1000;
     ts.tv_nsec = (duration % 1000) * 1000000;
