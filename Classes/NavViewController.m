@@ -75,6 +75,7 @@ BOOL showingServerView;
  */
 - (void)switchToView:(UIViewController*) viewCtrl
 {
+    if ([self visibleViewController] != viewCtrl)
 	[self pushViewController:viewCtrl animated:TRUE];
 }
 
@@ -91,7 +92,7 @@ BOOL showingServerView;
 	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
 	[self setNavigationBarHidden:FALSE];
 	[self switchToView:printViewController];
-		
+	printViewController.isShowing = true;		
 	[printViewController display];
 }
 
@@ -103,6 +104,9 @@ BOOL showingServerView;
 - (void)navigationController:(UINavigationController *)navigationController 
 	   willShowViewController:(UIViewController *)vc animated:(BOOL)animated
 {
+    	if (vc != printViewController)
+	    printViewController.isShowing = false;
+        
 	// There will be one view controller on the stack if returning to the calc view
 	if (vc == (UIViewController*)calcViewController)
 	{

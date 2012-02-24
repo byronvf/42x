@@ -91,29 +91,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
     if (high == 0) high = 1;
     
 	[viewCtrl.blitterView setDisplayUpdateRow:low h:high];
-	
-	// If a program is running, force Free42 to pop out of core_keydown and
-	// service display, see shell_wants_cpu()
-	// cpuCount = 0;
-		
-	if (core_menu() && menuKeys)
-	{
-		assert(viewCtrl.menuView);
-		assert(viewCtrl.blankButtonsView);
-		// The menu keys are in the rows just beyond dispRows, so 
-		// don't bother updateing unless this area of the display has changed.
-		if (height + y > dispRows*8 || [viewCtrl menuView].hidden)
-		{
-			[[viewCtrl menuView] setHidden:FALSE];
-			[[viewCtrl blankButtonsView] setHidden:FALSE];
-			[[viewCtrl menuView] setNeedsDisplay];
-		}
-	}
-	else
-	{  
-		[[viewCtrl menuView] setHidden:TRUE];
-		[[viewCtrl blankButtonsView] setHidden:TRUE];
-	} 
+	// The menu keys are in the rows just beyond dispRows, so 
+    	// don't bother updateing unless this area of the display has changed.
+	bool menuUpdate = height + y > dispRows*8;
+    
+    [viewCtrl doMenuDisplay:false menuUpdate:menuUpdate];		
 }
 
 /*
@@ -657,6 +639,27 @@ void shell_request_timeout3(int delay)
 	return YES;
 }
 
+- (void) doMenuDisplay:(bool) forceHide menuUpdate:(bool) update
+{
+    if (core_menu() && menuKeys && !forceHide)
+    {
+	assert(viewCtrl.menuView);
+	assert(viewCtrl.blankButtonsView);
+	// The menu keys are in the rows just beyond dispRows, so 
+	// don't bother updateing unless this area of the display has changed.
+	if (update || [viewCtrl menuView].hidden)
+	{
+	    [[viewCtrl menuView] setHidden:FALSE];
+	    [[viewCtrl blankButtonsView] setHidden:FALSE];
+	    [[viewCtrl menuView] setNeedsDisplay];
+	}
+    }
+    else
+    {  
+	[[viewCtrl menuView] setHidden:TRUE];
+	[[viewCtrl blankButtonsView] setHidden:TRUE];
+    } 
+}
 
 - (void) resetLCD
 {
@@ -684,18 +687,18 @@ void shell_request_timeout3(int delay)
 	cmdline_row = dispRows-1;
 	if (!menuKeys && core_menu()) cmdline_row--;
 	
-	b01.enabled = TRUE;
-	b02.enabled = TRUE;
-	b03.enabled = TRUE;
-	b04.enabled = TRUE;
-	b05.enabled = TRUE;
-	b06.enabled = TRUE;
-	b07.enabled = TRUE;    
-	b08.enabled = TRUE;    
-	b09.enabled = TRUE;    
-	b10.enabled = TRUE;    
-	b11.enabled = TRUE;    
-	b12.enabled = TRUE;    
+	b01.hidden = FALSE;
+	b02.hidden = FALSE;
+	b03.hidden = FALSE;
+	b04.hidden = FALSE;
+	b05.hidden = FALSE;
+	b06.hidden = FALSE;
+	b07.hidden = FALSE;    
+	b08.hidden = FALSE;    
+	b09.hidden = FALSE;    
+	b10.hidden = FALSE;    
+	b11.hidden = FALSE;    
+	b12.hidden = FALSE;    
 
 	CGPoint cent = blankButtonsView.center;
 	cent.y = 121;
@@ -704,7 +707,9 @@ void shell_request_timeout3(int delay)
 	cent = menuView.center;
 	cent.y = 121;
 	menuView.center = cent;
-}
+    
+	[self doMenuDisplay:false  menuUpdate:false];  
+       }
 
 - (void) doubleLCD
 {
@@ -724,18 +729,18 @@ void shell_request_timeout3(int delay)
 		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
-	b01.enabled = FALSE;
-	b02.enabled = FALSE;
-	b03.enabled = FALSE;
-	b04.enabled = FALSE;
-	b05.enabled = FALSE;
-	b06.enabled = FALSE;
-	b07.enabled = TRUE;    
-	b08.enabled = TRUE;    
-	b09.enabled = TRUE;    
-	b10.enabled = TRUE;    
-	b11.enabled = TRUE;    
-	b12.enabled = TRUE;    
+	b01.hidden = TRUE;
+	b02.hidden = TRUE;
+	b03.hidden = TRUE;
+	b04.hidden = TRUE;
+	b05.hidden = TRUE;
+	b06.hidden = TRUE;
+	b07.hidden = FALSE;    
+	b08.hidden = FALSE;    
+	b09.hidden = FALSE;    
+	b10.hidden = FALSE;    
+	b11.hidden = FALSE;    
+	b12.hidden = FALSE;    
 		
 	CGPoint cent;
 	
@@ -752,7 +757,9 @@ void shell_request_timeout3(int delay)
 	[b09.superview bringSubviewToFront:b09];
 	[b10.superview bringSubviewToFront:b10];
 	[b11.superview bringSubviewToFront:b11];
-	[b12.superview bringSubviewToFront:b12];	
+	[b12.superview bringSubviewToFront:b12];
+    
+	[self doMenuDisplay:false  menuUpdate:false]; 
 }
 
 - (void) fullLCD
@@ -760,18 +767,20 @@ void shell_request_timeout3(int delay)
     [blitterView fullLCD];
 	[blitterView setNumDisplayRows];
     
-	b01.enabled = FALSE;
-	b02.enabled = FALSE;
-	b03.enabled = FALSE;
-	b04.enabled = FALSE;
-	b05.enabled = FALSE;
-	b06.enabled = FALSE;    
-	b07.enabled = FALSE;    
-	b08.enabled = FALSE;    
-	b09.enabled = FALSE;    
-	b10.enabled = FALSE;    
-	b11.enabled = FALSE;    
-	b12.enabled = FALSE;    
+	b01.hidden = TRUE;
+	b02.hidden = TRUE;
+	b03.hidden = TRUE;
+	b04.hidden = TRUE;
+	b05.hidden = TRUE;
+	b06.hidden = TRUE;    
+	b07.hidden = TRUE;    
+	b08.hidden = TRUE;    
+	b09.hidden = TRUE;    
+	b10.hidden = TRUE;    
+	b11.hidden = TRUE;    
+	b12.hidden = TRUE;       
+	
+    [self doMenuDisplay:true  menuUpdate:false]; 
 }
 
 

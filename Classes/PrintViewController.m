@@ -48,35 +48,41 @@ void shell_print(const char *text, int length,
 				 const char *bits, int bytesperline,
 				 int x, int y, int width, int height)
 {
-	shell_spool_txt(text, length, writer, newliner);
-	
-	assert(printViewController);
-	NSMutableData* buf = [printViewController getBuff];
-	if (!printingStarted)
-	{
-		printingStarted = TRUE;
-		lastPrintPosition = [buf length]/18;
+    shell_spool_txt(text, length, writer, newliner);
+    
+    assert(printViewController);
+    NSMutableData* buf = [printViewController getBuff];
+    if (!printingStarted)
+    {
+	printingStarted = TRUE;
+	lastPrintPosition = [buf length]/18;
+    }
+    
+    if (bytesperline == 18) {
+	// Regular text-mode print command
+	if ([buf length] < 18*9*MAX_PRINT_LINES) 
+	    [buf appendBytes:bits length:18*9];
+    } else {
+	// PRLCD
+	if ([buf length] < 18 * 8 * dispRows * MAX_PRINT_LINES) {
+	    for (int i = 0; i <  8*dispRows; i++) {
+		[buf appendBytes:(bits + i * 17) length:17];
+		[buf increaseLengthBy:1];
+		[[Settings instance] setPrintedPRLCD:TRUE];
+	    }
 	}
-	
-	if (bytesperline == 18) {
-		// Regular text-mode print command
-		if ([buf length] < 18*9*MAX_PRINT_LINES) 
-			[buf appendBytes:bits length:18*9];
-	} else {
-		// PRLCD
-		if ([buf length] < 18 * 8 * dispRows * MAX_PRINT_LINES) {
-			for (int i = 0; i <  8*dispRows; i++) {
-				[buf appendBytes:(bits + i * 17) length:17];
-				[buf increaseLengthBy:1];
-				[[Settings instance] setPrintedPRLCD:TRUE];
-			}
-		}
-	}
+    }
+
+    // If we the print display is showing, then we want to continue to update
+    // the display as new print data is added, implying a program is still running
+    if (printViewController.isShowing)
+	[printViewController display];
 }
 
 @implementation PrintViewController
 
 @synthesize printBuffer;
+@synthesize isShowing;
 
 - (void)flushFile
 {
@@ -236,19 +242,17 @@ void shell_print(const char *text, int length,
 }
 
 - (void)awakeFromNib {
-	// Get the navigation item that represent this controller in the 
-	// navigation bar, and add our clear button to it
-	UIBarButtonItem* clearButton = 
-	[[UIBarButtonItem alloc] initWithTitle:@"Clear"
-									 style:UIBarButtonItemStylePlain target:self action:@selector(clearPrinter)];
-	UINavigationItem* item = [self navigationItem];	
-	[item setRightBarButtonItem:clearButton animated:FALSE];
-	
-
-	strcpy(printFileStr, [[NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME] UTF8String]);	
-	
-	// Initialize the two views we will use to tile the scroll view.
-	printViewController = self;
+    // Get the navigation item that represent this controller in the 
+    // navigation bar, and add our clear button to it
+    UIBarButtonItem* clearButton = 
+    [[UIBarButtonItem alloc] initWithTitle:@"Clear"
+				     style:UIBarButtonItemStylePlain target:self action:@selector(clearPrinter)];
+    UINavigationItem* item = [self navigationItem];	
+    [item setRightBarButtonItem:clearButton animated:FALSE];
+        
+    strcpy(printFileStr, [[NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME] UTF8String]);	
+    // Initialize the two views we will use to tile the scroll view.
+    printViewController = self;
 }
 
 - (void)viewDidLoad {

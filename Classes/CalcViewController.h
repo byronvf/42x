@@ -143,6 +143,6 @@ extern bool reval;
 - (void) testUpdateDispFlags;
 - (void) runUpdate;
 - (void) testShutdown;
-
+- (void) doMenuDisplay: (bool) forceHide menuUpdate:(bool) update;
 @end
 

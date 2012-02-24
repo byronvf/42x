@@ -29,16 +29,16 @@
  * Cut/Paste, copy the entire print output directly from file to the clipboard.
  */
 - (void)copy:(id)sender {
-
-	// flush file contents to file
-	[printViewController flushFile];
-
-	NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
-	NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding
-												  error:NULL];	
-	UIPasteboard *pb = [UIPasteboard generalPasteboard];
-	pb.string = pout;	
-	[printViewController setViewsHighlight:FALSE];		
+    
+    // flush file contents to file
+    [printViewController flushFile];
+    
+    NSString* fileStr = [NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME];
+    NSString *pout = [NSString stringWithContentsOfFile:fileStr encoding:NSASCIIStringEncoding
+						  error:NULL];	
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    pb.string = pout;	
+    [printViewController setViewsHighlight:FALSE];		
 }	
 
 /**

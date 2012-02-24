@@ -31,9 +31,11 @@ extern BOOL printingStarted;
 	NSMutableData* printBuffer;	
 	PrintView* view1;
 	PrintView* view2;
+	bool isShowing;
 }
 
 @property (nonatomic, retain) NSMutableData* printBuffer;
+@property bool isShowing;
 
 -(void)displayTextView;
 - (void)displayPlotView;
