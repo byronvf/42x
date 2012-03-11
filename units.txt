@@ -7,7 +7,7 @@
 ; temperatures. blank lines and comment lines are allowed between type
 ; sections but not between units.
 
-LNGTH   12
+LNGTH   14
 m       1.0
 km      1e3
 cm      1e-2
@@ -20,14 +20,18 @@ fathm   1.828804
 Angst   1.0e-10
 mm      1e-3
 micrn   1e-6
+yard    9.144e-1
+parsc   3.085678e16
 
-AREA    6
+AREA    8
 m^2     1.0
 ft^2    9.290304e-2
-yrd^2   8.361274e-1
+in^2	6.4516-4
 mil^2   2.589988e6
-Hectr   1e4
 acre    4.046873e3
+Hectr   1e4
+yrd^2   8.361274e-1
+cm^2    1e-4
 
 VOL     12
 l       1.0
