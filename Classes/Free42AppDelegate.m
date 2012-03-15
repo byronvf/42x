@@ -312,6 +312,8 @@ bool prgmFirstWrite = TRUE;
 		else
 			core_init(1, FREE42_VERSION);
 	}
+    
+    	callKeydownAgain = core_powercycle();
 	free42init = TRUE;
 	
 	if (persistVersion < 4)
@@ -347,8 +349,15 @@ bool prgmFirstWrite = TRUE;
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	[self saveSettings];
-	core_quit();
+    [self saveSettings];
+    
+    // So, we put this here, but we never know when or if this handler will 
+    // will be called iOS.  In fact, it will rarely every call this. 
+    // Backgrounding 42s, then shutting it down manually in 
+    // the iOS multitasking menu will not fire this method.  In otherwords
+    // there is no reliable way to know when we are actually terminating.
+    // we put this here to be complete, but it's just eye candy.    
+    core_quit();
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
