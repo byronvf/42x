@@ -229,7 +229,7 @@ bool prgmFirstWrite = TRUE;
 		dispRows = 2;
 	
 	if ([defaults objectForKey:CONFIG_SHOW_FLAGS])
-		[[Settings instance] setShowFlags:[defaults boolForKey:CONFIG_DISP_ROWS]];
+		[[Settings instance] setShowFlags:[defaults boolForKey:CONFIG_SHOW_FLAGS]];
 	else
 		 [[Settings instance] setShowFlags:TRUE];	
 	
