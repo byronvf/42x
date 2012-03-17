@@ -56,14 +56,14 @@
 		ED82C6951013DC9800803FB3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED82C6941013DC9800803FB3 /* UIKit.framework */; };
 		ED8B3EF2134F5757009DF1AC /* core_commands7.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED8B3EF1134F5757009DF1AC /* core_commands7.cc */; };
 		ED8FA017122A5E7700B2DAAC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED8FA016122A5E7700B2DAAC /* CoreLocation.framework */; };
+		ED958D041514697B00650B74 /* i_print_adv_dark.png in Resources */ = {isa = PBXBuildFile; fileRef = ED958D031514697B00650B74 /* i_print_adv_dark.png */; };
+		ED958D061514793100650B74 /* i_print_adv.png in Resources */ = {isa = PBXBuildFile; fileRef = ED958D051514793100650B74 /* i_print_adv.png */; };
 		EDA093D913FB038E006A789E /* core_math1.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDA093D513FB038E006A789E /* core_math1.cc */; };
 		EDA093DA13FB038E006A789E /* core_tables.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDA093D713FB038E006A789E /* core_tables.cc */; };
 		EDA9B7440EB1F95300D30EA2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA9B7430EB1F95300D30EA2 /* AudioToolbox.framework */; };
 		EDA9BBCE0EB49EEF00D30EA2 /* PrintViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA9BBCD0EB49EEF00D30EA2 /* PrintViewController.m */; };
 		EDA9BBD10EB4A06600D30EA2 /* PrintView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EDA9BBD00EB4A06600D30EA2 /* PrintView.xib */; };
 		EDA9BBE80EB4A49400D30EA2 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA9BBE70EB4A49400D30EA2 /* Utils.m */; };
-		EDAFFDDE0EAF0BB500F06495 /* imgFlagGrad.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */; };
-		EDAFFE100EAF0D6B00F06495 /* imgFlagRad.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */; };
 		EDDA2FCB0FB810FC00B9D002 /* Default-BlankTop.png in Resources */ = {isa = PBXBuildFile; fileRef = EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */; };
 		EDE45EAE0EAF7D6000404D59 /* ConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE45EAD0EAF7D6000404D59 /* ConfigViewController.m */; };
 		EDE45EB20EB033F500404D59 /* ConfigView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EDE45EB10EB033F500404D59 /* ConfigView.xib */; };
@@ -154,6 +154,8 @@
 		ED82C6941013DC9800803FB3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ED8B3EF1134F5757009DF1AC /* core_commands7.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_commands7.cc; path = "Classes/common-42s/core_commands7.cc"; sourceTree = "<group>"; };
 		ED8FA016122A5E7700B2DAAC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		ED958D031514697B00650B74 /* i_print_adv_dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = i_print_adv_dark.png; sourceTree = "<group>"; };
+		ED958D051514793100650B74 /* i_print_adv.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = i_print_adv.png; sourceTree = "<group>"; };
 		EDA093D513FB038E006A789E /* core_math1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_math1.cc; path = "Classes/common-42s/core_math1.cc"; sourceTree = "<group>"; };
 		EDA093D613FB038E006A789E /* core_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_tables.h; path = "Classes/common-42s/core_tables.h"; sourceTree = "<group>"; };
 		EDA093D713FB038E006A789E /* core_tables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = core_tables.cc; path = "Classes/common-42s/core_tables.cc"; sourceTree = "<group>"; };
@@ -164,8 +166,6 @@
 		EDA9BBD00EB4A06600D30EA2 /* PrintView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PrintView.xib; sourceTree = "<group>"; };
 		EDA9BBE60EB4A49400D30EA2 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		EDA9BBE70EB4A49400D30EA2 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
-		EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imgFlagGrad.png; sourceTree = "<group>"; };
-		EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imgFlagRad.png; sourceTree = "<group>"; };
 		EDDA2FCA0FB810FC00B9D002 /* Default-BlankTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-BlankTop.png"; sourceTree = "<group>"; };
 		EDE45EAC0EAF7D6000404D59 /* ConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigViewController.h; sourceTree = "<group>"; };
 		EDE45EAD0EAF7D6000404D59 /* ConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigViewController.m; sourceTree = "<group>"; };
@@ -299,6 +299,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				ED958D051514793100650B74 /* i_print_adv.png */,
+				ED958D031514697B00650B74 /* i_print_adv_dark.png */,
 				ED15EEBC14E4EDED0030D91B /* units.txt */,
 				ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */,
 				ED0B99C512AA43E80002D7E8 /* Icon.png */,
@@ -328,8 +330,6 @@
 				EDFC86B80EAF10F4007120DA /* imgFlagShift.png */,
 				EDFC86BA0EAF10FC007120DA /* imgFlagUpDown.png */,
 				ED26D2730F6AB7F400F285A2 /* ServerView.xib */,
-				EDAFFE0F0EAF0D6B00F06495 /* imgFlagRad.png */,
-				EDAFFDDD0EAF0BB500F06495 /* imgFlagGrad.png */,
 				2899E5210DE3E06400AC0155 /* CalcView.xib */,
 				EDE45EB10EB033F500404D59 /* ConfigView.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
@@ -482,8 +482,6 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* CalcView.xib in Resources */,
-				EDAFFDDE0EAF0BB500F06495 /* imgFlagGrad.png in Resources */,
-				EDAFFE100EAF0D6B00F06495 /* imgFlagRad.png in Resources */,
 				EDFC86B90EAF10F4007120DA /* imgFlagShift.png in Resources */,
 				EDFC86BB0EAF10FC007120DA /* imgFlagUpDown.png in Resources */,
 				EDFC86BE0EAF1FBD007120DA /* imgFlagRun.png in Resources */,
@@ -514,6 +512,8 @@
 				ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */,
 				ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */,
 				ED15EEBD14E4EDED0030D91B /* units.txt in Resources */,
+				ED958D041514697B00650B74 /* i_print_adv_dark.png in Resources */,
+				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -78,6 +78,7 @@ extern bool reval;
 	IBOutlet NavViewController* navViewController;
 	IBOutlet MenuView *menuView;
 	IBOutlet UIImageView *blankButtonsView;
+	IBOutlet PrintViewController* printController;
 	
 	const char* displayBuff;
 	
@@ -92,6 +93,8 @@ extern bool reval;
 @property (nonatomic, retain) UIImageView* blankButtonsView;
 @property (nonatomic, retain) MenuView *menuView;
 @property (nonatomic, retain) NavViewController* navViewController;
+@property (nonatomic, retain) PrintViewController* printController;
+
 @property (nonatomic, retain) UILabel *screen;
 @property (nonatomic, retain) UIButton *b01;
 @property (nonatomic, retain) UIButton *b02;

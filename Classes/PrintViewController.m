@@ -54,35 +54,40 @@ void shell_print(const char *text, int length,
     NSMutableData* buf = [printViewController getBuff];
     if (!printingStarted)
     {
-	printingStarted = TRUE;
-	lastPrintPosition = [buf length]/18;
+		printingStarted = TRUE;
+		lastPrintPosition = [buf length]/18;
     }
     
     if (bytesperline == 18) {
-	// Regular text-mode print command
-	if ([buf length] < 18*9*MAX_PRINT_LINES) 
-	    [buf appendBytes:bits length:18*9];
+		// Regular text-mode print command
+		if ([buf length] < 18*9*MAX_PRINT_LINES) 
+			[buf appendBytes:bits length:18*9];
     } else {
-	// PRLCD
-	if ([buf length] < 18 * 8 * dispRows * MAX_PRINT_LINES) {
-	    for (int i = 0; i <  8*dispRows; i++) {
-		[buf appendBytes:(bits + i * 17) length:17];
-		[buf increaseLengthBy:1];
-		[[Settings instance] setPrintedPRLCD:TRUE];
-	    }
-	}
+		// PRLCD
+		if ([buf length] < 18 * 8 * dispRows * MAX_PRINT_LINES) {
+			for (int i = 0; i <  8*dispRows; i++) {
+				[buf appendBytes:(bits + i * 17) length:17];
+				[buf increaseLengthBy:1];
+				[[Settings instance] setPrintedPRLCD:TRUE];
+			}
+		}
     }
-
+	
     // If we the print display is showing, then we want to continue to update
     // the display as new print data is added, implying a program is still running
+	printViewController.isSeen = FALSE;
     if (printViewController.isShowing)
-	[printViewController display];
+	{
+		printViewController.isSeen = TRUE;
+		[printViewController display];
+	}
 }
 
 @implementation PrintViewController
 
 @synthesize printBuffer;
 @synthesize isShowing;
+@synthesize isSeen;
 
 - (void)flushFile
 {
@@ -253,6 +258,8 @@ void shell_print(const char *text, int length,
     strcpy(printFileStr, [[NSHomeDirectory() stringByAppendingString:PRINT_FILE_NAME] UTF8String]);	
     // Initialize the two views we will use to tile the scroll view.
     printViewController = self;
+	
+	isSeen = TRUE;  // WE should probably persist this at some point
 }
 
 - (void)viewDidLoad {

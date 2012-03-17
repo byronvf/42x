@@ -25,6 +25,7 @@ void keydown_number_entry(int shift, int key) KEYDOWN_SECT;
 void keydown_command_entry(int shift, int key) KEYDOWN_SECT;
 void keydown_alpha_mode(int shift, int key) KEYDOWN_SECT;
 void keydown_normal_mode(int shift, int key) KEYDOWN_SECT;
+int basekeys() KEYDOWN_SECT;
 
 #if BIGLCD
 int get_next_highlight_row() KEYDOWN_SECT;

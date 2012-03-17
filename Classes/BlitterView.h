@@ -19,6 +19,7 @@
 
 @class CalcViewController;
 @class NavViewController;
+@class PrintViewController;
 @class BlitterView;
 
 extern int cpuCount;

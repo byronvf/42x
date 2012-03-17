@@ -84,8 +84,7 @@ static int is_number_key(int shift, int key) {
 		|| key == KEY_9 || key == KEY_DOT || key == KEY_E);
 }
 
-static int basekeys() KEYDOWN_SECT;
-static int basekeys() {
+int basekeys() {
     if (!baseapp)
 	return 0;
     int *menu = get_front_menu();

@@ -32,10 +32,12 @@ extern BOOL printingStarted;
 	PrintView* view1;
 	PrintView* view2;
 	bool isShowing;
+	bool isSeen;  // user has seen all new print output
 }
 
 @property (nonatomic, retain) NSMutableData* printBuffer;
 @property bool isShowing;
+@property bool isSeen;
 
 -(void)displayTextView;
 - (void)displayPlotView;

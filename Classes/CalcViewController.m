@@ -145,6 +145,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize bgImageView;
 @synthesize updnGlowView;
 @synthesize navViewController;
+@synthesize printController;
 @synthesize blankButtonsView;
 @synthesize displayBuff;
 @synthesize menuView;
@@ -336,6 +337,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		if (printingStarted)
 		{
+			[blitterView annuncNeedsDisplay];
 			// We set printingStarted to true in the shell_print method to indicate
 			// that printing has begun.  For each line out output Free42 returns from
 			// core_keydown, but returns true if ther are more lines. If we get
@@ -345,7 +347,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 			
 			// We use the printingStarted flag to turn on the and off the print 
 			// aunnunciator since it is off now, we want to redisplay.
-			[blitterView annuncNeedsDisplay];
 			if ([[Settings instance] autoPrint])
 				[navViewController switchToPrintView];
 		}

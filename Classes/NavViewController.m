@@ -92,7 +92,8 @@ BOOL showingServerView;
 	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
 	[self setNavigationBarHidden:FALSE];
 	[self switchToView:printViewController];
-	printViewController.isShowing = true;		
+	printViewController.isShowing = TRUE;		
+	printViewController.isSeen = TRUE;		
 	[printViewController display];
 }
 

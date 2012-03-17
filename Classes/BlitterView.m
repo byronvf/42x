@@ -22,6 +22,7 @@
 #import "core_globals.h"
 #import "core_commands1.h"
 #import "core_commands2.h"
+#import "core_keydown.h"
 #import "Free42AppDelegate.h"
 #import "PrintViewController.h"
 #import "NavViewController.h"
@@ -215,45 +216,54 @@ short dispflags = 0;
 						   [[UIImage imageNamed:@"imgFlagUpDown.png"] CGImage]);
 	
 	if (flagShift)
-		CGContextDrawImage(ctx, CGRectMake(35, -3 + statusBarOffset, 30, 18),
+		CGContextDrawImage(ctx, CGRectMake(35, -3 + statusBarOffset, 22, 18),
 						   [[UIImage imageNamed:@"imgFlagShift.png"] CGImage]);
 	
-	if (printingStarted)
-		CGContextDrawImage(ctx, CGRectMake(65, -1 + statusBarOffset, 32, 18),
-						   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
+	//if (printingStarted)
+	//	CGContextDrawImage(ctx, CGRectMake(65, -1 + statusBarOffset, 32, 18),
+	//					   [[UIImage imageNamed:@"imgFlagPrint.png"] CGImage]);	
 	
 	if (flagRun)
-		CGContextDrawImage(ctx, CGRectMake(100, -1 + statusBarOffset, 18, 18),
+		CGContextDrawImage(ctx, CGRectMake(60, -1 + statusBarOffset, 18, 18),
 						   [[UIImage imageNamed:@"imgFlagRun.png"] CGImage]);	
-	
+
+	NSString* ang = NULL;
 	if (flagGrad)
-		CGContextDrawImage(ctx, CGRectMake(120, -2 + statusBarOffset, 30, 20), 
-						   [[UIImage imageNamed:@"imgFlagGrad.png"] CGImage]);
+		ang = @"GRAD";
+	else if (flagRad)
+		ang = @"RAD";
 	
-	if (flagRad)
-		CGContextDrawImage(ctx, CGRectMake(120, -1 + statusBarOffset, 24, 20),
-						   [[UIImage imageNamed:@"imgFlagRad.png"] CGImage]);		
+	if (ang != NULL)
+	{
+		UIFont *font = [UIFont boldSystemFontOfSize:13];
+		[ang drawInRect:CGRectMake(80, statusBarOffset, 38, 14) 
+				withFont:font lineBreakMode:UILineBreakModeClip
+			   alignment:UITextAlignmentRight];	
+	}	
 }	
+
 
 - (void)drawFlags
 {
+	const int xoff = 158;
+	
 	if (![[Settings instance] showFlags]) return;
 		
-	UIFont *font = [UIFont boldSystemFontOfSize:14];
+	UIFont *font = [UIFont boldSystemFontOfSize:13];
 	if (flags.f.f00) 
-		[@"0" drawAtPoint:CGPointMake(166, statusBarOffset-1) withFont:font];
+		[@"0" drawAtPoint:CGPointMake(xoff, statusBarOffset) withFont:font];
 	
 	if (flags.f.f01)
-		[@"1" drawAtPoint:CGPointMake(175, statusBarOffset-1) withFont:font];
+		[@"1" drawAtPoint:CGPointMake(xoff+9, statusBarOffset) withFont:font];
 
 	if (flags.f.f02)
-		[@"2" drawAtPoint:CGPointMake(184, statusBarOffset-1) withFont:font];
+		[@"2" drawAtPoint:CGPointMake(xoff+18, statusBarOffset) withFont:font];
 	
 	if (flags.f.f03)
-		[@"3" drawAtPoint:CGPointMake(193, statusBarOffset-1) withFont:font];
+		[@"3" drawAtPoint:CGPointMake(xoff+27, statusBarOffset) withFont:font];
 
-	if (flags.f.f04)
-		[@"4" drawAtPoint:CGPointMake(202, statusBarOffset-1) withFont:font];
+	//if (flags.f.f04)
+	//	[@"4" drawAtPoint:CGPointMake(202, statusBarOffset) withFont:font];
 	
 }
 
@@ -265,6 +275,29 @@ short dispflags = 0;
 	if (flags.f.prgm_mode  || core_alpha_menu())
 	{
 		self.cutPaste = FALSE;
+	}
+}
+
+- (void)drawBase
+{
+	if (!basekeys()) return;
+		
+	NSString *base = NULL;
+	int b = get_base();
+	switch (b) 
+	{
+		case  2: base = @"BIN"; break;
+		case  8: base = @"OCT"; break;
+		case 10: base = @"DEC"; break;
+		case 16: base = @"HEX"; break;
+	}
+	
+	if (base != NULL)
+	{
+		UIFont *font = [UIFont boldSystemFontOfSize:13];
+		[base drawInRect:CGRectMake(120, statusBarOffset, 30, 14) 
+				withFont:font lineBreakMode:UILineBreakModeClip
+				alignment:UITextAlignmentRight];	
 	}
 }
 
@@ -280,7 +313,7 @@ short dispflags = 0;
 	// a 4 byte char and a null terminator.
     hp2utf8(lastxbuf, strlen(lastxbuf), lxstr, lxbufsize - 4);
 	NSString *lval = [[NSString alloc] initWithUTF8String:lxstr];
-	NSString *wprefix = @"L ";
+	NSString *wprefix = @"L";
 
 	// If the number is very long, then we drop "L " prefix because it will start to crowd
 	// The annunciators, and potetially will begin to overlap
@@ -292,10 +325,10 @@ short dispflags = 0;
 	// Draw the lastx register right justified in the upper right hand corner of the LCD in
 	// the annunciator row.
 	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
-	UIFont *font = [UIFont systemFontOfSize:15];
-	[wprefix drawInRect:CGRectMake(140, -2 + statusBarOffset, 178, 14) 
+	UIFont *font = [UIFont systemFontOfSize:14];
+	[wprefix drawInRect:CGRectMake(195, statusBarOffset-1, 100, 14) 
 			   withFont:font lineBreakMode:UILineBreakModeClip
-	 alignment:UITextAlignmentRight];
+	 alignment:UITextAlignmentCenter];
 	
 	[lval release];
 }
@@ -329,7 +362,8 @@ short dispflags = 0;
 	{
 		[self drawAnnunciators];	
 		[self drawLastX];	
-		[self drawFlags];		
+		[self drawFlags];
+		[self drawBase];
 	}
 		
 	if (rect.origin.y + rect.size.height > ASTAT_HEIGHT + statusBarOffset)
@@ -369,10 +403,26 @@ short dispflags = 0;
 	
     if (dispRows < 8)
     {
-        // Draw printer watermark button 
+		
+		
+        // Draw printer watermark button
         if (fuval)
             CGContextFillRect(ctx, rect);
-        int poff = dispRows < 4 ? 69 : 123;
+		
+		if (calcViewController.printController.isSeen)
+		{
+			CGContextDrawImage(ctx, CGRectMake(295, 2+statusBarOffset, 18, 16),
+							   [[UIImage imageNamed:@"i_print_adv.png"] CGImage]);
+		}
+		else 
+		{
+			CGContextDrawImage(ctx, CGRectMake(295, 2+statusBarOffset, 18, 16),
+							   [[UIImage imageNamed:@"i_print_adv_dark.png"] CGImage]);
+		}
+		
+		
+	/*
+		 int poff = dispRows < 4 ? 69 : 123;
         CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
         UIFont *font = [UIFont systemFontOfSize:13];
         [@"P" drawAtPoint:CGPointMake(300, poff) withFont:font];		
@@ -381,6 +431,7 @@ short dispflags = 0;
         CGContextSetLineWidth(ctx, 1);
         CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 0.3);	
         CGContextStrokePath(ctx);
+	 */
     }
 	
 	if (flags.f.prgm_mode) [self drawScrollBar];
@@ -836,7 +887,7 @@ char cbuf[30];
 	{
 		[calcViewController handlePopupKeyboard:true];
 	}
-	else if (dispRows < 8 && (p.x > 280 && ((dispRows < 4 && p.y > 70) || p.y > 110)) 
+	else if (dispRows < 8 && (p.x > 280 && p.y < statusBarOffset+25)
 			 && touch.tapCount == 1)
 	{
 		// If we are currently in the process of printing, then we don't allow flipping 
