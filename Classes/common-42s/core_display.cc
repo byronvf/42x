@@ -26,6 +26,7 @@
 #include "core_keydown.h"
 #include "shell.h"
 #include "units.h"
+#include "undo.h"
 
 
 /********************/
@@ -1114,6 +1115,13 @@ void display_prgm_line(int row, int line_offset) {
     }
 }
 
+static int radj(int rcnt)
+{
+	if (rcnt < 0)
+		return rcnt += stacksize;
+	return rcnt;
+}
+
 void display_x(int row) {
     char buf[22];
     int bufptr = 0;
@@ -1123,12 +1131,18 @@ void display_x(int row) {
 	bufptr += int2string(matedit_i + 1, buf + bufptr, 22 - bufptr);
 	char2buf(buf, 22, &bufptr, ':');
 	bufptr += int2string(matedit_j + 1, buf + bufptr, 22 - bufptr);
-	char2buf(buf, 22, &bufptr, '=');
+	if (roll_count == 0 && roll_pending && flags.f.f32)
+		char2buf(buf, 22, &bufptr, '\017');
+	else
+		char2buf(buf, 22, &bufptr, '=');		
     } else if (input_length > 0) {
 	string2buf(buf, 22, &bufptr, input_name, input_length);
 	char2buf(buf, 22, &bufptr, '?');
     } else {
-	string2buf(buf, 22, &bufptr, "x\200", 2);
+		if (radj(roll_count) == 0 && roll_pending && flags.f.f32)
+			string2buf(buf, 22, &bufptr, "x\017", 2);
+		else
+			string2buf(buf, 22, &bufptr, "x\200", 2);
     }
 	int prefixLen  = bufptr;
     bufptr += vartype2string(reg_x, buf + bufptr, 22 - bufptr);
@@ -1156,10 +1170,11 @@ void display_row(int row, int start, int len, char *buf)
 
 void display_y(int row) {
     char buf[20];
-    int len;
-    clear_row(row);
+    int len;	
+    clear_row(row);		
+	const char* prefix = (radj(roll_count) == 1 && flags.f.f32) ? "\201\017" : "\201\200";
+    draw_string(0, row, prefix, 2);
     len = vartype2string(reg_y, buf, 20);
-    draw_string(0, row, "\201\200", 2);
     display_row(row, 2, len, buf);
 }
 
@@ -1168,7 +1183,8 @@ void display_z(int row) {
     int len;
     clear_row(row);
     len = vartype2string(reg_z, buf, 20);
-    draw_string(0, row, "z\200", 2);
+	const char* prefix = (radj(roll_count) == 2 && flags.f.f32) ? "z\017" : "z\200";
+    draw_string(0, row, prefix, 2);
     display_row(row, 2, len, buf);
 }
 
@@ -1179,7 +1195,8 @@ void display_t(int row) {
 	len = vartype2string(reg_t, buf, 20);
 	if (flags.f.f32) {
 		if (stacksize < 4) len = 0;	
-		draw_string(0, row, "~\200", 2);
+		const char* prefix = (radj(roll_count) == 3) ? "~\017" : "~\200";
+		draw_string(0, row, prefix, 2);
 	}
 	else {
 		draw_string(0, row, "t\200", 2);
@@ -1191,12 +1208,18 @@ void display_0(int row) {
     char buf[20];
     int len = 0;
     clear_row(row);
-    if (stacksize > 4)	
-	len = vartype2string(bigstack_head->var, buf, 20);
-    
-    
-    
-    draw_string(0, row, "~\200", 2);
+	if (!flags.f.f32)
+	{
+		len = vartype2string(reg_lastx, buf, 20);
+		draw_string(0, row, "l\200", 2);		
+	}
+	else
+	{
+		if (stacksize > 4)	
+			len = vartype2string(bigstack_head->var, buf, 20);
+		const char* prefix = (radj(roll_count) == 4) ? "~\017" : "~\200";
+	    draw_string(0, row, prefix, 2);
+	}
     display_row(row, 2, len, buf);
 }
 
@@ -1206,7 +1229,8 @@ void display_1(int row) {
     clear_row(row);
     if (stacksize > 5)
 	len = vartype2string(bigstack_head->next->var, buf, 20);
-    draw_string(0, row, "~\200", 2);
+	const char* prefix = (radj(roll_count) == 5) ? "~\017" : "~\200";
+    draw_string(0, row, prefix, 2);
     display_row(row, 2, len, buf);
 }
 

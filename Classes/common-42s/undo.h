@@ -33,6 +33,8 @@ typedef struct snapshot_struct snapshot;
 extern snapshot* snapshot_head;
 extern int snapshot_count;
 extern int undo_pos;
+extern int roll_count;
+extern bool roll_pending;
 
 int docmd_undo(arg_struct *arg);
 int docmd_redo(arg_struct *arg);

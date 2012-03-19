@@ -28,6 +28,7 @@
 #include "core_math2.h"
 #include "core_sto_rcl.h"
 #include "core_variables.h"
+#include "undo.h"
 
 /********************************************************/
 /* Implementations of HP-42S built-in functions, part 3 */
@@ -838,6 +839,10 @@ int appmenu_exitcallback_1(int menuid) {
 	    reg_x = matedit_x;
 	    matedit_x = NULL;
 	}
+			
+	roll_pending = FALSE;
+	roll_count = 0;	
+		
 	matedit_mode = 0;
 	flags.f.grow = 0;
 	flags.f.stack_lift_disable = 0;

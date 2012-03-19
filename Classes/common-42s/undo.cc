@@ -512,6 +512,7 @@ void record_undo_cmd(int cmd, arg_struct *arg)
 				// fall through, roll_count will only decrement by 1
 			case CMD_RUP:
 				roll_count++;
+				roll_count %= stacksize;
 
 			if (!roll_pending)
 			{
