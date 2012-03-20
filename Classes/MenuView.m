@@ -205,69 +205,13 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 
 - (void) superscript: (CGContextRef)ctx  key:(int)i
 {
-    const int dispsize = 7; // number of characters to display for menu superscript
-    int length = 0;
-    const char* text = NULL;
-    
-    int catsect = get_cat_section();
-    if (catsect == CATSECT_VARS_ONLY || 
-        catsect == CATSECT_CPX ||
-        catsect == CATSECT_REAL ||
-        catsect == CATSECT_MAT)
-    {
-        int itemindex = get_cat_item(i);
-        length = vars[itemindex].length;
-        text = vars[itemindex].name;
-    }
-    else if ((catsect == CATSECT_PGM_SOLVE && mode_appmenu == MENU_VARMENU) ||
-        (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_VARMENU))
-    {
-        int itemindex = find_menu_key(i+1);
-        length = varmenu_labellength[itemindex];
-        text = varmenu_labeltext[itemindex];
-    }
-    else if (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_INTEG_PARAMS)
-    {
-        switch (i)
-        {
-            case 0: text = "LLIM"; length = 4; break;
-            case 1: text = "ULIM"; length = 4; break;
-            case 2: text = "ACC" ; length = 3; break;            
-        }    
-    }
-    else if (mode_plainmenu >= MENU_CUSTOM1 && mode_plainmenu <= MENU_CUSTOM3)
-    {
-        int r = mode_plainmenu - MENU_CUSTOM1;
-        length = custommenu_length[r][i];
-        text = custommenu_label[r][i];
-        int prgm;
-        int4 pc;
-        // If we find the label in the global program labels, then 
-        // the custom menu will always execute the program when key is pressed, so we 
-        // don't want to show a variable value.
-        if (find_global_label(text, length, &prgm, &pc))
-            length = 0; 
-    }
-    
+	
+    NSString *str = NULL;
     int menu = MENU_NONE;
     if (get_front_menu() != NULL)
         menu = *get_front_menu();
-    
-    NSString *str = NULL;
-    if (length != 0)
-    {
-        vartype *v = recall_var(text, length); 
-        if (v != NULL)
-        {
-            char vstr[dispsize];
-            int len = vartype2small_string(v, vstr, dispsize);                
-            char vutf8[dispsize*2];
-            hp2utf8(vstr, len, vutf8, dispsize*2);
-            str = [[NSString alloc] initWithUTF8String:vutf8];
-            [str autorelease];
-        }
-    }
-    else if (menu == MENU_TOP_FCN)
+	
+    if (menu == MENU_TOP_FCN)
     {
         switch (i)
         {
@@ -278,7 +222,6 @@ int vartype2small_string(vartype* v, char* vstr, int length)
             case 4: str = @"e^x"; break;
             case 5: str = @"GTO"; break;
         }
-        
     }
     else if (menu == MENU_BASE_A_THRU_F)
     {
@@ -309,6 +252,66 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         }
         
     }
+	else
+	{
+		const int dispsize = 7; // number of characters to display for menu superscript
+		int length = 0;
+		const char* text = NULL;
+		
+		int catsect = get_cat_section();
+		if (menu == MENU_CATALOG &&
+			(catsect == CATSECT_VARS_ONLY || 
+			catsect == CATSECT_CPX ||
+			catsect == CATSECT_REAL ||
+			catsect == CATSECT_MAT))
+		{
+			int itemindex = get_cat_item(i);
+			length = vars[itemindex].length;
+			text = vars[itemindex].name;
+		}
+		else if ((catsect == CATSECT_PGM_SOLVE && mode_appmenu == MENU_VARMENU) ||
+				 (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_VARMENU))
+		{
+			int itemindex = find_menu_key(i+1);
+			length = varmenu_labellength[itemindex];
+			text = varmenu_labeltext[itemindex];
+		}
+		else if (catsect == CATSECT_PGM_INTEG && mode_appmenu == MENU_INTEG_PARAMS)
+		{
+			switch (i)
+			{
+				case 0: text = "LLIM"; length = 4; break;
+				case 1: text = "ULIM"; length = 4; break;
+				case 2: text = "ACC" ; length = 3; break;            
+			}    
+		}
+		else if (mode_plainmenu >= MENU_CUSTOM1 && mode_plainmenu <= MENU_CUSTOM3)
+		{
+			int r = mode_plainmenu - MENU_CUSTOM1;
+			length = custommenu_length[r][i];
+			text = custommenu_label[r][i];
+			int prgm;
+			int4 pc;
+			// If we find the label in the global program labels, then 
+			// the custom menu will always execute the program when key is pressed, so we 
+			// don't want to show a variable value.
+			if (find_global_label(text, length, &prgm, &pc))
+				length = 0; 
+		}
+        
+		if (length != 0)
+		{
+			vartype *v = recall_var(text, length); 
+			if (v != NULL)
+			{
+				char vstr[dispsize];
+				int len = vartype2small_string(v, vstr, dispsize);                
+				char vutf8[dispsize*2];
+				hp2utf8(vstr, len, vutf8, dispsize*2);
+				str = [[[NSString alloc] initWithUTF8String:vutf8] autorelease];
+			}
+		}
+	}
     
     if (str != NULL)
     {
