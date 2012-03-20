@@ -434,6 +434,7 @@ void set_base(int base) {
 
     if (base != oldbase && flags.f.trace_print && flags.f.printer_exists)
 	docmd_prx(NULL);
+	shell_annunciators(-1, -1, 1, -1, -1, -1);
 }
 
 int get_base_param(const vartype *v, int8 *n) {
