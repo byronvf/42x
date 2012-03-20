@@ -20,6 +20,12 @@ extern int dispRows;
 @implementation MenuView
 
 @synthesize calcViewController;
+@synthesize label1;
+@synthesize label2;
+@synthesize label3;
+@synthesize label4;
+@synthesize label5;
+@synthesize label6;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self == [super initWithFrame:frame]) {
@@ -319,6 +325,14 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     }
 }
 
+- (NSString*)getKeyLabel: (int)i
+{
+	char utf8[MENU_ITEM_CHAR_LENGTH*3];
+	hp2utf8(menu_items[i].chars, menu_items[i].length, utf8, MENU_ITEM_CHAR_LENGTH*3);
+	NSString *str = [[[NSString alloc] initWithUTF8String:utf8] autorelease];
+	return str;
+}
+
 - (void)drawRect:(CGRect)rect 
 {
 #ifdef DEBUG	
@@ -329,51 +343,26 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 #endif
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
-	CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);
-    //UIFont *font = [UIFont boldSystemFontOfSize:13];
-    //UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:13];
-    UIFont *font = [UIFont fontWithName:@"Helvetica-Bold" size:13];
-		
-	// 136 - size in bytes of one row.
-	// 17*2 - absorb a couple of pixel rows	
-	//const char* menuBuff = calcViewController.displayBuff + dispRows*136 + 17*2;
-	
-	// 32 - vert pixel offset to begin drawing.
-	// 5  - pixel height of display
-	// 17 - number of bytes per line, each byte is an 8 pixel bit map. 
-	// 2.0 - horz scale factor
-	// 3.0 - vert scale factor
-		
-	int horzoff = 14;	
+	CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.30, 1.0);
 	for (int i=0; i<6; i++)
 	{
         if (menu_items[i].length > 0)
         {
             if (menu_items[i].highlight)
-            {
-                
-                //CGContextSetRGBFillColor(ctx, 1.0, 0.67, 0.23, 1.0);
-                CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.30, 1.0);
+            {                
                 CGContextFillRect(ctx, CGRectMake(16+i*50, 42, 38, 2));
             }
-            
-            CGContextSetRGBFillColor(ctx, 0.90, 0.90, 0.90, 1.0);
-                
-            //drawBlitterDataToContext(ctx, menuBuff, horzoff, 28, 5, 17, 2.0, 3.0, i*22, (i+1)*22-1, 1);
-            horzoff += 6;
-        
-            char utf8[MENU_ITEM_CHAR_LENGTH*3];
-            hp2utf8(menu_items[i].chars, menu_items[i].length, utf8, MENU_ITEM_CHAR_LENGTH*3);
-            NSString *str = [[NSString alloc] initWithUTF8String:utf8];        
-            [str drawInRect:CGRectMake(11 + i*50, 25, 48, 20) 
-                   withFont:font lineBreakMode:UILineBreakModeClip
-                  alignment:UITextAlignmentCenter];
-        
-            [str release];
+			
             [self superscript:ctx key:i];
-        }
+		}
 	}
 	
+	label1.text = [self getKeyLabel:0];
+	label2.text = [self getKeyLabel:1];
+	label3.text = [self getKeyLabel:2];
+	label4.text = [self getKeyLabel:3];
+	label5.text = [self getKeyLabel:4];
+	label6.text = [self getKeyLabel:5];	
 }
 
 
