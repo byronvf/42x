@@ -760,6 +760,14 @@ int docmd_clsigma(arg_struct *arg) {
     return ERR_NONE;
 }
 
+int docmd_newpg(arg_struct *arg)
+{
+	goto_dot_dot();
+	flags.f.prgm_mode = TRUE;
+	do_interactive(CMD_LBL);
+	return ERR_NONE;
+}
+
 int docmd_clp(arg_struct *arg) {
     return clear_prgm(arg);
 }

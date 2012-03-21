@@ -265,22 +265,21 @@ menu_spec menus[] = {
 			{ 0x1000 + CMD_CLMENU, 0, "" },
 			{ 0x1000 + CMD_CLALLa, 0, "" } } },
   
-        
         { /* MENU_CONVERT1 */ MENU_NONE, MENU_CONVERT2, MENU_CONVERT4,
+            { { 0, 0, "" },
+                { 0, 0, "" },
+                { 0,  0, "" },
+                { 0, 0, "" },
+                { 0, 0, "" },
+                { 0, 0, "" } } },
+		
+		{ /* MENU_CONVERT2 */ MENU_NONE, MENU_CONVERT3, MENU_CONVERT1,
             { { 0x1000 + CMD_TO_DEG, 0, "" },
                 { 0x1000 + CMD_TO_RAD, 0, "" },
                 { 0x1000 + CMD_TO_HR,  0, "" },
                 { 0x1000 + CMD_TO_HMS, 0, "" },
                 { 0x1000 + CMD_TO_REC, 0, "" },
                 { 0x1000 + CMD_TO_POL, 0, "" } } },
-        { /* MENU_CONVERT2 */ MENU_NONE, MENU_CONVERT3, MENU_CONVERT1,
-            { { 0x1000 + CMD_IP,   0, "" },
-                { 0x1000 + CMD_FP,   0, "" },
-                { 0x1000 + CMD_RND,  0, "" },
-                { 0x1000 + CMD_ABS,  0, "" },
-                { 0x1000 + CMD_SIGN, 0, "" },
-                { 0x1000 + CMD_MOD,  0, "" } } },
-        
         
     { /* MENU_FLAGS */ MENU_NONE, MENU_NONE, MENU_NONE,
 		      { { 0x1000 + CMD_SF,    0, "" },
@@ -536,20 +535,26 @@ menu_spec menus[] = {
 			{ 0x1000 + CMD_NULL, 0, "" },
 			{ 0x1000 + CMD_NULL, 0, "" } } },
         
+		
+        
         { /* MENU_CONVERT3 */ MENU_NONE, MENU_CONVERT4, MENU_CONVERT2,
-            { { 0, 0, "" },
-                { 0, 0, "" },
-                { 0,  0, "" },
-                { 0, 0, "" },
-                { 0, 0, "" },
-                { 0, 0, "" } } },
+            { { 0x1000 + CMD_IP,   0, "" },
+                { 0x1000 + CMD_FP,   0, "" },
+                { 0x1000 + CMD_RND,  0, "" },
+                { 0x1000 + CMD_ABS,  0, "" },
+                { 0x1000 + CMD_SIGN, 0, "" },
+                { 0x1000 + CMD_MOD,  0, "" } } },
+        
+		
+  		
         { /* MENU_CONVERT4 */ MENU_NONE, MENU_CONVERT1, MENU_CONVERT3,
             { { 0 ,   0, "" },
                 { 0,   0, "" },
                 { 0,  0, "" },
                 { 0,  0, "" },
                 { 0, 0, "" },
-                { 0,  0, "" } } },        
+                { 0,  0, "" } } },  
+		
         { /* MENU_UNITS */ MENU_NONE, MENU_NONE, MENU_NONE,
             { { 0 ,   0, "" },
                 { 0,   0, "" },

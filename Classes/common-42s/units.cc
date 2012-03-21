@@ -157,8 +157,8 @@ int init_units()
     assert(NUM_UNIT_TYPES == 10);  // loops below fail if this is not true
     for (int i = 0; i < 6; i++)
     {
-        menu_item_spec *mi = &menus[MENU_CONVERT3].child[i];
-        int strsz = MIN(sizeof(menus[MENU_CONVERT3].child[0].title),
+        menu_item_spec *mi = &menus[MENU_CONVERT1].child[i];
+        int strsz = MIN(sizeof(menus[MENU_CONVERT1].child[0].title),
                         strlen(unit_table[i].label));
         strncpy(mi->title, unit_table[i].label, strsz);
         mi->title_length = strsz;
@@ -167,7 +167,7 @@ int init_units()
     for (int i = 0; i < 4; i++)
     {
         menu_item_spec *mi = &menus[MENU_CONVERT4].child[i];
-        int strsz = MIN(sizeof(menus[MENU_CONVERT3].child[0].title),
+        int strsz = MIN(sizeof(menus[MENU_CONVERT4].child[0].title),
                         strlen(unit_table[i+6].label));        
         strncpy(mi->title, unit_table[i+6].label, strsz);
         mi->title_length = strsz;

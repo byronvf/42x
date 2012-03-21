@@ -464,11 +464,10 @@ static const command_spec cmd_array[] =
     { /* CLRALMS */     "CLRALMS",              7, docmd_xrom,        0x0000a6a1, ARG_NONE,  FLAG_HIDDEN },
     { /* RCLALM */      "RCLALM",               6, docmd_xrom,        0x0000a6a2, ARG_NONE,  FLAG_HIDDEN },
     { /* SWPT */        "SWPT",                 4, docmd_xrom,        0x0000a6a3, ARG_NONE,  FLAG_HIDDEN },
-#ifdef BIGSTACK
     { /* UNDO */        "UNDO",                 4, docmd_undo,        0x0000a272, ARG_NONE,  FLAG_NONE },
     { /* REDO */        "REDO",                 4, docmd_redo,        0x0000a273, ARG_NONE,  FLAG_NONE },
-    { /* CONV */        "CONVERT",              7, docmd_convert,     0x0000a274, ARG_OTHER,  FLAG_NONE }
-#endif
+    { /* CONV */        "CONVERT",              7, docmd_convert,     0x0000a274, ARG_OTHER,  FLAG_NONE },
+    { /* CONV */        "NEWPRG",               6, docmd_newpg,		  0x0000a275, ARG_NONE,  FLAG_NO_PRGM + FLAG_HIDDEN }
 };
 
 /*

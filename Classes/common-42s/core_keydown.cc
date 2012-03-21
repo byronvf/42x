@@ -369,9 +369,12 @@ void keydown(int shift, int key) {
 	if ((key > 6 && key != KEY_UP && key != KEY_DOWN) ||
 	    (shift && (key == KEY_UP || key == KEY_DOWN)) )
 	{
+		set_menu(MENULEVEL_PLAIN, MENU_NONE);
 	    finish_command_entry(false);
-	    incomplete_num &= 0x1F;
-	    incomplete_argtype = ARGTYPE_CONVERT;
+	    //incomplete_num &= 0x1F;
+	    //incomplete_argtype = ARGTYPE_CONVERT;
+		incomplete_command = CMD_NONE;
+		redisplay();
 	}	
     }
     
@@ -766,11 +769,9 @@ void keydown_command_entry(int shift, int key) {
 	    }
 	    else if (flags.f.prgm_mode)
 	    {
+			set_menu(MENULEVEL_PLAIN, MENU_NONE);
 		finish_command_entry(false);
-		incomplete_num &= 0x1F;
-		if (getTypeByCode(incomplete_num)->num_units > 6) 
-		    mode_updown = TRUE;
-		shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
+		incomplete_command = CMD_NONE;
 		return;
 	    }
 	    
@@ -780,6 +781,7 @@ void keydown_command_entry(int shift, int key) {
 		//pending_command_arg.val.num = incomplete_num;
 		pending_command = CMD_NULL;
 		finish_command_entry(false);
+		incomplete_command = CMD_NONE;
 		if (getTypeByCode(incomplete_num)->num_units > 6) 
 		    mode_updown = TRUE;
 		shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
@@ -2513,7 +2515,7 @@ void keydown_normal_mode(int shift, int key) {
 		    pending_command = CMD_NULL;
 		return;
 	    }
-        else if (menu == MENU_CONVERT3 || menu == MENU_CONVERT4)
+        else if (menu == MENU_CONVERT1 || menu == MENU_CONVERT4)
         {
             incomplete_num = menukey;
 	    incomplete_argtype = ARGTYPE_CONVERT;
@@ -2586,8 +2588,13 @@ void keydown_normal_mode(int shift, int key) {
 			case 4: cmd_id = CMD_E_POW_X; break;
 			case 5: cmd_id = CMD_GTO; break;
 		    }
-		} else if (menu == MENU_PGM_FCN1 && menukey == 5 && shift)
-		    cmd_id = CMD_GTO;
+		} else if (menu == MENU_PGM_FCN1 && shift)
+		{
+			if (menukey == 0)
+				cmd_id = CMD_NEWPG;
+			else if (menukey == 5)
+				cmd_id = CMD_GTO;
+		}
 		else if (menu == MENU_STAT1 && menukey == 0 && shift)
 		    cmd_id = CMD_SIGMASUB;
         if (menu == MENU_BASE_A_THRU_F && shift) {

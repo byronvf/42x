@@ -87,9 +87,7 @@ int docmd_rnd(arg_struct *arg) COMMANDS1_SECT;
 int docmd_abs(arg_struct *arg) COMMANDS1_SECT;
 int docmd_sign(arg_struct *arg) COMMANDS1_SECT;
 int docmd_mod(arg_struct *arg) COMMANDS1_SECT;
-
-#ifdef BIGSTACK
+int docmd_newpg(arg_struct *arg) COMMANDS1_SECT;
 int docmd_drop(arg_struct *arg) COMMANDS1_SECT;
-#endif
 
 #endif

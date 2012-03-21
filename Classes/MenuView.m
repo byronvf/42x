@@ -57,7 +57,7 @@ extern int dispRows;
 			return TRUE;
 		}
 	}
-    else if (*menu == MENU_CONVERT3 || *menu == MENU_CONVERT4)
+    else if (*menu == MENU_CONVERT1 || *menu == MENU_CONVERT4)
     {
         return menus[id].child[i].title_length != 0;			
     }
@@ -248,6 +248,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     {
         switch (i)
         {
+			case 0: str = @"NEWPG"; break;
             case 5: str = @"GTO"; break;
         }
         

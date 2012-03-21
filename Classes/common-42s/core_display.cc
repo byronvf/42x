@@ -1982,15 +1982,7 @@ void redisplay() {
 		draw_key(i, 0, 0, "", 0);
 	    
         }
-	/*
-	if (unitconv&0x3E0 && !flags.f.prgm_mode)
-	{
-	    char buf[30];
-	    flags.f.message = 1;
-	    int sz = write_unit_string_to_buf(buf, 30, 0, unitconv);
-	    draw_string(0, 0, buf, sz);
-	}
-	 */
+		avail_rows = menuKeys ? dispRows: dispRows-1;
     }
     else if (menu_id != MENU_NONE) {
 	const menu_spec *m = menus + menu_id;

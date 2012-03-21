@@ -410,9 +410,10 @@
 #define CMD_UNDO        367
 #define CMD_REDO        368
 
-#define CMD_CONVERT	369
+#define CMD_CONVERT		369
+#define CMD_NEWPG	    370
 
-#define CMD_SENTINEL    370
+#define CMD_SENTINEL    371
 
 
 /* command_spec.argtype */
