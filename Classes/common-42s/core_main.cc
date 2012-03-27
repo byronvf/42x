@@ -345,11 +345,21 @@ void core_keytimeout2() {
 	    && (cmdlist(pending_command)->flags & FLAG_NO_SHOW) == 0) {
 	clear_row(0);
 	draw_string(0, 0, "NULL", 4);
-#ifdef BIGLCD
 	if (dispRows <= 2)
-#endif
-	display_x(1);
+		display_x(1);
 	flush_display();
+		if (pending_command == CMD_CONVERT)
+		{
+			// If there is a second unit, then we have modified the stack with a conversion
+			// so we set it back to what it was.
+			if ((incomplete_command>>10)&0x1F)
+			{
+				remove_first_snapshot();
+				//finish_command_entry(FALSE);
+			}
+			incomplete_num &= 0x2FF;
+		}
+		
 	pending_command = CMD_CANCELLED;
     }
 }

@@ -33,15 +33,17 @@ Hectr   1e4
 yrd^2   8.361274e-1
 cm^2    1e-4
 
-VOL     12
-l       1.0
+VOL     14
+liter   1.0
 ft^3    2.831685e1
 USgal   3.785412
 UKgal   4.54609
-ml      1e-3
+mL      1e-3
 USfoz   2.957353e-2
 UKfoz   2.841306e-2
 pint    4.731765e-1
+quart   9.463529e-1
+cord    3.624556e3
 cup     2.365882e-1
 tabsp   1.478676e-2
 teasp   4.928922e-3
@@ -81,13 +83,15 @@ kWh     3.6e6
 ftLbf   1.355818
 erg     1e-7
 
-POWER   6
-Watt    1.0
+POWER   8
+watt    1.0
 hp      7.456999e2
-ftb/h   3.766161e-4
-ftb/s   2.259697e-2
+bhp     9.80950e3
 erg/s   1.0e-7
 Btu/m   1.7584264e1
+ftb/s   2.259697e-2
+ftb/m   2.259697E-2
+ftb/h   3.766161e-4
 
 PRESS   9
 Pa      1.0

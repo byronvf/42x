@@ -74,23 +74,28 @@ extern bool reval;
 	
 	IBOutlet BlitterView *blitterView;
 	IBOutlet UIImageView *updnGlowView;
-	IBOutlet UIImageView *bgImageView;	
 	IBOutlet NavViewController* navViewController;
 	IBOutlet MenuView *menuView;
-	IBOutlet UIImageView *blankButtonsView;
+	IBOutlet UIImageView *fixedMenuView;
+	IBOutlet UIImageView *blankButtons;	
+	IBOutlet UIView *baseSoftMenuView;	
+	IBOutlet UIView *softMenu;	
 	IBOutlet PrintViewController* printController;
 	
 	const char* displayBuff;
 	
 	BOOL keyPressed;
+	BOOL menuShowing;
 }
 
 @property BOOL keyPressed;
 @property BOOL shutdown;
 @property (nonatomic, retain) BlitterView* blitterView;
-@property (nonatomic, retain) UIImageView* bgImageView;
+@property (nonatomic, retain) UIImageView* fixedMenuView;
 @property (nonatomic, retain) UIImageView* updnGlowView;
-@property (nonatomic, retain) UIImageView* blankButtonsView;
+@property (nonatomic, retain) UIImageView* blankButtons;
+@property (nonatomic, retain) UIView* baseSoftMenuView;
+@property (nonatomic, retain) UIView* softMenu;
 @property (nonatomic, retain) MenuView *menuView;
 @property (nonatomic, retain) NavViewController* navViewController;
 @property (nonatomic, retain) PrintViewController* printController;
@@ -134,6 +139,7 @@ extern bool reval;
 @property (nonatomic, retain) UIButton *b36;
 @property (nonatomic, retain) UIButton *b37;
 @property const char* displayBuff;
+@property BOOL menuShowing;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
@@ -147,5 +153,6 @@ extern bool reval;
 - (void) runUpdate;
 - (void) testShutdown;
 - (void) doMenuDisplay: (bool) forceHide menuUpdate:(bool) update;
+- (void) hideButtonNum: (int) num hidden:(BOOL)hidden;
 @end
 

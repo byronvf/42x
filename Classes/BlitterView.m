@@ -582,10 +582,10 @@ const int SCROLL_SPEED = 15;
 {
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 89;
+	bounds.size.height = 90;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
-	self.center = cent;
+	self.center = cent;	
 	[self setNeedsDisplay];	
 }
 

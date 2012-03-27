@@ -24,5 +24,4 @@
 @property (nonatomic, retain) UILabel* label4;
 @property (nonatomic, retain) UILabel* label5;
 @property (nonatomic, retain) UILabel* label6;
-
 @end

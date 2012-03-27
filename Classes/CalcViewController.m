@@ -55,6 +55,7 @@ static int get_cat_index() {
         return -1;
 }
 
+
 /*
  This handler gets called whenever the run loop is about to sleep.  We us it to try
  and do a better job at executing free42 programs, and handling key events.
@@ -142,16 +143,18 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 @synthesize b36;
 @synthesize b37;
 @synthesize blitterView;
-@synthesize bgImageView;
 @synthesize updnGlowView;
 @synthesize navViewController;
 @synthesize printController;
-@synthesize blankButtonsView;
 @synthesize displayBuff;
 @synthesize menuView;
+@synthesize fixedMenuView;
+@synthesize blankButtons;
 @synthesize keyPressed;
 @synthesize shutdown;
-
+@synthesize baseSoftMenuView;
+@synthesize softMenu;
+@synthesize menuShowing;
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically
@@ -199,7 +202,6 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// if dispRows is zero, then we have not loaded the display settings.
 	NSAssert(dispRows != 0, @"We are not ready to display");
 	NSAssert(blitterView != NULL, @"Blitter view not ready");
-	NSAssert(blankButtonsView != NULL, @"Buttons View not ready");
 	NSAssert(menuView != NULL, @"Menu view not ready");
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
@@ -207,6 +209,11 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// core_init does not do this.
 	redisplay();
 	[self testUpdateLastX:FALSE];
+	
+	menuShowing = FALSE;
+	CGPoint o = {160, -57/2};
+	self.baseSoftMenuView.center = o;	
+	
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -390,7 +397,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		AudioServicesPlaySystemSound(1105);
 	
 	int keynum = (int)[sender tag];
-	if (core_menu() && dispRows > 4 && keynum < 13) keynum -= 6;
+	if (dispRows > 4 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];
@@ -644,22 +651,62 @@ void shell_request_timeout3(int delay)
 {
     if (core_menu() && menuKeys && !forceHide)
     {
-	assert(viewCtrl.menuView);
-	assert(viewCtrl.blankButtonsView);
-	// The menu keys are in the rows just beyond dispRows, so 
-	// don't bother updateing unless this area of the display has changed.
-	if (update || [viewCtrl menuView].hidden)
-	{
-	    [[viewCtrl menuView] setHidden:FALSE];
-	    [[viewCtrl blankButtonsView] setHidden:FALSE];
-	    [[viewCtrl menuView] setNeedsDisplay];
+		[self.menuView setNeedsDisplay];
+		if (!menuShowing)
+		{
+			CGPoint o = {160, -57/2};
+			self.baseSoftMenuView.center = o;			
+
+			// Make sure iOS version supports animation call
+			if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
+			{
+				[UIView animateWithDuration:0.3 animations:^
+				 {
+					 CGPoint o = {160, 57/2};
+					 self.baseSoftMenuView.center = o;
+				 }];
+			}
+			else 
+			{
+				CGPoint o = {160, 57/2};
+				self.baseSoftMenuView.center = o;
+			}
+			
+			menuShowing = TRUE;
+		}
 	}
-    }
-    else
-    {  
-	[[viewCtrl menuView] setHidden:TRUE];
-	[[viewCtrl blankButtonsView] setHidden:TRUE];
-    } 
+	else 
+	{
+		if (menuShowing)
+		{
+			CGPoint o = {160, 57/2};
+			self.baseSoftMenuView.center = o;
+			
+			// Make sure iOS version supports animation call
+			if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
+			{
+				[UIView animateWithDuration:0.3 animations:^
+				 {
+					 CGPoint o = {160, -57/2};
+					 self.baseSoftMenuView.center = o;
+				 }];
+			}
+			else
+			{
+				CGPoint o = {160, -57/2};
+				self.baseSoftMenuView.center = o;
+			}
+			
+			menuShowing = FALSE;
+		}
+		
+	}	
+}
+
+- (void) hideButtonNum:(int)num hidden:(BOOL)hidden 
+{
+	UIButton *button = (UIButton *)[self.view viewWithTag:num];	
+	if (button) button.hidden = hidden;
 }
 
 - (void) resetLCD
@@ -678,39 +725,46 @@ void shell_request_timeout3(int delay)
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	
-	
-	[blitterView singleLCD];
-	[blitterView setNumDisplayRows];
-		
 	// If we are entering something then change the line
 	// with the display.  Free42 uses this  to track the current row
 	// for entry.
 	cmdline_row = dispRows-1;
 	if (!menuKeys && core_menu()) cmdline_row--;
-	
-	b01.hidden = FALSE;
-	b02.hidden = FALSE;
-	b03.hidden = FALSE;
-	b04.hidden = FALSE;
-	b05.hidden = FALSE;
-	b06.hidden = FALSE;
-	b07.hidden = FALSE;    
-	b08.hidden = FALSE;    
-	b09.hidden = FALSE;    
-	b10.hidden = FALSE;    
-	b11.hidden = FALSE;    
-	b12.hidden = FALSE;    
 
+	for (int i=1; i<12; i++)
+		[self hideButtonNum:i hidden:FALSE];
+	
+	/*
 	CGPoint cent = blankButtonsView.center;
 	cent.y = 121;
 	blankButtonsView.center = cent;
+	 */
 
-	cent = menuView.center;
+	CGPoint cent =  softMenu.center;
 	cent.y = 121;
-	menuView.center = cent;
+	
+	// Make sure iOS version supports animation call
+	if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
+	{
+		[UIView animateWithDuration:0.3 animations:^
+		 {
+			 softMenu.center = cent;
+		 }
+						 completion:^(BOOL finished)
+		 {
+			 [blitterView singleLCD];
+			 [blitterView setNumDisplayRows];		 
+		 }];
+	}
+	else 
+	{
+		softMenu.center = cent;
+		[blitterView singleLCD];
+		[blitterView setNumDisplayRows];		 
+	}
     
 	[self doMenuDisplay:false  menuUpdate:false];  
-       }
+}
 
 - (void) doubleLCD
 {
@@ -730,37 +784,33 @@ void shell_request_timeout3(int delay)
 		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
-	b01.hidden = TRUE;
-	b02.hidden = TRUE;
-	b03.hidden = TRUE;
-	b04.hidden = TRUE;
-	b05.hidden = TRUE;
-	b06.hidden = TRUE;
-	b07.hidden = FALSE;    
-	b08.hidden = FALSE;    
-	b09.hidden = FALSE;    
-	b10.hidden = FALSE;    
-	b11.hidden = FALSE;    
-	b12.hidden = FALSE;    
+	for (int i=1; i<6; i++)
+		[self hideButtonNum:i hidden:TRUE];
+		
+	for (int i=7; i<40; i++)
+		[self hideButtonNum:i hidden:FALSE];
 		
 	CGPoint cent;
 	
-	cent = menuView.center;
+	cent = softMenu.center;
 	cent.y = 174;
-	menuView.center = cent;
-
-	cent = blankButtonsView.center;
-	cent.y = 174;
-	blankButtonsView.center = cent;
 	
-	[b07.superview bringSubviewToFront:b07];
-	[b08.superview bringSubviewToFront:b08];
-	[b09.superview bringSubviewToFront:b09];
-	[b10.superview bringSubviewToFront:b10];
-	[b11.superview bringSubviewToFront:b11];
-	[b12.superview bringSubviewToFront:b12];
-    
+	// Make sure iOS version supports animation call
+	if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
+	{
+		[UIView animateWithDuration:0.3 animations:^
+		 {
+			 softMenu.center = cent;
+		 }];
+	}
+	else 
+	{
+		softMenu.center = cent;
+	}
+	
+	softMenu.hidden = FALSE;
 	[self doMenuDisplay:false  menuUpdate:false]; 
+	
 }
 
 - (void) fullLCD
@@ -768,20 +818,12 @@ void shell_request_timeout3(int delay)
     [blitterView fullLCD];
 	[blitterView setNumDisplayRows];
     
-	b01.hidden = TRUE;
-	b02.hidden = TRUE;
-	b03.hidden = TRUE;
-	b04.hidden = TRUE;
-	b05.hidden = TRUE;
-	b06.hidden = TRUE;    
-	b07.hidden = TRUE;    
-	b08.hidden = TRUE;    
-	b09.hidden = TRUE;    
-	b10.hidden = TRUE;    
-	b11.hidden = TRUE;    
-	b12.hidden = TRUE;       
+	for (int i=1; i<40; i++)
+		[self hideButtonNum:i hidden:TRUE];
+
+	softMenu.hidden = TRUE;
+    //[self doMenuDisplay:true menuUpdate:false];
 	
-    [self doMenuDisplay:true  menuUpdate:false]; 
 }
 
 

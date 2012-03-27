@@ -34,7 +34,6 @@ extern int dispRows;
     return self;
 }
 
-
 - (BOOL)keyIsDirectory: (int)i
 {
     if (mode_plainmenu == MENU_CATALOG && get_cat_section() == CATSECT_TOP
@@ -57,7 +56,7 @@ extern int dispRows;
 			return TRUE;
 		}
 	}
-    else if (*menu == MENU_CONVERT1 || *menu == MENU_CONVERT4)
+    else if (*menu == MENU_CONVERT1 || *menu == MENU_CONVERT2)
     {
         return menus[id].child[i].title_length != 0;			
     }
@@ -98,7 +97,7 @@ extern int dispRows;
 - (void)drawDirectoryMark: (CGContextRef)ctx key:(int) i
 {
 	int x = 23 + i*50;
-	int y = 3;
+	int y = 5;
 	CGPoint A = {x, y};
 	CGPoint B = {x+20, y};
 	CGPoint C = {x+10, y+8};
@@ -318,7 +317,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     {
         UIFont *font = [UIFont boldSystemFontOfSize:13];
         CGContextSetRGBFillColor(ctx, 1.0, 0.80, 0.23, 1.0);
-        [str drawInRect:CGRectMake(5 + i*51, -2, 55, 24) 
+        [str drawInRect:CGRectMake(5 + i*51, 0, 55, 24) 
                withFont:font lineBreakMode:UILineBreakModeClip
               alignment:UITextAlignmentCenter];
     }
@@ -354,7 +353,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
         {
             if (menu_items[i].highlight)
             {                
-                CGContextFillRect(ctx, CGRectMake(16+i*50, 42, 38, 2));
+                CGContextFillRect(ctx, CGRectMake(16+i*50, 44, 38, 2));
             }
 			
             [self superscript:ctx key:i];

@@ -369,11 +369,14 @@ void keydown(int shift, int key) {
 	if ((key > 6 && key != KEY_UP && key != KEY_DOWN) ||
 	    (shift && (key == KEY_UP || key == KEY_DOWN)) )
 	{
-		set_menu(MENULEVEL_PLAIN, MENU_NONE);
+		// if Key is exit, then the exit code will take care of setting the plain
+		// menu to none, otherwise if plain menu has already been set to none, then the
+		// exit routine will set any other pending menus to none also...
+		if (key != KEY_EXIT)
+			set_menu(MENULEVEL_PLAIN, MENU_NONE);
 	    finish_command_entry(false);
-	    //incomplete_num &= 0x1F;
-	    //incomplete_argtype = ARGTYPE_CONVERT;
 		incomplete_command = CMD_NONE;
+		pending_command = CMD_CANCELLED;
 		redisplay();
 	}	
     }
@@ -716,79 +719,79 @@ void keydown_command_entry(int shift, int key) {
 
     if (incomplete_command == CMD_CONVERT)
     {	
-	
-	if (!shift && key == KEY_BSP)
-	{
-	    pending_command = CMD_NULL;
-	    finish_command_entry(false);
-	    incomplete_num &= 0x1F;
-	    if (getTypeByCode(incomplete_num)->num_units > 6) 
-		mode_updown = TRUE;
-	    shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
-	    return;	    
-	}
-	else if (!shift && (key == KEY_UP || key == KEY_DOWN)) 
-	{
-	    int numpages = (getTypeByCode(incomplete_num)->num_units + 5)/6;
-	    if (numpages > 1)
-	    {
-		if (key == KEY_UP)
+		
+		if (!shift && key == KEY_BSP)
 		{
-		    if (--unit_menu_page < 0) unit_menu_page = numpages-1;
+			pending_command = CMD_NULL;
+			finish_command_entry(false);
+			incomplete_num &= 0x1F;
+			if (getTypeByCode(incomplete_num)->num_units > 6) 
+				mode_updown = TRUE;
+			shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
+			return;	    
 		}
-		else
+		else if (!shift && (key == KEY_UP || key == KEY_DOWN)) 
 		{
-		    if (++unit_menu_page >= numpages) unit_menu_page = 0;
-		}
-	    }	    
-	    redisplay();
-	    return;
-	}	
-	
-	pending_command = incomplete_command;
-	incomplete_argtype = ARGTYPE_CONVERT;
-	int unitidx = unit_menu_page*6 + key-1;
-	if (unitidx < getTypeByCode(incomplete_num)->num_units)
-	{
-	    unitidx++;  // conv from order to code
-	    assert (incomplete_num&0x3E0);
-	    bool has_second_unit = incomplete_num&0x7C00;
-	    
-	    incomplete_num &= ~0x7C00;
-	    incomplete_num |= unitidx << 10;	    	    
-	    pending_command_arg.val.num = incomplete_num;
-	    pending_command_arg.type = incomplete_argtype;
-	    
-	    if (has_second_unit)
-	    {
-		vartype* x = get_most_recent_x();
-		vartype* new_x = dup_vartype(x);
-		free_vartype(reg_x);
-		reg_x = new_x;
-		remove_first_snapshot();
-	    }
-	    else if (flags.f.prgm_mode)
-	    {
-			set_menu(MENULEVEL_PLAIN, MENU_NONE);
-		finish_command_entry(false);
-		incomplete_command = CMD_NONE;
+			int numpages = (getTypeByCode(incomplete_num)->num_units + 5)/6;
+			if (numpages > 1)
+			{
+				if (key == KEY_UP)
+				{
+					if (--unit_menu_page < 0) unit_menu_page = numpages-1;
+				}
+				else
+				{
+					if (++unit_menu_page >= numpages) unit_menu_page = 0;
+				}
+			}	    
+			redisplay();
+			return;
+		}	
+		
+		pending_command = incomplete_command;
+		incomplete_argtype = ARGTYPE_UNITS;
+		int unitidx = unit_menu_page*6 + key-1;
+		if (unitidx < getTypeByCode(incomplete_num)->num_units)
+		{
+			unitidx++;  // conv from order to code
+			assert (incomplete_num&0x3E0);
+			bool has_second_unit = incomplete_num&0x7C00;
+			
+			incomplete_num &= ~0x7C00;
+			incomplete_num |= unitidx << 10;	    	    
+			pending_command_arg.val.num = incomplete_num;
+			pending_command_arg.type = incomplete_argtype;
+			
+			if (has_second_unit)
+			{
+				vartype* x = get_most_recent_x();
+				vartype* new_x = dup_vartype(x);
+				free_vartype(reg_x);
+				reg_x = new_x;
+				remove_first_snapshot();
+			}
+			else if (flags.f.prgm_mode)
+			{
+				set_menu(MENULEVEL_PLAIN, MENU_NONE);
+				finish_command_entry(false);
+				incomplete_command = CMD_NONE;
+				return;
+			}
+			
+			if (((incomplete_num >> 10)&0x1F) == ((incomplete_num >> 5)&0x1F))
+			{
+				incomplete_num &= 0x1F;
+				//pending_command_arg.val.num = incomplete_num;
+				pending_command = CMD_NULL;
+				finish_command_entry(false);
+				incomplete_command = CMD_NONE;
+				if (getTypeByCode(incomplete_num)->num_units > 6) 
+					mode_updown = TRUE;
+				shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
+				return;
+			}
+		}	
 		return;
-	    }
-	    
-	    if (((incomplete_num >> 10)&0x1F) == ((incomplete_num >> 5)&0x1F))
-	    {
-		incomplete_num &= 0x1F;
-		//pending_command_arg.val.num = incomplete_num;
-		pending_command = CMD_NULL;
-		finish_command_entry(false);
-		incomplete_command = CMD_NONE;
-		if (getTypeByCode(incomplete_num)->num_units > 6) 
-		    mode_updown = TRUE;
-		shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
-		return;
-	    }
-	}	
-	return;
     }
     
     if (incomplete_command == CMD_LBL && incomplete_length == 0
@@ -2515,56 +2518,59 @@ void keydown_normal_mode(int shift, int key) {
 		    pending_command = CMD_NULL;
 		return;
 	    }
-        else if (menu == MENU_CONVERT1 || menu == MENU_CONVERT4)
+        else if (menu == MENU_CONVERT1 || menu == MENU_CONVERT2)
         {
             incomplete_num = menukey;
-	    incomplete_argtype = ARGTYPE_CONVERT;
-            if (menu == MENU_CONVERT4) incomplete_num += 6; 
+			incomplete_argtype = ARGTYPE_UNITS;
+            if (menu == MENU_CONVERT2) incomplete_num += 6; 
             
             if (incomplete_num < NUM_UNIT_TYPES)
             {    
-		incomplete_num += 1; // convert order to type code		
-		unit_menu_page = 0;
-                set_menu(level, MENU_UNITS);
+				incomplete_num += 1; // convert order to type code		
+				unit_menu_page = 0;
+				// level must be MENULEVEL_PLAIN sincd we are coming from the convert
+				// menus
+                set_menu(level, MENU_UNITS);				
                 if (getTypeByCode(incomplete_num)->num_units > 6) mode_updown = TRUE;
                 shell_annunciators(mode_updown, -1, -1, -1, -1, -1);                
                 redisplay();
             }
-	    else
-	    {
-		incomplete_num = 0;
-	    }
+			else
+			{
+				incomplete_num = 0;
+			}
             return;
         }	    
     	else if (menu == MENU_UNITS)
-	{
-	    int unitconv = incomplete_num;
-	    int unitidx = unit_menu_page*6 + menukey;
-	    if (unitidx < getTypeByCode(incomplete_num)->num_units)
-	    {
-		unitidx++;  // conv from order to code
-		if (unitconv&0x3E0)
 		{
-		    unitconv &= ~0x7C00;
-		    unitconv |= unitidx << 10;
-		    
-		    arg_struct args;
-		    args.type = TYPE_REAL;
-		    args.val.num = unitconv;	
+			int unitconv = incomplete_num;
+			int unitidx = unit_menu_page*6 + menukey;
+			if (unitidx < getTypeByCode(incomplete_num)->num_units)
+			{
+				unitidx++;  // conv from order to code
+				if (unitconv&0x3E0)
+				{
+					// Set the 'to' unit
+					
+					unitconv &= ~0x7C00;
+					unitconv |= unitidx << 10;
+					
+					arg_struct args;
+					args.type = TYPE_REAL;
+					args.val.num = unitconv;	
+				}
+				else
+				{
+					// set the 'from' unit
+					unitconv &= ~0x3E0;
+					unitconv |= unitidx << 5;		    
+				}
+				do_interactive(CMD_CONVERT);
+				incomplete_num = unitconv;
+				redisplay();
+			}			
+			return;
 		}
-		else
-		{
-		    unitconv &= ~0x3E0;
-		    unitconv |= unitidx << 5;		    
-		}
-		
-		do_interactive(CMD_CONVERT);
-		incomplete_num = unitconv;
-		redisplay();
-	    }
-
-	    return;
-	}
         else {
 		const menu_item_spec *mi = menus[menu].child + menukey;
 		int cmd_id = mi->menuid;
@@ -2625,19 +2631,19 @@ void keydown_normal_mode(int shift, int key) {
 	    }
 	    else if (menu == MENU_UNITS)
 	    {
-		int numpages = (getTypeByCode(incomplete_num)->num_units + 5)/6;
-		if (numpages > 1 && !shift && (key == KEY_UP || key == KEY_DOWN))
-		{
-		    if (key == KEY_UP)
-		    {
-			if (--unit_menu_page < 0) unit_menu_page = numpages-1;
-		    }
-		    else
-		    {
-			if (++unit_menu_page >= numpages) unit_menu_page = 0;
-		    }
-		}
-		redisplay();
+			int numpages = (getTypeByCode(incomplete_num)->num_units + 5)/6;
+			if (numpages > 1 && !shift && (key == KEY_UP || key == KEY_DOWN))
+			{
+				if (key == KEY_UP)
+				{
+					if (--unit_menu_page < 0) unit_menu_page = numpages-1;
+				}
+				else
+				{
+					if (++unit_menu_page >= numpages) unit_menu_page = 0;
+				}
+			}
+			redisplay();
 	    } else if (flags.f.local_label
 		    && (menu == MENU_CUSTOM1
 			|| menu == MENU_CUSTOM2

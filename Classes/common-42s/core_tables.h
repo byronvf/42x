@@ -466,7 +466,7 @@
 #define ARGTYPE_LCLBL     9
 #define ARGTYPE_DOUBLE   10
 #define ARGTYPE_LBLINDEX 11
-#define ARGTYPE_CONVERT  12
+#define ARGTYPE_UNITS    12
 
 
 typedef struct {

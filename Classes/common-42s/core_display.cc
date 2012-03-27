@@ -1346,11 +1346,6 @@ void display_command(int row) {
 
     if (cmd->argtype == ARG_NONE)
 	goto done;
-
-    if (pending_command == CMD_CONVERT)
-    {
-	bufptr = write_unit_string_to_buf(buf, 22, bufptr, pending_command_arg.val.num);
-    }
     
     if (pending_command_arg.type == ARGTYPE_IND_NUM
 	    || pending_command_arg.type == ARGTYPE_IND_STK
@@ -1394,7 +1389,12 @@ void display_command(int row) {
 					 labels[labelindex].length);
 	    char2buf(buf, 22, &bufptr, '"');
 	}
-    } else /* ARGTYPE_LCLBL */ {
+	}
+	else if (pending_command_arg.type == ARGTYPE_UNITS)
+	{
+		bufptr = write_unit_string_to_buf(buf, 22, bufptr, pending_command_arg.val.num);		
+    } 
+	else /* ARGTYPE_LCLBL */ {
 	char2buf(buf, 22, &bufptr, pending_command_arg.val.lclbl);
     }
 
