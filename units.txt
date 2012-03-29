@@ -95,8 +95,8 @@ ftb/h   3.766161e-4
 
 PRESS   9
 Pa      1.0
-ATM     1.01325e5
-kPa     1.01325e2
+atm     1.01325e5
+kPa     1e3
 psi     6.894757e3
 bar     1e5
 mbar    1e2
