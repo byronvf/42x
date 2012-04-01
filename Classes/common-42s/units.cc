@@ -158,6 +158,23 @@ static unit temperature_units[] =
 	{"K",      "1.0", NULL},
 };
 
+static unit time_units[] =
+{
+	{"msec",    "1.0", NULL},
+	{"sec",     "1e3", NULL},
+	{"min",     "6e4", NULL},
+	{"hour",    "3.6e6", NULL},
+	{"day",     "8.64e7", NULL},
+	{"year",    "3.1536e10", NULL},
+	{"s.sid",   "9.972696e2", NULL},	
+	{"m.sid",   "5.983617e4", NULL},	
+	{"d.sid",   "8.616409e7", NULL},	
+	{"y.sid",   "3.155815e10", NULL},	
+	{"shake",   "1e-5", NULL},
+	{"\x11sec", "1e-3", NULL},
+};
+
+
 static unit_type unit_table[] =
 {
 	{"LNGTH", sizeof(length_units)/sizeof(unit), length_units},
@@ -170,6 +187,7 @@ static unit_type unit_table[] =
 	{"POWER", sizeof(power_units)/sizeof(unit), power_units},
 	{"PRESS", sizeof(pressure_units)/sizeof(unit), pressure_units},
 	{"TEMP", sizeof(temperature_units)/sizeof(unit), temperature_units},
+	{"TIME", sizeof(time_units)/sizeof(unit), time_units},
 };
 
 const int NUM_UNIT_TYPES = sizeof(unit_table)/sizeof(unit_type);
@@ -268,7 +286,7 @@ int init_units()
     
     //  -------   Initialize menus ----------------
 
-    assert(NUM_UNIT_TYPES == 10);  // loops below fail if this is not true
+    assert(NUM_UNIT_TYPES >= 6);  
     for (int i = 0; i < 6; i++)
     {
         menu_item_spec *mi = &menus[MENU_CONVERT1].child[i];
@@ -278,7 +296,8 @@ int init_units()
         mi->title_length = strsz;
     }
 
-    for (int i = 0; i < 4; i++)
+    assert(NUM_UNIT_TYPES <= 12);
+    for (int i = 0; i < NUM_UNIT_TYPES-6; i++)
     {
         menu_item_spec *mi = &menus[MENU_CONVERT2].child[i];
         int strsz = MIN(sizeof(menus[MENU_CONVERT2].child[0].title),
