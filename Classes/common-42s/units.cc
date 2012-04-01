@@ -28,13 +28,151 @@
 int unit_menu_page = 0;
 
 // Table of all the unit types and associated list of units
-static unit_type unit_table[NUM_UNIT_TYPES];
+//static unit_type unit_table[NUM_UNIT_TYPES];
 
 // values we use for temperature conversions
 static vartype *temp_273_15; // 273.15
 static vartype *temp_5_9;    // 5/9
 static vartype *temp_9_5;    // 9/5
 static vartype *temp_32;     // 32
+
+static unit length_units[] =
+{
+	{"m",       "1.0", NULL},
+	{"km",      "1e3", NULL},
+	{"cm",      "1e-2", NULL},
+	{"ft",      "3.048e-1", NULL},
+	{"in",      "2.54e-2", NULL},
+	{"mile",    "1.609344e3", NULL},
+	{"lyear",   "9.46073e15", NULL},
+	{"ua",      "1.495979e11", NULL},
+	{"fathm",   "1.828804", NULL},
+	{"Angst",   "1.0e-10", NULL},
+	{"mm",      "1e-3", NULL},
+	{"micrn",   "1e-6", NULL},
+	{"yard",    "9.144e-1", NULL},
+	{"parsc",   "3.085678e16", NULL},
+};
+
+static unit area_units[] = 
+{
+	{"m^2",     "1.0", NULL},
+	{"ft^2",    "9.290304e-2", NULL},
+	{"in^2",	"6.4516-4", NULL},
+	{"mil^2",   "2.589988e6", NULL},
+	{"acre",    "4.046873e3", NULL},
+	{"Hectr",   "1e4", NULL},
+	{"yrd^2",   "8.361274e-1", NULL},
+	{"cm^2",    "1e-4", NULL},
+};
+
+static unit volume_units[] =
+{
+	{"liter",  "1.0", NULL},
+	{"ft^3",   "2.831685e1", NULL},
+	{"USgal",  "3.785412", NULL},
+	{"UKgal",  "4.54609", NULL},
+	{"mL",     "1e-3", NULL},
+	{"USfoz",  "2.957353e-2", NULL},
+	{"UKfoz",  "2.841306e-2", NULL},
+	{"pint",   "4.731765e-1", NULL},
+	{"quart",  "9.463529e-1", NULL},
+	{"cord",   "3.624556e3", NULL},
+	{"cup",    "2.365882e-1", NULL},
+	{"tabsp",  "1.478676e-2", NULL},
+	{"teasp",  "4.928922e-3", NULL},
+	{"cc",     "1e-3", NULL},
+};
+
+static unit speed_units[] =
+{
+	{"m/sec",  "1.0", NULL},
+	{"km/h",   "2.777778e-1", NULL},
+	{"mil/h",  "4.4704e-1", NULL},
+	{"ft/s",   "3.048e-1", NULL},
+	{"mil/s",  "1.609344e3", NULL},
+	{"knot",   "5.144444e-1", NULL},
+};
+
+static unit mass_units[] =
+{
+	{"kg",     "1.0", NULL},
+	{"pound",  "4.5359237e-1", NULL},
+	{"g",      "1e-3", NULL},
+	{"ounce",  "2.834952e-2", NULL},
+	{"TRYoz",  "3.110348e-2", NULL},
+	{"carat",  "2e-4", NULL},
+	{"UKton",  "1.016047e3", NULL},
+	{"USton",  "9.071847e2", NULL},
+	{"grain",  "6.479891e-5", NULL},
+	{"slug",   "1.459390e1", NULL},
+};
+
+static unit force_units[] =
+{
+	{"N",      "1.0", NULL},
+	{"lbf",    "4.4482216152605", NULL},
+};
+
+static unit energy_units[] =
+{
+	{"Joule",  "1.0", NULL},
+	{"cal",    "4.1868", NULL},
+	{"kcal",   "4.1868e3", NULL},
+	{"Btu",    "1.05505585262e3", NULL},
+	{"eV",     "1.602177e-19", NULL},
+	{"kWh",    "3.6e6", NULL},
+	{"ftLbf",  "1.355818", NULL},
+	{"erg",    "1e-7", NULL},
+};
+
+static unit power_units[] =
+{
+	{"watt",   "1.0", NULL},
+	{"hp",     "7.456999e2", NULL},
+	{"bhp",    "9.80950e3", NULL},
+	{"erg/s",  "1.0e-7", NULL},
+	{"Btu/m",  "1.7584264e1", NULL},
+	{"ftb/s",  "2.259697e-2", NULL},
+	{"ftb/m",  "2.259697E-2", NULL},
+	{"ftb/h",  "3.766161e-4", NULL},
+};
+
+static unit pressure_units[] =
+{
+	{"Pa",     "1.0", NULL},
+	{"atm",    "1.01325e5", NULL},
+	{"kPa",    "1e3", NULL},
+	{"psi",    "6.894757e3", NULL},
+	{"bar",    "1e5", NULL},
+	{"mbar",   "1e2", NULL},
+	{"mmHg",   "1.333224e2", NULL},
+	{"cmH2O",  "9.80665e1", NULL},
+	{"inHg",   "3.386389e3", NULL},
+};
+
+static unit temperature_units[] =
+{
+	{"C",      "1.0", NULL},
+	{"F",      "1.8", NULL},
+	{"K",      "1.0", NULL},
+};
+
+static unit_type unit_table[] =
+{
+	{"LNGTH", sizeof(length_units)/sizeof(unit), length_units},
+	{"AREA", sizeof(area_units)/sizeof(unit), area_units},
+	{"VOL", sizeof(volume_units)/sizeof(unit), volume_units},
+	{"SPEED", sizeof(speed_units)/sizeof(unit), speed_units},
+	{"MASS", sizeof(mass_units)/sizeof(unit), mass_units},
+	{"FORCE", sizeof(force_units)/sizeof(unit), force_units},
+	{"ENRGY", sizeof(energy_units)/sizeof(unit), energy_units},
+	{"POWER", sizeof(power_units)/sizeof(unit), power_units},
+	{"PRESS", sizeof(pressure_units)/sizeof(unit), pressure_units},
+	{"TEMP", sizeof(temperature_units)/sizeof(unit), temperature_units},
+};
+
+const int NUM_UNIT_TYPES = sizeof(unit_table)/sizeof(unit_type);
 
 // Provide some simple parsing for reading the units text file including 
 // some niceities like ignoring blank lines and comment lines
@@ -60,7 +198,6 @@ void conv_karat(char *str)
         if (*c == '^') *c = 0x5E;
     }
 }
-
 
 // The following four methods are used to retrieve Type and unit information
 // either by type or unit codes, or by index (such as in the case of menu order).
@@ -96,49 +233,26 @@ unit_type *getTypeByCode(int typeCode)
     return getTypeByOrder(typeCode-1);
 }
 
+void lazyInitUnit(unit* u)
+{
+	if (u->scale == NULL)
+	{
+		u->scale = new_real(0);
+		if (!parse_phloat(u->scaleStr, strlen(u->scaleStr), 
+						  &((vartype_real*)u->scale)->x))
+		{
+			// A string could not be converted to a BCD number, which means
+			// we screwed up the string... Too late to handle it, we are screwed
+			assert(FALSE);
+			exit(1);
+		}
+	}
+}
+
 // Initializes units at program startup reading unit info from the units.txt text file.
 int init_units()
 {
-    FILE *f;
-    char line[100];
     
-    // Read unit conversion files from text file
-    
-    // The call to NSHomeDirectory doesn't belong here, but I don't want to change
-    // shell.cc at this point with a callback method to get the path to units.txt.
-    const char* unitsfile =
-      [[NSHomeDirectory() stringByAppendingString:@"/42s.app/units.txt"] UTF8String];
-    if (!(f = fopen(unitsfile, "r"))) return 1;
-    int tnum = 0;
-    while (tnum < NUM_UNIT_TYPES)
-    {
-        fgets(line, 100, f);
-        if (skipline(line)) continue;  // A comment character... skip
-        
-        unit_type *utype = &unit_table[tnum];
-        memset(utype->label, 0, UNIT_LABEL_SIZE);
-        // %9s = UNIT_LABEL_SIZE-1
-        int res = sscanf(line, "%9s %d", utype->label, &utype->num_units);
-        if (res != 2) return 1;
-        utype->units = (unit*)malloc(sizeof(unit)*utype->num_units);
-        int ucnt = 0;
-        while (ucnt < utype->num_units)
-        {
-            fgets(line, 100, f);
-            if (skipline(line)) continue;
-            unit *u = &utype->units[ucnt];            
-            char scale_str[50], offset_str[50];
-            int res2 = 
-                sscanf(line, "%9s %50s %s50s", u->label, scale_str, offset_str);
-            if (res2 < 2 || res2 > 3) return 1;
-            u->scale = new_real(0);
-            if (!parse_phloat(scale_str, strlen(scale_str), &((vartype_real*)u->scale)->x))
-                return 1;
-            conv_karat(u->label);
-            ucnt++;
-        }
-        tnum++;
-    }
     // -------  Initialze values for temperature conversions -----------
     
     phloat tf;
@@ -171,9 +285,32 @@ int init_units()
                         strlen(unit_table[i+6].label));        
         strncpy(mi->title, unit_table[i+6].label, strsz);
         mi->title_length = strsz;
-    }
-    
-    
+    } 
+	
+	
+#ifdef DEBUG
+	// Scale strings are lazily converted to phloat values as we perform the specific
+	// conversion.  In debug we make sure all conversion can be made, so we don't 
+	// have any surprises at runtime.  We then revert the units table back to the way it was.
+	for (int i=0; i<NUM_UNIT_TYPES; i++)
+	{
+		for (int j=0; j<unit_table[i].num_units; j++)
+		{
+			// fails fast with exit(1) if scaleStr cannot be converted to a phloat
+			lazyInitUnit(&unit_table[i].units[j]);
+		}			
+	}
+
+	for (int i=0; i<NUM_UNIT_TYPES; i++)
+	{
+		for (int j=0; j<unit_table[i].num_units; j++)
+		{
+			free_vartype(unit_table[i].units[j].scale);	
+			unit_table[i].units[j].scale = NULL;
+		}			
+	}
+#endif    
+	
     return 0;
 }
 
@@ -190,15 +327,14 @@ static void completion(int error, vartype *res) {
     comp_res = res;
 }
 
-
 int docmd_convert(arg_struct *arg)
 {
     if (reg_x->type == TYPE_STRING) return ERR_ALPHA_DATA_IS_INVALID;
 
     int param = arg->val.num;
     int type = param&0x1F;
-    int uf = (param >> 5)&0x1F;
-    int ut = (param >> 10)&0x1F;
+    int uf = (param >> 5)&0x1F;  // unit from
+    int ut = (param >> 10)&0x1F; // unit to
     
     if (type == UNIT_TYPE_TEMP) 
     {
@@ -259,7 +395,9 @@ int docmd_convert(arg_struct *arg)
     }
     
     unit *ufrom = getUnitByCode(type, uf);
+	lazyInitUnit(ufrom);
     unit *uto = getUnitByCode(type, ut);
+	lazyInitUnit(uto);
     phloat *from = &((vartype_real*)ufrom->scale)->x;
     phloat *to = &((vartype_real*)uto->scale)->x;        
     vartype *scale = new_real(*from / *to);
@@ -279,14 +417,14 @@ int write_unit_string_to_buf(char* buf, int bufsz, int start, int convert)
     int bufptr = start;
     if (convert&0x3E0)
     {
-	unit *u = getUnitByCode(convert, convert >> 5);
-	string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
-	string2buf(buf, bufsz, &bufptr, " \x0F ", 3);
-	if (convert&0x7C00)
-	{
-	    u = getUnitByCode(convert, convert >> 10);
-	    string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
-	}
+		unit *u = getUnitByCode(convert, convert >> 5);		
+		string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
+		string2buf(buf, bufsz, &bufptr, " \x0F ", 3);
+		if (convert&0x7C00)
+		{
+			u = getUnitByCode(convert, convert >> 10);
+			string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
+		}
     }
     return bufptr;
 }

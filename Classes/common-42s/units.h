@@ -11,23 +11,22 @@
 
 #include "core_globals.h"
 
-const int UNIT_LABEL_SIZE = 10;
 typedef struct unit_struct
 {
-    int num;
-    char label[UNIT_LABEL_SIZE];
+    const char* label;
+	const char* scaleStr;
     vartype* scale;
 } unit;
 
-const int UNIT_TYPE_LABEL_SIZE = 10;
 typedef struct unit_type_struct
 {
-    char label[UNIT_TYPE_LABEL_SIZE];
+    const char* label;
     int num_units;
     unit *units; // Array of units
+	//unit units[];	
 } unit_type;
 
-const int NUM_UNIT_TYPES = 10;
+extern const int NUM_UNIT_TYPES;
 
 extern int init_units();
 extern int docmd_convert(arg_struct *arg);

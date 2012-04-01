@@ -784,10 +784,10 @@ void shell_request_timeout3(int delay)
 		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
-	for (int i=1; i<6; i++)
+	for (int i=1; i<7; i++)
 		[self hideButtonNum:i hidden:TRUE];
 		
-	for (int i=7; i<40; i++)
+	for (int i=7; i<38; i++)
 		[self hideButtonNum:i hidden:FALSE];
 		
 	CGPoint cent;
@@ -818,7 +818,7 @@ void shell_request_timeout3(int delay)
     [blitterView fullLCD];
 	[blitterView setNumDisplayRows];
     
-	for (int i=1; i<40; i++)
+	for (int i=1; i<38; i++)
 		[self hideButtonNum:i hidden:TRUE];
 
 	softMenu.hidden = TRUE;

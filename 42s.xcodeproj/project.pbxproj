@@ -32,7 +32,6 @@
 		ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED0C2CF10EB4BA6F00053F90 /* PrintView.m */; };
 		ED11B0A4107C6C2400A89C47 /* glare.png in Resources */ = {isa = PBXBuildFile; fileRef = ED11B0A3107C6C2400A89C47 /* glare.png */; };
 		ED15EEB814E33DBE0030D91B /* units.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED15EEB714E33DBE0030D91B /* units.cc */; };
-		ED15EEBD14E4EDED0030D91B /* units.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED15EEBC14E4EDED0030D91B /* units.txt */; };
 		ED26D2400F6AB1D100F285A2 /* simpleserver.c in Sources */ = {isa = PBXBuildFile; fileRef = ED26D23F0F6AB1D100F285A2 /* simpleserver.c */; };
 		ED26D2650F6AB70E00F285A2 /* ServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26D2640F6AB70E00F285A2 /* ServerViewController.m */; };
 		ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED26D2730F6AB7F400F285A2 /* ServerView.xib */; };
@@ -123,7 +122,6 @@
 		ED11B0A3107C6C2400A89C47 /* glare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glare.png; sourceTree = "<group>"; };
 		ED15EEB714E33DBE0030D91B /* units.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = units.cc; path = "Classes/common-42s/units.cc"; sourceTree = "<group>"; };
 		ED15EEBB14E33E3E0030D91B /* units.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = units.h; path = "Classes/common-42s/units.h"; sourceTree = "<group>"; };
-		ED15EEBC14E4EDED0030D91B /* units.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = units.txt; sourceTree = "<group>"; };
 		ED26D23F0F6AB1D100F285A2 /* simpleserver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = simpleserver.c; path = simpleserver/simpleserver.c; sourceTree = "<group>"; tabWidth = 8; };
 		ED26D2630F6AB70E00F285A2 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
 		ED26D2640F6AB70E00F285A2 /* ServerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerViewController.m; sourceTree = "<group>"; };
@@ -302,7 +300,6 @@
 				EDE847A8151B36FD00DE8B0B /* menu-norm.png */,
 				ED958D051514793100650B74 /* i_print_adv.png */,
 				ED958D031514697B00650B74 /* i_print_adv_dark.png */,
-				ED15EEBC14E4EDED0030D91B /* units.txt */,
 				ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */,
 				ED0B99C512AA43E80002D7E8 /* Icon.png */,
 				ED0B99C312AA43E20002D7E8 /* Icon-72.png */,
@@ -510,7 +507,6 @@
 				ED0B99C412AA43E20002D7E8 /* Icon-72.png in Resources */,
 				ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */,
 				ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */,
-				ED15EEBD14E4EDED0030D91B /* units.txt in Resources */,
 				ED958D041514697B00650B74 /* i_print_adv_dark.png in Resources */,
 				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 				EDE847A9151B36FD00DE8B0B /* menu-norm.png in Resources */,
