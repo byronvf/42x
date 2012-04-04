@@ -1,8 +1,8 @@
 
 /*
  This module provides the functionality for converting between units such as
- km to miles. We break it down to two concepts of type and unit, where the type is 
- something such as temperature or pressure, and a unit is a specific unit within
+ km to miles. We break it down into two concepts of type and unit, where the type is 
+ something such as length or pressure, and a unit is a specific unit within
  those types.  The basic data structure that contains these values is unit_table which
  is an array of types with lists of units for each type.  Much of the code in 
  this module is dedicated to working with a 16 bit conversion word. with the following
@@ -36,6 +36,15 @@ static vartype *temp_5_9;    // 5/9
 static vartype *temp_9_5;    // 9/5
 static vartype *temp_32;     // 32
 
+/*
+ The below unit values are main taken from:
+ 		http://en.wikipedia.org/wiki/Conversion_of_units
+ but verified against:
+ 		http://physics.nist.gov/Pubs/SP811/appenB9.html
+*/
+
+// Conversion values are relative to the first, index 0, unit for a type
+
 static unit length_units[] =
 {
 	{"m",       "1.0", NULL},
@@ -44,14 +53,15 @@ static unit length_units[] =
 	{"ft",      "3.048e-1", NULL},
 	{"in",      "2.54e-2", NULL},
 	{"mile",    "1.609344e3", NULL},
-	{"lyear",   "9.46073e15", NULL},
-	{"ua",      "1.495979e11", NULL},
+	// As defined by the IAU, year = julian year = 365.25 days
+	{"lyear",   "9.4607304725808e15", NULL},
+	{"AU",      "1.49597871464e11", NULL},
 	{"fathm",   "1.828804", NULL},
 	{"Angst",   "1.0e-10", NULL},
 	{"mm",      "1e-3", NULL},
 	{"micrn",   "1e-6", NULL},
 	{"yard",    "9.144e-1", NULL},
-	{"parsc",   "3.085678e16", NULL},
+	{"parsc",   "3.08567782e16", NULL},
 };
 
 static unit area_units[] = 
@@ -59,39 +69,39 @@ static unit area_units[] =
 	{"m^2",     "1.0", NULL},
 	{"ft^2",    "9.290304e-2", NULL},
 	{"in^2",	"6.4516-4", NULL},
-	{"mil^2",   "2.589988e6", NULL},
-	{"acre",    "4.046873e3", NULL},
+	{"mil^2",   "2.589988110336e6", NULL},
+	{"acre",    "4.0468564224e3", NULL},
 	{"Hectr",   "1e4", NULL},
-	{"yrd^2",   "8.361274e-1", NULL},
+	{"yrd^2",   "8.3612736e-1", NULL},
 	{"cm^2",    "1e-4", NULL},
 };
 
 static unit volume_units[] =
 {
-	{"liter",  "1.0", NULL},
-	{"ft^3",   "2.831685e1", NULL},
-	{"USgal",  "3.785412", NULL},
+	{"Liter",  "1.0", NULL},
+	{"ft^3",   "2.8316846592e1", NULL},
+	{"USgal",  "3.785411784", NULL},
 	{"UKgal",  "4.54609", NULL},
 	{"mL",     "1e-3", NULL},
-	{"USfoz",  "2.957353e-2", NULL},
-	{"UKfoz",  "2.841306e-2", NULL},
-	{"pint",   "4.731765e-1", NULL},
-	{"quart",  "9.463529e-1", NULL},
+	{"USfoz",  "2.95735295625e-2", NULL},
+	{"UKfoz",  "2.84130625e-2", NULL},
+	{"pint",   "4.73176473e-1", NULL},
+	{"quart",  "9.46352946e-1", NULL},
 	{"cord",   "3.624556e3", NULL},
-	{"cup",    "2.365882e-1", NULL},
-	{"tabsp",  "1.478676e-2", NULL},
-	{"teasp",  "4.928922e-3", NULL},
+	{"cup",    "2.365882365e-1", NULL},
+	{"tabsp",  "1.47867647825e-2", NULL},
+	{"teasp",  "4.928921595e-3", NULL},
 	{"cc",     "1e-3", NULL},
 };
 
 static unit speed_units[] =
 {
 	{"m/sec",  "1.0", NULL},
-	{"km/h",   "2.777778e-1", NULL},
+	{"km/h",   "2.777777777777777777777778e-1", NULL},
 	{"mil/h",  "4.4704e-1", NULL},
 	{"ft/s",   "3.048e-1", NULL},
 	{"mil/s",  "1.609344e3", NULL},
-	{"knot",   "5.144444e-1", NULL},
+	{"knot",   "5.144444444444444444444444e-1", NULL},
 };
 
 static unit mass_units[] =
@@ -99,13 +109,13 @@ static unit mass_units[] =
 	{"kg",     "1.0", NULL},
 	{"pound",  "4.5359237e-1", NULL},
 	{"g",      "1e-3", NULL},
-	{"ounce",  "2.834952e-2", NULL},
-	{"TRYoz",  "3.110348e-2", NULL},
+	{"ounce",  "2.8349523125e-2", NULL},
+	{"TRYoz",  "3.11034768e-2", NULL},
 	{"carat",  "2e-4", NULL},
-	{"UKton",  "1.016047e3", NULL},
-	{"USton",  "9.071847e2", NULL},
+	{"UKton",  "1.0160469088e3", NULL},
+	{"USton",  "9.0718474e2", NULL},
 	{"grain",  "6.479891e-5", NULL},
-	{"slug",   "1.459390e1", NULL},
+	{"slug",   "1.4593903e1", NULL},
 };
 
 static unit force_units[] =
@@ -120,21 +130,25 @@ static unit energy_units[] =
 	{"cal",    "4.1868", NULL},
 	{"kcal",   "4.1868e3", NULL},
 	{"Btu",    "1.05505585262e3", NULL},
-	{"eV",     "1.602177e-19", NULL},
+	{"eV",     "1.60217733e-19", NULL},
 	{"kWh",    "3.6e6", NULL},
-	{"ftLbf",  "1.355818", NULL},
+	{"ftLbf",  "1.3558179483314004", NULL},
 	{"erg",    "1e-7", NULL},
 };
 
 static unit power_units[] =
 {
 	{"watt",   "1.0", NULL},
-	{"hp",     "7.456999e2", NULL},
-	{"bhp",    "9.80950e3", NULL},
+	{"hp",     "7.4569987158227022e2", NULL},
+	// Some dissagreement here, Took the value from 
+	// http://en.wikipedia.org/wiki/Conversion_of_units#Power_or_heat_flow_rate
+	// because of more precision.
+	{"bhp",    "9.810657e3", NULL},
+	
 	{"erg/s",  "1.0e-7", NULL},
 	{"Btu/m",  "1.7584264e1", NULL},
-	{"ftb/s",  "2.259697e-2", NULL},
-	{"ftb/m",  "2.259697E-2", NULL},
+	{"ftb/s",  "1.3558179483314004", NULL},
+	{"ftb/m",  "2.259696580552334e-2", NULL},
 	{"ftb/h",  "3.766161e-4", NULL},
 };
 
@@ -147,15 +161,21 @@ static unit pressure_units[] =
 	{"bar",    "1e5", NULL},
 	{"mbar",   "1e2", NULL},
 	{"mmHg",   "1.333224e2", NULL},
+	// Taken from NIST	http://physics.nist.gov/Pubs/SP811/footnotes.html#f12
+	// Found slightly different values for this, going with the "conventional value"
 	{"cmH2O",  "9.80665e1", NULL},
 	{"inHg",   "3.386389e3", NULL},
 };
 
+// This is really just a place holder for these units, we calculate the 
+// conversion in code since it is more complicated then simply applying
+// a scale factor.
+
 static unit temperature_units[] =
 {
-	{"C",      "1.0", NULL},
-	{"F",      "1.8", NULL},
-	{"K",      "1.0", NULL},
+	{"C",      "1", NULL},
+	{"F",      "1", NULL},
+	{"K",      "1", NULL},
 };
 
 static unit time_units[] =
@@ -165,13 +185,21 @@ static unit time_units[] =
 	{"min",     "6e4", NULL},
 	{"hour",    "3.6e6", NULL},
 	{"day",     "8.64e7", NULL},
-	{"year",    "3.1536e10", NULL},
-	{"s.sid",   "9.972696e2", NULL},	
-	{"m.sid",   "5.983617e4", NULL},	
-	{"d.sid",   "8.616409e7", NULL},	
-	{"y.sid",   "3.155815e10", NULL},	
-	{"shake",   "1e-5", NULL},
+	{"y.Gor",	"3.1556952e10", NULL},
 	{"\x11sec", "1e-3", NULL},
+	{"shake",   "1e-5", NULL},
+	{"nsec",    "1e-6", NULL},
+	{"au",      "2.418884254e-14", NULL},
+	{"y.Jul",   "3.1557600e10", NULL},
+	// some discrepencies with the duration of sidreal day and year.
+	// values taken from:
+    // http://pdg.lbl.gov/2011/reviews/rpp2011-rev-astrophysical-constants.pdf
+	{"y.Tro",   "3.15569252e10", NULL},
+	{"y.Sid",   "3.15581498e10", NULL},	
+	{"d.Sid",   "8.616409053e7", NULL},	
+	{"h.Sid",   "3.59017043875e6", NULL},	
+	{"m.Sid",   "5.983617397916666666666667e4", NULL},	
+	{"s.Sid",   "9.972695663194444444444444e2", NULL},	
 };
 
 
@@ -430,7 +458,7 @@ int docmd_convert(arg_struct *arg)
     return ERR_NONE;
 }
 
-// Create a string representing the unit conversion passed in convert
+// Create a string representing the unit conversion passed in the word convert
 int write_unit_string_to_buf(char* buf, int bufsz, int start, int convert)
 {
     int bufptr = start;
