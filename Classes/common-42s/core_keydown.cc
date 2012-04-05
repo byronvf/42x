@@ -372,8 +372,10 @@ void keydown(int shift, int key) {
 		// if Key is exit, then the exit code will take care of setting the plain
 		// menu to none, otherwise if plain menu has already been set to none, then the
 		// exit routine will set any other pending menus to none also...
+		
 		if (key != KEY_EXIT)
 			set_menu(MENULEVEL_PLAIN, MENU_NONE);
+		
 	    finish_command_entry(false);
 		incomplete_command = CMD_NONE;
 		pending_command = CMD_CANCELLED;
@@ -719,12 +721,14 @@ void keydown_command_entry(int shift, int key) {
 
     if (incomplete_command == CMD_CONVERT)
     {	
+		// We come to this point while in the UNITS menu, and the user
+		// has already keyed in the first unit, and has now keyed in the second
+		// unit.
 		
+		pending_command = CMD_NULL;		
 		if (!shift && key == KEY_BSP)
 		{
-			pending_command = CMD_NULL;
 			finish_command_entry(false);
-			incomplete_num &= 0x1F;
 			if (getTypeByCode(incomplete_num)->num_units > 6) 
 				mode_updown = TRUE;
 			shell_annunciators(mode_updown, -1, -1, -1, -1, -1);	
@@ -748,8 +752,6 @@ void keydown_command_entry(int shift, int key) {
 			return;
 		}	
 		
-		pending_command = incomplete_command;
-		incomplete_argtype = ARGTYPE_UNITS;
 		int unitidx = unit_menu_page*6 + key-1;
 		if (unitidx < getTypeByCode(incomplete_num)->num_units)
 		{
@@ -759,6 +761,7 @@ void keydown_command_entry(int shift, int key) {
 			
 			incomplete_num &= ~0x7C00;
 			incomplete_num |= unitidx << 10;	    	    
+			pending_command = incomplete_command;
 			pending_command_arg.val.num = incomplete_num;
 			pending_command_arg.type = incomplete_argtype;
 			
@@ -780,9 +783,12 @@ void keydown_command_entry(int shift, int key) {
 			
 			if (((incomplete_num >> 10)&0x1F) == ((incomplete_num >> 5)&0x1F))
 			{
+				// The 'from' unit is the same as the 'to', so "reset" unit
+				// entry, and pop out of command entry.
+				
+				// mask out the from and to units but leave type.
 				incomplete_num &= 0x1F;
-				//pending_command_arg.val.num = incomplete_num;
-				pending_command = CMD_NULL;
+				
 				finish_command_entry(false);
 				incomplete_command = CMD_NONE;
 				if (getTypeByCode(incomplete_num)->num_units > 6) 
@@ -2520,6 +2526,10 @@ void keydown_normal_mode(int shift, int key) {
 	    }
         else if (menu == MENU_CONVERT1 || menu == MENU_CONVERT2)
         {
+			// so when we pop out of the units menu, we end up in the 
+			// correct COVERT menu.
+			//menus[MENU_UNITS].parent = menu;
+			
             incomplete_num = menukey;
 			incomplete_argtype = ARGTYPE_UNITS;
             if (menu == MENU_CONVERT2) incomplete_num += 6; 
@@ -2543,30 +2553,27 @@ void keydown_normal_mode(int shift, int key) {
         }	    
     	else if (menu == MENU_UNITS)
 		{
-			int unitconv = incomplete_num;
+			// We come to this point when we drill down to the units menu
+			// from MENU_CONVERT1 or 2, above.
+			// and we type one of the unit conversion keys. However,
+			// typeing the second unit conversion key is handled by 
+			// keydown_commmand_entry.
+			
 			int unitidx = unit_menu_page*6 + menukey;
+			int convnum = incomplete_num;
 			if (unitidx < getTypeByCode(incomplete_num)->num_units)
 			{
 				unitidx++;  // conv from order to code
-				if (unitconv&0x3E0)
-				{
-					// Set the 'to' unit
-					
-					unitconv &= ~0x7C00;
-					unitconv |= unitidx << 10;
-					
-					arg_struct args;
-					args.type = TYPE_REAL;
-					args.val.num = unitconv;	
-				}
-				else
-				{
 					// set the 'from' unit
-					unitconv &= ~0x3E0;
-					unitconv |= unitidx << 5;		    
-				}
+				
+				// incomplete_num already has the type code in bits 0-4
+				// so mask in the from unit code.
+				convnum &= ~0x3E0;
+				convnum |= unitidx << 5;
+				
 				do_interactive(CMD_CONVERT);
-				incomplete_num = unitconv;
+				incomplete_num = convnum;
+				incomplete_argtype = ARGTYPE_UNITS;
 				redisplay();
 			}			
 			return;
