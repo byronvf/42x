@@ -2528,7 +2528,7 @@ void keydown_normal_mode(int shift, int key) {
         {
 			// so when we pop out of the units menu, we end up in the 
 			// correct COVERT menu.
-			//menus[MENU_UNITS].parent = menu;
+			menus[MENU_UNITS].parent = menu;
 			
             incomplete_num = menukey;
 			incomplete_argtype = ARGTYPE_UNITS;
