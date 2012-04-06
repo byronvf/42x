@@ -2648,7 +2648,8 @@ void set_plainmenu(int menuid) {
 	/* Even if it's a different menu than the current one, it should
 	 * still stick if it belongs to the same group.
 	 */
-	if (mode_plainmenu != MENU_NONE) {
+	// If the menuid is MENU_CONVERT then we don't want to make it sticky..
+	if (mode_plainmenu != MENU_NONE && menuid != MENU_CONVERT1) {
 	    int menu1 = mode_plainmenu;
 	    int menu2 = menuid;
 	    int parent;
