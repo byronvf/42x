@@ -2553,6 +2553,12 @@ void start_incomplete_command(int cmd_id) {
 	redisplay();
 	return;
     }
+	
+	// The convert menu uses plain menu, but using another incomplete command 
+	// clears the info we need for convert, so we simply drop the menu.
+	if (mode_plainmenu == MENU_UNITS)
+		mode_plainmenu = MENU_NONE;
+	
     incomplete_command = cmd_id;
     incomplete_ind = 0;
     if (argtype == ARG_NAMED || argtype == ARG_PRGM
