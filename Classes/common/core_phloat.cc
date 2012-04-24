@@ -72,7 +72,7 @@ int string2phloat(const char *buf, int buflen, phloat *d) {
     // First, convert from HP-42S format to bcdfloat format:
     // strip thousands separators, convert comma to dot if
     // appropriate, and convert char(24) to 'E'.
-    // Also, reject numbers with more than 12 digits in the mantissa.
+    // Also, reject numbers with more than 25 digits in the mantissa.
     char buf2[100];
     int buflen2 = 0;
     char sep = flags.f.decimal_point ? ',' : '.';
