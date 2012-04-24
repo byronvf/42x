@@ -36,3 +36,11 @@ extern BOOL isSleeping;
 @end
 
 extern BOOL free42init;
+
+static BOOL isPad() {
+#ifdef UI_USER_INTERFACE_IDIOM
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+#else
+    return NO;
+#endif
+}

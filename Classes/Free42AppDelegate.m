@@ -242,7 +242,7 @@ bool prgmFirstWrite = TRUE;
 		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
 	else
 		[[Settings instance] setShowStatusBar:TRUE];
-	
+		
 	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
 		[[Settings instance] setAutoPrint:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
 	else
