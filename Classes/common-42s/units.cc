@@ -284,6 +284,11 @@ void lazyInitUnit(unit* u)
 	if (u->scale == NULL)
 	{
 		u->scale = new_real(0);
+		
+		// Set the decimal seperator to '.' so are number strings are read correctly
+		BOOL tmpv = flags.f.decimal_point;
+		flags.f.decimal_point = TRUE;
+		
 		if (!parse_phloat(u->scaleStr, strlen(u->scaleStr), 
 						  &((vartype_real*)u->scale)->x))
 		{
@@ -292,6 +297,7 @@ void lazyInitUnit(unit* u)
 			assert(FALSE);
 			exit(1);
 		}
+		flags.f.decimal_point = tmpv;
 	}
 }
 
@@ -302,7 +308,12 @@ int init_units()
     // -------  Initialze values for temperature conversions -----------
     
     phloat tf;
+	
+	BOOL tmpv = flags.f.decimal_point;
+	flags.f.decimal_point = TRUE;
     parse_phloat("273.15", 6, &tf);
+	flags.f.decimal_point = tmpv;
+	
     temp_273_15 = new_real(tf);
     tf = 9;
     tf = tf / 5;
