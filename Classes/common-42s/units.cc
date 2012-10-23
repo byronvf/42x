@@ -68,7 +68,7 @@ static unit area_units[] =
 {
 	{"m^2",     "1.0", NULL},
 	{"ft^2",    "9.290304e-2", NULL},
-	{"in^2",	"6.4516-4", NULL},
+	{"in^2",	"6.4516e-4", NULL},
 	{"mil^2",   "2.589988110336e6", NULL},
 	{"acre",    "4.0468564224e3", NULL},
 	{"Hectr",   "1e4", NULL},
