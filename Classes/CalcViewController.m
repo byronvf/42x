@@ -202,7 +202,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// if dispRows is zero, then we have not loaded the display settings.
 	NSAssert(dispRows != 0, @"We are not ready to display");
 	NSAssert(blitterView != NULL, @"Blitter view not ready");
-	NSAssert(menuView != NULL, @"Menu view not ready");
+	//NSAssert(menuView != NULL, @"Menu view not ready");
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
 	// Force Free42 redisplay using our settings for menuKeys and displayRows. 
