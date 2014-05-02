@@ -11,10 +11,13 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		2899E5220DE3E06400AC0155 /* CalcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* CalcView.xib */; };
-		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
+		28AD733F0D9D9553002E5188 /* MainWindow-iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow-iPhone.xib */; };
 		28D7ACF80DDB3853001CB0EB /* CalcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* CalcViewController.m */; };
 		91341E5A1638E2AE0086FEDD /* ModernView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91341E591638E2AE0086FEDD /* ModernView.m */; };
 		91341E5C1638E9400086FEDD /* ModernView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91341E5B1638E9400086FEDD /* ModernView.xib */; };
+		91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89A163BBF1900470456 /* Default-568h@2x.png */; };
+		91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */; };
+		91B8D8A2163BE5FB00470456 /* IPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8D8A1163BE5FB00470456 /* IPadViewController.m */; };
 		E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D40FDE8CE800698456 /* squeak.wav */; };
 		E9B918E00FDE8CE800698456 /* tone0.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D50FDE8CE800698456 /* tone0.wav */; };
 		E9B918E10FDE8CE800698456 /* tone1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D60FDE8CE800698456 /* tone1.wav */; };
@@ -97,7 +100,7 @@
 		1D3623250D0F684500981E51 /* Free42AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Free42AppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* 42x.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 42x.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2899E5210DE3E06400AC0155 /* CalcView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CalcView.xib; sourceTree = "<group>"; };
-		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		28AD733E0D9D9553002E5188 /* MainWindow-iPhone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "MainWindow-iPhone.xib"; sourceTree = "<group>"; };
 		28D7ACF60DDB3853001CB0EB /* CalcViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalcViewController.h; sourceTree = "<group>"; };
 		28D7ACF70DDB3853001CB0EB /* CalcViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -106,6 +109,10 @@
 		91341E581638E2AE0086FEDD /* ModernView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernView.h; sourceTree = "<group>"; };
 		91341E591638E2AE0086FEDD /* ModernView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModernView.m; sourceTree = "<group>"; };
 		91341E5B1638E9400086FEDD /* ModernView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModernView.xib; sourceTree = "<group>"; };
+		91B8D89A163BBF1900470456 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
+		91B8D8A0163BE5FB00470456 /* IPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadViewController.h; sourceTree = "<group>"; };
+		91B8D8A1163BE5FB00470456 /* IPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPadViewController.m; sourceTree = "<group>"; };
 		E9B918D40FDE8CE800698456 /* squeak.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = squeak.wav; sourceTree = "<group>"; };
 		E9B918D50FDE8CE800698456 /* tone0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone0.wav; sourceTree = "<group>"; };
 		E9B918D60FDE8CE800698456 /* tone1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone1.wav; sourceTree = "<group>"; };
@@ -120,7 +127,7 @@
 		ED021D6F101D7BE700D8907C /* upglow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = upglow.png; sourceTree = "<group>"; };
 		ED03DC4613621775009E7343 /* icons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icons.c; path = simpleserver/icons.c; sourceTree = "<group>"; };
 		ED0B99C312AA43E20002D7E8 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		ED0B99C512AA43E80002D7E8 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		ED0B99C512AA43E80002D7E8 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../Icon.png; sourceTree = "<group>"; };
 		ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		ED0C2CF00EB4BA6F00053F90 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		ED0C2CF10EB4BA6F00053F90 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
@@ -265,6 +272,9 @@
 				ED361AB50FB973A700C432A1 /* MenuView.m */,
 				91341E581638E2AE0086FEDD /* ModernView.h */,
 				91341E591638E2AE0086FEDD /* ModernView.m */,
+				91B8D8A0163BE5FB00470456 /* IPadViewController.h */,
+				91B8D8A1163BE5FB00470456 /* IPadViewController.m */,
+				ED0B99C512AA43E80002D7E8 /* Icon.png */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -305,13 +315,13 @@
 			isa = PBXGroup;
 			children = (
 				8D1107310486CEB800E47090 /* Info.plist */,
+				91B8D89A163BBF1900470456 /* Default-568h@2x.png */,
 				EDE847A8151B36FD00DE8B0B /* menu-norm.png */,
 				ED958D051514793100650B74 /* i_print_adv.png */,
 				ED958D031514697B00650B74 /* i_print_adv_dark.png */,
 				ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */,
-				ED0B99C512AA43E80002D7E8 /* Icon.png */,
-				ED0B99C312AA43E20002D7E8 /* Icon-72.png */,
 				EDF7F9F5123EDD680091DB79 /* Default@2x.png */,
+				ED0B99C312AA43E20002D7E8 /* Icon-72.png */,
 				ED11B0A3107C6C2400A89C47 /* glare.png */,
 				ED021D6F101D7BE700D8907C /* upglow.png */,
 				ED366417100B339D00293D2C /* VERSION */,
@@ -337,8 +347,9 @@
 				ED26D2730F6AB7F400F285A2 /* ServerView.xib */,
 				2899E5210DE3E06400AC0155 /* CalcView.xib */,
 				EDE45EB10EB033F500404D59 /* ConfigView.xib */,
-				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
+				28AD733E0D9D9553002E5188 /* MainWindow-iPhone.xib */,
 				91341E5B1638E9400086FEDD /* ModernView.xib */,
+				91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -485,7 +496,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
+				28AD733F0D9D9553002E5188 /* MainWindow-iPhone.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* CalcView.xib in Resources */,
 				EDFC86B90EAF10F4007120DA /* imgFlagShift.png in Resources */,
 				EDFC86BB0EAF10FC007120DA /* imgFlagUpDown.png in Resources */,
@@ -519,6 +530,8 @@
 				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 				EDE847A9151B36FD00DE8B0B /* menu-norm.png in Resources */,
 				91341E5C1638E9400086FEDD /* ModernView.xib in Resources */,
+				91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */,
+				91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +601,7 @@
 				EDEE186513FB09A4002B76CC /* bcd.cc in Sources */,
 				ED15EEB814E33DBE0030D91B /* units.cc in Sources */,
 				91341E5A1638E2AE0086FEDD /* ModernView.m in Sources */,
+				91B8D8A2163BE5FB00470456 /* IPadViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,10 +635,11 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREPROCESS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = 42x;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -652,10 +667,11 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = 42x;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;
@@ -732,10 +748,11 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = 42x;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Distribution;
 		};

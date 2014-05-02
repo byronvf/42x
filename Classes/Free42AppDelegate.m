@@ -327,16 +327,6 @@ bool prgmFirstWrite = TRUE;
 	if (statefile) fclose(statefile);
 	statefile = NULL;
 
-    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-	
-	[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
-		
-	// Override point for customization after app launch
-	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
-	[navViewController setDelegate:navViewController];
-    [window addSubview: [navViewController view]];
-	[window makeKeyAndVisible];
-			
 	const char *sound_names[] = { "tone0", "tone1", "tone2", "tone3", "tone4", "tone5", "tone6", "tone7", "tone8", "tone9", "squeak" };
 	for (int i = 0; i < 11; i++) {
 		NSString *name = [NSString stringWithCString:sound_names[i] encoding:NSASCIIStringEncoding];
@@ -345,7 +335,53 @@ bool prgmFirstWrite = TRUE;
 		if (status)
 			NSLog(@"error loading sound:  %@", name);
 	}
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		[self initializeIpad];
+	}
+	else
+	{
+		[self initializeIphone];
+	}
+				
 }
+
+- (void)initializeIpad;
+{
+	NSLog(@"Tying views together...");
+	//[window addSubview:[viewController view]];
+	//[window setRootViewController:viewController];
+	//[window addSubview:[viewController view]];
+	UIViewController *viewCtrl = [window rootViewController];
+	UIView *padView = [viewCtrl view];
+	UIView *keypadView = [viewController view];
+	//[keypadView setFrame:CGRectMake(0, 0, 512, 768)];
+	//[keypadView setBounds:CGRectMake(0, 0, 512, 768)];
+	//[padView addSubview:keypadView];
+
+	CGRect rect = [window frame];
+	NSLog(@"window frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	rect = [padView frame];
+	NSLog(@"Pad view frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	rect = [keypadView frame];
+	NSLog(@"keypad view frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	
+}
+
+- (void)initializeIphone;
+{
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+	
+	[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+	
+	// Override point for customization after app launch
+	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
+	[navViewController setDelegate:navViewController];
+    [window addSubview: [navViewController view]];
+	[window makeKeyAndVisible];
+}
+
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {

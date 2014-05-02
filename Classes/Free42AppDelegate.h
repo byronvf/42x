@@ -19,6 +19,7 @@
 #import "CalcViewController.h"
 #import "NavViewController.h"
 
+
 #define PRINT_FILE_NAME @"/Documents/print.txt"
 
 // Set this to true when we are in sleep mode
@@ -33,7 +34,11 @@ extern BOOL isSleeping;
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) NavViewController *navViewController;
 
+- (void)initializeIpad;
+- (void)initializeIphone;
+
 @end
+
 
 extern BOOL free42init;
 

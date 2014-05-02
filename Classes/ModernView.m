@@ -73,6 +73,9 @@ btnlable_struct btnlabels[] =
 	NSMutableArray *mbtns = [[NSMutableArray alloc] init];
 	ButtonInfo *bi = NULL;
 	
+	CGRect rect = [self frame];
+	NSLog(@"key pad nib (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	
 	int bnum = 0;
 	for (int col=0; col<3; col++)
 	{
@@ -137,6 +140,8 @@ btnlable_struct btnlabels[] =
 
 - (void)drawRect:(CGRect)rect
 {
+	NSLog(@"Drawing key pad (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	UIFont *fontShift = [UIFont boldSystemFontOfSize:12];
 	UIFont *fontnorm = [UIFont boldSystemFontOfSize:14];
@@ -164,7 +169,7 @@ btnlable_struct btnlabels[] =
 		}
 		
 		
-        CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.10, 1.0);\
+        CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.10, 1.0);
         [button->shiftLabel drawInRect:rect
                withFont:fontShift lineBreakMode:NSLineBreakByClipping
               alignment:UITextAlignmentCenter];
