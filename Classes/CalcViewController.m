@@ -369,21 +369,19 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	[self handlePopupKeyboard:FALSE];
 }
 
-/*
- * Handle the user pressing a keypad button
- */
-- (void)buttonDown:(UIButton*)sender
+
+- (void)keyDown:(int)keynum
 {
 	// Added this to fix a PSE bug in combo with keyup and key repeat.
 	timer3active = FALSE;
 	
 	// last_pending_command is only used to track if the last command was CMD_CLX
-	// so that Free42 can call CMD_DROP on the second press.  This is a little 
+	// so that Free42 can call CMD_DROP on the second press.  This is a little
 	// messy doing it this way, and should at some point be integrated into Free42
 	// as an option. But it works for now.
 	if ([[Settings instance] dropFirstClick])
 		last_pending_command = CMD_CLX;
-		
+	
 	keyPressed = TRUE;
 	bool old_prgm_mode = flags.f.prgm_mode;
 	
@@ -395,8 +393,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	// Play click sound
 	if ([[Settings instance] clickSoundOn])
 		AudioServicesPlaySystemSound(1105);
-	
-	int keynum = (int)[sender tag];
+
 	if (dispRows > 4 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
@@ -408,18 +405,18 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		if (repeat == 1)  // Slow Repeat
 		{
-			[self performSelector:@selector(keyRepeatTimer) withObject:NULL 
+			[self performSelector:@selector(keyRepeatTimer) withObject:NULL
 					   afterDelay:1.0];  // 1s initial delay for slow repeat
 		}
 		else // repeat = 2  Fast Repeat
 		{
-			[self performSelector:@selector(keyRepeatTimer) withObject:NULL 
+			[self performSelector:@selector(keyRepeatTimer) withObject:NULL
 					   afterDelay:0.5];  // 500ms initial delay for fast repeat
 		}
 	}
 	else if (!enqueued && !timer3active)
 	{
-		// if the key is held down for 0.25 seconds, then flash the 
+		// if the key is held down for 0.25 seconds, then flash the
 		// key function.
 		[self performSelector:@selector(keyTimerEvent1) withObject:NULL afterDelay:0.25];
 	}
@@ -433,17 +430,29 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	{
 		[blitterView setNeedsDisplay];
 		[blitterView setNumDisplayRows];
-	}	
+	}
 	
-	[self handlePopupKeyboard:FALSE];	
+	[self handlePopupKeyboard:FALSE];
+	
 }
 
-- (void)buttonUp:(UIButton*)sender
+
+/*
+ * Handle the user pressing a keypad button
+ */
+- (void)buttonDown:(UIButton*)sender
+{
+	int keynum = (int)[sender tag];
+	[self keyDown:keynum];
+}
+
+
+- (void)keyUp
 {
 	keyPressed = FALSE;
 	if (!enqueued && !timer3active)
 	{
-		// If the timer 3 event is active, we don't want to stop the timer on 
+		// If the timer 3 event is active, we don't want to stop the timer on
 		// a key up event
 		[self cancelKeyTimer];
 	}
@@ -454,20 +463,26 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		callKeydownAgain = core_keyup();
 		
 		// Whenever we start a program we set the cpuCount to 1000, which
-		// will force the display not to be updated for 1000 calls to 
+		// will force the display not to be updated for 1000 calls to
 		// shell_needs_cpu.  This prevents flashing the display when running
-		// short programs.  Otherwise the goose flashes and ruins the 
+		// short programs.  Otherwise the goose flashes and ruins the
 		// 42s zen!
 		if (callKeydownAgain)
-			cpuCount = 1000;		
+			cpuCount = 1000;
 	}
-
+	
 	timer3active = FALSE;
 	if (callKeydownAgain)
 		[self keepRunning];
 	
 	[self testShutdown];
 	[self runUpdate];
+	
+}
+
+- (void)buttonUp:(UIButton*)sender
+{
+	[self keyUp];
 }
 
 /* Test if we should update the lastx display.  We create a new string

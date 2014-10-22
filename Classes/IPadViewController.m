@@ -43,7 +43,7 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	NSLog(@"Will rotate: %d", toInterfaceOrientation);
+	// NSLog(@"Will rotate: %d", toInterfaceOrientation);
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation

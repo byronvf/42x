@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#include "CalcViewController.h"
+
 
 @interface ButtonInfo : NSObject
 {
@@ -23,5 +25,6 @@
 @interface ModernView : UIView
 {
 	NSArray *buttons;
+	IBOutlet CalcViewController* calcViewController;
 }
 @end

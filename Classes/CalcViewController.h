@@ -143,7 +143,9 @@ extern bool reval;
 
 - (IBAction)buttonUp:(UIButton*)sender;
 - (IBAction)buttonDown:(UIButton*)sender;
-- (void)handlePopupKeyboard:(BOOL)toggle;
+- (void) keyDown: (int) keynum;
+- (void) keyup;
+- (void) handlePopupKeyboard:(BOOL)toggle;
 - (void) singleLCD;
 - (void) doubleLCD;
 - (void) fullLCD;

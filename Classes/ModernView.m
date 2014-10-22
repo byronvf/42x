@@ -23,8 +23,8 @@ typedef struct
 
 const int SPACING = 1;
 const int PIXEL_WIDTH = 320;
-const int PIXEL_WIDTH_TOP_BUTTONS = 170;
-const int PIXEL_WIDTH_BOTTOM_BUTTONS = 220;
+const int PIXEL_HEIGHT_TOP_BUTTONS = 170;
+const int PIXEL_HEIGHT_BOTTOM_BUTTONS = 220;
 const int LCD_HEIGHT = 90;
 
 btnlable_struct btnlabels[] =
@@ -79,9 +79,9 @@ btnlable_struct btnlabels[] =
 	int bnum = 0;
 	for (int col=0; col<3; col++)
 	{
-		int btn_top = col*PIXEL_WIDTH_TOP_BUTTONS/3 + SPACING
+		int btn_top = col*PIXEL_HEIGHT_TOP_BUTTONS/3 + SPACING
 		+ LCD_HEIGHT;
-		int btn_bot = (col+1)*PIXEL_WIDTH_TOP_BUTTONS/3 - SPACING
+		int btn_bot = (col+1)*PIXEL_HEIGHT_TOP_BUTTONS/3 - SPACING
 		+ LCD_HEIGHT;
 		
 		for (int row=0; row<6; row++)
@@ -111,10 +111,10 @@ btnlable_struct btnlabels[] =
 	
 	for (int col=0; col<4; col++)
 	{
-		int btn_top = col*PIXEL_WIDTH_BOTTOM_BUTTONS/4 + SPACING
-		+ LCD_HEIGHT + PIXEL_WIDTH_TOP_BUTTONS;
-		int btn_bot = (col+1)*PIXEL_WIDTH_BOTTOM_BUTTONS/4 - SPACING
-		+ LCD_HEIGHT + PIXEL_WIDTH_TOP_BUTTONS;
+		int btn_top = col*PIXEL_HEIGHT_BOTTOM_BUTTONS/4 + SPACING
+		+ LCD_HEIGHT + PIXEL_HEIGHT_TOP_BUTTONS;
+		int btn_bot = (col+1)*PIXEL_HEIGHT_BOTTOM_BUTTONS/4 - SPACING
+		+ LCD_HEIGHT + PIXEL_HEIGHT_TOP_BUTTONS;
 		
 		for (int row=0; row<5; row++)
 		{
@@ -136,6 +136,34 @@ btnlable_struct btnlabels[] =
 	buttons = [[NSArray alloc] initWithArray:mbtns];
 	NSAssert([buttons count] == 37, @"There should be 37 buttons");
 	
+}
+
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [[event allTouches] anyObject];
+	CGPoint p = [touch locationInView:self];
+	
+	for (int i=0; i<[buttons count]; i++)
+	{
+		ButtonInfo *button = [buttons objectAtIndex:i];
+		if (p.x > button->rect.origin.x &&
+			p.x < button->rect.origin.x + button->rect.size.width &&
+			p.y > button->rect.origin.y &&
+			p.y < button->rect.origin.y + button->rect.size.height)
+		{
+			int keynum = button->num+1;
+			[calcViewController keyDown:keynum];
+		}
+	}
+	
+	// DEBUG
+	NSLog(@"Recieved Event %f, %f", p.x, p.y);
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	[calcViewController keyUp];
 }
 
 - (void)drawRect:(CGRect)rect
