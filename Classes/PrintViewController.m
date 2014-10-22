@@ -55,7 +55,7 @@ void shell_print(const char *text, int length,
     if (!printingStarted)
     {
 		printingStarted = TRUE;
-		lastPrintPosition = [buf length]/18;
+		lastPrintPosition = (int)[buf length]/18;
     }
     
     if (bytesperline == 18) {
@@ -144,7 +144,7 @@ void shell_print(const char *text, int length,
 - (void)displayPlotView
 {
 	UIScrollView* scrollView = (UIScrollView*)[self view];
-	int numVertPixel = [[self getBuff] length]/18;
+	int numVertPixel = (int)[[self getBuff] length]/18;
  	numVertPixel *= PRINT_VERT_SCALE;
 	numVertPixel += PRINT_YOFFSET;
  	numVertPixel = MAX(vsize, numVertPixel);
@@ -157,7 +157,7 @@ void shell_print(const char *text, int length,
 		CGRect frame = [scrollView frame];
 		// If there is not enough content to fill the print view, then don't
 		// try and reposition.
-		int buflength = [[self getBuff] length]/18;
+		int buflength = (int)[[self getBuff] length]/18;
 		if (frame.size.height < buflength*PRINT_VERT_SCALE)
 		{
 			if (frame.size.height > (buflength - lastPrintPosition)*PRINT_VERT_SCALE)

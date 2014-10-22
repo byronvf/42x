@@ -78,7 +78,7 @@
 	int adjViewSize = vsize/PRINT_VERT_SCALE;  // convert view size to buf cords
 	int adjOffset = offset/PRINT_VERT_SCALE;
 	const char* beginBuf = (const char*)[buf bytes] + 18*adjOffset;
-	int buflength = [buf length]/18;
+	int buflength = (int)[buf length]/18;
 	int length = buflength - adjOffset;
 	if (length > adjViewSize)
 		length = adjViewSize;

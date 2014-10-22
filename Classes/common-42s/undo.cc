@@ -130,7 +130,7 @@ snapshot* setstack(int snappos)
 void draw_lcd_message(const char* msg)
 {
 	clear_row(0);
-	int len = strlen(msg);
+	int len = (int)strlen(msg);
 		
 	draw_string(0, 0, msg, len);
 

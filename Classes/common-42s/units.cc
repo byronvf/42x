@@ -289,7 +289,7 @@ void lazyInitUnit(unit* u)
 		BOOL tmpv = flags.f.decimal_point;
 		flags.f.decimal_point = TRUE;
 		
-		if (!parse_phloat(u->scaleStr, strlen(u->scaleStr), 
+		if (!parse_phloat(u->scaleStr, (int)strlen(u->scaleStr),
 						  &((vartype_real*)u->scale)->x))
 		{
 			// A string could not be converted to a BCD number, which means
@@ -329,7 +329,7 @@ int init_units()
     for (int i = 0; i < 6; i++)
     {
         menu_item_spec *mi = &menus[MENU_CONVERT1].child[i];
-        int strsz = MIN(sizeof(menus[MENU_CONVERT1].child[0].title),
+        int strsz = (int)MIN(sizeof(menus[MENU_CONVERT1].child[0].title),
                         strlen(unit_table[i].label));
         strncpy(mi->title, unit_table[i].label, strsz);
         mi->title_length = strsz;
@@ -339,7 +339,7 @@ int init_units()
     for (int i = 0; i < NUM_UNIT_TYPES-6; i++)
     {
         menu_item_spec *mi = &menus[MENU_CONVERT2].child[i];
-        int strsz = MIN(sizeof(menus[MENU_CONVERT2].child[0].title),
+        int strsz = (int)MIN(sizeof(menus[MENU_CONVERT2].child[0].title),
                         strlen(unit_table[i+6].label));        
         strncpy(mi->title, unit_table[i+6].label, strsz);
         mi->title_length = strsz;
@@ -476,12 +476,12 @@ int write_unit_string_to_buf(char* buf, int bufsz, int start, int convert)
     if (convert&0x3E0)
     {
 		unit *u = getUnitByCode(convert, convert >> 5);		
-		string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
+		string2buf(buf, bufsz, &bufptr, u->label, (int)strlen(u->label));
 		string2buf(buf, bufsz, &bufptr, " \x0F ", 3);
 		if (convert&0x7C00)
 		{
 			u = getUnitByCode(convert, convert >> 10);
-			string2buf(buf, bufsz, &bufptr, u->label, strlen(u->label));
+			string2buf(buf, bufsz, &bufptr, u->label, (int)strlen(u->label));
 		}
     }
     return bufptr;

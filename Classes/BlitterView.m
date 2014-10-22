@@ -311,7 +311,7 @@ short dispflags = 0;
 
 	// Quick and dirty character conversion... lxbufsize - so we alway have room for
 	// a 4 byte char and a null terminator.
-    hp2utf8(lastxbuf, strlen(lastxbuf), lxstr, lxbufsize - 4);
+    hp2utf8(lastxbuf, (int)strlen(lastxbuf), lxstr, lxbufsize - 4);
 	NSString *lval = [[NSString alloc] initWithUTF8String:lxstr];
 	NSString *wprefix = @"L";
 

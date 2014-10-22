@@ -77,7 +77,7 @@ static void read_line(int csock, char *buf, int bufsize) {
     int p = 0;
     int afterCR = 0;
     while (1) {
-	int n = recv(csock, buf + p, 1, 0);
+	int n = (int)recv(csock, buf + p, 1, 0);
 	if (n == -1) {
 	    buf[p] = 0;
 	    break;
@@ -207,7 +207,7 @@ static void tbprintf(textbuf *tb, const char *fmt, ...) {
     char text[LINEBUFSIZE];
     va_start(ap, fmt);
     vsprintf(text, fmt, ap);
-    tbwrite(tb, text, strlen(text));
+    tbwrite(tb, text, (int)strlen(text));
     va_end(ap);
 }
 
@@ -270,7 +270,7 @@ static void do_get(int csock, const char *url) {
 	    send(csock, ptr, filesize, 0);
 	else {
 	    FILE *file = (FILE *) ptr;
-	    while ((n = fread(buf, 1, LINEBUFSIZE, file)) > 0)
+	    while ((n = (int)fread(buf, 1, LINEBUFSIZE, file)) > 0)
 		send(csock, buf, n, 0);
 	    fclose(file);
 	}
@@ -318,7 +318,7 @@ static void do_get(int csock, const char *url) {
 		    strftime(di->mtime, sizeof(di->mtime), "%d-%b-%Y %H:%M:%S", &stm);
 		    if (S_ISREG(s.st_mode)) {
 			di->type = 1;
-			di->size = s.st_size;
+			di->size = (int)s.st_size;
 		    } else if (S_ISDIR(s.st_mode))
 			di->type = 2;
 		    else
@@ -509,7 +509,7 @@ void do_post(int csock, const char *url) {
 		p++;
 	    if (q != 0 && p[-1] == q)
 		*(--p) = 0;
-	    blen = strlen(boundary);
+	    blen = (int)strlen(boundary);
 	}
     }
 
@@ -567,7 +567,7 @@ void do_post(int csock, const char *url) {
 
 	while (1) {
 	    char c;
-	    int n = recv(csock, &c, 1, 0);
+	    int n = (int)recv(csock, &c, 1, 0);
 	    if (n != 1)
 		break;
 	    if (*filename != 0)
@@ -840,7 +840,7 @@ static int open_item(const char *url, void **ptr, int *type, int *filesize, cons
 	if (strcmp(url, icon_name[i]) == 0) {
 	    *ptr = icon_data[i];
 	    *type = 0;
-	    *filesize = icon_size[i];
+	    *filesize = (int)icon_size[i];
 	    return 200;
 	}
     }
@@ -864,7 +864,7 @@ static int open_item(const char *url, void **ptr, int *type, int *filesize, cons
     if (S_ISREG(statbuf.st_mode)) {
 	*ptr = fopen(url, "r");
 	*type = 1;
-	*filesize = statbuf.st_size;
+	*filesize = (int)statbuf.st_size;
 	if (*ptr == NULL) {
 	    /* We already know the file exists and is reachable, so
 	     * we only check for EACCES; any other error is reported
@@ -910,13 +910,13 @@ static mime_rec mime_list[] = {
 
 static const char *get_mime(const char *filename) {
     int i = 0;
-    int filenamelen = strlen(filename);
+    int filenamelen = (int)strlen(filename);
     int extlen;
     while (1) {
 	mime_rec *mr = &mime_list[i++];
 	if (mr->ext == NULL)
 	    return mr->mime;
-	extlen = strlen(mr->ext);
+	extlen = (int)strlen(mr->ext);
 	if (filenamelen >= extlen && strcmp(filename + filenamelen - extlen, mr->ext) == 0)
 	    return mr->mime;
     }

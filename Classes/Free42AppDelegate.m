@@ -96,7 +96,7 @@ int4 read_state(NSString* key, int *readUpTo, void *buf, int4 bufsize)
 	}
 	
 	const char *sbuf = (char*)[data bytes];
-	int length = [data length];
+	int length = (int)[data length];
 	int cnt = MIN(length - *readUpTo, bufsize);	
 	memcpy(buf, sbuf+*readUpTo, cnt);
 	*readUpTo += cnt;
@@ -116,7 +116,7 @@ bool shell_write_saved_state(const void *buf, int4 nbytes)
 		if (statefile == NULL) return false;
 	}		
 		
-	int4 n = fwrite(buf, 1, nbytes, statefile);
+	int n = (int)fwrite(buf, 1, nbytes, statefile);
 	if (n != nbytes) {
 		fclose(statefile);
 		NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
@@ -134,7 +134,7 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 {	
     if (persistVersion < 3 && bufsize == 1360)
 	{
-		int4 n = fread(buf, 1, 816, statefile);
+		int4 n = (int)fread(buf, 1, 816, statefile);
 		if (n != 816 && ferror(statefile)) 
 		{
 			fclose(statefile);
@@ -150,7 +150,7 @@ int4 shell_read_saved_state(void *buf, int4 bufsize)
 		return -1;
     else 
 	{
-		int4 n = fread(buf, 1, bufsize, statefile);
+		int4 n = (int)fread(buf, 1, bufsize, statefile);
 		if (n != bufsize && ferror(statefile)) 
 		{
 			fclose(statefile);
@@ -196,7 +196,7 @@ bool prgmFirstWrite = TRUE;
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-	persistVersion = [defaults integerForKey:CONFIG_PERSIST_VERSION];
+	persistVersion = (int)[defaults integerForKey:CONFIG_PERSIST_VERSION];
 	
 	if ([defaults objectForKey:CONFIG_KEY_CLICK_ON])
 		[[Settings instance] setClickSoundOn:[defaults boolForKey:CONFIG_KEY_CLICK_ON]];
@@ -224,7 +224,7 @@ bool prgmFirstWrite = TRUE;
 		[[Settings instance] setPrintedPRLCD:FALSE];
 	
 	if ([defaults objectForKey:CONFIG_DISP_ROWS])
-		dispRows = [defaults integerForKey:CONFIG_DISP_ROWS];
+		dispRows = (int)[defaults integerForKey:CONFIG_DISP_ROWS];
 	else
 		dispRows = 2;
 	
