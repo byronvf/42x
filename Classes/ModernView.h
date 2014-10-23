@@ -27,4 +27,9 @@
 	NSArray *buttons;
 	IBOutlet CalcViewController* calcViewController;
 }
+
+- (ButtonInfo*) makeButton: (int)col  row:(int)row doubleSize:(bool)ds numCols:(int)numCols
+				   numRows:(int)numRows pixelWidth:(int)pwidth pixelHeight:(int)pheight
+				   bNum:(int)bnum;
+
 @end

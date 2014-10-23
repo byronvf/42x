@@ -68,6 +68,28 @@ btnlable_struct btnlabels[] =
 	{@"+", @"CATALOG", TRUE}
 };
 
+
+- (ButtonInfo*) makeButton: (int)col row:(int)row doubleWidth:(bool)dw numCols:(int)numCols numRows:(int)numRows
+				  areaRect: (CGRect)area bNum:(int)bnum
+{
+	NSAssert(row < numRows && col < numCols, @"row or col out of bounds");
+	ButtonInfo* bi = [[ButtonInfo alloc] init];
+	int btn_top = row*area.size.height/numRows + SPACING + area.origin.y;
+	int btn_bot = (row+1)*area.size.height/numRows - SPACING + area.origin.y;
+	
+	int btn_left = col*PIXEL_WIDTH/numCols + SPACING;
+	int btn_right = (col + 1 + (dw?1:0))*PIXEL_WIDTH/numCols - SPACING;
+	
+	bi = [[ButtonInfo alloc] init];
+	bi->rect = CGRectMake(btn_left, btn_top, btn_right-btn_left, btn_bot-btn_top);
+	bi->num = bnum;
+	bi->label = btnlabels[bnum].label;
+	bi->shiftLabel = btnlabels[bnum].shiftLabel;
+	bi->isMenu = btnlabels[bnum].isMenu;
+	
+	return bi;
+}
+
 - (void)awakeFromNib
 {
 	NSMutableArray *mbtns = [[NSMutableArray alloc] init];
@@ -75,67 +97,43 @@ btnlable_struct btnlabels[] =
 	
 	CGRect rect = [self frame];
 	NSLog(@"key pad nib (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-	
 	int bnum = 0;
-	for (int col=0; col<3; col++)
-	{
-		int btn_top = col*PIXEL_HEIGHT_TOP_BUTTONS/3 + SPACING
-		+ LCD_HEIGHT;
-		int btn_bot = (col+1)*PIXEL_HEIGHT_TOP_BUTTONS/3 - SPACING
-		+ LCD_HEIGHT;
-		
-		for (int row=0; row<6; row++)
-		{
-			int btn_left = row*PIXEL_WIDTH/6 + SPACING;
-			int btn_right = (row + 1)*PIXEL_WIDTH/6 - SPACING;
 
-			if (col == 2 && row == 1)
-			{
-				bi->rect = CGRectMake(bi->rect.origin.x, bi->rect.origin.y,
-									  btn_right-bi->rect.origin.x, btn_bot-bi->rect.origin.y);
-			}
-			else
-			{
-				bi = [[ButtonInfo alloc] init];
-				bi->rect = CGRectMake(btn_left, btn_top, btn_right-btn_left, btn_bot-btn_top);
-				bi->num = bnum;
-				bi->label = btnlabels[bnum].label;
-				bi->shiftLabel = btnlabels[bnum].shiftLabel;
-				bi->isMenu = btnlabels[bnum].isMenu;
-				[mbtns addObject:bi];
-				bnum++;
-			}
+	// Upper 3 rows of buttons
+	CGRect buttonArea = CGRectMake(0, LCD_HEIGHT,
+								   PIXEL_WIDTH, PIXEL_HEIGHT_TOP_BUTTONS);
+	for (int row=0; row<3; row++)
+	{
+		for (int col=0; col<6; col++)
+		{
+			bool isDoubleWidth = row == 2 && col == 0;
+			bi = [self makeButton:col row:row doubleWidth:isDoubleWidth numCols:6 numRows:3
+						 areaRect:buttonArea bNum:bnum];
+			if (isDoubleWidth) col++;
 			
-		}
-	}
-	
-	for (int col=0; col<4; col++)
-	{
-		int btn_top = col*PIXEL_HEIGHT_BOTTOM_BUTTONS/4 + SPACING
-		+ LCD_HEIGHT + PIXEL_HEIGHT_TOP_BUTTONS;
-		int btn_bot = (col+1)*PIXEL_HEIGHT_BOTTOM_BUTTONS/4 - SPACING
-		+ LCD_HEIGHT + PIXEL_HEIGHT_TOP_BUTTONS;
-		
-		for (int row=0; row<5; row++)
-		{
-			int btn_left = row*PIXEL_WIDTH/5 + SPACING;
-			int btn_right = (row + 1)*PIXEL_WIDTH/5 - SPACING;
-
-			bi = [[ButtonInfo alloc] init];
-			bi->rect = CGRectMake(btn_left, btn_top, btn_right-btn_left, btn_bot-btn_top);
-			bi->num = bnum;
-			bi->label = btnlabels[bnum].label;
-			bi->shiftLabel = btnlabels[bnum].shiftLabel;
-			bi->isMenu = btnlabels[bnum].isMenu;
 			[mbtns addObject:bi];
 			bnum++;
 		}
-		
+	}
+
+	// Button 4 rows
+	buttonArea = CGRectMake(0, LCD_HEIGHT+PIXEL_HEIGHT_TOP_BUTTONS,
+						    PIXEL_WIDTH, PIXEL_HEIGHT_BOTTOM_BUTTONS);
+
+	for (int row=0; row<4; row++)
+	{
+		for (int col=0; col<5; col++)
+		{
+			bi = [self makeButton:col row:row doubleWidth:false numCols:5 numRows:4
+						 areaRect:buttonArea bNum:bnum];
+			
+			[mbtns addObject:bi];
+			bnum++;
+		}
 	}
 		
 	buttons = [[NSArray alloc] initWithArray:mbtns];
 	NSAssert([buttons count] == 37, @"There should be 37 buttons");
-	
 }
 
 
@@ -147,10 +145,10 @@ btnlable_struct btnlabels[] =
 	for (int i=0; i<[buttons count]; i++)
 	{
 		ButtonInfo *button = [buttons objectAtIndex:i];
-		if (p.x > button->rect.origin.x &&
-			p.x < button->rect.origin.x + button->rect.size.width &&
-			p.y > button->rect.origin.y &&
-			p.y < button->rect.origin.y + button->rect.size.height)
+		if (p.x >= button->rect.origin.x &&
+			p.x <= button->rect.origin.x + button->rect.size.width &&
+			p.y >= button->rect.origin.y &&
+			p.y <= button->rect.origin.y + button->rect.size.height)
 		{
 			int keynum = button->num+1;
 			[calcViewController keyDown:keynum];
