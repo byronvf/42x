@@ -192,6 +192,9 @@ bool prgmFirstWrite = TRUE;
 @synthesize window;
 @synthesize navViewController;
 
+@synthesize calcCtrl;
+@synthesize keyPadHolderView;
+
 - (void)loadSettings
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -289,7 +292,7 @@ bool prgmFirstWrite = TRUE;
 	
 	NSString *statepath = [NSHomeDirectory() stringByAppendingString:stateBaseName];	
 	statefile = fopen([statepath UTF8String], "r");
-		
+	
 	if (statefile == NULL)
 	{
 		// We get here if this application has never been run, and there is 
@@ -344,7 +347,7 @@ bool prgmFirstWrite = TRUE;
 	{
 		[self initializeIphone];
 	}
-				
+	
 }
 
 - (void)initializeIpad;
@@ -354,8 +357,20 @@ bool prgmFirstWrite = TRUE;
 	//[window setRootViewController:viewController];
 	//[window addSubview:[viewController view]];
 	UIViewController *viewCtrl = [window rootViewController];
-	UIView *padView = [viewCtrl view];
-	UIView *keypadView = [viewController view];
+	UIView *padView = viewCtrl.view;
+	UIView *keyPad = calcCtrl.view;
+	CGRect keyFrame = keyPad.frame;
+	CGRect keyBound = keyPad.bounds;
+//	keyBound.size.width = 700;
+//	assert(padView != window);
+	keyFrame.size.width = window.bounds.size.width/2;
+	keyFrame.size.height = window.bounds.size.height;
+	keyPad.frame = keyFrame;
+//	keyPad.bounds = keyBound;
+//	[padView addSubview:keyPad];
+//	[window addSubview: padView];
+[keyPadHolderView addSubview:keyPad];
+//	UIView *keypadView = [viewController view];
 	//[keypadView setFrame:CGRectMake(0, 0, 512, 768)];
 	//[keypadView setBounds:CGRectMake(0, 0, 512, 768)];
 	//[padView addSubview:keypadView];
@@ -364,8 +379,10 @@ bool prgmFirstWrite = TRUE;
 	NSLog(@"window frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 	rect = [padView frame];
 	NSLog(@"Pad view frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-	rect = [keypadView frame];
-	NSLog(@"keypad view frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	rect = [keyPad frame];
+	NSLog(@"KeyPad view frame (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	
+	[window makeKeyAndVisible];
 	
 }
 
@@ -456,7 +473,6 @@ bool prgmFirstWrite = TRUE;
 }
 
 - (void)dealloc {
-    [viewController release];
 	[window release];
 	[super dealloc];
 }

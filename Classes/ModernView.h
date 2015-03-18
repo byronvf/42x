@@ -18,6 +18,7 @@
 	NSString *shiftLabel;
 	NSString *label;
 	bool isMenu;
+	int fontSize;
 }
 
 @end
@@ -26,10 +27,7 @@
 {
 	NSArray *buttons;
 	IBOutlet CalcViewController* calcViewController;
+	float baseFontSize;
 }
-
-- (ButtonInfo*) makeButton: (int)col  row:(int)row doubleSize:(bool)ds numCols:(int)numCols
-				   numRows:(int)numRows pixelWidth:(int)pwidth pixelHeight:(int)pheight
-				   bNum:(int)bnum;
-
+- (void)calcKeyLayout;
 @end

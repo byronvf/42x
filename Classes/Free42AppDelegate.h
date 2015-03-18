@@ -22,17 +22,24 @@
 
 #define PRINT_FILE_NAME @"/Documents/print.txt"
 
+@class CalcViewController;
+
 // Set this to true when we are in sleep mode
 extern BOOL isSleeping;
 
 @interface Free42AppDelegate : NSObject <UIApplicationDelegate> {
 	IBOutlet UIWindow *window;
-	IBOutlet CalcViewController *viewController;
 	IBOutlet NavViewController *navViewController;
+
+	// these are only used for the iPad
+	IBOutlet CalcViewController *calcCtrl;
+	IBOutlet UIView *keyPadHolderView;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) NavViewController *navViewController;
+@property (nonatomic, retain) CalcViewController *calcCtrl;
+@property (nonatomic, retain) UIView *keyPadHolderView;
 
 - (void)initializeIpad;
 - (void)initializeIphone;

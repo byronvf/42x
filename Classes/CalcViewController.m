@@ -17,6 +17,7 @@
 
 #import <AudioToolbox/AudioServices.h>
 #import "CalcViewController.h"
+#import "ModernView.h"
 #import "core_main.h"
 #import "core_display.h"
 #import "core_keydown.h"
@@ -861,6 +862,13 @@ void shell_beeper(int frequency, int duration)
 	}
 	AudioServicesPlaySystemSound([Settings instance]->soundIDs[10]);
 	shell_delay(125);
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[((ModernView*)self.view) calcKeyLayout];
+	// DEBUG
+	NSLog(@"Calc view says madern view will appear");
 }
 
 /**
