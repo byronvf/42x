@@ -25,7 +25,6 @@
 @synthesize keyboardOn;
 @synthesize showLastX;
 @synthesize printedPRLCD;
-@synthesize showStatusBar;
 @synthesize autoPrint;
 @synthesize dropFirstClick;
 @synthesize showFlags;

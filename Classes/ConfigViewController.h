@@ -30,7 +30,6 @@
 #define CONFIG_PERSIST_VERSION @"persistVersion"
 #define CONFIG_SHOW_LASTX @"showLastX"
 #define CONFIG_PRLCD @"prlcd"
-#define CONFIG_SHOW_STATUS_BAR @"showStatusBar"
 #define CONFIG_DROP_FIRST_CLICK @"dropFirstClick"
 #define CONFIG_SHOW_FLAGS @"showFlags"
 
@@ -41,7 +40,6 @@
 	UISwitch* bigStackSwitch;
 	UISwitch* menuKeysSwitch;
 	UISwitch* lastXSwitch;
-	UISwitch* statusBarSwitch;
 	UISwitch* autoPrintSwitch;
 	UISwitch* RPLEnterSwitch;
 	UISwitch* dropSwitch;
@@ -56,7 +54,6 @@
 }
 
 @property (nonatomic, retain) UISwitch* clickSoundSwitch;
-@property (nonatomic, retain) UISwitch* statusBarSwitch;
 @property (nonatomic, retain) UISwitch* autoPrintSwitch;
 @property (nonatomic, retain) UISwitch* lastXSwitch;
 @property (nonatomic, retain) UISwitch* menuKeysSwitch;

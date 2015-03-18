@@ -241,11 +241,6 @@ bool prgmFirstWrite = TRUE;
 	else
 		[[Settings instance] setShowLastX:FALSE];
 	
-	if ([defaults objectForKey:CONFIG_SHOW_STATUS_BAR])
-		[[Settings instance] setShowStatusBar:[defaults boolForKey:CONFIG_SHOW_STATUS_BAR]];
-	else
-		[[Settings instance] setShowStatusBar:TRUE];
-		
 	if ([defaults objectForKey:CONFIG_AUTO_PRINT_ON])
 		[[Settings instance] setAutoPrint:[defaults boolForKey:CONFIG_AUTO_PRINT_ON]];
 	else
@@ -270,7 +265,6 @@ bool prgmFirstWrite = TRUE;
 	[defaults setBool:[[Settings instance] showLastX] forKey:CONFIG_SHOW_LASTX];
 	[defaults setBool:[[Settings instance] keyboardOn] forKey:CONFIG_KEYBOARD];
 	[defaults setBool:[[Settings instance] printedPRLCD] forKey:CONFIG_PRLCD];
-	[defaults setBool:[[Settings instance] showStatusBar] forKey:CONFIG_SHOW_STATUS_BAR];
 	[defaults setBool:[[Settings instance] dropFirstClick] forKey:CONFIG_DROP_FIRST_CLICK];
 	[defaults setBool:[[Settings instance] showFlags] forKey:CONFIG_SHOW_FLAGS];
 	[defaults setBool:[[Settings instance] autoPrint] forKey:CONFIG_AUTO_PRINT_ON];
@@ -388,10 +382,6 @@ bool prgmFirstWrite = TRUE;
 
 - (void)initializeIphone;
 {
-    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-	
-	[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
-	
 	// Override point for customization after app launch
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
 	[navViewController setDelegate:navViewController];
@@ -448,29 +438,28 @@ bool prgmFirstWrite = TRUE;
 
 
 // Tells the delegate that the application is about to enter the foreground.
-// If we are going to show the status bar, then we first set the status bar to hidden
-// so that the view correctly draws.  The view assumes a full screen.  We then
+// If we are going to show the status bar,.  The view assumes a full screen.  We then
 // do a little kludge that forces the status bar to be displayed after the view
 // is done drawing.  If we don't do this, then the status bar pushes the view 
 // down.
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-	UIViewController* vc = [navViewController visibleViewController];
-	if (vc == [navViewController calcViewController])	
-	{
-		[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
-		if ([[Settings instance] showStatusBar])
-		{
-			[self performSelector:@selector(restoreStatusBar) withObject:NULL afterDelay:0.0];		
-		}
-	}
-	
-}
+//- (void)applicationWillEnterForeground:(UIApplication *)application
+//{
+//	UIViewController* vc = [navViewController visibleViewController];
+//	if (vc == [navViewController calcViewController])	
+//	{
+//		[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+//		if ([[Settings instance] showStatusBar])
+//		{
+//			[self performSelector:@selector(restoreStatusBar) withObject:NULL afterDelay:0.0];		
+//		}
+//	}
+//	
+//}
 
-- (void)restoreStatusBar
-{
-	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];	
-}
+//- (void)restoreStatusBar
+//{
+//	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];	
+//}
 
 - (void)dealloc {
 	[window release];

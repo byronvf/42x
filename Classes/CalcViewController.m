@@ -440,6 +440,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 
 /*
  * Handle the user pressing a keypad button
+ * TODO old way of doing this, can get rid of it at some point
  */
 - (void)buttonDown:(UIButton*)sender
 {
@@ -727,9 +728,6 @@ void shell_request_timeout3(int delay)
 
 - (void) resetLCD
 {
-	// Initialize offsetDisp if we need to compensate for the top statusbar
-	[blitterView setStatusBarOffset:[[Settings instance] showStatusBar] ? 20 : 0];
-	
 	if (dispRows < 4)
 		[self singleLCD];
 	else

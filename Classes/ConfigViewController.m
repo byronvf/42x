@@ -31,7 +31,6 @@
 @synthesize keyboardSwitch;
 @synthesize bigStackSwitch;
 @synthesize menuKeysSwitch;
-@synthesize statusBarSwitch;
 @synthesize autoPrintSwitch;
 @synthesize RPLEnterSwitch;
 @synthesize dropSwitch;
@@ -58,7 +57,6 @@
 	lastXSwitch = [self makeSwitch];
 	bigStackSwitch = [self makeSwitch];
 	menuKeysSwitch = [self makeSwitch];
-	statusBarSwitch = [self makeSwitch];
 	autoPrintSwitch = [self makeSwitch];
 	RPLEnterSwitch = [self makeSwitch];
 	dropSwitch = [self makeSwitch];
@@ -80,7 +78,6 @@
 	[lastXSwitch release];
 	[bigStackSwitch release];
 	[menuKeysSwitch release];
-	[statusBarSwitch release];
 	[autoPrintSwitch release];
 	[gotoServerButton release];
 	[aboutButton release];	
@@ -100,7 +97,6 @@
 	[lastXSwitch setOn:[[Settings instance] showLastX]];	
 	[bigStackSwitch setOn:flags.f.f32];
 	[menuKeysSwitch setOn:!menuKeys];
-	[statusBarSwitch setOn:[[Settings instance] showStatusBar]];
 	[autoPrintSwitch setOn:[[Settings instance] autoPrint]];
 	[RPLEnterSwitch setOn:mode_rpl_enter];
 	[dropSwitch setOn:[[Settings instance] dropFirstClick]];
@@ -144,11 +140,6 @@
 	{
 		[[Settings instance] setShowLastX:[sender isOn]];
 		[[navViewController calcViewController] testUpdateLastX:TRUE];
-	}
-	else if (sender == statusBarSwitch)
-	{
-		[[Settings instance] setShowStatusBar:[sender isOn]];
-		[[navViewController calcViewController] resetLCD];
 	}
 	else if (sender == autoPrintSwitch)
 	{
@@ -303,11 +294,6 @@
 		cell.accessoryView = lastXSwitch;
 	}
 	else if (indexPath.section == 2 && indexPath.row == 1)
-	{
-		cell.textLabel.text = @"Device Status Bar";
-		cell.accessoryView = statusBarSwitch;
-	}
-	else if (indexPath.section == 2 && indexPath.row == 2)
 	{
 		cell.textLabel.text = @"Show flags";
 		cell.accessoryView = flagsSwitch;

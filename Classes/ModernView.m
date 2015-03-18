@@ -171,7 +171,6 @@ btnlable_struct btnlabels[] =
 - (void)drawRect:(CGRect)rect
 {
 	NSLog(@"Drawing key pad (%f, %f, %f, %f)", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-	
 
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	UIFont *menuFont = [UIFont boldSystemFontOfSize:self->baseFontSize*0.75];

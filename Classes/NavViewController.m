@@ -81,15 +81,12 @@ BOOL showingServerView;
 
 - (void)switchToConfigView
 {
-	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
 	[self setNavigationBarHidden:FALSE];
-
 	[self switchToView:configViewController];
 }
 
 - (void)switchToPrintView
 {
-	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];
 	[self setNavigationBarHidden:FALSE];
 	[self switchToView:printViewController];
 	printViewController.isShowing = TRUE;		
@@ -113,7 +110,6 @@ BOOL showingServerView;
 	{
   	    // When we come back to the calc view, rehide the navigation bar
 	    [self setNavigationBarHidden:TRUE animated:FALSE];		
-		[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
 	}
 	
 	if (showingServerView)
@@ -145,14 +141,14 @@ BOOL showingServerView;
  * show the status bar so it will overlay on top of the LCD.   the NavViewController
  * handles all status bar trickery.
  */
-- (void)navigationController:(UINavigationController *)navigationController 
-	  didShowViewController:(UIViewController *)vc animated:(BOOL)animated
-{	
-	if (vc == (UIViewController*)calcViewController)
-	{			
-		[[UIApplication sharedApplication] setStatusBarHidden:![[Settings instance] showStatusBar]];
-	}
-}
+//- (void)navigationController:(UINavigationController *)navigationController 
+//	  didShowViewController:(UIViewController *)vc animated:(BOOL)animated
+//{	
+//	if (vc == (UIViewController*)calcViewController)
+//	{			
+//		[[UIApplication sharedApplication] setStatusBarHidden:![[Settings instance] showStatusBar]];
+//	}
+//}
 
 /*
  Implement loadView if you want to create a view hierarchy programmatically

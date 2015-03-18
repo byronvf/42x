@@ -27,7 +27,6 @@
 	bool beepSoundOn;
 	bool keyboardOn;
 	bool showLastX;
-	bool showStatusBar;
 	bool autoPrint;
 	bool dropFirstClick;
 	bool showFlags;
@@ -47,7 +46,6 @@
 @property bool beepSoundOn;
 @property bool keyboardOn;
 @property bool printedPRLCD;
-@property bool showStatusBar;
 @property bool autoPrint;
 @property bool dropFirstClick;
 @property bool showFlags;

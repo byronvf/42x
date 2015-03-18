@@ -171,7 +171,7 @@ short dispflags = 0;
 	dispAnnunc = TRUE;
 	
 	// Initialize offsetDisp if we need to compensate for the top statusbar
-	statusBarOffset = [[Settings instance] showStatusBar] ? 20 : 0;
+	statusBarOffset = 20;
 	
 	// Hightlight for x region
 	selectRect = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24);
@@ -449,14 +449,8 @@ short dispflags = 0;
 	if (self.dispAnnunc) insetTop += ASTAT_HEIGHT;
 	int insetBot = 4;
 	
-	int offset = insetTop;
-	int fullheight = self.bounds.size.height - (insetTop + insetBot);
-	
-	if ([[Settings instance] showStatusBar])
-	{	
-		offset += 20;
-		fullheight -= 20;
-	}
+	int offset = insetTop + statusBarOffset;
+	int fullheight = self.bounds.size.height - (insetTop + insetBot) - statusBarOffset;
 	
 	int barheight = fullheight;
 	int lines = num_prgm_lines() + 1;
@@ -481,10 +475,7 @@ short dispflags = 0;
 {
 	if (self.dispAnnunc)
 	{
-		int v = ASTAT_HEIGHT;
-		// If we are not int largeLCD mode, then include the iphone statusbar region
-		if ([[Settings instance] showStatusBar]) v += 20;
-			
+		int v = ASTAT_HEIGHT + statusBarOffset;
 		[blitterView setNeedsDisplayInRect:CGRectMake(0, 0, 320, v)];
 	}
 }
@@ -499,23 +490,8 @@ short dispflags = 0;
     if (self.bounds.size.height > 300)
     {
         self.dispAnnunc = FALSE;
-        dispRows = 22;
-        if (![[Settings instance] showStatusBar])
-        {
-            dispRows++;
-        }
-    }    
-	else if (![[Settings instance] showStatusBar])
-	{
-		dispRows = 3;
-		if (self.bounds.size.height > 100)
-			dispRows = 6;
-		if (flags.f.prgm_mode)
-		{
-			self.dispAnnunc = FALSE;
-			dispRows += 1;
-		}
-	}
+        dispRows = 23;
+    }
 	else
 	{
 		dispRows = 2;
