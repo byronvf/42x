@@ -24,8 +24,8 @@ typedef struct
 
 const int SPACING = 1;
 const float upperKeysToBottomKeysRatio = .4;
-//const int LCD_HEIGHT = 90;
-const int LCD_HEIGHT = 150;
+const int LCD_HEIGHT = 90;
+//const int LCD_HEIGHT = 150;
 
 btnlable_struct btnlabels[] =
 {
@@ -222,9 +222,7 @@ btnlable_struct btnlabels[] =
 		
         [button->label drawInRect:rect
 						 withFont:drawFont lineBreakMode:NSLineBreakByClipping
-							 alignment:UITextAlignmentCenter];
-		
-		
+							 alignment:UITextAlignmentCenter];		
 	}
 }
 

@@ -39,7 +39,6 @@ extern short dispflags;
 	CGRect selectRect;
 	BOOL cutPaste;
 	BOOL selectAll;
-	int statusBarOffset;
 	BOOL dispAnnunc;
 	
 	IBOutlet CalcViewController* calcViewController;
@@ -49,7 +48,6 @@ extern short dispflags;
 @property BOOL highlight;
 @property BOOL cutPaste;
 @property BOOL selectAll;
-@property int statusBarOffset; // Offset if the status bar is being used
 
 @property (nonatomic, retain) CalcViewController* calcViewController;
 

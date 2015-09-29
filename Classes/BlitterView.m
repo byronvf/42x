@@ -135,6 +135,8 @@ void core_copy_reg(char *buf, int buflen, vartype *reg) {
 char lastxbuf[LASTXBUF_SIZE];
 short dispflags = 0;
 
+const int statusBarOffset = 20;
+
 /**
  * The blitterView manages the calculators digital display
  */
@@ -143,7 +145,6 @@ short dispflags = 0;
 @synthesize highlight;
 @synthesize cutPaste;
 @synthesize selectAll;
-@synthesize statusBarOffset;
 @synthesize dispAnnunc;
 
 - (void)setSelectHighlight
@@ -169,9 +170,6 @@ short dispflags = 0;
 	blitterView = self; // We need a reference to this view outside the class
 	highlight = FALSE;
 	dispAnnunc = TRUE;
-	
-	// Initialize offsetDisp if we need to compensate for the top statusbar
-	statusBarOffset = 20;
 	
 	// Hightlight for x region
 	selectRect = CGRectMake(28, ASTAT_HEIGHT + statusBarOffset, 284, 24);
@@ -530,7 +528,7 @@ short dispflags = 0;
 	if (dispRows == 6 || dispRows == 7 || dispRows) hs += 2;
     if (dispRows == 23) hs += 5;
 
-	int top = [self statusBarOffset] + (l*8)*vscale;	
+	int top = statusBarOffset + (l*8)*vscale;
 	if (self.dispAnnunc)
 		top += ASTAT_HEIGHT;
 			

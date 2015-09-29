@@ -56,6 +56,6 @@
 	<key>UIPrerenderedIcon</key>
 	<string>true</string>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleBlackTranslucent</string>
+	<string>UIStatusBarStyleBlackOpaque</string>
 </dict>
 </plist>
