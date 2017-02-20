@@ -24,8 +24,6 @@
 #import "PrintViewController.h"
 #import "core_variables.h"
 
-
-
 // Set to true after we call init_core basically so we can use it
 // in assert calls to verify Free42 has been initialized.
 BOOL free42init = FALSE;
@@ -386,6 +384,7 @@ bool prgmFirstWrite = TRUE;
 	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
 	[navViewController setDelegate:navViewController];
     [window addSubview: [navViewController view]];
+	[window setRootViewController:navViewController];
 	[window makeKeyAndVisible];
 }
 
