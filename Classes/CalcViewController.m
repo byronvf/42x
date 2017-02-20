@@ -864,7 +864,7 @@ void shell_beeper(int frequency, int duration)
 
 - (void)viewWillAppear:(BOOL)animated
 {
-	[((ModernView*)self.view) calcKeyLayout];
+	//[((ModernView*)self.view) calcKeyLayout];
 	// DEBUG
 	NSLog(@"Calc view says madern view will appear");
 }
