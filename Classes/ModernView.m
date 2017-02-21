@@ -205,10 +205,12 @@ btnlable_struct btnlabels[] =
 		
 		
         CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.10, 1.0);
-        [button->shiftLabel drawInRect:rect
-               withFont:menuFont lineBreakMode:NSLineBreakByClipping
-              alignment:UITextAlignmentCenter];
-
+        NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+        textStyle.lineBreakMode = NSLineBreakByClipping;
+        textStyle.alignment = NSTextAlignmentCenter;
+        NSDictionary *attributes = @{ NSFontAttributeName: menuFont,
+                                      NSParagraphStyleAttributeName: textStyle};
+        [button->shiftLabel drawInRect:rect withAttributes:attributes];
 		rect.origin.y += rect.size.height + button->rect.size.height/8;
 		rect.size.height = button->rect.size.height/2;
 		
@@ -220,9 +222,8 @@ btnlable_struct btnlabels[] =
 		else if (button->fontSize == 3)
 			drawFont = fontSize3;
 		
-        [button->label drawInRect:rect
-						 withFont:drawFont lineBreakMode:NSLineBreakByClipping
-							 alignment:UITextAlignmentCenter];		
+        [attributes setValue:drawFont forKey:NSFontAttributeName];
+        [button->shiftLabel drawInRect:rect withAttributes:attributes];
 	}
 }
 
