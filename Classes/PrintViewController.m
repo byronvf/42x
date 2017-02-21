@@ -249,6 +249,7 @@ void shell_print(const char *text, int length,
 - (void)awakeFromNib {
     // Get the navigation item that represent this controller in the 
     // navigation bar, and add our clear button to it
+    [super awakeFromNib];
     UIBarButtonItem* clearButton = 
     [[UIBarButtonItem alloc] initWithTitle:@"Clear"
 				     style:UIBarButtonItemStylePlain target:self action:@selector(clearPrinter)];

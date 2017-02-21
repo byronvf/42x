@@ -66,6 +66,7 @@ void shell_powerdown()
 BOOL showingServerView;
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
 	navCtrl = self;	
 	showingServerView = FALSE;
 }
