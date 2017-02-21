@@ -3006,7 +3006,7 @@ static bool convert_programs() {
     for (i = 0; i < mod_count; i++)
 	for (int j = i + 1; j <= mod_count; j++)
 	    if (mod_prgm[i] < mod_prgm[j]
-		    || mod_prgm[i] == mod_prgm[j] && mod_pc[i] < mod_pc[j]) {
+		    || (mod_prgm[i] == mod_prgm[j] && mod_pc[i] < mod_pc[j])) {
 		int tmp = mod_prgm[i];
 		mod_prgm[i] = mod_prgm[j];
 		mod_prgm[j] = tmp;

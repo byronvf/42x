@@ -1584,7 +1584,7 @@ int phloat2string(phloat pd, char *buf, int buflen, int base_mode, int digits,
 
     /* base_mode: 0=only decimal, 1=all bases, 2=decimal or binary (SHOW) */
     int base = get_base();
-    if (base_mode == 1 && base != 10 || base_mode == 2 && base == 2) {
+    if ((base_mode == 1 && base != 10) || (base_mode == 2 && base == 2)) {
 	int8 n;
 	int inexact, shift;
 	char binbuf[36];

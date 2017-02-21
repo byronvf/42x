@@ -2446,13 +2446,13 @@ int command2buf(char *buf, int len, int cmd, const arg_struct *arg) {
     int bufptr = 0;
 
     int4 xrom_arg;
-    if (!core_settings.enable_ext_copan && cmd >= CMD_OPENF && cmd <= CMD_DELP
-	    || !core_settings.enable_ext_bigstack && cmd == CMD_DROP
-	    || !core_settings.enable_ext_accel && cmd == CMD_ACCEL
-	    || !core_settings.enable_ext_locat && cmd == CMD_LOCAT
-	    || !core_settings.enable_ext_heading && cmd == CMD_HEADING
-	    || !core_settings.enable_ext_time && cmd >= CMD_ADATE && cmd <= CMD_SWPT
-	    || (cmdlist(cmd)->hp42s_code & 0xfffff800) == 0x0000a000 && (cmdlist(cmd)->flags & FLAG_HIDDEN) != 0) {
+    if ((!core_settings.enable_ext_copan && cmd >= CMD_OPENF && cmd <= CMD_DELP)
+	    || (!core_settings.enable_ext_bigstack && cmd == CMD_DROP)
+	    || (!core_settings.enable_ext_accel && cmd == CMD_ACCEL)
+	    || (!core_settings.enable_ext_locat && cmd == CMD_LOCAT)
+	    || (!core_settings.enable_ext_heading && cmd == CMD_HEADING)
+	    || (!core_settings.enable_ext_time && cmd >= CMD_ADATE && cmd <= CMD_SWPT)
+	    || ((cmdlist(cmd)->hp42s_code & 0xfffff800) == 0x0000a000 && (cmdlist(cmd)->flags & FLAG_HIDDEN)) != 0) {
 	xrom_arg = cmdlist(cmd)->hp42s_code;
 	cmd = CMD_XROM;
     } else if (cmd == CMD_XROM)

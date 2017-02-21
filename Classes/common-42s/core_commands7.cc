@@ -180,8 +180,8 @@ static int date2comps(phloat x, int4 *yy, int4 *mm, int4 *dd) {
 	return ERR_INVALID_DATA;
     if (m == 2 && d > ((y % 4 == 0 && (y % 100 != 0 || y % 400 == 0)) ? 29 : 28))
 	return ERR_INVALID_DATA;
-    if (y == 1582 && (m < 10 || m == 10 && d < 15)
-	    || y == 4320 && (m > 9 || m == 9 && d > 10))
+    if (((y == 1582) && (m < 10 || (m == 10 && d < 15)))
+	    || (y == 4320 && (m > 9 || (m == 9 && d > 10))))
 	return ERR_INVALID_DATA;
 
     *yy = y;
