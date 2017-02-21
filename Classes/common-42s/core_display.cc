@@ -1977,7 +1977,7 @@ void redisplay() {
 	    // -1 to convert code to order
 	    unit *u = getUnitByOrder((incomplete_num&0x1F)-1, i+unit_menu_page*6);
 	    if (u)
-		draw_key(i, 0, 0, u->label, strlen(u->label));
+		draw_key(i, 0, 0, u->label, (int)strlen(u->label));
 	    else
 		draw_key(i, 0, 0, "", 0);
 	    
