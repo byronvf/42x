@@ -330,7 +330,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 		{
 			Free42AppDelegate *del = (Free42AppDelegate*)app.delegate;
 			mode_running = FALSE;
-			[del applicationWillTerminate:NULL];
+			[del applicationWillTerminate:app];
 			exit(ESHUTDOWN);
 		}
 	}	
