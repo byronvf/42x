@@ -317,9 +317,13 @@ int vartype2small_string(vartype* v, char* vstr, int length)
     {
         UIFont *font = [UIFont boldSystemFontOfSize:13];
         CGContextSetRGBFillColor(ctx, 1.0, 0.80, 0.23, 1.0);
-        [str drawInRect:CGRectMake(5 + i*51, 0, 55, 24) 
-               withFont:font lineBreakMode:UILineBreakModeClip
-              alignment:UITextAlignmentCenter];
+        NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+        textStyle.lineBreakMode = NSLineBreakByClipping;
+        textStyle.alignment = NSTextAlignmentCenter;
+        NSDictionary *attributes = @{ NSFontAttributeName: font,
+                                      NSParagraphStyleAttributeName: textStyle};
+        [str drawInRect:CGRectMake(5 + i*51, 0, 55, 24) withAttributes:attributes];
+
     }
     else
     {    
