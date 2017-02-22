@@ -21,6 +21,7 @@
 #include <sys/sysctl.h>
 #import <AudioToolbox/AudioServices.h>
 #import <CoreLocation/CoreLocation.h>
+#import <CoreMotion/CoreMotion.h>
 #import "shell.h"
 #import "Settings.h"
 #import "core_main.h"
@@ -42,8 +43,7 @@ static double accel_x = 0, accel_y = 0, accel_z = 0;
 static double loc_lat = 0, loc_lon = 0, loc_lat_lon_acc = 0, loc_elev = 0, loc_elev_acc = 0;
 static double hdg_mag = 0, hdg_true = 0, hdg_acc = 0, hdg_x = 0, hdg_y = 0, hdg_z = 0;
 
-@interface HardwareDelegate : NSObject <UIAccelerometerDelegate, CLLocationManagerDelegate> {}
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
+@interface HardwareDelegate : NSObject <CLLocationManagerDelegate> {}
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error;
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading;
@@ -51,13 +51,6 @@ static double hdg_mag = 0, hdg_true = 0, hdg_acc = 0, hdg_x = 0, hdg_y = 0, hdg_
 @end
 
 @implementation HardwareDelegate
-
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-	accel_x = acceleration.x;
-	accel_y = acceleration.y;
-	accel_z = acceleration.z;
-	NSLog(@"Acceleration received: %g %g %g", accel_x, accel_y, accel_z);
-}
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
 	loc_lat = newLocation.coordinate.latitude;
@@ -94,9 +87,22 @@ static CLLocationManager *locMgr = NULL;
 int shell_get_acceleration(double *x, double *y, double *z) {
 	static bool accelerometer_active = false;
 	if (!accelerometer_active) {
-		UIAccelerometer *am = [UIAccelerometer sharedAccelerometer];
-		am.updateInterval = 1;
-		am.delegate = hwDel;
+        CMMotionManager *mm = [[CMMotionManager alloc] init];
+        mm.accelerometerUpdateInterval = 1;
+        if ([mm isAccelerometerAvailable])
+        {
+            NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+            [mm startAccelerometerUpdatesToQueue:queue withHandler:^(CMAccelerometerData *accelerometerData, NSError *error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    accel_x = accelerometerData.acceleration.x;
+                    accel_y = accelerometerData.acceleration.y;
+                    accel_z = accelerometerData.acceleration.z;
+                    NSLog(@"Acceleration received: %g %g %g", accel_x, accel_y, accel_z);
+                });
+            }];
+        } else{
+            NSLog(@"accelerometer not active");
+        }
 		accelerometer_active = true;
 	}
 	*x = accel_x;
