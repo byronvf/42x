@@ -156,5 +156,6 @@ extern bool reval;
 - (void) testShutdown;
 - (void) doMenuDisplay: (bool) forceHide menuUpdate:(bool) update;
 - (void) hideButtonNum: (int) num hidden:(BOOL)hidden;
+- (void) keepRunning;
 @end
 

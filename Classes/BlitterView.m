@@ -164,6 +164,7 @@ const int statusBarOffset = 20;
 
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
 	// Initialization code
