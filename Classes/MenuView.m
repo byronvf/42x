@@ -313,23 +313,23 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 		}
 	}
     
-    if (str != NULL)
-    {
-        UIFont *font = [UIFont boldSystemFontOfSize:13];
-        CGContextSetRGBFillColor(ctx, 1.0, 0.80, 0.23, 1.0);
-        NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.lineBreakMode = NSLineBreakByClipping;
-        textStyle.alignment = NSTextAlignmentCenter;
-        NSDictionary *attributes = @{ NSFontAttributeName: font,
-                                      NSParagraphStyleAttributeName: textStyle};
-        [str drawInRect:CGRectMake(5 + i*51, 0, 55, 24) withAttributes:attributes];
-
-    }
-    else
-    {    
-        if ([self keyIsDirectory:i])
-            [self drawDirectoryMark:ctx key:i];
-    }
+	if (str != NULL)
+	{
+		UIFont *font = [UIFont boldSystemFontOfSize:13];
+		NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+		textStyle.lineBreakMode = NSLineBreakByClipping;
+		textStyle.alignment = NSTextAlignmentCenter;
+		UIColor *textColor = [UIColor colorWithRed:1.0 green:0.7 blue:0.30 alpha:1.0];
+		NSDictionary *attributes = @{ NSFontAttributeName: font,
+									  NSParagraphStyleAttributeName: textStyle,
+									  NSForegroundColorAttributeName: textColor };
+		[str drawInRect:CGRectMake(5 + i*51, 0, 55, 24) withAttributes:attributes];
+	}
+	else
+	{
+		if ([self keyIsDirectory:i])
+			[self drawDirectoryMark:ctx key:i];
+	}
 }
 
 - (NSString*)getKeyLabel: (int)i
@@ -340,27 +340,27 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	return str;
 }
 
-- (void)drawRect:(CGRect)rect 
+- (void)drawRect:(CGRect)rect
 {
-#ifdef DEBUG	
-	NSAssert(calcViewController && calcViewController.displayBuff, 
+#ifdef DEBUG
+	NSAssert(calcViewController && calcViewController.displayBuff,
 			 @"viewController not initialized");
 #else
-	if (calcViewController.displayBuff == NULL) return;	
+	if (calcViewController.displayBuff == NULL) return;
 #endif
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 1.0, 0.70, 0.30, 1.0);
 	for (int i=0; i<6; i++)
 	{
-        if (menu_items[i].length > 0)
-        {
-            if (menu_items[i].highlight)
-            {                
-                CGContextFillRect(ctx, CGRectMake(16+i*50, 44, 38, 2));
-            }
+		if (menu_items[i].length > 0)
+		{
+			if (menu_items[i].highlight)
+			{
+				CGContextFillRect(ctx, CGRectMake(16+i*50, 44, 38, 2));
+			}
 			
-            [self superscript:ctx key:i];
+			[self superscript:ctx key:i];
 		}
 	}
 	
@@ -369,7 +369,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 	label3.text = [self getKeyLabel:2];
 	label4.text = [self getKeyLabel:3];
 	label5.text = [self getKeyLabel:4];
-	label6.text = [self getKeyLabel:5];	
+	label6.text = [self getKeyLabel:5];
 }
 
 

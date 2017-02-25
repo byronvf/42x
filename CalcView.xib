@@ -155,6 +155,7 @@
                                         </label>
                                     </subviews>
                                     <color key="backgroundColor" red="1" green="0.064168214409999993" blue="0.19430953040000001" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="tintColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="calibratedRGB"/>
                                     <connections>
                                         <outlet property="calcViewController" destination="-1" id="230"/>
                                         <outlet property="label1" destination="247" id="253"/>
