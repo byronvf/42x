@@ -36,10 +36,10 @@ extern BOOL isSleeping;
 	IBOutlet UIView *keyPadHolderView;
 }
 
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) NavViewController *navViewController;
-@property (nonatomic, retain) CalcViewController *calcCtrl;
-@property (nonatomic, retain) UIView *keyPadHolderView;
+@property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) NavViewController *navViewController;
+@property (nonatomic, strong) CalcViewController *calcCtrl;
+@property (nonatomic, strong) UIView *keyPadHolderView;
 
 - (void)initializeIpad;
 - (void)initializeIphone;

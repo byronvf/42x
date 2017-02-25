@@ -328,7 +328,6 @@ const int statusBarOffset = 20;
 			   withFont:font lineBreakMode:UILineBreakModeClip
 	 alignment:UITextAlignmentCenter];
 	
-	[lval release];
 }
 
 - (void)drawRect:(CGRect)rect 
@@ -881,8 +880,8 @@ char cbuf[30];
 	// we test if we are sleeping or not.
 	if (!flags.f.prgm_mode && !mode_running && !flags.f.alpha_mode && !isSleeping)
 	{
-		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Clear Stack?"
-			message:NULL delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:nil] autorelease];	
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Clear Stack?"
+			message:NULL delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:nil];	
 		[alert addButtonWithTitle:@"No"];
 		[alert show];
 	}

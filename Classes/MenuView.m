@@ -308,7 +308,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 				int len = vartype2small_string(v, vstr, dispsize);                
 				char vutf8[dispsize*2];
 				hp2utf8(vstr, len, vutf8, dispsize*2);
-				str = [[[NSString alloc] initWithUTF8String:vutf8] autorelease];
+				str = [[NSString alloc] initWithUTF8String:vutf8];
 			}
 		}
 	}
@@ -336,7 +336,7 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 {
 	char utf8[MENU_ITEM_CHAR_LENGTH*3];
 	hp2utf8(menu_items[i].chars, menu_items[i].length, utf8, MENU_ITEM_CHAR_LENGTH*3);
-	NSString *str = [[[NSString alloc] initWithUTF8String:utf8] autorelease];
+	NSString *str = [[NSString alloc] initWithUTF8String:utf8];
 	return str;
 }
 
@@ -373,8 +373,5 @@ int vartype2small_string(vartype* v, char* vstr, int length)
 }
 
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 @end

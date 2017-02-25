@@ -53,21 +53,21 @@
 	IBOutlet NavViewController* navViewController;
 }
 
-@property (nonatomic, retain) UISwitch* clickSoundSwitch;
-@property (nonatomic, retain) UISwitch* autoPrintSwitch;
-@property (nonatomic, retain) UISwitch* lastXSwitch;
-@property (nonatomic, retain) UISwitch* menuKeysSwitch;
-@property (nonatomic, retain) UISwitch* beepSoundSwitch;
-@property (nonatomic, retain) UISwitch* keyboardSwitch;
-@property (nonatomic, retain) UISwitch* bigStackSwitch;
-@property (nonatomic, retain) UISwitch* RPLEnterSwitch;
-@property (nonatomic, retain) UISwitch* dropSwitch;
-@property (nonatomic, retain) UISwitch* flagsSwitch;
-@property (nonatomic, retain) UISwitch* singMatrixSwitch;
-@property (nonatomic, retain) UISwitch* matrixOutOfRangeSwitch;
-@property (nonatomic, retain) UIButton* gotoServerButton;
-@property (nonatomic, retain) UIButton* aboutButton;
-@property (nonatomic, retain) NavViewController* navViewController;
+@property (nonatomic, strong) UISwitch* clickSoundSwitch;
+@property (nonatomic, strong) UISwitch* autoPrintSwitch;
+@property (nonatomic, strong) UISwitch* lastXSwitch;
+@property (nonatomic, strong) UISwitch* menuKeysSwitch;
+@property (nonatomic, strong) UISwitch* beepSoundSwitch;
+@property (nonatomic, strong) UISwitch* keyboardSwitch;
+@property (nonatomic, strong) UISwitch* bigStackSwitch;
+@property (nonatomic, strong) UISwitch* RPLEnterSwitch;
+@property (nonatomic, strong) UISwitch* dropSwitch;
+@property (nonatomic, strong) UISwitch* flagsSwitch;
+@property (nonatomic, strong) UISwitch* singMatrixSwitch;
+@property (nonatomic, strong) UISwitch* matrixOutOfRangeSwitch;
+@property (nonatomic, strong) UIButton* gotoServerButton;
+@property (nonatomic, strong) UIButton* aboutButton;
+@property (nonatomic, strong) NavViewController* navViewController;
 
 - (UISwitch*)makeSwitch;
 - (void)switchChange:(UISwitch*)sender;

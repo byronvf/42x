@@ -228,9 +228,6 @@ extern void handle_client(int);
 }
 
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 
 @end

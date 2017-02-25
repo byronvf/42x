@@ -64,28 +64,14 @@
 	singMatrixSwitch = [self makeSwitch];
     matrixOutOfRangeSwitch = [self makeSwitch];
 	
-	gotoServerButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	gotoServerButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 	[gotoServerButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
 	
-	aboutButton = [[UIButton buttonWithType:UIButtonTypeDetailDisclosure] retain];
+	aboutButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 	[aboutButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
 }
 
 - (void)viewDidUnload {
-	[clickSoundSwitch release];
-	[beepSoundSwitch release];
-	[keyboardSwitch release];
-	[lastXSwitch release];
-	[bigStackSwitch release];
-	[menuKeysSwitch release];
-	[autoPrintSwitch release];
-	[gotoServerButton release];
-	[aboutButton release];	
-	[RPLEnterSwitch release];
-	[dropSwitch release];
-	[flagsSwitch release];
-    [singMatrixSwitch release];
-    [matrixOutOfRangeSwitch release];
 }
 
 
@@ -192,8 +178,8 @@
 		NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];		
 		NSString *title = [NSString stringWithFormat:@"42s Version %@%@\nFree42 %@i", ver, MOD, free42ver];
 		
-		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
-		message:@"Licensed under GPL" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];	
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+		message:@"Licensed under GPL" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];	
 		[alert addButtonWithTitle:@"Web Site"];
 		[alert show];		
 	}
@@ -259,8 +245,8 @@
     static NSString *MyIdentifier = @"switch";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] 
-				 initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] 
+				 initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 	if (indexPath.section == 0 && indexPath.row == 0)  // Behavior Section

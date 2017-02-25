@@ -31,7 +31,7 @@ const int hsize = 320;
 	int offset;
 }
 
-@property (nonatomic, retain) PrintViewController* printViewController;
+@property (nonatomic, strong) PrintViewController* printViewController;
 @property (nonatomic) int offset;
 
 

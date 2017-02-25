@@ -899,48 +899,6 @@ void shell_beeper(int frequency, int duration)
 	[blitterView resignFirstResponder];
 }
 
-- (void)dealloc {
-	[screen release];
-	[b01 release];
-	[b02 release];
-	[b03 release];
-	[b04 release];
-	[b05 release];
-	[b06 release];
-	[b07 release];
-	[b08 release];
-	[b09 release];
-	[b10 release];
-	[b11 release];
-	[b12 release];
-	[b13 release];
-	[b14 release];
-	[b15 release];
-	[b16 release];
-	[b17 release];
-	[b18 release];
-	[b19 release];
-	[b20 release];
-	[b21 release];
-	[b22 release];
-	[b23 release];
-	[b24 release];
-	[b25 release];
-	[b26 release];
-	[b27 release];
-	[b28 release];
-	[b29 release];
-	[b30 release];
-	[b31 release];
-	[b32 release];
-	[b33 release];
-	[b34 release];
-	[b35 release];
-	[b36 release];
-	[b37 release];
-	[blitterView release];
-	[super dealloc];
-}
 
 /*
 - (void)didReceiveMemoryWarning {

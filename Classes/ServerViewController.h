@@ -13,7 +13,7 @@
 	IBOutlet UILabel* addressLabel;	
 }
 
-@property (nonatomic, retain) UILabel* addressLabel;
+@property (nonatomic, strong) UILabel* addressLabel;
 
 - (void)startServer;
 - (void)stopServer;

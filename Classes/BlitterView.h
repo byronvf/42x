@@ -49,7 +49,7 @@ extern short dispflags;
 @property BOOL cutPaste;
 @property BOOL selectAll;
 
-@property (nonatomic, retain) CalcViewController* calcViewController;
+@property (nonatomic, strong) CalcViewController* calcViewController;
 
 - (void) drawAnnunciators;
 - (void) annuncNeedsDisplay;

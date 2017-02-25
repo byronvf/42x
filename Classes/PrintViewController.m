@@ -278,9 +278,7 @@ void shell_print(const char *text, int length,
 
 - (void)viewDidUnload {
 	[self releasePrintBuffer];
-	[view1 release];
 	view1 = NULL;
-	[view2 release];
 	view2 = NULL;
 }
 
@@ -290,7 +288,6 @@ void shell_print(const char *text, int length,
 	{
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		[defaults setObject:printBuffer forKey:CONFIG_PRINT_BUF];	
-		[printBuffer release];		
 		printBuffer = NULL;
 	}
 	

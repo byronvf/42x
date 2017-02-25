@@ -35,7 +35,7 @@ extern BOOL printingStarted;
 	bool isSeen;  // user has seen all new print output
 }
 
-@property (nonatomic, retain) NSMutableData* printBuffer;
+@property (nonatomic, strong) NSMutableData* printBuffer;
 @property bool isShowing;
 @property bool isSeen;
 

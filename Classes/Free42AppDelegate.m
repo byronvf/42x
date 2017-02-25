@@ -326,7 +326,7 @@ bool prgmFirstWrite = TRUE;
 	for (int i = 0; i < 11; i++) {
 		NSString *name = [NSString stringWithCString:sound_names[i] encoding:NSASCIIStringEncoding];
 		NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"wav"];
-		OSStatus status = AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &[Settings instance]->soundIDs[i]);
+		OSStatus status = AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:path], &[Settings instance]->soundIDs[i]);
 		if (status)
 			NSLog(@"error loading sound:  %@", name);
 	}
@@ -415,8 +415,8 @@ bool prgmFirstWrite = TRUE;
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
 #ifndef NDEBUG	
- 	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Memory Alert"
-	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];	
+ 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Memory Alert"
+	message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];	
 	[alert show];	
 #endif
 	clean_vartype_pools();
@@ -460,10 +460,6 @@ bool prgmFirstWrite = TRUE;
 //	[[UIApplication sharedApplication] setStatusBarHidden:FALSE];	
 //}
 
-- (void)dealloc {
-	[window release];
-	[super dealloc];
-}
 
 
 @end

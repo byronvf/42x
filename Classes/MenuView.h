@@ -17,11 +17,11 @@
 	IBOutlet UILabel* label5;
 	IBOutlet UILabel* label6;
 }
-@property (nonatomic, retain) CalcViewController* calcViewController;
-@property (nonatomic, retain) UILabel* label1;
-@property (nonatomic, retain) UILabel* label2;
-@property (nonatomic, retain) UILabel* label3;
-@property (nonatomic, retain) UILabel* label4;
-@property (nonatomic, retain) UILabel* label5;
-@property (nonatomic, retain) UILabel* label6;
+@property (nonatomic, strong) CalcViewController* calcViewController;
+@property (nonatomic, strong) UILabel* label1;
+@property (nonatomic, strong) UILabel* label2;
+@property (nonatomic, strong) UILabel* label3;
+@property (nonatomic, strong) UILabel* label4;
+@property (nonatomic, strong) UILabel* label5;
+@property (nonatomic, strong) UILabel* label6;
 @end

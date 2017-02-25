@@ -30,10 +30,10 @@
 	IBOutlet CalcViewController* calcViewController;
 }
 
-@property (nonatomic, retain) ConfigViewController* configViewController;
-@property (nonatomic, retain) PrintViewController* printViewController;
-@property (nonatomic, retain) ServerViewController* serverViewController;
-@property (nonatomic, retain) CalcViewController* calcViewController;
+@property (nonatomic, strong) ConfigViewController* configViewController;
+@property (nonatomic, strong) PrintViewController* printViewController;
+@property (nonatomic, strong) ServerViewController* serverViewController;
+@property (nonatomic, strong) CalcViewController* calcViewController;
 
 - (void)switchToView:(UIViewController*) viewCtrl;
 - (void)switchToPrintView;
