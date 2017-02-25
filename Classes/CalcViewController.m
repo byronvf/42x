@@ -171,7 +171,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
     // Install the mySleepHandler run loop observer
     NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
     // Create a run loop observer and attach it to the run loop.
-    CFRunLoopObserverContext  context = {0, self, NULL, NULL, NULL};
+    CFRunLoopObserverContext  context = {0, NULL, NULL, NULL, NULL};
     CFRunLoopObserverRef    observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
 				kCFRunLoopBeforeWaiting, YES, 0, &mySleepHandler, &context);
 	CFRunLoopRef    cfLoop = [myRunLoop getCFRunLoop];
