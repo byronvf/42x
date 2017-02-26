@@ -330,12 +330,13 @@ bool prgmFirstWrite = TRUE;
 		if (status)
 			NSLog(@"error loading sound:  %@", name);
 	}
-	
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-	{
-		[self initializeIpad];
-	}
-	else
+
+//  Turn off iPad test for now since it's all have backed
+//	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+//	{
+//		[self initializeIpad];
+//	}
+//	else
 	{
 		[self initializeIphone];
 	}

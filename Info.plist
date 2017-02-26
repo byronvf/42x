@@ -50,7 +50,7 @@
 	<key>NSMainNibFile</key>
 	<string>MainWindow-iPhone</string>
 	<key>NSMainNibFile~ipad</key>
-	<string>MainWindow-iPad</string>
+	<string>MainWindow-iPhone</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>
