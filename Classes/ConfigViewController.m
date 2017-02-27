@@ -217,7 +217,7 @@
 	{
 		case 0: return 3;
 		case 1: return 2;
-		case 2: return 3;
+		case 2: return 2;
 		case 3: return 2;
 		case 4: return 1;
 		case 5: return 1;
@@ -319,6 +319,10 @@
         cell.textLabel.text = @"Old Style Menuing";
         cell.accessoryView = menuKeysSwitch;
     }
+	else
+	{
+		NSAssert(false, @"section or row do not exist");
+	}
 	
     return cell;
 }
