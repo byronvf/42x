@@ -53,8 +53,8 @@ palmos/shell.rcp
 palmos/shell.ro
 palmos/symlinks
 
-42x.xcodeproj/project.xcworkspace/*
-42x.xcodeproj/xcuserdata/*
+42s.xcodeproj/project.xcworkspace/*
+42s.xcodeproj/xcuserdata/*
 
 simpleserver/icon2c.dSYM
 simpleserver/icon2c
