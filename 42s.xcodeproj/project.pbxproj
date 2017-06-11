@@ -16,6 +16,7 @@
 		78D647C51E5D0839003110CE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D647C41E5D0839003110CE /* CoreMotion.framework */; };
 		91341E5A1638E2AE0086FEDD /* ModernView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91341E591638E2AE0086FEDD /* ModernView.m */; };
 		91341E5C1638E9400086FEDD /* ModernView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91341E5B1638E9400086FEDD /* ModernView.xib */; };
+		91B0CF201E66BC8E00620D08 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91B0CF1F1E66BC8E00620D08 /* Images.xcassets */; };
 		91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89A163BBF1900470456 /* Default-568h@2x.png */; };
 		91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */; };
 		91B8D8A2163BE5FB00470456 /* IPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8D8A1163BE5FB00470456 /* IPadViewController.m */; };
@@ -32,9 +33,7 @@
 		E9B918E90FDE8CE800698456 /* tone9.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918DE0FDE8CE800698456 /* tone9.wav */; };
 		ED021D70101D7BE700D8907C /* upglow.png in Resources */ = {isa = PBXBuildFile; fileRef = ED021D6F101D7BE700D8907C /* upglow.png */; };
 		ED03DC4713621775009E7343 /* icons.c in Sources */ = {isa = PBXBuildFile; fileRef = ED03DC4613621775009E7343 /* icons.c */; };
-		ED0B99C412AA43E20002D7E8 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = ED0B99C312AA43E20002D7E8 /* Icon-72.png */; };
 		ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = ED0B99C512AA43E80002D7E8 /* Icon.png */; };
-		ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */; };
 		ED0C2CF20EB4BA6F00053F90 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED0C2CF10EB4BA6F00053F90 /* PrintView.m */; };
 		ED11B0A4107C6C2400A89C47 /* glare.png in Resources */ = {isa = PBXBuildFile; fileRef = ED11B0A3107C6C2400A89C47 /* glare.png */; };
 		ED15EEB814E33DBE0030D91B /* units.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED15EEB714E33DBE0030D91B /* units.cc */; };
@@ -111,6 +110,7 @@
 		91341E581638E2AE0086FEDD /* ModernView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernView.h; sourceTree = "<group>"; };
 		91341E591638E2AE0086FEDD /* ModernView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModernView.m; sourceTree = "<group>"; };
 		91341E5B1638E9400086FEDD /* ModernView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModernView.xib; sourceTree = "<group>"; };
+		91B0CF1F1E66BC8E00620D08 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		91B8D89A163BBF1900470456 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		91B8D8A0163BE5FB00470456 /* IPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadViewController.h; sourceTree = "<group>"; };
@@ -128,9 +128,7 @@
 		E9B918DE0FDE8CE800698456 /* tone9.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone9.wav; sourceTree = "<group>"; };
 		ED021D6F101D7BE700D8907C /* upglow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = upglow.png; sourceTree = "<group>"; };
 		ED03DC4613621775009E7343 /* icons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icons.c; path = simpleserver/icons.c; sourceTree = "<group>"; };
-		ED0B99C312AA43E20002D7E8 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		ED0B99C512AA43E80002D7E8 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../Icon.png; sourceTree = "<group>"; };
-		ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		ED0C2CF00EB4BA6F00053F90 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		ED0C2CF10EB4BA6F00053F90 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
 		ED11B0A3107C6C2400A89C47 /* glare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glare.png; sourceTree = "<group>"; };
@@ -317,14 +315,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EDF7F9F5123EDD680091DB79 /* Default@2x.png */,
+				91B0CF1F1E66BC8E00620D08 /* Images.xcassets */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				91B8D89A163BBF1900470456 /* Default-568h@2x.png */,
 				EDE847A8151B36FD00DE8B0B /* menu-norm.png */,
 				ED958D051514793100650B74 /* i_print_adv.png */,
 				ED958D031514697B00650B74 /* i_print_adv_dark.png */,
-				ED0B99C712AA43EE0002D7E8 /* Icon@2x.png */,
-				EDF7F9F5123EDD680091DB79 /* Default@2x.png */,
-				ED0B99C312AA43E20002D7E8 /* Icon-72.png */,
 				ED11B0A3107C6C2400A89C47 /* glare.png */,
 				ED021D6F101D7BE700D8907C /* upglow.png */,
 				ED366417100B339D00293D2C /* VERSION */,
@@ -481,6 +478,7 @@
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = SMNP6E3346;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -512,6 +510,7 @@
 				EDFC86BE0EAF1FBD007120DA /* imgFlagRun.png in Resources */,
 				EDE45EB20EB033F500404D59 /* ConfigView.xib in Resources */,
 				EDA9BBD10EB4A06600D30EA2 /* PrintView.xib in Resources */,
+				91B0CF201E66BC8E00620D08 /* Images.xcassets in Resources */,
 				ED559B6A0EB6089B0060A929 /* Default.png in Resources */,
 				ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */,
 				ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */,
@@ -532,9 +531,7 @@
 				ED021D70101D7BE700D8907C /* upglow.png in Resources */,
 				ED11B0A4107C6C2400A89C47 /* glare.png in Resources */,
 				EDF7F9F6123EDD680091DB79 /* Default@2x.png in Resources */,
-				ED0B99C412AA43E20002D7E8 /* Icon-72.png in Resources */,
 				ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */,
-				ED0B99C812AA43EE0002D7E8 /* Icon@2x.png in Resources */,
 				ED958D041514697B00650B74 /* i_print_adv_dark.png in Resources */,
 				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 				EDE847A9151B36FD00DE8B0B /* menu-norm.png in Resources */,
@@ -621,8 +618,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = SMNP6E3346;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -647,8 +647,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.base2.app.42s;
 				PRODUCT_NAME = 42s;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -656,8 +658,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = SMNP6E3346;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -680,7 +685,7 @@
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;
@@ -772,6 +777,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -782,8 +788,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = SMNP6E3346;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -806,8 +815,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = cc.base2.app.42s;
 				PRODUCT_NAME = 42s;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Distribution;
 		};
