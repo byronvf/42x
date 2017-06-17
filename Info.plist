@@ -47,15 +47,17 @@
 	<true/>
 	<key>NSMainNibFile</key>
 	<string>MainWindow-iPhone</string>
-	<key>NSMainNibFile~ipad</key>
-	<string>MainWindow-iPhone</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>MainWindow-iPhone</string>
 	<key>UIPrerenderedIcon</key>
 	<string>true</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleBlackOpaque</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
 </dict>
 </plist>

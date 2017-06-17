@@ -3,18 +3,21 @@
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
+      "filename" : "Default.png",
       "extent" : "full-screen",
       "scale" : "1x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
+      "filename" : "Default@2x.png",
       "extent" : "full-screen",
       "scale" : "2x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
+      "filename" : "Simulator Screen Shot 2017-06-11, 23.41.26 .png",
       "extent" : "full-screen",
       "subtype" : "retina4",
       "scale" : "2x"
