@@ -208,7 +208,7 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 7;
+    return 6;
 }
 
   // Return the numer of items in the section, given the section number.
@@ -219,9 +219,8 @@
 		case 1: return 2;
 		case 2: return 2;
 		case 3: return 2;
-		case 4: return 1;
-		case 5: return 1;
-        case 6: return 3;
+		case 4: return 3;
+        case 5: return 1;
 		default: return 0;
 	}
 }
@@ -234,9 +233,8 @@
 		case 1: return @"Sound";
 		case 2: return @"Display";
 		case 3: return @"Interaction";
-		case 4: return NULL;
+		case 4: return @"Advanced";
 		case 5: return NULL;
-        case 6: return @"Advanced";
 		default: return @"What???";
 	}
 }
@@ -294,31 +292,31 @@
 		cell.textLabel.text = @"Auto Show Print View";
 		cell.accessoryView = autoPrintSwitch;
 	}	
-	else if  (indexPath.section == 4 && indexPath.row == 0) // Import Export
+//	else if  (indexPath.section == 4 && indexPath.row == 0) // Import Export
+//	{
+//		cell.textLabel.text = @"Import and Export Programs";
+//		cell.accessoryView = gotoServerButton;
+//	}
+	else if  (indexPath.section == 4 && indexPath.row == 0) // Advanced
 	{
-		cell.textLabel.text = @"Import and Export Programs";
-		cell.accessoryView = gotoServerButton;
+		cell.textLabel.text = @"Singular Matrix Error";
+		cell.accessoryView = singMatrixSwitch;
 	}
+	else if  (indexPath.section == 4 && indexPath.row == 1)
+	{
+		cell.textLabel.text = @"Matrix Range Error";
+		cell.accessoryView = matrixOutOfRangeSwitch;
+	}
+    else if (indexPath.section == 4 && indexPath.row == 2)
+    {
+        cell.textLabel.text = @"Old Style Menuing";
+        cell.accessoryView = menuKeysSwitch;
+    }
 	else if  (indexPath.section == 5 && indexPath.row == 0) // About
 	{
 		cell.textLabel.text = @"About";
 		cell.accessoryView = aboutButton;
 	}
-	else if  (indexPath.section == 6 && indexPath.row == 0) // Advanced
-	{
-		cell.textLabel.text = @"Singular Matrix Error";
-		cell.accessoryView = singMatrixSwitch;
-	}
-	else if  (indexPath.section == 6 && indexPath.row == 1)
-	{
-		cell.textLabel.text = @"Matrix Range Error";
-		cell.accessoryView = matrixOutOfRangeSwitch;
-	}
-    else if (indexPath.section == 6 && indexPath.row == 2)
-    {
-        cell.textLabel.text = @"Old Style Menuing";
-        cell.accessoryView = menuKeysSwitch;
-    }
 	else
 	{
 		NSAssert(false, @"section or row do not exist");
