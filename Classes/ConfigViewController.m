@@ -208,7 +208,7 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 6;
+    return 7;
 }
 
   // Return the numer of items in the section, given the section number.
@@ -221,6 +221,7 @@
 		case 3: return 2;
 		case 4: return 3;
         case 5: return 1;
+		case 6: return 1;
 		default: return 0;
 	}
 }
@@ -235,6 +236,7 @@
 		case 3: return @"Interaction";
 		case 4: return @"Advanced";
 		case 5: return NULL;
+		case 6: return NULL;
 		default: return @"What???";
 	}
 }
@@ -292,11 +294,6 @@
 		cell.textLabel.text = @"Auto Show Print View";
 		cell.accessoryView = autoPrintSwitch;
 	}	
-//	else if  (indexPath.section == 4 && indexPath.row == 0) // Import Export
-//	{
-//		cell.textLabel.text = @"Import and Export Programs";
-//		cell.accessoryView = gotoServerButton;
-//	}
 	else if  (indexPath.section == 4 && indexPath.row == 0) // Advanced
 	{
 		cell.textLabel.text = @"Singular Matrix Error";
@@ -312,7 +309,12 @@
         cell.textLabel.text = @"Old Style Menuing";
         cell.accessoryView = menuKeysSwitch;
     }
-	else if  (indexPath.section == 5 && indexPath.row == 0) // About
+	else if  (indexPath.section == 5 && indexPath.row == 0) // Import Export
+	{
+		cell.textLabel.text = @"Import and Export Programs";
+		cell.accessoryView = gotoServerButton;
+	}
+	else if  (indexPath.section == 6 && indexPath.row == 0) // About
 	{
 		cell.textLabel.text = @"About";
 		cell.accessoryView = aboutButton;
