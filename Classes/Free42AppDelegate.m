@@ -382,7 +382,6 @@ bool prgmFirstWrite = TRUE;
 - (void)initializeIphone;
 {
 	// Override point for customization after app launch
-	[navViewController setNavigationBarHidden:TRUE animated:FALSE];
 	[navViewController setDelegate:navViewController];
     [window addSubview: [navViewController view]];
 	[window setRootViewController:navViewController];

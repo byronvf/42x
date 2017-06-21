@@ -25,7 +25,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask"/>
             <color key="backgroundColor" red="0.17878464564599628" green="0.10611069119733885" blue="0.11338899495128331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </window>
         <viewController title="Options" nibName="ConfigView" id="12" customClass="ConfigViewController">
@@ -37,7 +37,7 @@
         </viewController>
         <navigationController id="15" customClass="NavViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
-            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
             <navigationBar key="navigationBar" opaque="NO" multipleTouchEnabled="YES" contentMode="top" barStyle="black" translucent="NO" id="17">
                 <rect key="frame" x="0.0" y="-44" width="0.0" height="44"/>
@@ -66,11 +66,11 @@
         </navigationController>
         <viewController title="Printer" nibName="PrintView" id="73" userLabel="Print View Controller" customClass="PrintViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
-            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
         </viewController>
         <viewController title="Import / Export" nibName="ServerView" id="80" customClass="ServerViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
-            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
         </viewController>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
