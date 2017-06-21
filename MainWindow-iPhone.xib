@@ -21,12 +21,13 @@
                 <outlet property="window" destination="2" id="93"/>
             </connections>
         </customObject>
-        <window opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" visibleAtLaunch="YES" resizesToFullScreen="NO" id="2">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+        <window opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" misplaced="YES" visibleAtLaunch="YES" resizesToFullScreen="NO" id="2">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask"/>
             <color key="backgroundColor" red="0.17878464564599628" green="0.10611069119733885" blue="0.11338899495128331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="448" y="98"/>
         </window>
         <viewController title="Options" nibName="ConfigView" id="12" customClass="ConfigViewController">
             <extendedEdge key="edgesForExtendedLayout"/>

@@ -610,11 +610,9 @@ void shell_request_timeout3(int delay)
 // ************************************  Popup Keyboard *************************************
 
 
--(BOOL)textField:(UITextField*)textField shouldChangeCharactersInRange:(NSRange)targetRange 
-                                       replacementString:(NSString*)newString
+-(BOOL)textField:(UITextField*)textField shouldChangeCharactersInRange:(NSRange)targetRange replacementString:(NSString*)newString
 {
 	int repeat;
-	
 	if(newString.length != 0)
 	{
 		// We are inserting a character
@@ -665,6 +663,10 @@ void shell_request_timeout3(int delay)
 	return YES;
 }
 
+
+CGPoint const menuViewCenterShowing = {160, -57/2};
+CGPoint const menuViewCenterNotShowing = {160, 57/2};
+
 - (void) doMenuDisplay:(bool) forceHide menuUpdate:(bool) update
 {
     if (core_menu() && menuKeys && !forceHide)
@@ -672,24 +674,13 @@ void shell_request_timeout3(int delay)
 		[self.menuView setNeedsDisplay];
 		if (!menuShowing)
 		{
-			CGPoint o = {160, -57/2};
-			self.baseSoftMenuView.center = o;			
-
-			// Make sure iOS version supports animation call
-			if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
-			{
-				[UIView animateWithDuration:0.3 animations:^
-				 {
-					 CGPoint o = {160, 57/2};
-					 self.baseSoftMenuView.center = o;
-				 }];
-			}
-			else 
-			{
-				CGPoint o = {160, 57/2};
-				self.baseSoftMenuView.center = o;
-			}
-			
+			CGPoint o = menuViewCenterShowing;
+			self.baseSoftMenuView.center = o;
+			[UIView animateWithDuration:0.3 animations:^
+			 {
+				 CGPoint o = menuViewCenterNotShowing;
+				 self.baseSoftMenuView.center = o;
+			 }];
 			menuShowing = TRUE;
 		}
 	}
@@ -697,24 +688,13 @@ void shell_request_timeout3(int delay)
 	{
 		if (menuShowing)
 		{
-			CGPoint o = {160, 57/2};
+			CGPoint o = menuViewCenterNotShowing;
 			self.baseSoftMenuView.center = o;
-			
-			// Make sure iOS version supports animation call
-			if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
-			{
-				[UIView animateWithDuration:0.3 animations:^
-				 {
-					 CGPoint o = {160, -57/2};
-					 self.baseSoftMenuView.center = o;
-				 }];
-			}
-			else
-			{
-				CGPoint o = {160, -57/2};
-				self.baseSoftMenuView.center = o;
-			}
-			
+			[UIView animateWithDuration:0.3 animations:^
+			 {
+				 CGPoint o = menuViewCenterShowing;
+				 self.baseSoftMenuView.center = o;
+			 }];
 			menuShowing = FALSE;
 		}
 		
@@ -808,7 +788,7 @@ void shell_request_timeout3(int delay)
 	CGPoint cent;
 	
 	cent = softMenu.center;
-	cent.y = 174;
+	cent.y = 208;
 	
 	// Make sure iOS version supports animation call
 	if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
@@ -838,9 +818,7 @@ void shell_request_timeout3(int delay)
 
 	softMenu.hidden = TRUE;
     //[self doMenuDisplay:true menuUpdate:false];
-	
 }
-
 
 /**
  * This is a crude implementation which just plays a wave beep sound.

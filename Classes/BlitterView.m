@@ -401,8 +401,6 @@ const int statusBarOffset = 20;
 	
     if (dispRows < 8)
     {
-		
-		
         // Draw printer watermark button
         if (fuval)
             CGContextFillRect(ctx, rect);
@@ -417,19 +415,6 @@ const int statusBarOffset = 20;
 			CGContextDrawImage(ctx, CGRectMake(295, 2+statusBarOffset, 18, 16),
 							   [[UIImage imageNamed:@"i_print_adv_dark.png"] CGImage]);
 		}
-		
-		
-	/*
-		 int poff = dispRows < 4 ? 69 : 123;
-        CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 0.3);	
-        UIFont *font = [UIFont systemFontOfSize:13];
-        [@"P" drawAtPoint:CGPointMake(300, poff) withFont:font];		
-        CGContextBeginPath(ctx);
-        CGContextAddArc(ctx, 304, poff+8, 8, 0, 2*M_PI, 0);
-        CGContextSetLineWidth(ctx, 1);
-        CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 0.3);	
-        CGContextStrokePath(ctx);
-	 */
     }
 	
 	if (flags.f.prgm_mode) [self drawScrollBar];
@@ -570,7 +555,8 @@ const int SCROLL_SPEED = 15;
 {
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
-	bounds.size.height = 145;
+//	bounds.size.height = 145;
+	bounds.size.height = 178;
 	cent.y = bounds.size.height/2;
 	self.bounds = bounds;
 	self.center = cent;	
@@ -601,6 +587,7 @@ const int SCROLL_SPEED = 15;
 	
 }
 
+// Called by system when copying to the paste board
 char cbuf[30];
 - (void)copy:(id)sender {
 	if (highlight)
@@ -675,9 +662,7 @@ char cbuf[30];
 	}	
 }
 
-/*
- *  Handle paste
- */
+// Called by the system when pasting from the paste board
 - (void)paste:(id)sender {
 	if (highlight)
 	{	

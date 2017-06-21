@@ -14,12 +14,14 @@
 		28AD733F0D9D9553002E5188 /* MainWindow-iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow-iPhone.xib */; };
 		28D7ACF80DDB3853001CB0EB /* CalcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* CalcViewController.m */; };
 		78D647C51E5D0839003110CE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D647C41E5D0839003110CE /* CoreMotion.framework */; };
+		911B035D1EF7D62F00D3670A /* keypad.png in Resources */ = {isa = PBXBuildFile; fileRef = 911B035C1EF7D62F00D3670A /* keypad.png */; };
+		911B035F1EF7D63700D3670A /* keypad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 911B035E1EF7D63700D3670A /* keypad@2x.png */; };
+		911B03691EF868AD00D3670A /* launchImageR4.png in Resources */ = {isa = PBXBuildFile; fileRef = 911B03681EF868AD00D3670A /* launchImageR4.png */; };
+		911B036B1EF868ED00D3670A /* launchImage1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 911B036A1EF868ED00D3670A /* launchImage1x.png */; };
+		911B036D1EF8691D00D3670A /* launchImage2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 911B036C1EF8691D00D3670A /* launchImage2x.png */; };
 		91341E5A1638E2AE0086FEDD /* ModernView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91341E591638E2AE0086FEDD /* ModernView.m */; };
 		91341E5C1638E9400086FEDD /* ModernView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91341E5B1638E9400086FEDD /* ModernView.xib */; };
-		916C5F311EF5ACF2007DD2EC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 916C5F301EF5ACF2007DD2EC /* Default.png */; };
-		916C5F331EF5ACFD007DD2EC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 916C5F321EF5ACFD007DD2EC /* Default@2x.png */; };
 		91B0CF201E66BC8E00620D08 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91B0CF1F1E66BC8E00620D08 /* Images.xcassets */; };
-		91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89A163BBF1900470456 /* Default-568h@2x.png */; };
 		91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */; };
 		91B8D8A2163BE5FB00470456 /* IPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8D8A1163BE5FB00470456 /* IPadViewController.m */; };
 		E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D40FDE8CE800698456 /* squeak.wav */; };
@@ -107,13 +109,15 @@
 		32CA4F630368D1EE00C91783 /* Free42_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Free42_Prefix.pch; sourceTree = "<group>"; };
 		78D647C41E5D0839003110CE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = Info.plist; sourceTree = "<group>"; };
+		911B035C1EF7D62F00D3670A /* keypad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keypad.png; sourceTree = "<group>"; };
+		911B035E1EF7D63700D3670A /* keypad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "keypad@2x.png"; sourceTree = "<group>"; };
+		911B03681EF868AD00D3670A /* launchImageR4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launchImageR4.png; sourceTree = "<group>"; };
+		911B036A1EF868ED00D3670A /* launchImage1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launchImage1x.png; sourceTree = "<group>"; };
+		911B036C1EF8691D00D3670A /* launchImage2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launchImage2x.png; sourceTree = "<group>"; };
 		91341E581638E2AE0086FEDD /* ModernView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernView.h; sourceTree = "<group>"; };
 		91341E591638E2AE0086FEDD /* ModernView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModernView.m; sourceTree = "<group>"; };
 		91341E5B1638E9400086FEDD /* ModernView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModernView.xib; sourceTree = "<group>"; };
-		916C5F301EF5ACF2007DD2EC /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		916C5F321EF5ACFD007DD2EC /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		91B0CF1F1E66BC8E00620D08 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		91B8D89A163BBF1900470456 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		91B8D8A0163BE5FB00470456 /* IPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadViewController.h; sourceTree = "<group>"; };
 		91B8D8A1163BE5FB00470456 /* IPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPadViewController.m; sourceTree = "<group>"; };
@@ -315,11 +319,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				91B0CF1F1E66BC8E00620D08 /* Images.xcassets */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				91B8D89A163BBF1900470456 /* Default-568h@2x.png */,
-				916C5F321EF5ACFD007DD2EC /* Default@2x.png */,
-				916C5F301EF5ACF2007DD2EC /* Default.png */,
+				91B0CF1F1E66BC8E00620D08 /* Images.xcassets */,
+				911B035C1EF7D62F00D3670A /* keypad.png */,
+				911B036C1EF8691D00D3670A /* launchImage2x.png */,
+				911B036A1EF868ED00D3670A /* launchImage1x.png */,
+				911B03681EF868AD00D3670A /* launchImageR4.png */,
+				911B035E1EF7D63700D3670A /* keypad@2x.png */,
 				EDE847A8151B36FD00DE8B0B /* menu-norm.png */,
 				ED958D051514793100650B74 /* i_print_adv.png */,
 				ED958D031514697B00650B74 /* i_print_adv_dark.png */,
@@ -504,31 +510,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow-iPhone.xib in Resources */,
+				911B03691EF868AD00D3670A /* launchImageR4.png in Resources */,
 				2899E5220DE3E06400AC0155 /* CalcView.xib in Resources */,
 				EDFC86B90EAF10F4007120DA /* imgFlagShift.png in Resources */,
 				EDFC86BB0EAF10FC007120DA /* imgFlagUpDown.png in Resources */,
 				EDFC86BE0EAF1FBD007120DA /* imgFlagRun.png in Resources */,
 				EDE45EB20EB033F500404D59 /* ConfigView.xib in Resources */,
 				EDA9BBD10EB4A06600D30EA2 /* PrintView.xib in Resources */,
-				916C5F311EF5ACF2007DD2EC /* Default.png in Resources */,
+				911B035D1EF7D62F00D3670A /* keypad.png in Resources */,
 				91B0CF201E66BC8E00620D08 /* Images.xcassets in Resources */,
 				ED69AAD70F13F6A8001B6C1A /* COPYING in Resources */,
 				ED26D2740F6AB7F400F285A2 /* ServerView.xib in Resources */,
 				EDDA2FCB0FB810FC00B9D002 /* Default-BlankTop.png in Resources */,
-				916C5F331EF5ACFD007DD2EC /* Default@2x.png in Resources */,
 				ED5F1AC80FBCB72A00ABACC2 /* glow.png in Resources */,
 				E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */,
 				E9B918E00FDE8CE800698456 /* tone0.wav in Resources */,
 				E9B918E10FDE8CE800698456 /* tone1.wav in Resources */,
 				E9B918E20FDE8CE800698456 /* tone2.wav in Resources */,
 				E9B918E30FDE8CE800698456 /* tone3.wav in Resources */,
+				911B036D1EF8691D00D3670A /* launchImage2x.png in Resources */,
 				E9B918E40FDE8CE800698456 /* tone4.wav in Resources */,
 				E9B918E50FDE8CE800698456 /* tone5.wav in Resources */,
 				E9B918E60FDE8CE800698456 /* tone6.wav in Resources */,
 				E9B918E70FDE8CE800698456 /* tone7.wav in Resources */,
+				911B035F1EF7D63700D3670A /* keypad@2x.png in Resources */,
 				E9B918E80FDE8CE800698456 /* tone8.wav in Resources */,
 				E9B918E90FDE8CE800698456 /* tone9.wav in Resources */,
 				ED366418100B339D00293D2C /* VERSION in Resources */,
+				911B036B1EF868ED00D3670A /* launchImage1x.png in Resources */,
 				ED021D70101D7BE700D8907C /* upglow.png in Resources */,
 				ED11B0A4107C6C2400A89C47 /* glare.png in Resources */,
 				ED0B99C612AA43E80002D7E8 /* Icon.png in Resources */,
@@ -536,7 +545,6 @@
 				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 				EDE847A9151B36FD00DE8B0B /* menu-norm.png in Resources */,
 				91341E5C1638E9400086FEDD /* ModernView.xib in Resources */,
-				91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */,
 				91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

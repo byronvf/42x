@@ -43,7 +43,7 @@
 #pragma warning(disable: 4309)
 #endif
 
-int dispRows = 2; 
+int dispRows = 5;
 bool ignore_menu = FALSE;
 bool menuKeys = FALSE;
 bool fuval = FALSE;
