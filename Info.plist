@@ -47,8 +47,6 @@
 	<true/>
 	<key>NSMainNibFile</key>
 	<string>MainWindow-iPhone</string>
-	<key>UIFileSharingEnabled</key>
-	<true/>
 	<key>UIPrerenderedIcon</key>
 	<string>true</string>
 	<key>UIRequiresFullScreen</key>
