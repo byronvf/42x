@@ -18,8 +18,8 @@
 		91341E5C1638E9400086FEDD /* ModernView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91341E5B1638E9400086FEDD /* ModernView.xib */; };
 		916C5F311EF5ACF2007DD2EC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 916C5F301EF5ACF2007DD2EC /* Default.png */; };
 		916C5F331EF5ACFD007DD2EC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 916C5F321EF5ACFD007DD2EC /* Default@2x.png */; };
+		9198E0371EFC81FE0023130E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9198E0361EFC81FE0023130E /* Default-568h@2x.png */; };
 		91B0CF201E66BC8E00620D08 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91B0CF1F1E66BC8E00620D08 /* Images.xcassets */; };
-		91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89A163BBF1900470456 /* Default-568h@2x.png */; };
 		91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */; };
 		91B8D8A2163BE5FB00470456 /* IPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8D8A1163BE5FB00470456 /* IPadViewController.m */; };
 		E9B918DF0FDE8CE800698456 /* squeak.wav in Resources */ = {isa = PBXBuildFile; fileRef = E9B918D40FDE8CE800698456 /* squeak.wav */; };
@@ -112,8 +112,8 @@
 		91341E5B1638E9400086FEDD /* ModernView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModernView.xib; sourceTree = "<group>"; };
 		916C5F301EF5ACF2007DD2EC /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		916C5F321EF5ACFD007DD2EC /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		9198E0361EFC81FE0023130E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		91B0CF1F1E66BC8E00620D08 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		91B8D89A163BBF1900470456 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		91B8D89E163BC04A00470456 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		91B8D8A0163BE5FB00470456 /* IPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPadViewController.h; sourceTree = "<group>"; };
 		91B8D8A1163BE5FB00470456 /* IPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPadViewController.m; sourceTree = "<group>"; };
@@ -317,7 +317,7 @@
 			children = (
 				91B0CF1F1E66BC8E00620D08 /* Images.xcassets */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				91B8D89A163BBF1900470456 /* Default-568h@2x.png */,
+				9198E0361EFC81FE0023130E /* Default-568h@2x.png */,
 				916C5F321EF5ACFD007DD2EC /* Default@2x.png */,
 				916C5F301EF5ACF2007DD2EC /* Default.png */,
 				EDE847A8151B36FD00DE8B0B /* menu-norm.png */,
@@ -536,7 +536,7 @@
 				ED958D061514793100650B74 /* i_print_adv.png in Resources */,
 				EDE847A9151B36FD00DE8B0B /* menu-norm.png in Resources */,
 				91341E5C1638E9400086FEDD /* ModernView.xib in Resources */,
-				91B8D89B163BBF1900470456 /* Default-568h@2x.png in Resources */,
+				9198E0371EFC81FE0023130E /* Default-568h@2x.png in Resources */,
 				91B8D89F163BC04A00470456 /* MainWindow-iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
