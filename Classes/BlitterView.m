@@ -44,6 +44,9 @@ static BOOL flagRun = false;
 // Height of the annuciator line
 #define ASTAT_HEIGHT 18
 
+// Top margin of LCD display
+#define LCD_TOP_MARGIN 6
+
 /**
  * Returns the new value of 'flag' based on the value of 'code' based
  * on values passed in from shell_annuciators
@@ -386,14 +389,15 @@ const int statusBarOffset = 20;
 			vertoffset += ASTAT_HEIGHT;
 		}
 		else
-		{		
+		{
 			// If in program mode then create a little buffer at the top
-			if (dispRows == 7) vertoffset += 3;	
-			if (dispRows == 4) vertoffset += 5;
-			if (dispRows == 6) vertoffset += 2;
-            if (dispRows == 22) vertoffset+= 5;
-            if (dispRows == 23) vertoffset+= 8;
+//			if (dispRows == 7) vertoffset += 3;
+//			if (dispRows == 4) vertoffset += 5;
+//			if (dispRows == 6) vertoffset += 2;
+//            if (dispRows == 22) vertoffset+= 5;
+//            if (dispRows == 23) vertoffset+= 8;
 		}
+		vertoffset += LCD_TOP_MARGIN;
 
 		drawBlitterDataToContext(ctx, calcViewController.displayBuff, 8, vertoffset,
 								 hMax, 17, 2.3, vertScale, -1, 17*8, 0);
@@ -522,7 +526,7 @@ const int statusBarOffset = 20;
 
 - (float)getDispVertScale
 {
-	float vertScale = 2.5;
+	float vertScale = 3.1;
 	if (dispRows == 2) vertScale = 3.0;
 	else if (dispRows == 3) vertScale = 2.8;
 	
@@ -537,7 +541,7 @@ const int SCROLL_SPEED = 15;
 /**
  * Set the blitter in two line display mode
  */
-- (void) singleLCD
+- (void) smallLCD
 {
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
@@ -551,7 +555,7 @@ const int SCROLL_SPEED = 15;
 /**
  * Set the blitter in four line display mode
  */
-- (void) doubleLCD
+- (void) bigLCD
 {
 	CGRect bounds = self.bounds;
 	CGPoint cent = self.center;
@@ -745,7 +749,9 @@ char cbuf[30];
 
 /*
  * The following two event handlers implement the swiping of the display 
- * to switch to the print view.  If the touches are far enough apart, then we switch 
+ * to switch to the print view.  We also use this to swipe down or up the blitter
+ * view to make the LCD larger or smaller, moving the soft menu up and down a 
+ * row
  */
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -786,7 +792,7 @@ char cbuf[30];
 		if (dragDist < -30)
 		{
             if (self.bounds.size.height < 100)                    
-                [calcViewController doubleLCD];
+                [calcViewController bigLCD];
             else if (self.bounds.size.height < 300 && flags.f.prgm_mode)
                 [calcViewController fullLCD];
             firstTouch.y = [touch locationInView:self].y;
@@ -795,9 +801,9 @@ char cbuf[30];
 		else if (dragDist > 30)
 		{
             if (self.bounds.size.height > 300)
-                [calcViewController doubleLCD];
+                [calcViewController bigLCD];
             else if (self.bounds.size.height > 100)                
-                [calcViewController singleLCD];
+                [calcViewController smallLCD];
             firstTouch.y = [touch locationInView:self].y;
             firstTouch.x = TOUCH_SWIPE_COMPLETE;
 		}	
@@ -824,8 +830,6 @@ char cbuf[30];
             redisplay();		
         }
 	}
-    
-    
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event

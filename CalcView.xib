@@ -77,7 +77,7 @@
                                 <outlet property="delegate" destination="-1" id="217"/>
                             </connections>
                         </textField>
-                        <imageView opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" alpha="0.65352106094360352" contentMode="scaleToFill" image="glare.png" id="246">
+                        <imageView opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" alpha="0.65352106094360352" contentMode="scaleToFill" misplaced="YES" image="glare.png" id="246">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="179"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         </imageView>
@@ -94,7 +94,122 @@
                         <imageView userInteractionEnabled="NO" contentMode="left" misplaced="YES" image="keypad.png" id="273" userLabel="keyPadImage">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="390"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <accessibility key="accessibilityConfiguration">
+                                <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                            </accessibility>
                         </imageView>
+                        <view autoresizesSubviews="NO" clipsSubviews="YES" contentMode="left" misplaced="YES" id="265" userLabel="softMenuView">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="menu-norm.png" id="268" userLabel="staticMenuView">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <accessibility key="accessibilityConfiguration">
+                                        <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                    </accessibility>
+                                </imageView>
+                                <view opaque="NO" contentMode="scaleToFill" id="274" userLabel="baseView">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <imageView clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="top" image="Default-BlankTop.png" id="224" userLabel="blankButtonView">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <accessibility key="accessibilityConfiguration">
+                                                <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                            </accessibility>
+                                        </imageView>
+                                        <view clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" id="226" userLabel="menuView" customClass="MenuView">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="247" userLabel="label1">
+                                                    <rect key="frame" x="14" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="248" userLabel="label2">
+                                                    <rect key="frame" x="65" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="249" userLabel="label3">
+                                                    <rect key="frame" x="114" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="250" userLabel="label4">
+                                                    <rect key="frame" x="164" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="251" userLabel="label5">
+                                                    <rect key="frame" x="214" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="252" userLabel="label6">
+                                                    <rect key="frame" x="264" y="22" width="42" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                                    </accessibility>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
+                                                    <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" red="1" green="0.064168214409999993" blue="0.19430953040000001" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="tintColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="calibratedRGB"/>
+                                            <accessibility key="accessibilityConfiguration">
+                                                <accessibilityTraits key="traits" notEnabled="YES"/>
+                                            </accessibility>
+                                            <connections>
+                                                <outlet property="calcViewController" destination="-1" id="230"/>
+                                                <outlet property="label1" destination="247" id="253"/>
+                                                <outlet property="label2" destination="248" id="254"/>
+                                                <outlet property="label3" destination="249" id="255"/>
+                                                <outlet property="label4" destination="250" id="256"/>
+                                                <outlet property="label5" destination="251" id="257"/>
+                                                <outlet property="label6" destination="252" id="258"/>
+                                            </connections>
+                                        </view>
+                                    </subviews>
+                                    <accessibility key="accessibilityConfiguration">
+                                        <accessibilityTraits key="traits" notEnabled="YES"/>
+                                    </accessibility>
+                                </view>
+                            </subviews>
+                            <accessibility key="accessibilityConfiguration">
+                                <accessibilityTraits key="traits" notEnabled="YES"/>
+                            </accessibility>
+                        </view>
                         <button opaque="NO" clearsContextBeforeDrawing="NO" tag="1" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="233" userLabel="b01">
                             <rect key="frame" x="0.0" y="0.0" width="58" height="56"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -183,7 +298,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" clearsContextBeforeDrawing="NO" tag="6" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="28" userLabel="b06">
-                            <rect key="frame" x="260" y="0.0" width="54" height="56"/>
+                            <rect key="frame" x="260" y="0.0" width="60" height="56"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" red="0.19343067705631256" green="0.19343067705631256" blue="0.19343067705631256" alpha="0.02" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
@@ -274,7 +389,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" clearsContextBeforeDrawing="NO" tag="11" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="27" userLabel="b11">
-                            <rect key="frame" x="258" y="56" width="54" height="56"/>
+                            <rect key="frame" x="210" y="65" width="52" height="50"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" red="0.19343067705631256" green="0.19343067705631256" blue="0.19343067705631256" alpha="0.02" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
@@ -435,24 +550,6 @@
                                 <action selector="buttonDown:" destination="-1" eventType="touchDown" id="93"/>
                                 <action selector="buttonUp:" destination="-1" eventType="touchUpInside" id="94"/>
                                 <action selector="buttonUp:" destination="-1" eventType="touchDragExit" id="198"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" clearsContextBeforeDrawing="NO" tag="20" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="39" userLabel="b20">
-                            <rect key="frame" x="125" y="169" width="56" height="54"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.19343067705631256" green="0.19343067705631256" blue="0.19343067705631256" alpha="0.02" colorSpace="custom" customColorSpace="sRGB"/>
-                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
-                            <state key="normal">
-                                <color key="titleColor" red="0.19607843" green="0.30980393000000001" blue="0.52156866000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </state>
-                            <state key="highlighted">
-                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </state>
-                            <connections>
-                                <action selector="buttonDown:" destination="-1" eventType="touchDown" id="95"/>
-                                <action selector="buttonUp:" destination="-1" eventType="touchUpInside" id="96"/>
-                                <action selector="buttonUp:" destination="-1" eventType="touchDragExit" id="199"/>
                             </connections>
                         </button>
                         <button opaque="NO" clearsContextBeforeDrawing="NO" tag="21" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="43" userLabel="b21">
@@ -767,90 +864,29 @@
                             <rect key="frame" x="0.0" y="169" width="59" height="110"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
+                        <button opaque="NO" clearsContextBeforeDrawing="NO" tag="20" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="39" userLabel="b20">
+                            <rect key="frame" x="122" y="171" width="59" height="55"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" red="0.19343067705631256" green="0.19343067705631256" blue="0.19343067705631256" alpha="0.02" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
+                            <state key="normal">
+                                <color key="titleColor" red="0.19607843" green="0.30980393000000001" blue="0.52156866000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <state key="highlighted">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="buttonDown:" destination="-1" eventType="touchDown" id="95"/>
+                                <action selector="buttonUp:" destination="-1" eventType="touchUpInside" id="96"/>
+                                <action selector="buttonUp:" destination="-1" eventType="touchDragExit" id="199"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <accessibility key="accessibilityConfiguration">
                         <accessibilityTraits key="traits" image="YES"/>
                     </accessibility>
-                </view>
-                <view autoresizesSubviews="NO" clipsSubviews="YES" contentMode="left" misplaced="YES" id="265" userLabel="softMenuView">
-                    <rect key="frame" x="0.0" y="178" width="320" height="57"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="menu-norm.png" id="268" userLabel="staticMenuView">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <view opaque="NO" contentMode="scaleToFill" id="274" userLabel="baseView">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <imageView clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="top" misplaced="YES" image="Default-BlankTop.png" id="224" userLabel="blankButtonView">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </imageView>
-                                <view clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" id="226" userLabel="menuView" customClass="MenuView">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="247" userLabel="label1">
-                                            <rect key="frame" x="14" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="248" userLabel="label2">
-                                            <rect key="frame" x="65" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="249" userLabel="label3">
-                                            <rect key="frame" x="114" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="250" userLabel="label4">
-                                            <rect key="frame" x="164" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="251" userLabel="label5">
-                                            <rect key="frame" x="214" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="LABEL" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="10" id="252" userLabel="label6">
-                                            <rect key="frame" x="264" y="22" width="42" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="13"/>
-                                            <color key="textColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" red="1" green="0.064168214409999993" blue="0.19430953040000001" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="tintColor" red="0.91629161010000004" green="0.91629161010000004" blue="0.91629161010000004" alpha="1" colorSpace="calibratedRGB"/>
-                                    <connections>
-                                        <outlet property="calcViewController" destination="-1" id="230"/>
-                                        <outlet property="label1" destination="247" id="253"/>
-                                        <outlet property="label2" destination="248" id="254"/>
-                                        <outlet property="label3" destination="249" id="255"/>
-                                        <outlet property="label4" destination="250" id="256"/>
-                                        <outlet property="label5" destination="251" id="257"/>
-                                        <outlet property="label6" destination="252" id="258"/>
-                                    </connections>
-                                </view>
-                            </subviews>
-                        </view>
-                    </subviews>
                 </view>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

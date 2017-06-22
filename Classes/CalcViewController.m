@@ -396,7 +396,7 @@ void shell_blitter(const char *bits, int bytesperline, int x, int y,
 	if ([[Settings instance] clickSoundOn])
 		AudioServicesPlaySystemSound(1105);
 
-	if (dispRows > 4 && keynum < 13) keynum -= 6;
+//	if (dispRows > 4 && keynum < 13) keynum -= 6;
 	
 	if (keynum != 28)
 		[self cancelKeyTimer];
@@ -710,12 +710,12 @@ CGPoint const menuViewCenterNotShowing = {160, 57/2};
 - (void) resetLCD
 {
 	if (dispRows < 4)
-		[self singleLCD];
+		[self smallLCD];
 	else
-		[self doubleLCD];
+		[self bigLCD];
 }
 
-- (void) singleLCD
+- (void) smallLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
@@ -726,47 +726,31 @@ CGPoint const menuViewCenterNotShowing = {160, 57/2};
 	cmdline_row = dispRows-1;
 	if (!menuKeys && core_menu()) cmdline_row--;
 
-	for (int i=1; i<12; i++)
-		[self hideButtonNum:i hidden:FALSE];
+//	for (int i=1; i<12; i++)
+//		[self hideButtonNum:i hidden:FALSE];
 	
-	/*
-	CGPoint cent = blankButtonsView.center;
-	cent.y = 121;
-	blankButtonsView.center = cent;
-	 */
-
 	CGPoint cent =  softMenu.center;
-	cent.y = 121;
+	// Enough to slide the softMenu out of view
+	cent.y = -softMenu.bounds.size.height/2+2;
+	[UIView animateWithDuration:0.3 animations:^
+	 {
+		 softMenu.center = cent;
+	 }
+	completion:^(BOOL finished)
+	 {
+		 [blitterView smallLCD];
+		 [blitterView setNumDisplayRows];
+	 }];
 	
-	// Make sure iOS version supports animation call
-	if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
-	{
-		[UIView animateWithDuration:0.3 animations:^
-		 {
-			 softMenu.center = cent;
-		 }
-						 completion:^(BOOL finished)
-		 {
-			 [blitterView singleLCD];
-			 [blitterView setNumDisplayRows];		 
-		 }];
-	}
-	else 
-	{
-		softMenu.center = cent;
-		[blitterView singleLCD];
-		[blitterView setNumDisplayRows];		 
-	}
-    
-	[self doMenuDisplay:false  menuUpdate:false];  
+	[self doMenuDisplay:false  menuUpdate:false];
 }
 
-- (void) doubleLCD
+- (void) bigLCD
 {
 	NSAssert(free42init, @"Free42 has not been initialized");	
 	NSAssert([viewCtrl isViewLoaded], @"View Not loaded");
 	
-	[blitterView doubleLCD];	
+	[blitterView bigLCD];
 	[blitterView setNumDisplayRows];
 	
 	// If we are entering something then change the line
@@ -779,29 +763,21 @@ CGPoint const menuViewCenterNotShowing = {160, 57/2};
 		if (!menuKeys && core_menu()) cmdline_row--;
 	}
 	
-	for (int i=1; i<7; i++)
-		[self hideButtonNum:i hidden:TRUE];
-		
-	for (int i=7; i<38; i++)
-		[self hideButtonNum:i hidden:FALSE];
-		
+//	for (int i=1; i<7; i++)
+//		[self hideButtonNum:i hidden:TRUE];
+//		
+//	for (int i=7; i<38; i++)
+//		[self hideButtonNum:i hidden:FALSE];
+	
 	CGPoint cent;
 	
 	cent = softMenu.center;
-	cent.y = 208;
-	
-	// Make sure iOS version supports animation call
-	if ([UIView respondsToSelector:@selector(animateWithDuration:animations:)])
-	{
-		[UIView animateWithDuration:0.3 animations:^
-		 {
-			 softMenu.center = cent;
-		 }];
-	}
-	else 
-	{
-		softMenu.center = cent;
-	}
+	// Slide the softMenu into view
+	cent.y = softMenu.bounds.size.height/2;
+	[UIView animateWithDuration:0.3 animations:^
+	 {
+		 softMenu.center = cent;
+	 }];
 	
 	softMenu.hidden = FALSE;
 	[self doMenuDisplay:false  menuUpdate:false]; 

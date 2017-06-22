@@ -53,8 +53,8 @@ extern short dispflags;
 
 - (void) drawAnnunciators;
 - (void) annuncNeedsDisplay;
-- (void) singleLCD;
-- (void) doubleLCD;
+- (void) bigLCD;
+- (void) smallLCD;
 - (void) fullLCD;
 - (void) shouldCutPaste;
 - (void) showEditMenu;
