@@ -336,13 +336,9 @@ const int statusBarOffset = 20;
 
 - (void)drawRect:(CGRect)rect 
 {	
-#ifdef DEBUG	
-	NSAssert(calcViewController && calcViewController.displayBuff, 
+	NSAssert(calcViewController && calcViewController.displayBuff,
 			 @"viewController not initialized");
-#else
-	if (calcViewController.displayBuff == NULL) return;	
-#endif
-	
+
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	if (highlight)
@@ -350,6 +346,17 @@ const int statusBarOffset = 20;
 		CGContextSetRGBFillColor(ctx, 0.60, 0.8, 1.0, 1.0);
         CGContextFillRect(ctx, selectRect);
 	}
+
+//	Debug
+//	NSLog(@"Rect: %f, %f, %f, %f", rect.origin.x, rect.origin.y, rect.size.height, rect.size.width);
+//	if (rect.origin.y > 100) {
+//	CGContextSetRGBFillColor(ctx, 1.0, 0.0, 0.0, 1.0);
+//	CGContextFillRect(ctx, rect);
+//	}
+//	else if (rect.origin.y > 0) {
+//		CGContextSetRGBFillColor(ctx, 0.0, 0.0, 1.0, 1.0);
+//		CGContextFillRect(ctx, rect);
+//	}
 	
 	CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
 	
@@ -379,7 +386,7 @@ const int statusBarOffset = 20;
 		// 3.0 - vert scale factor
 		
 		int hMax = ((rect.origin.y - (ASTAT_HEIGHT + statusBarOffset)) + rect.size.height)/vertScale + 1;
-		// If in program mode just display the who thing, we don't try and be smart about
+		// If in program mode just display the whole thing, we don't try and be smart about
 		// the update region.
 		if (hMax > dispRows*8 || flags.f.prgm_mode) hMax = dispRows*8;
 		int vertoffset = statusBarOffset;
@@ -432,9 +439,9 @@ const int statusBarOffset = 20;
 {
 	NSAssert(free42init, @"Free42 has not been initialized");
 	
+	int insetBot = 4;
 	int insetTop = 4;
 	if (self.dispAnnunc) insetTop += ASTAT_HEIGHT;
-	int insetBot = 4;
 	
 	int offset = insetTop + statusBarOffset;
 	int fullheight = self.bounds.size.height - (insetTop + insetBot) - statusBarOffset;
@@ -513,11 +520,11 @@ const int statusBarOffset = 20;
 	// dispRows == 4 means we are in program mode with the status bar off, in draw rect
 	// we addjust the top by +5 in this mode to help center the program display in the 
 	// LCD, we make the same adjustment here so we draw the entire area.
-	if (dispRows == 4) hs += 5;
-	if (dispRows == 6 || dispRows == 7 || dispRows) hs += 2;
-    if (dispRows == 23) hs += 5;
+//	if (dispRows == 4) hs += 5;
+//	if (dispRows == 6 || dispRows == 7 || dispRows) hs += 2;
+//    if (dispRows == 23) hs += 5;
 
-	int top = statusBarOffset + (l*8)*vscale;
+	int top = statusBarOffset + (l*8)*vscale+LCD_TOP_MARGIN;
 	if (self.dispAnnunc)
 		top += ASTAT_HEIGHT;
 			
