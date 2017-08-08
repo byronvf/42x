@@ -37,7 +37,7 @@ static vartype *temp_9_5;    // 9/5
 static vartype *temp_32;     // 32
 
 /*
- The below unit values are main taken from:
+ The below unit values are mainly taken from:
  		http://en.wikipedia.org/wiki/Conversion_of_units
  but verified against:
  		http://physics.nist.gov/Pubs/SP811/appenB9.html
@@ -79,10 +79,10 @@ static unit area_units[] =
 static unit volume_units[] =
 {
 	{"Liter",  "1.0", NULL},
-	{"ft^3",   "2.8316846592e1", NULL},
+	{"cu ft",   "2.8316846592e1", NULL},
+	{"cu in",   "1.6387064×10e−2", NULL},
 	{"USgal",  "3.785411784", NULL},
 	{"UKgal",  "4.54609", NULL},
-	{"mL",     "1e-3", NULL},
 	{"USfoz",  "2.95735295625e-2", NULL},
 	{"UKfoz",  "2.84130625e-2", NULL},
 	{"pint",   "4.73176473e-1", NULL},
@@ -91,6 +91,7 @@ static unit volume_units[] =
 	{"cup",    "2.365882365e-1", NULL},
 	{"tabsp",  "1.47867647825e-2", NULL},
 	{"teasp",  "4.928921595e-3", NULL},
+	{"mL",     "1e-3", NULL},
 	{"cc",     "1e-3", NULL},
 };
 
