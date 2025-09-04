@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -23,24 +23,24 @@
         <viewController title="Options" nibName="ConfigView" id="12" customClass="ConfigViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
             <nil key="simulatedStatusBarMetrics"/>
-            <point key="canvasLocation" x="141" y="640"/>
+            <point key="canvasLocation" x="-45" y="646"/>
         </viewController>
         <viewController title="Printer" nibName="PrintView" id="73" userLabel="Print View Controller" customClass="PrintViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
             <nil key="simulatedStatusBarMetrics"/>
-            <point key="canvasLocation" x="403.125" y="-65.0390625"/>
+            <point key="canvasLocation" x="545" y="-195"/>
         </viewController>
         <viewController title="Import / Export" nibName="ServerView" id="80" customClass="ServerViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
             <nil key="simulatedStatusBarMetrics"/>
-            <point key="canvasLocation" x="141" y="640"/>
+            <point key="canvasLocation" x="728" y="493"/>
         </viewController>
         <viewController autoresizesArchivedViewToFullSize="NO" nibName="ModernView" automaticallyAdjustsScrollViewInsets="NO" id="109" customClass="CalcViewController">
             <extendedEdge key="edgesForExtendedLayout"/>
             <connections>
                 <outlet property="printController" destination="73" id="111"/>
             </connections>
-            <point key="canvasLocation" x="141" y="154"/>
+            <point key="canvasLocation" x="-102" y="-202"/>
         </viewController>
         <window opaque="NO" clearsContextBeforeDrawing="NO" contentMode="TopLeft" resizesToFullScreen="NO" id="2" userLabel="IPad Window">
             <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
@@ -69,7 +69,7 @@
                 <color key="backgroundColor" red="0.21380515059999999" green="1" blue="0.2283368663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             </view>
             <extendedEdge key="edgesForExtendedLayout"/>
-            <point key="canvasLocation" x="-355.46875" y="265.4296875"/>
+            <point key="canvasLocation" x="259" y="165"/>
         </viewController>
     </objects>
 </document>

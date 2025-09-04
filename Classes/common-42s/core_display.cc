@@ -50,7 +50,8 @@ bool fuval = FALSE;
 
 struct menu_item menu_items[6];
 
-static char bigchars[130][5] =
+// DEBUG
+static int8 bigchars[130][5] =
     {
 	{ 0x08, 0x08, 0x2a, 0x08, 0x08 },
 	{ 0x22, 0x14, 0x08, 0x14, 0x22 },

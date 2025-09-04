@@ -96,8 +96,8 @@ extern int dispRows;
 
 - (void)drawDirectoryMark: (CGContextRef)ctx key:(int) i
 {
-	int x = 23 + i*50;
-	int y = 5;
+	float x = 23 + i*50;
+	float y = 5;
 	CGPoint A = {x, y};
 	CGPoint B = {x+20, y};
 	CGPoint C = {x+10, y+8};

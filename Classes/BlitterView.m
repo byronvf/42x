@@ -238,9 +238,17 @@ const int statusBarOffset = 20;
 	if (ang != NULL)
 	{
 		UIFont *font = [UIFont boldSystemFontOfSize:13];
-		[ang drawInRect:CGRectMake(80, statusBarOffset, 38, 14) 
-				withFont:font lineBreakMode:UILineBreakModeClip
-			   alignment:UITextAlignmentRight];	
+		NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+			paragraphStyle.alignment = NSTextAlignmentRight;
+			paragraphStyle.lineBreakMode = NSLineBreakByClipping;
+			NSDictionary *attributes = @{NSFontAttributeName: font,
+										 NSParagraphStyleAttributeName: paragraphStyle};
+			[ang drawInRect:CGRectMake(80, statusBarOffset, 38, 14) withAttributes:attributes];
+
+// DEBUG
+//		[ang drawInRect:CGRectMake(80, statusBarOffset, 38, 14)
+//				withFont:font lineBreakMode:UILineBreakModeClip
+//			   alignment:UITextAlignmentRight];	
 	}	
 }	
 
@@ -297,9 +305,18 @@ const int statusBarOffset = 20;
 	if (base != NULL)
 	{
 		UIFont *font = [UIFont boldSystemFontOfSize:13];
-		[base drawInRect:CGRectMake(120, statusBarOffset, 30, 14) 
-				withFont:font lineBreakMode:UILineBreakModeClip
-				alignment:UITextAlignmentRight];	
+		NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+				paragraphStyle.alignment = NSTextAlignmentRight;
+				paragraphStyle.lineBreakMode = NSLineBreakByClipping;
+
+				NSDictionary *attributes = @{NSFontAttributeName: font,
+											 NSParagraphStyleAttributeName: paragraphStyle};
+				[base drawInRect:CGRectMake(120, statusBarOffset, 30, 14) withAttributes:attributes];
+
+// DEBUG
+//		[base drawInRect:CGRectMake(120, statusBarOffset, 30, 14)
+//				withFont:font lineBreakMode:UILineBreakModeClip
+//				alignment:UITextAlignmentRight];	
 	}
 }
 
@@ -328,9 +345,17 @@ const int statusBarOffset = 20;
 	// the annunciator row.
 	//UIFont *font = [UIFont fontWithName:@"Helvetica" size:15];
 	UIFont *font = [UIFont systemFontOfSize:14];
-	[wprefix drawInRect:CGRectMake(195, statusBarOffset-1, 100, 14) 
-			   withFont:font lineBreakMode:UILineBreakModeClip
-	 alignment:UITextAlignmentCenter];
+	NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		paragraphStyle.alignment = NSTextAlignmentCenter;
+		paragraphStyle.lineBreakMode = NSLineBreakByClipping;
+		NSDictionary *attributes = @{NSFontAttributeName: font,
+									 NSParagraphStyleAttributeName: paragraphStyle};
+		[wprefix drawInRect:CGRectMake(195, statusBarOffset-1, 100, 14) withAttributes:attributes];
+	
+// DEBUG
+//	[wprefix drawInRect:CGRectMake(195, statusBarOffset-1, 100, 14)
+//			   withFont:font lineBreakMode:UILineBreakModeClip
+//	 alignment:UITextAlignmentCenter];
 	
 }
 
